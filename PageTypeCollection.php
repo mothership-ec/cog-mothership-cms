@@ -36,6 +36,16 @@ class PageTypeCollection implements \IteratorAggregate, \Countable
 	}
 
 	/**
+	 * Get the number of page types registered on this collection.
+	 *
+	 * @return int The number of page types registered
+	 */
+	public function count()
+	{
+		return count($this->_pageTypes);
+	}
+
+	/**
 	 * Get the iterator object to use for iterating over this class.
 	 *
 	 * @return \ArrayIterator An \ArrayIterator instance for the `_pageTypes`
@@ -44,15 +54,5 @@ class PageTypeCollection implements \IteratorAggregate, \Countable
 	public function getIterator()
 	{
 		return new \ArrayIterator($this->_pageTypes);
-	}
-
-	/**
-	 * Get the number of page types registered on this collection.
-	 *
-	 * @return int The number of page types registered
-	 */
-	public function count()
-	{
-		return count($this->_pageTypes);
 	}
 }
