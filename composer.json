@@ -1,0 +1,36 @@
+{
+	"name": "message/cog-cms",
+	"description": "Cog module for content management",
+	"keywords": ["cms", "content", "editing", "cog"],
+	"homepage": "http://message.co.uk",
+	"authors": [
+		{
+			"name" : "The Message Development Team",
+			"email": "dev@message.co.uk"
+		}
+	],
+	"support": {
+		"wiki"  : "http://server.local/wiki/projects/cog",
+		"issues": "http://server.local:3000/cog-cms/issues"
+	},
+	"autoload": {
+		"psr-0": {
+			"Message\\CMS": ""
+		}
+	},
+	"target-dir": "Message/CMS",
+	"repositories": [
+		{
+			"type": "composer",
+			"url" : "http://packages.message.co.uk"
+		}
+	],
+	"minimum-stability": "stable",
+	"require": {
+		"php"        : ">=5.3.0",
+
+		"message/cog": "dev-master"
+	},
+	"suggest": {
+	}
+}
