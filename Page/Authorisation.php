@@ -18,7 +18,6 @@ class Authorisation
 	 * @param Page $page
 	 * @param User $user
 	 *
-	 * @return void
 	 * @access public
 	 */
 	public function __construct(Page $page, User $user)
@@ -32,7 +31,7 @@ class Authorisation
 	 *
 	 * @param mixed $password (default: null)
 	 *
-	 * @return bool
+	 * @return bool will return true / false is the validation is correct
 	 * @access public
 	 */
 	public function validatePassword($password = null)
