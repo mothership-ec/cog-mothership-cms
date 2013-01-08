@@ -3,8 +3,7 @@
 namespace Message\CMS\Page;
 
 /**
- * Authorisation class will handle basic authorisation on any CMS page if the 
- * given page has requested it
+ * Handle basic authorisation on any CMS page if the given page has requested it
  *
  * @author Danny Hannah <danny@message.co.uk>
  */
@@ -12,13 +11,10 @@ class Authorisation
 {
 
 	/**
-	 * get an instance of the given page along with an instance of the User
-	 *
+	 * Get an instance of the given page along with an instance of the User
 	 *
 	 * @param Page $page
 	 * @param User $user
-	 *
-	 * @access public
 	 */
 	public function __construct(Page $page, User $user)
 	{
@@ -26,26 +22,22 @@ class Authorisation
 	}
 
 	/**
-	 * validatePassword function pass in a password to check the validation of the
-	 * supplied password.
+	 * Check that a given string matches the stored password for the page.
 	 *
-	 * @param mixed $password (default: null)
-	 *
-	 * @return bool will return true / false is the validation is correct
-	 * @access public
+	 * @param  mixed $password The password to check for
+	 * @return bool  		   Result of the check
+	 * 
+	 * @throws \Exception      If the given page has no password set
 	 */
-	public function validatePassword($password = null)
+	public function validatePassword($password)
 	{
 
 	}
 
 	/**
-	 * isViewable will check wether the given page is vieable by the given user
-	 * for instance it should check that the user has he correct access level
-	 * and that the page is published etc...
+	 * Check whether the given page is viewable by the given user
 	 *
-	 * @return bool
-	 * @access public
+	 * @return bool			   Result of the check
 	 */
 	public function isViewable()
 	{
@@ -53,11 +45,10 @@ class Authorisation
 	}
 
 	/**
-	 * isPublished will check that the given page is ready to be viewed and not
-	 * in a draft or hidden state.
+	 * Check that the given page is ready to be viewed and not in a draft or hidden
+	 * state.
 	 *
-	 * @return bool
-	 * @access public
+	 * @return bool			   Result of the check
 	 */
 	public function isPublished()
 	{
