@@ -2,6 +2,12 @@
 
 namespace Message\CMS\Page;
 
+/**
+ * Authorisation class will handle basic authorisation on any CMS page if the 
+ * given page has requested it
+ *
+ * @author Danny Hannah <danny@message.co.uk>
+ */
 class Authorisation
 {
 
