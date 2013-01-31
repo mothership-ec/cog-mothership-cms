@@ -1,0 +1,3 @@
+enabled: false
+approval: true
+allow-override: false # allow override of these settings at page level
