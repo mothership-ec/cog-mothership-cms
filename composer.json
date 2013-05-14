@@ -21,8 +21,8 @@
 	"target-dir": "Message/Mothership/CMS",
 	"repositories": [
 		{
-			"type": "composer",
-			"url" : "http://packages.message.co.uk"
+			"type": "vcs",
+			"url" : "git@server.local:cog/cog.git"
 		}
 	],
 	"minimum-stability": "stable",
