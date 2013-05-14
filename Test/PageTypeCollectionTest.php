@@ -6,17 +6,22 @@ use Message\Mothership\CMS\PageTypeCollection;
 
 class PageTypeCollectionTest extends \PHPUnit_Framework_TestCase
 {
-	public function testConstructor()
+	public function testConstructorAndIteration()
 	{
-		// test the stuff passed into constructor gets added
-	}
+		$pageTypes = array(
+			new PageType\Blog,
+			new PageType\Blog,
+			new PageType\Blog,
+			new PageType\Blog,
+			new PageType\Blog,
+		);
+		$collection = new PageTypeCollection($pageTypes);
 
-	/**
-	 * @depends testConstructor
-	 */
-	public function testIteration()
-	{
-		// test looping over the class works properly
+		$this->assertEquals(count($pageTypes), $collection->count());
+
+		foreach ($collection as $key => $pageType) {
+			$this->assertEquals($pageTypes[$key], $pageType);
+		}
 	}
 
 	public function testAdd()
@@ -24,9 +29,11 @@ class PageTypeCollectionTest extends \PHPUnit_Framework_TestCase
 		$collection = new PageTypeCollection;
 		$pageType   = new PageType\Blog;
 
-		$collection->add($pageType);
+		$this->assertEquals($collection, $collection->add($pageType));
 
-		// test what I added is in there
+		foreach ($collection as $type) {
+			$this->assertEquals($pageType, $type);
+		}
 	}
 
 	public function testCount()
