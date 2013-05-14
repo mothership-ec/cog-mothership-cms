@@ -1,5 +1,5 @@
 {
-	"name": "message/cog-cms",
+	"name": "message/cog-mothership-cms",
 	"description": "Cog module for content management",
 	"keywords": ["cms", "content", "editing", "cog"],
 	"homepage": "http://message.co.uk",
@@ -15,10 +15,10 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"Message\\CMS": ""
+			"Message\\Mothership\\CMS": ""
 		}
 	},
-	"target-dir": "Message/CMS",
+	"target-dir": "Message/Mothership/CMS",
 	"repositories": [
 		{
 			"type": "composer",
