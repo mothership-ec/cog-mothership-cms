@@ -1,7 +1,7 @@
 {
 	"name": "message/cog-mothership-cms",
-	"description": "Cog module for content management",
-	"keywords": ["cms", "content", "editing", "cog"],
+	"description": "Cog module for content management in Mothership",
+	"keywords": ["cms", "mothership", "content", "editing", "cog"],
 	"homepage": "http://message.co.uk",
 	"authors": [
 		{
@@ -11,7 +11,7 @@
 	],
 	"support": {
 		"wiki"  : "http://server.local/wiki/projects/cog",
-		"issues": "http://server.local:3000/cog-cms/issues"
+		"issues": "http://server.local:3000/cog/cog-cms/issues"
 	},
 	"autoload": {
 		"psr-0": {
