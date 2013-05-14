@@ -1,8 +1,8 @@
 <?php
 
-namespace Message\CMS\Test\PageType;
+namespace Message\Mothership\CMS\Test\PageType;
 
-use Message\CMS\PageTypeInterface;
+use Message\Mothership\CMS\PageTypeInterface;
 
 class Blog implements PageTypeInterface
 {

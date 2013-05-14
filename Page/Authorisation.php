@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\CMS\Page;
+namespace Message\Mothership\CMS\Page;
 
 /**
  * Handle basic authorisation on any CMS page if the given page has requested it
@@ -26,7 +26,7 @@ class Authorisation
 	 *
 	 * @param  mixed $password The password to check for
 	 * @return bool  		   Result of the check
-	 * 
+	 *
 	 * @throws \Exception      If the given page has no password set
 	 */
 	public function validatePassword($password)

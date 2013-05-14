@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\CMS\Page;
+namespace Message\Mothership\CMS\Page;
 
 class Content
 {

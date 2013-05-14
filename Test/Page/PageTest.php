@@ -1,8 +1,8 @@
 <?php
 
-namespace Message\CMS\Test\Page;
+namespace Message\Mothership\CMS\Test\Page;
 
-use Message\CMS\Page\Page;
+use Message\Mothership\CMS\Page\Page;
 
 class PageTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,6 +18,6 @@ class PageTest extends \PHPUnit_Framework_TestCase
 		// TODO: create blog page type fixture class to use here.
 		$this->_page->type = 'blog';
 
-		$this->assertInstanceOf('Message\CMS\PageTypeInterface', $this->_page->getType());
+		$this->assertInstanceOf('Message\Mothership\CMS\PageTypeInterface', $this->_page->getType());
 	}
 }

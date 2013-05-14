@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\CMS;
+namespace Message\Mothership\CMS;
 
 interface PageTypeInterface
 {

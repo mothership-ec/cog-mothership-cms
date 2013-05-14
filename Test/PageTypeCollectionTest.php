@@ -1,8 +1,8 @@
 <?php
 
-namespace Message\CMS\Test;
+namespace Message\Mothership\CMS\Test;
 
-use Message\CMS\PageTypeCollection;
+use Message\Mothership\CMS\PageTypeCollection;
 
 class PageTypeCollectionTest extends \PHPUnit_Framework_TestCase
 {
