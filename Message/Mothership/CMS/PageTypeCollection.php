@@ -34,7 +34,7 @@ class PageTypeCollection implements \IteratorAggregate, \Countable
 	 */
 	public function add(PageTypeInterface $pageType)
 	{
-		$this->_pageTypes[$pageType->getName()] = $pageType;
+		$this->_pageTypes[] = $pageType;
 
 		return $this;
 	}
