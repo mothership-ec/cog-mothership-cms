@@ -9,7 +9,6 @@ namespace Message\Mothership\CMS\Page;
  */
 class Authorisation
 {
-
 	/**
 	 * Get an instance of the given page along with an instance of the User
 	 *

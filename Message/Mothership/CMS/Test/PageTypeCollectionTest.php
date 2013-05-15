@@ -31,7 +31,8 @@ class PageTypeCollectionTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertEquals($collection, $collection->add($pageType));
 
-		foreach ($collection as $type) {
+		foreach ($collection as $name => $type) {
+			$this->assertEquals($pageType->getName(), $name);
 			$this->assertEquals($pageType, $type);
 		}
 	}

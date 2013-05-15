@@ -18,7 +18,6 @@
 			"Message\\Mothership\\CMS": ""
 		}
 	},
-	"target-dir": "Message/Mothership/CMS",
 	"repositories": [
 		{
 			"type": "vcs",
