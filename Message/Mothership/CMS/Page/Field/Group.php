@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\CMS\Field;
+namespace Message\Mothership\CMS\Page\Field;
 
 /**
  * Represents a group of fields on a page.
@@ -16,21 +16,19 @@ class Group
 	 *
 	 * @param array $fields Array of fields in this group
 	 */
-	public function __construct(array $fields)
+	public function __construct(array $fields = array())
 	{
-		foreach ($fields as $field) {
-			$this->add($field);
+		foreach ($fields as $name => $field) {
+			$this->add($name, $field);
 		}
 	}
 
 	/**
-	 * Add a field to this group.
-	 *
-	 * @param Field $field The field to add
+	 * @see add()
 	 */
-	public function add(Field $field)
+	public function __set($name, Field $field)
 	{
-		$this->_fields[] = $field;
+		$this->add($name, $field);
 	}
 
 	/**
@@ -49,5 +47,34 @@ class Group
 		}
 
 		throw new \OutOfBoundsException(sprintf('Group field does not exist: `%s`', $name));
+	}
+
+	/**
+	 * Check if a field exists in this group
+	 *
+	 * @param  string  $name Field name
+	 *
+	 * @return boolean       True if the field exists on this group
+	 */
+	public function __isset($name)
+	{
+		return isset($this->_fields[$name]);
+	}
+
+	/**
+	 * Add a field to this group.
+	 *
+	 * @param string $name  The name for the field
+	 * @param Field  $field The field to add
+	 *
+	 * @throws \InvalidArgumentException If the name is falsey
+	 */
+	public function add($name, Field $field)
+	{
+		if (!$name) {
+			throw new \InvalidArgumentException('Page field group field must have a name');
+		}
+
+		$this->_fields[$name] = $field;
 	}
 }

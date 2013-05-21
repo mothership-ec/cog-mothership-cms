@@ -6,6 +6,8 @@ namespace Message\Mothership\CMS\Page;
  * Represents the properties of a single page.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
+ *
+ * @todo figure out locales - the PHP locale object is not what I hoped it was
  */
 class Page
 {

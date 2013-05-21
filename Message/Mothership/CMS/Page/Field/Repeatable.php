@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\CMS\Field;
+namespace Message\Mothership\CMS\Page\Field;
 
 /**
  * Wrapper for a repeatable set of field groups.
@@ -16,7 +16,7 @@ class Repeatable implements \IteratorAggregate, \Countable
 	 *
 	 * @param array $groups Array of field groups
 	 */
-	public function __construct(array $groups)
+	public function __construct(array $groups = array())
 	{
 		foreach ($groups as $group) {
 			$this->add($group);
