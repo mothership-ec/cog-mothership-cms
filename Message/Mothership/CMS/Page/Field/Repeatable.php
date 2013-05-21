@@ -50,6 +50,6 @@ class Repeatable implements \IteratorAggregate, \Countable
 	 */
 	public function getIterator()
 	{
-		return \ArrayIterator($this->_groups);
+		return new \ArrayIterator($this->_groups);
 	}
 }
