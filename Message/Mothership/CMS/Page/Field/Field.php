@@ -14,7 +14,7 @@ class Field
 	/**
 	 * Constructor.
 	 *
-	 * @param mixed $value The field's vaulue
+	 * @param mixed $value The field's value
 	 */
 	public function __construct($value)
 	{
