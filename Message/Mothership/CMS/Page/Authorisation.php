@@ -61,8 +61,7 @@ class Authorisation
 	public function isPublished()
 	{
 		if (!$this->_page->publish_state 
-		 || $this->_page->publish_at > time()
-		 || $this->_page->unpublish_at < time()
+		 || !$this->_page->publishDateRange->isInRange()
 		) {
 			return false;
 		}
