@@ -10,15 +10,19 @@ namespace Message\Mothership\CMS\Page;
  */
 class Authorisation
 {
+	protected $_page;
+	protected $_user;
+
 	/**
 	 * Get an instance of the given page along with an instance of the User
 	 *
 	 * @param Page $page
 	 * @param User $user
 	 */
-	public function __construct(Page $page, User $user)
+	public function __construct(Page $page, $user)
 	{
-
+		$this->_page = $page;
+		$this->_user = $user;
 	}
 
 	/**
@@ -31,7 +35,11 @@ class Authorisation
 	 */
 	public function validatePassword($password)
 	{
-
+		if (!$this->_page->password) {
+			throw new \Exception('This page has no password');
+		}
+	
+		return $this->_page->password == $password;
 	}
 
 	/**
@@ -52,6 +60,12 @@ class Authorisation
 	 */
 	public function isPublished()
 	{
-
+		if (!$this->_page->publish_state 
+		 || $this->_page->publish_at > time()
+		 || $this->_page->unpublish_at < time()
+		) {
+			return false;
+		}
+		return true;
 	}
 }
