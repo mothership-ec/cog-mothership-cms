@@ -42,7 +42,7 @@ class ContentLoader
 			SELECT
 				field_name   AS field,
 				value_string AS value,
-				`group`,
+				group_name   AS `group`,
 				sequence,
 				data_name
 			FROM
@@ -52,7 +52,7 @@ class ContentLoader
 			AND language_id = '" . $page->languageID . "'
 			AND country_id  = '" . $page->countryID . "'
 			ORDER BY
-				`group`, sequence, field_name, data_name
+				group_name, sequence, field_name, data_name
 		");
 
 		$content = new Content;
