@@ -9,7 +9,7 @@ namespace Message\Mothership\CMS\Page\Field;
  */
 class Repeatable implements \IteratorAggregate, \Countable
 {
-	protected $_groups;
+	protected $_groups = array();
 
 	/**
 	 * Constructor.

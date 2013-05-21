@@ -9,7 +9,7 @@ namespace Message\Mothership\CMS\Page\Field;
  */
 class Group
 {
-	protected $_fields;
+	protected $_fields = array();
 
 	/**
 	 * Constructor.

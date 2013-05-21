@@ -13,7 +13,7 @@ namespace Message\Mothership\CMS\Page\Field;
  */
 class MultipleValueField extends Field
 {
-	protected $_values;
+	protected $_values = array();
 
 	/**
 	 * Constructor.
