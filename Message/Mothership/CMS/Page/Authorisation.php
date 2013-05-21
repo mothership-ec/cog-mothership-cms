@@ -3,7 +3,8 @@
 namespace Message\Mothership\CMS\Page;
 
 /**
- * Handle basic authorisation on any CMS page if the given page has requested it
+ * Helper class for determining if a page is viewable by the current user based
+ * on the various authorisation and access settings.
  *
  * @author Danny Hannah <danny@message.co.uk>
  */
@@ -44,8 +45,8 @@ class Authorisation
 	}
 
 	/**
-	 * Check that the given page is ready to be viewed and not in a draft or hidden
-	 * state.
+	 * Check that the given page is ready to be viewed and not in a draft or
+	 * hidden state.
 	 *
 	 * @return bool			   Result of the check
 	 */
