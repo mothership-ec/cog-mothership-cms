@@ -153,13 +153,11 @@ class Loader
 
 		if (count($result)) {
 			$page = $result->bind($page);
-			$datetime = new \DateTime;
-
-			$from = $datetime->setTimestamp($result[0]->publishAt);
-			$to = $datetime->setTimestamp($result[0]->unpublishAt);
+			$from = new \DateTime(date('c',$result[0]->publishAt));
+			$to = new \DateTime(date('c',$result[0]->unpublishAt));
 
 			$page->publishDateRange = new DateRange($from, $to);
-			var_dump($page); exit;
+
 			return $page;
 
 		}
