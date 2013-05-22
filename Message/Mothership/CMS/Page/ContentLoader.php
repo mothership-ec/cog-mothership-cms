@@ -26,18 +26,6 @@ class ContentLoader
 
 	public function load(Page $page)
 	{
-		// $result = $this->_query->run("
-		// 	SELECT
-		// 		*
-		// 	FROM
-		// 		page_content
-		// 	WHERE
-		// 		page_id     = :unit_id?i
-		// 	AND language_id = ?s
-		// 	AND country_id  = ?sn
-		// 	ORDER BY
-		// 		`group`, sequence, field, data_name
-		// ", array($page->id, $page->languageID, $page->countryID));
 		$result = $this->_query->run("
 			SELECT
 				field_name   AS field,
@@ -48,12 +36,12 @@ class ContentLoader
 			FROM
 				page_content
 			WHERE
-				page_id     = " . $page->id . "
-			AND language_id = '" . $page->languageID . "'
-			AND country_id  = '" . $page->countryID . "'
+				page_id     = ?i
+			AND language_id = ?s
+			AND country_id  = ?sn
 			ORDER BY
 				group_name, sequence, field_name, data_name
-		");
+		", array($page->id, $page->languageID, $page->countryID));
 
 		$content = new Content;
 		$groups  = array();
