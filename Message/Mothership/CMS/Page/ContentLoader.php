@@ -11,7 +11,6 @@ use Message\Cog\DB\Query as DBQuery;
  * @todo implement language stacking (base, then language, then country & language)
  * @todo determine when a group is repeatable by checking the page type, rather
  *       than making assumptions based on the data
- * @todo update the query to use tokens again when the DB component is fixed!
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
@@ -99,7 +98,7 @@ class ContentLoader
 			if ($row->data_name) {
 				// Otherwise, check the field allows multiple values
 				if (!$content->{$row->field} instanceof Field\MultipleValueField) {
-					throw new RuntimeException(sprintf('Field & group name clash on name `%s`', $row->field));
+					throw new \RuntimeException(sprintf('Field & group name clash on name `%s`', $row->field));
 				}
 
 				$content->{$row->field}->{$row->data_name} = new Field\Field($row->value);
