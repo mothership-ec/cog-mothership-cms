@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Cog\DB\Query as DBQuery;
+use Message\Cog\DB\Result as DBResult;
 
 /**
  * Page content loader, responsible for loading content for pages and populating
@@ -18,11 +19,24 @@ class ContentLoader
 {
 	protected $_query;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param DBQuery $query The database query instance to use
+	 */
 	public function __construct(DBQuery $query)
 	{
 		$this->_query = $query;
 	}
 
+	/**
+	 * Load page content from the database and prepare it as an instance of
+	 * `Page\Content`.
+	 *
+	 * @param  Page   $page The page to load the content for
+	 *
+	 * @return Content      The prepared Content instance
+	 */
 	public function load(Page $page)
 	{
 		$result = $this->_query->run("
@@ -44,6 +58,8 @@ class ContentLoader
 
 		$content = new Content;
 		$groups  = array();
+
+		$this->_validate($result);
 
 		// Prepare groups
 		foreach ($result->collect('group') as $groupName => $rows) {
@@ -96,15 +112,64 @@ class ContentLoader
 
 			// If the field supports multiple values, set the value
 			if ($row->data_name) {
-				// Otherwise, check the field allows multiple values
-				if (!$content->{$row->field} instanceof Field\MultipleValueField) {
-					throw new \RuntimeException(sprintf('Field & group name clash on name `%s`', $row->field));
-				}
-
 				$content->{$row->field}->{$row->data_name} = new Field\Field($row->value);
 			}
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Validate the results of the content retrieval query.
+	 *
+	 * This method performs the following checks:
+	 *
+	 *  * Checks that rows with empty `group` parameters don't have a `sequence`
+	 *    parameters set.
+	 *  * Checks that all values in a "multiple value" field have a name
+	 *    (`data_name` parameter).
+	 *  * Check there are no collisions of field names (the field name for
+	 *    ungrouped fields, the group name for grouped fields).
+	 *
+	 * @param DBResult $result The database query result
+	 *
+	 * @throws \RuntimeException If an ungrouped field has a sequence number
+	 * @throws \RuntimeException If there is a field name collision
+	 * @throws \RuntimeException If a multi-value field has a value with no name
+	 */
+	protected function _validate(DBResult $result)
+	{
+		$ids = array();
+
+		foreach ($result as $row) {
+			$key  = $row->group ?: $row->field;
+			$type = $row->group ? 'group' : $row->data_name ? 'multi' : 'single';
+
+			// Check only grouped fields have sequence numbers
+			if ($row->sequence && !$row->group) {
+				throw new \RuntimeException(sprintf('Ungrouped field `%s` cannot have a sequence number', $row->field));
+			}
+
+			// If this identifier has already been used
+			if (isset($ids[$key])) {
+				// If the field was a normal field, no other row can use this identifier
+				if ('single' === $ids[$key]) {
+					throw new \RuntimeException(sprintf('Field name collision on `%s`', $row->field));
+				}
+				// If this field is a multi-value field, check each value has a value name
+				if ('multi' === $ids[$key] && !$row->data_name) {
+					throw new \RuntimeException(sprintf('Missing value name for multi-value field `%s`', $row->field));
+				}
+				// If the field isn't the same type, throw exception (once a
+				// group or multi-value field uses an identifier, only that group
+				// or multi-value field can keep using it)
+				if ($type !== $ids[$key]) {
+					throw new \RuntimeException(sprintf('Field/group name collision on `%s`', $row->field));
+				}
+			}
+			else {
+				$ids[$key] = $type;
+			}
+		}
 	}
 }
