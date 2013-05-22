@@ -4,22 +4,24 @@ namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\PageTypeInterface;
 use Message\Cog\ValueObject\DateRange;
-
+use Message\Cog\DB\Query;
 /**
  * Responsible for loading page data and returning prepared instances of `Page`.
  *
- * @author Joe Holdcroft <joe@message.co.uk>
+ * @author	  Joe Holdcroft <joe@message.co.uk>
+ * @author	  Danny Hannah <danny@message.co.uk>
  */
 class Loader
 {
 	protected $_locale;
+	protected $_query;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param \Locale $locale The locale to use for loading translations
 	 */
-	public function __construct(/* \Locale */ $locale, $query)
+	public function __construct(/* \Locale */ $locale, Query $query)
 	{
 		$this->_locale = $locale;
 		$this->_query = $query;
@@ -31,7 +33,7 @@ class Loader
 	 * If an array of page IDs is passed, an array of the prepared `Page`
 	 * instances is returned where the keys are the page IDs.
 	 *
-	 * @param	int|array $pageIDs Page ID or array of page IDs to load
+	 * @param int|array $pageIDs Page ID or array of page IDs to load
 	 *
 	 * @return Page|array[Page]   Prepared `Page` instance(s)
 	 */
@@ -53,57 +55,166 @@ class Loader
 	/**
 	 * Get a page by its slug.
 	 *
-	 * @param	string	$slug		  The slug to check for
-	 * @param	boolean $checkHistory True to check through historical slug data
+	 * @param string  $slug		 The slug to check for
+	 * @param boolean $checkHistory True to check through historical slug data
 	 *
 	 * @return Page|false			  Prepared `Page` instance, or false if not found
 	 */
 	public function getBySlug($slug, $checkHistory = true)
 	{
+		
+		$path = trim($slug, '/');
+		$parts = array_reverse(explode('/', $path));
+		$base	 = array_shift($parts);
 
+		$joins = '';
+		$where = '';
+		$params = array(
+			$base,
+			count($parts),
+		);
+
+		for ($i = 2; $i <= count($parts) +1; $i++) {
+			$joins.= " JOIN page level$i ON (level$i.position_left < level".($i-1).".position_left AND level$i.position_right > level".($i-1).".position_right)";
+			$where.= " AND level$i.slug = ?s";
+			$params[] = $parts[$i-2];
+		}
+
+		$result = $this->_query->run('
+			SELECT
+				level1.page_id
+			FROM
+				page level1
+			'.$joins.'
+			WHERE
+				level1.slug = ?s
+				AND level1.position_depth = ?i
+			'.$where.'',
+			$params
+		);
+		
+		// If there is a result then retun a page object
+		if (count($result)) {
+			return $this->getByID($result[0]->page_id);
+		}
+
+		if ($checkHistory && $page = $this->checkSlugHistory($slug)) {
+			return $page;
+		}
+
+		return false;
+	}
+	
+	
+	/**
+	 * Find a page by an ancestral slug
+	 * 
+	 * @param string $slug		Slug to check for
+	 * @return Page|false		Prepared `Page` instance, or false if not found
+	 */
+	public function checkSlugHistory($slug)
+	{
+		$result = $this->_query->run('
+			SELECT
+				page_id
+			FROM
+				slug_history
+			WHERE
+				slug = ?s
+		', $slug);
+		
+		return (count($result)) ? $this->getByID($result[0]->page_id) : false;
 	}
 
 	/**
 	 * Get all pages of a specific type.
 	 *
-	 * @param	PageTypeInterface $pageType The page type to get pages for
+	 * @param PageTypeInterface $pageType The page type to get pages for
 	 *
 	 * @return array[Page]					An array of prepared `Page` instances
 	 */
 	public function getByType(PageTypeInterface $pageType)
 	{
-
+		$result = $this->_query->run('
+			SELECT
+				page_id
+			FROM
+				page
+			WHERE
+				type = ?s
+		', $pageType->getName());
+		
+		if (count($result)) {
+			return $this->getById($result->flatten());
+		}
+		
 	}
 
 	/**
 	 * Get the child pages for a page.
 	 *
-	 * @param	Page   $page The page to find the children for
+	 * @param Page $page The page to find the children for
 	 *
 	 * @return array[Page]	 An array of prepared `Page` instances
 	 */
 	public function getChildren(Page $page)
 	{
+		$result = $this->_query->run('
+			SELECT
+				page_id
+			FROM
+				page
+			WHERE
+				position_left > ?i
+			AND
+				position_right < ?i
+			AND
+				position_depth = ?i
+		', array(
+			$page->left,
+			$page->right,
+			$page->depth+1,
+		));
 
+		if (count($result)) {
+			return $this->getById($result->flatten());
+		}
 	}
 
 	/**
 	 * Get the siblings (pages at the same level in the IA) for a page.
 	 *
-	 * @param	Page   $page The page to find the siblings for
+	 * @param Page $page The page to find the siblings for
 	 *
 	 * @return array[Page]	 An array of prepared `Page` instances
 	 */
 	public function getSiblings(Page $page)
 	{
+		$result = $this->_query->run('
+			SELECT
+				page_id
+			FROM
+				page
+			WHERE
+				position_left < ?i
+			AND
+				position_right > ?i
+			AND
+				position_depth = ?i
+		', array(
+			$page->left,
+			$page->right,
+			$page->depth,
+		));
+
+		if (count($result)) {
+			return $this->getById($result->flatten());
+		}
 
 	}
 
 	protected function _load($pageID)
 	{
-
-
-		// return a prepared page object
 		$result = $this->_query->run('
 			SELECT
 				/* locale, */
@@ -115,20 +226,20 @@ class Loader
 				page.publish_at AS publishAt,
 				page.unpublish_at AS unpublishAt,
 				page.slug AS slug,
-				
+
 				page.position_left AS `left`,
 				page.position_right AS `right`,
 				page.position_depth AS depth,
-				
+
 				page.meta_title AS metaTitle,
 				page.meta_description AS metaDescription,
 				page.meta_html_head AS metaHtmlHead,
 				page.meta_html_foot AS metaHtmlFoot,
-				
+
 				page.visibility_search AS visibilitySearch,
 				page.visibility_menu AS visibilityMenu,
 				page.visibility_aggregator AS visibilityAggregator,
-				
+
 				page.password AS password,
 				page.access AS access,
 
@@ -146,21 +257,21 @@ class Loader
 				page_access_group ON (page_access_group.page_id = page.page_id)
 			WHERE
 				page.page_id = ?i',
-			array($pageID)
-		);
+			array($pageID));
 
 		$page = new Page;
 
 		if (count($result)) {
 			$page = $result->bind($page);
-			$from = new \DateTime(date('c',$result[0]->publishAt));
-			$to = new \DateTime(date('c',$result[0]->unpublishAt));
+			$from = new \DateTime(date('c', $result[0]->publishAt));
+			$to = new \DateTime(date('c', $result[0]->unpublishAt));
 
 			$page->publishDateRange = new DateRange($from, $to);
 
 			return $page;
 
 		}
-		
+
+		return false;
 	}
 }
