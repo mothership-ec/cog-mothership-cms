@@ -144,9 +144,7 @@ class Loader
 				type = ?s
 		', $pageType->getName());
 		
-		if (count($result)) {
-			return $this->getById($result->flatten());
-		}
+		return (count($result)) ? $this->getById($result->flatten()) : false;
 		
 	}
 
@@ -176,9 +174,7 @@ class Loader
 			$page->depth+1,
 		));
 
-		if (count($result)) {
-			return $this->getById($result->flatten());
-		}
+		return (count($result)) ? $this->getById($result->flatten()) : false;
 	}
 
 	/**
@@ -190,27 +186,51 @@ class Loader
 	 */
 	public function getSiblings(Page $page)
 	{
-		$result = $this->_query->run('
-			SELECT
-				page_id
-			FROM
-				page
-			WHERE
-				position_left < ?i
-			AND
-				position_right > ?i
-			AND
-				position_depth = ?i
-		', array(
-			$page->left,
-			$page->right,
-			$page->depth,
-		));
+		// We have to do a different query if the depth is zero, as this causes
+		// complications and have to change the query a fair bit. This way is simpler.
+		if ($page->depth == 0) {
+			$result = $this->_query->run('
+			    SELECT 
+			        page.page_id
+			    FROM
+			        page
+			    WHERE
+			    	page.position_depth = 0
+				AND 
+					page.page_id <> ?i
+			', array(
+			    $page->id,
+			));
 
-		if (count($result)) {
-			return $this->getById($result->flatten());
+		} else {
+			// Get the parent, then get the children of that parent based on it's position.
+			$result = $this->_query->run('
+			    SELECT 
+			        children.page_id
+			    FROM
+			        page AS parent
+			    LEFT JOIN page AS children
+			        ON (
+			        	children.position_left > parent.position_left 
+			        	AND children.position_right < parent.position_right  
+			        	AND children.position_depth = ?i
+			        )
+			    
+			    WHERE	
+			        	parent.position_left < ?i
+			        	AND parent.position_right > ?i
+			        	AND parent.position_depth = ?i
+			AND children.page_id <> ?i
+			', array(
+			    $page->depth,
+			    $page->left,
+			    $page->right,
+			    $page->depth -1,
+			    $page->id,
+			));
 		}
 
+		return (count($result)) ? $this->getById($result->flatten()) : false;
 	}
 
 	protected function _load($pageID)
