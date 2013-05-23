@@ -1,0 +1,11 @@
+"id","title","type","publishState","publishAt","unpublishAt","slug","left","right","depth","metaTitle","metaDescription","metaHtmlHead","metaHtmlFoot","visibilitySearch","visibilityMenu","visibilityAggregator","password","access","accessGroups","commentsEnabled","commentsAccess","commentsAccessGroups","commentsApproval","commentsExpiry"
+1,"My first blog","blog",1,1369228378,1369229378,"/blog/hello-world",2,3,1,NULL,NULL,NULL,NULL,1,1,1,NULL,0,100,0,0,0,NULL,NULL
+2,"Blog Section","blog_index",1,1369228378,1369229378,NULL,1,8,0,NULL,NULL,NULL,NULL,1,1,1,NULL,0,NULL,0,0,0,NULL,NULL
+3,"My second blog","blog",1,1369228378,1369229378,"/blog/second-blog",4,5,1,NULL,NULL,NULL,NULL,1,1,1,NULL,0,NULL,0,0,0,NULL,NULL
+4,"My third blog","blog",1,1369228378,1369229378,"/blog/third-blog",6,7,1,NULL,NULL,NULL,NULL,1,1,1,NULL,0,NULL,0,0,0,NULL,NULL
+5,"Staff","staff_index",1,1369228378,1369229378,NULL,9,20,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,0,0,0,NULL,NULL
+6,"Joe","staff",1,1369228378,1369229378,"/staff/joe",10,11,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,0,0,0,NULL,NULL
+7,"Danny","staff",1,1369228378,1369229378,"/staff/danny",12,13,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,0,0,0,NULL,NULL
+8,"James","staff",1,1369228378,1369229378,"/staff/james",14,15,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,0,0,0,NULL,NULL
+9,"Laura","staff",1,1369228378,1369229378,"/staff/laura",16,19,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,0,0,0,NULL,NULL
+10,"Richard","",1,1369228378,1369228378,"/staff/laura/richard",17,18,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,0,0,0,NULL,NULL

@@ -125,6 +125,7 @@ class Loader
 				slug = ?s
 		', $slug);
 		
+
 		return (count($result)) ? $this->getByID($result[0]->page_id) : false;
 	}
 
@@ -302,7 +303,7 @@ class Loader
 			
 			// We can use bind here to populate the Page object
 			$page = $result->bind($page);
-			
+
 			// Create two DateTime objects for the publishDateRange
 			$from = new \DateTime(date('c', $result[0]->publishAt));
 			$to = new \DateTime(date('c', $result[0]->unpublishAt));

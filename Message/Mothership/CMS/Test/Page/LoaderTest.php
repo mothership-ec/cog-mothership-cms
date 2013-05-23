@@ -10,31 +10,48 @@ use Message\Cog\DB\Query;
 class LoaderTest extends \PHPUnit_Framework_TestCase
 {
 
-	protected $_loader;
-
-	public function setUp()
-	{
-		$connection = new ConnectionCsv;
-		$connection->setResult(__DIR__.'/page_table.csv');
-		$query = new Query($connection);
-		
-		$this->_loader =  new \Message\Mothership\CMS\Page\Loader('gb', $query);
-	}
-
 	public function testGetByID()
 	{
-		$page = $this->_loader->getByID(1);
-		
-		var_dump($page); exit;
+		$paths = array(
+			__DIR__.'/Data/full_table_results.csv',
+			__DIR__.'/Data/empty_table.csv',
+		);
+
+		$loader = $this->_getLoader($paths);
+
 		// test that the corrcet instance is returned for a single ID
-		// test that an array of Page objects are returned if an array of them are passed through
+		$page = $loader->getByID(1);
+		$this->assertTrue($page instanceof Page);
+
+		// test that an array of Page objects are returned if an array of them are 
+		// passed through
+		$page = $loader->getByID(0);
+		$this->assertFalse($page);
 		
 	}
 	
 	public function testGetBySlug()
 	{
+
+		$paths = array(
+			__DIR__.'/Data/page_table.csv',
+			__DIR__.'/Data/full_table_results.csv',
+			__DIR__.'/Data/page_id_empty.csv',
+			__DIR__.'/Data/historical_result.csv',
+			__DIR__.'/Data/full_table_results.csv',
+
+		);
+
 		// Check that a page instance is returned for a valid slug from a current page with history false
-		// Check that a page instance is returned for a valid slug from a current page with history true
+		$loader = $this->_getLoader($paths);
+		
+		$page = $loader->getBySlug('/blog/hello-world');
+		$this->assertTrue($page instanceof Page);
+
+
+		$page = $loader->getBySlug('/blog/hello-world-old', true);
+		$this->assertTrue($page instanceof Page);
+
 		// Check that a page instance is returned for a historical slug
 		// test for false to be returned is no slug is found
 	}
@@ -61,6 +78,15 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 	{
 		// Test the correct amount of items are returned and that there is an array or Page items
 		// Return false when nothing is found
+	}
+	
+	protected function _getLoader(array $paths)
+	{
+		$connection = new ConnectionCsv;
+		$connection->setSequence($paths);
+		$query = new Query($connection);
+		
+		return new \Message\Mothership\CMS\Page\Loader('gb', $query);
 	}
 
 }

@@ -11,7 +11,7 @@
             "source": {
                 "type": "git",
                 "url": "git@server.local:cog/cog.git",
-                "reference": "0d31f9e31d2831c6d15243d37278354273931ffc"
+                "reference": "36dd7d4c3644a5d33534d44855218bcc6052f7e4"
             },
             "require": {
                 "ext-curl": "*",
@@ -67,7 +67,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://server.local:3000/cog/issues"
             },
-            "time": "2013-05-23 11:27:59"
+            "time": "2013-05-23 14:09:35"
         },
         {
             "name": "message/cog-mothership-cp",
@@ -75,7 +75,7 @@
             "source": {
                 "type": "git",
                 "url": "git@server.local:cog/cog-mothership-cp.git",
-                "reference": "cf8fc242db4c76879fc0d95051988fc2080ba568"
+                "reference": "d1e3370aebee59b16749cf37e0674037d5db71a7"
             },
             "require": {
                 "message/cog": "dev-master",
@@ -106,7 +106,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://server.local:3000/cog/cog-mothership-cp/issues"
             },
-            "time": "2013-05-22 09:29:11"
+            "time": "2013-05-23 12:33:57"
         },
         {
             "name": "message/cog-user",
@@ -114,7 +114,7 @@
             "source": {
                 "type": "git",
                 "url": "git@server.local:cog/cog-user.git",
-                "reference": "e33e7f75e02a244ae41952e45d97d9d4069f3e95"
+                "reference": "ebe032da8d063fb3ef74202e14147d56ec9d6949"
             },
             "require": {
                 "message/cog": "dev-master",
@@ -145,7 +145,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://server.local:3000/cog/cog-user/issues"
             },
-            "time": "2013-05-15 15:53:36"
+            "time": "2013-05-23 12:20:41"
         },
         {
             "name": "mtdowling/cron-expression",
