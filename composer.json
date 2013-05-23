@@ -15,7 +15,7 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"Message\\Mothership\\CMS"      : "",
+			"Message\\Mothership\\CMS"      : "src",
 			"Message\\Mothership\\CMS\\Test": "tests"
 		}
 	},
