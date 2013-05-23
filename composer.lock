@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "a213716fc1563c51df41c2f521534a3f",
+    "hash": "c0f77d0fa442331d9101e3931152d6b0",
     "packages": [
         {
             "name": "message/cog",
@@ -75,7 +75,7 @@
             "source": {
                 "type": "git",
                 "url": "git@server.local:cog/cog-mothership-cp.git",
-                "reference": "d1e3370aebee59b16749cf37e0674037d5db71a7"
+                "reference": "ef95573fa8c99df08e61b56968848aed024340dd"
             },
             "require": {
                 "message/cog": "dev-master",
@@ -84,7 +84,8 @@
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "Message\\Mothership\\ControlPanel": ""
+                    "Message\\Mothership\\ControlPanel": "src",
+                    "Message\\Mothership\\ControlPanel\\Test": "tests"
                 }
             },
             "authors": [
@@ -106,7 +107,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://server.local:3000/cog/cog-mothership-cp/issues"
             },
-            "time": "2013-05-23 12:33:57"
+            "time": "2013-05-23 16:54:40"
         },
         {
             "name": "message/cog-user",
@@ -114,7 +115,7 @@
             "source": {
                 "type": "git",
                 "url": "git@server.local:cog/cog-user.git",
-                "reference": "ebe032da8d063fb3ef74202e14147d56ec9d6949"
+                "reference": "c62d8ecd9240283825146ce8293135ed0c430daa"
             },
             "require": {
                 "message/cog": "dev-master",
@@ -123,7 +124,8 @@
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "Message\\User": ""
+                    "Message\\User": "src",
+                    "Message\\User\\Test": "tests"
                 }
             },
             "authors": [
@@ -145,7 +147,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://server.local:3000/cog/cog-user/issues"
             },
-            "time": "2013-05-23 12:20:41"
+            "time": "2013-05-23 16:53:20"
         },
         {
             "name": "mtdowling/cron-expression",

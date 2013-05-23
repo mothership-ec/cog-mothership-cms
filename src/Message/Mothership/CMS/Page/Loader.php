@@ -126,7 +126,7 @@ class Loader
 		', $slug);
 		
 
-		return (count($result)) ? $this->getByID($result[0]->page_id) : false;
+		return count($result) ? $this->getByID($result[0]->page_id) : false;
 	}
 
 	/**
@@ -147,7 +147,7 @@ class Loader
 				type = ?s
 		', $pageType->getName());
 		
-		return (count($result)) ? $this->getById($result->flatten()) : false;
+		return count($result) ? $this->getById($result->flatten()) : false;
 		
 	}
 
@@ -177,7 +177,7 @@ class Loader
 			$page->depth+1,
 		));
 
-		return (count($result)) ? $this->getById($result->flatten()) : false;
+		return count($result) ? $this->getById($result->flatten()) : false;
 	}
 
 	/**
@@ -220,10 +220,10 @@ class Loader
 			        )
 			    
 			    WHERE	
-			        	parent.position_left < ?i
-			        	AND parent.position_right > ?i
-			        	AND parent.position_depth = ?i
-			AND children.page_id <> ?i
+			        parent.position_left < ?i
+			        AND parent.position_right > ?i
+			        AND parent.position_depth = ?i
+					AND children.page_id <> ?i
 			', array(
 			    $page->depth,
 			    $page->left,
@@ -233,7 +233,7 @@ class Loader
 			));
 		}
 
-		return (count($result)) ? $this->getById($result->flatten()) : false;
+		return count($result) ? $this->getById($result->flatten()) : false;
 	}
 
 
