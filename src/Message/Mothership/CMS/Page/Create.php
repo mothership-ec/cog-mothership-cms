@@ -3,6 +3,8 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\PageTypeInterface;
+use Message\Mothership\CMS\Event\Event;
+use Message\Mothership\CMS\Event\PageEvent;
 
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;
@@ -57,7 +59,13 @@ class Create
 		));
 
 		$loader = new Loader('the locale thing', $this->_query);
+		$page   = $loader->getByID($result->id());
 
-		return $loader->getByID($result->id());
+		$this->_eventDispatcher->dispatch(
+			Event::PAGE_CREATE,
+			new PageEvent($page)
+		);
+
+		return $page;
 	}
 }
