@@ -15,7 +15,8 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"Message\\Mothership\\CMS": ""
+			"Message\\Mothership\\CMS"      : "",
+			"Message\\Mothership\\CMS\\Test": "tests"
 		}
 	},
 	"repositories": [
