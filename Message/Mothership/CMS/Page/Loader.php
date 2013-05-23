@@ -4,6 +4,7 @@ namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\PageTypeInterface;
 use Message\Cog\ValueObject\DateRange;
+use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
 /**
  * Responsible for loading page data and returning prepared instances of `Page`.
@@ -253,7 +254,15 @@ class Loader
 				page.publish_state AS publishState,
 				page.publish_at AS publishAt,
 				page.unpublish_at AS unpublishAt,
-				page.slug AS slug,
+				CONCAT((
+					SELECT
+						CONCAT(\'/\',GROUP_CONCAT(p.slug ORDER BY p.position_depth ASC SEPARATOR \'/\'))
+					FROM 
+						page AS p
+					WHERE
+						p.position_left < page.position_left
+					AND 
+						p.position_right > page.position_right),\'/\',page.slug) AS slug,
 
 				page.position_left AS `left`,
 				page.position_right AS `right`,
@@ -287,10 +296,10 @@ class Loader
 				page.page_id = ?i',
 			array($pageID));
 
-		$page = new Page;
-
 		if (count($result)) {
-
+			
+			$page = new Page;
+			
 			// We can use bind here to populate the Page object
 			$page = $result->bind($page);
 			
@@ -300,7 +309,7 @@ class Loader
 
 			// Load the DateRange object for publishDateRange
 			$page->publishDateRange = new DateRange($from, $to);
-
+			$page->slug = new Slug($result[0]->slug);
 			return $page;
 
 		}

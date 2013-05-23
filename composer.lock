@@ -11,7 +11,7 @@
             "source": {
                 "type": "git",
                 "url": "git@server.local:cog/cog.git",
-                "reference": "b14c1e9dbeb7808286cc5e8b5d913ffb579b6b68"
+                "reference": "0d31f9e31d2831c6d15243d37278354273931ffc"
             },
             "require": {
                 "ext-curl": "*",
@@ -67,7 +67,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://server.local:3000/cog/issues"
             },
-            "time": "2013-05-22 11:04:03"
+            "time": "2013-05-23 11:27:59"
         },
         {
             "name": "message/cog-mothership-cp",
@@ -145,7 +145,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://server.local:3000/cog/cog-user/issues"
             },
-            "time": "2013-05-15 15:53:26"
+            "time": "2013-05-15 15:53:36"
         },
         {
             "name": "mtdowling/cron-expression",

@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Test\Page;
 
 use Message\Mothership\CMS\Page\Page;
+use Message\Mothership\CMS\Page\Loader;
 use Message\Cog\DB\Adapter\Faux\ConnectionCsv;
 use Message\Cog\DB\Query;
 
@@ -14,11 +15,10 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 	public function setUp()
 	{
 		$connection = new ConnectionCsv;
-		$connection->setResult('Data/page_table.csv');
+		$connection->setResult(__DIR__.'/page_table.csv');
 		$query = new Query($connection);
 		
-		$this->_loader = new Loader('gb', $query);
-		var_dump($this->_loader); exit;
+		$this->_loader =  new \Message\Mothership\CMS\Page\Loader('gb', $query);
 	}
 
 	public function testGetByID()
