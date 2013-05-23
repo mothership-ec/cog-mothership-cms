@@ -145,7 +145,7 @@ class Loader
 				page
 			WHERE
 				type = ?s
-		', $pageType->getName());
+		', strtolower($pageType->getName()));
 		
 		return count($result) ? $this->getById($result->flatten()) : false;
 		

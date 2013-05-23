@@ -6,6 +6,7 @@ use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Loader;
 use Message\Cog\DB\Adapter\Faux\ConnectionCsv;
 use Message\Cog\DB\Query;
+use Message\Mothership\CMS\Test\PageType\Blog;
 
 class LoaderTest extends \PHPUnit_Framework_TestCase
 {
@@ -68,9 +69,23 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 
 	public function testGetByType()
 	{
-		$this->markTestIncomplete(
-			'Awaiting for `PageTypeInterface` to be implemented'
+		$paths = array(
+			__DIR__.'/Data/blog_page_types.csv',
+			__DIR__.'/Data/blog_1.csv',
+			__DIR__.'/Data/blog_2.csv',
+			__DIR__.'/Data/blog_3.csv',
 		);
+
+		// Check that a page instance is returned for a valid slug from a current page with history false
+		$loader = $this->_getLoader($paths);
+		
+		$pages = $loader->getByType(new Blog);
+		
+		$this->assertTrue(is_array($pages));
+		
+		foreach ($pages as $page) {
+			$this->assertTrue($page instanceof $page);
+		}
 	}
 
 	public function testGetChildren()
