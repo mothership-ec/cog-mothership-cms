@@ -8,7 +8,7 @@ class Blog implements PageTypeInterface
 {
 	public function getName()
 	{
-		return 'Blog';
+		return 'blog';
 	}
 
 	public function getDescription()
