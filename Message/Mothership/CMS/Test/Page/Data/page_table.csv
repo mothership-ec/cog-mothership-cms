@@ -1,0 +1,10 @@
+"page_id","title","created_at","created_by","updated_at","updated_by","deleted_at","deleted_by","publish_at","unpublish_at","publish_state","slug","position_left","position_right","position_depth","visibility_search","visibility_menu","visibility_aggregator","password","type","comment_enabled","comment_access","comment_expiry","comment_approval","access","meta_title","meta_description","meta_html_head","meta_html_foot","meta_title_inherit","meta_description_inherit","meta_html_head_inherit","meta_html_foot_inherit"
+1,"My first blog",1369228378,1,NULL,NULL,NULL,NULL,1369228378,1369229378,1,"hello-world",2,3,1,1,1,1,NULL,"blog",0,0,NULL,NULL,0,NULL,NULL,NULL,NULL,0,0,0,0
+2,"Blog Section",1369228378,1,NULL,NULL,NULL,NULL,1369228378,1369229378,1,"blog",1,8,0,1,1,1,NULL,"blog_index",0,0,NULL,NULL,0,NULL,NULL,NULL,NULL,0,0,0,0
+3,"My second blog",1369228378,1,NULL,NULL,NULL,NULL,1369228378,1369229378,1,"second-blog",4,5,1,1,1,1,NULL,"blog",0,0,NULL,NULL,0,NULL,NULL,NULL,NULL,0,0,0,0
+4,"My third blog",1369228378,1,NULL,NULL,NULL,NULL,1369228378,1369229378,1,"third-blog",6,7,1,1,1,1,NULL,"blog",0,0,NULL,NULL,0,NULL,NULL,NULL,NULL,0,0,0,0
+5,"Staff",1369228378,1,NULL,NULL,NULL,NULL,1369228378,1369229378,1,"staff",9,18,0,NULL,NULL,NULL,NULL,"staff_index",0,0,NULL,NULL,0,NULL,NULL,NULL,NULL,0,0,0,0
+6,"Joe",1369228378,1,NULL,NULL,NULL,NULL,1369228378,1369229378,1,"joe",10,11,1,NULL,NULL,NULL,NULL,"staff",0,0,NULL,NULL,0,NULL,NULL,NULL,NULL,0,0,0,0
+7,"Danny",1369228378,1,NULL,NULL,NULL,NULL,1369228378,1369229378,1,"danny",12,13,1,NULL,NULL,NULL,NULL,"staff",0,0,NULL,NULL,0,NULL,NULL,NULL,NULL,0,0,0,0
+8,"James",1369228378,1,NULL,NULL,NULL,NULL,1369228378,1369229378,1,"james",14,15,1,NULL,NULL,NULL,NULL,"staff",0,0,NULL,NULL,0,NULL,NULL,NULL,NULL,0,0,0,0
+9,"Laura",1369228378,1,NULL,NULL,NULL,NULL,1369228378,1369229378,1,"laura",16,17,1,NULL,NULL,NULL,NULL,"staff",0,0,NULL,NULL,0,NULL,NULL,NULL,NULL,0,0,0,0
