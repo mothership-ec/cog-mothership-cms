@@ -62,7 +62,6 @@ class Loader
 	 */
 	public function getBySlug($slug, $checkHistory = true)
 	{
-		
 		$path = trim($slug, '/');
 		$parts = array_reverse(explode('/', $path));
 		$base	 = array_shift($parts);
@@ -98,6 +97,8 @@ class Loader
 			return $this->getByID($result[0]->page_id);
 		}
 
+		// If no result has been returned at this point and $checkHistory is true
+		// then we will check the history to see if it existed in the past
 		if ($checkHistory && $page = $this->checkSlugHistory($slug)) {
 			return $page;
 		}
@@ -233,6 +234,13 @@ class Loader
 		return (count($result)) ? $this->getById($result->flatten()) : false;
 	}
 
+
+	/**
+	 * Load the given page from the DB and populate the Page object
+	 * 
+	 * @param int 			$pageID id of the page to load
+	 * @return Page|false 	populated Page object or false if not found
+	 */
 	protected function _load($pageID)
 	{
 		$result = $this->_query->run('
@@ -282,10 +290,15 @@ class Loader
 		$page = new Page;
 
 		if (count($result)) {
+
+			// We can use bind here to populate the Page object
 			$page = $result->bind($page);
+			
+			// Create two DateTime objects for the publishDateRange
 			$from = new \DateTime(date('c', $result[0]->publishAt));
 			$to = new \DateTime(date('c', $result[0]->unpublishAt));
 
+			// Load the DateRange object for publishDateRange
 			$page->publishDateRange = new DateRange($from, $to);
 
 			return $page;
