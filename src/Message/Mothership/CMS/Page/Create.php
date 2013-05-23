@@ -22,10 +22,10 @@ class Create
 	protected $_eventDispatcher;
 
 	/**
-	 * [__construct description]
+	 * Constructor.
 	 *
-	 * @param DBQuery             $query           [description]
-	 * @param DispatcherInterface $eventDispatcher [description]
+	 * @param DBQuery             $query           The database query instance to use
+	 * @param DispatcherInterface $eventDispatcher The event dispatcher
 	 */
 	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher)
 	{
@@ -33,6 +33,14 @@ class Create
 		$this->_eventDispatcher = $eventDispatcher;
 	}
 
+	/**
+	 * Create a page.
+	 *
+	 * @param  PageTypeInterface $pageType The page type to use for the page
+	 * @param  string            $title    The page title
+	 *
+	 * @return Page                        The page that was created
+	 */
 	public function create(PageTypeInterface $pageType, $title)
 	{
 		$result = $this->_query->run("
