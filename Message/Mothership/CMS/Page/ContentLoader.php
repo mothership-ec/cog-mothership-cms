@@ -87,13 +87,15 @@ class ContentLoader
 
 				// If the field supports multiple values, set the value
 				if ($row->data_name) {
-					$groups[$groupName][$row->sequence]->{$row->field}->{$row->data_name} = new Field\Field($row->value);
+					$groups[$groupName][$row->sequence]->{$row->field}->{$row->data_name} = $row->value;
 				}
 			}
 		}
 
 		// Set groups on the content instance
 		foreach ($groups as $name => $set) {
+			// Sort the groups by sequence
+			ksort($set);
 			// TODO: determine whether it's repeatable based on the page type
 			$content->$name = count($set) > 1 ? new Field\Repeatable($set) : array_shift($set);
 		}
@@ -112,7 +114,7 @@ class ContentLoader
 
 			// If the field supports multiple values, set the value
 			if ($row->data_name) {
-				$content->{$row->field}->{$row->data_name} = new Field\Field($row->value);
+				$content->{$row->field}->{$row->data_name} = $row->value;
 			}
 		}
 
@@ -139,15 +141,27 @@ class ContentLoader
 	 */
 	protected function _validate(DBResult $result)
 	{
-		$ids = array();
+		$ids    = array();
+		$multis = array();
 
 		foreach ($result as $row) {
 			$key  = $row->group ?: $row->field;
-			$type = $row->group ? 'group' : $row->data_name ? 'multi' : 'single';
+			$uid  = $row->group . '-' . $row->field;
+			$type = $row->group ? 'group' : ($row->data_name ? 'multi' : 'single');
 
 			// Check only grouped fields have sequence numbers
 			if ($row->sequence && !$row->group) {
 				throw new \RuntimeException(sprintf('Ungrouped field `%s` cannot have a sequence number', $row->field));
+			}
+
+			// If this is a multi-value field, add to the list of multi-value fields
+			if ($row->data_name) {
+				$multis[] = $uid;
+			}
+
+			// If this field is a multi-value field and has no value name, throw exception
+			if (in_array($uid, $multis) && !$row->data_name) {
+				throw new \RuntimeException(sprintf('Missing value name for multi-value field `%s`', $row->field));
 			}
 
 			// If this identifier has already been used
@@ -155,10 +169,6 @@ class ContentLoader
 				// If the field was a normal field, no other row can use this identifier
 				if ('single' === $ids[$key]) {
 					throw new \RuntimeException(sprintf('Field name collision on `%s`', $row->field));
-				}
-				// If this field is a multi-value field, check each value has a value name
-				if ('multi' === $ids[$key] && !$row->data_name) {
-					throw new \RuntimeException(sprintf('Missing value name for multi-value field `%s`', $row->field));
 				}
 				// If the field isn't the same type, throw exception (once a
 				// group or multi-value field uses an identifier, only that group
