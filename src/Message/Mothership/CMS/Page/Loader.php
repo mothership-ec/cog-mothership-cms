@@ -7,8 +7,33 @@ use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
+
 /**
  * Responsible for loading page data and returning prepared instances of `Page`.
+ *
+ * Useage as follows:
+ *
+ * # Load by pageID
+ * $loader = new Loader($locale, $query);
+ * $page = $loader->getByID(1); // returns pageID 1
+ * 
+ * # Load deleted page - deleted pages are not loaded by default
+ * $page = $loader->getByID(3); // returns false as deleted so do the following
+ * $page = $loader->includeDeleted(true)->getByID(3); // this will now return the deletd page object
+ * 
+ * # Load by slug
+ * // you can use either a slug object or a string
+ * $slug = new Slug('/blog/hello-world);
+ * $page = $loader->getBySlug($slug); // returns page object
+ *
+ * # You can then load that pages siblings, or the children
+ * $siblings = $loader->getSiblings($page); // returns array of Page objects
+ * $children = $loader->getChildren($page); // returns array of Page objects
+ * $children = $loader->includeDeleted(true)->getChildren($page); // returns array of Page objects inc deleted pages
+ *
+ * # You can also load by type
+ * $pages = $loader->getByType(new PageTypeInterface\Blog); // Returns array of page types
+ *
  *
  * @author	  Joe Holdcroft <joe@message.co.uk>
  * @author	  Danny Hannah <danny@message.co.uk>
@@ -57,10 +82,10 @@ class Loader
 		$return = array();
 
 		foreach ($pageIDs as $pageID) {
-			$return[$pageID] = array_filter($this->_load($pageID));
+			$return[$pageID] = $this->_load($pageID);
 		}
-
-		return $return;
+		
+		return array_filter($return);
 	}
 
 	/**
