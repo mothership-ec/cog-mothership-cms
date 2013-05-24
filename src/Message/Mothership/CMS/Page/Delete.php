@@ -39,23 +39,54 @@ class Delete
 	 */
 	public function delete(Page $page)
 	{
+		$page->authorship->delete(new \Datetime, 0);
 		$result = $this->_query->run("
 			UPDATE
 				page
 			SET
-				deleted_at = UNIX_TIMESTAMP(),
-				deleted_by = 0
+				deleted_at = ?i,
+				deleted_by = ?i
+			WHERE
+				page_id = ?i
+		", array(
+			$page->authorship->deletedAt()->getTimestamp(),
+			$page->authorship->deletedBy(),
+			$page->id,
+		));
+
+		$this->_eventDispatcher->dispatch(
+			Event::PAGE_DELETE,
+			new PageEvent($page)
+		);
+
+		return $page;
+	}
+	
+	
+	/**
+	 * Restores the currently deleted page to it's former self.
+	 * 
+	 * @param Page 		$page instance of the deleted page to be reinstated
+	 * @return Page 	$page instance of the page after it has been reinstated
+	 */
+	public function restore(Page $page)
+	{
+		$page->authorship->restore();
+
+		$result = $this->_query->run("
+			UPDATE
+				page
+			SET
+				deleted_at = NULL,
+				deleted_by = NULL
 			WHERE
 				page_id = ?i
 		", array(
 			$page->id,
 		));
 
-		$loader = new Loader('gb', $this->_query);
-		$page   = $loader->getByID($page->id);
-
 		$this->_eventDispatcher->dispatch(
-			Event::PAGE_DELETE,
+			Event::PAGE_RESTORE,
 			new PageEvent($page)
 		);
 
