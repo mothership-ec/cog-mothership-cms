@@ -17,6 +17,7 @@ use Message\Cog\DB\Query as DBQuery;
  * @todo Implement the created_by setting. Is there a service for the current
  *       user?
  * @todo Pass the default Locale to Loader when it's instantiated and we have it
+ * @todo Set the position using NestedSetHelper
  */
 class Create
 {
@@ -49,10 +50,11 @@ class Create
 			INSERT INTO
 				page
 			SET
-				created_at = UNIX_TIMESTAMP(),
-				created_by = 0,
-				title      = ?s,
-				type       = ?s
+				created_at    = UNIX_TIMESTAMP(),
+				created_by    = 0,
+				title         = ?s,
+				type          = ?s,
+				publish_state = 0
 		", array(
 			$title,
 			$pageType->getName(),
