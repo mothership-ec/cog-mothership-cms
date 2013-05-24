@@ -4,6 +4,7 @@ namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\PageTypeInterface;
 use Message\Cog\ValueObject\DateRange;
+use Message\Cog\ValueObject\Authorship;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
 /**
@@ -248,13 +249,18 @@ class Loader
 		$result = $this->_query->run('
 			SELECT
 				/* locale, */
-				/* authorship, */
 				page.page_id AS id,
 				page.title AS title,
 				page.type AS type,
 				page.publish_state AS publishState,
 				page.publish_at AS publishAt,
 				page.unpublish_at AS unpublishAt,
+				page.created_at AS createdAt,
+				page.created_by AS createdBy,
+				page.updated_at AS updatedAt,
+				page.created_by AS updatedBy,
+				page.deleted_at AS deletedAt,
+				page.deleted_by AS deletedBy,
 				CONCAT((
 					SELECT
 						CONCAT(\'/\',GROUP_CONCAT(p.slug ORDER BY p.position_depth ASC SEPARATOR \'/\'))
@@ -311,6 +317,31 @@ class Loader
 			// Load the DateRange object for publishDateRange
 			$page->publishDateRange = new DateRange($from, $to);
 			$page->slug = new Slug($result[0]->slug);
+			
+			
+			$authorship = new Authorship;
+			// Load authorship details
+			$authorship->create(new \DateTime(date('c', $result[0]->createdAt)), $result[0]->createdBy);
+
+			if ($result[0]->updatedAt) {
+				$authorship->delete(new \DateTime(date('c', $result[0]->updatedAt)), $result[0]->updatedBy);
+			}			
+
+			if ($result[0]->deletedAt) {
+				$authorship->delete(new \DateTime(date('c', $result[0]->deletedAt)), $result[0]->deletedBy);
+			}
+			
+			$page->authorship = $authorship;
+			
+			// Remove unneeded properties from the page object which are loaded from the
+			// Db to fill vaious things. This is the neatest way i can think of doing it.
+			$blankPage = new Page;
+			foreach ($result[0] as $k => $v) {
+				if (!property_exists($blankPage, $k)) {
+					unset($page->{$k});
+				}
+			}		
+
 			return $page;
 
 		}
