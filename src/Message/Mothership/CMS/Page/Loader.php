@@ -130,7 +130,7 @@ class Loader
 		
 		// If there is a result then retun a page object
 		if (count($result)) {
-			return $this->getByID($result[0]->page_id);
+			return $this->getByID($result->page_id);
 		}
 
 		// If no result has been returned at this point and $checkHistory is true
@@ -161,7 +161,7 @@ class Loader
 		', $slug);
 		
 
-		return count($result) ? $this->getByID($result[0]->page_id) : false;
+		return count($result) ? $this->getByID($result->page_id) : false;
 	}
 
 	/**
@@ -270,7 +270,14 @@ class Loader
 
 		return count($result) ? $this->getById($result->flatten()) : false;
 	}
+
 	
+	/**
+	 * Toggle whether or not to load deleted pages
+	 * 
+	 * @param bool $bool 	true / false as to whether to include deleted items
+	 * @return 	$this 		Loader object in order to chain the methods
+	 */
 	public function includeDeleted($bool)
 	{
 		$this->_loadDeleted = $bool;
@@ -344,40 +351,42 @@ class Loader
 			array($pageID));
 
 		if (count($result)) {
-
-			if ($result[0]->deletedAt && !$this->_loadDeleted) {
-				return false;
-			}
 			
 			$page = new Page;
 			
 			// We can use bind here to populate the Page object
 			$page = $result->bind($page);
 
+			$result = $result->first();
+
+			if ($result->deletedAt && !$this->_loadDeleted) {
+				return false;
+			}
+
 			// Create two DateTime objects for the publishDateRange
-			$from = new \DateTime(date('c', $result[0]->publishAt));
-			$to = new \DateTime(date('c', $result[0]->unpublishAt));
+			$from = new \DateTime(date('c', $result->publishAt));
+			$to = new \DateTime(date('c', $result->unpublishAt));
 
 			// Load the DateRange object for publishDateRange
 			$page->publishDateRange = new DateRange($from, $to);
-			$page->slug = new Slug($result[0]->slug);
+			$page->slug = new Slug($result->slug);
 			
 			// Load authorship details
 			$authorship = new Authorship;
-			$authorship->create(new \DateTime(date('c', $result[0]->createdAt)), $result[0]->createdBy);
-			if ($result[0]->updatedAt) {
-				$authorship->delete(new \DateTime(date('c', $result[0]->updatedAt)), $result[0]->updatedBy);
+			$authorship->create(new \DateTime(date('c', $result->createdAt)), $result->createdBy);
+			if ($result->updatedAt) {
+				$authorship->delete(new \DateTime(date('c', $result->updatedAt)), $result->updatedBy);
 			}			
-			if ($result[0]->deletedAt) {
-				$authorship->delete(new \DateTime(date('c', $result[0]->deletedAt)), $result[0]->deletedBy);
+			if ($result->deletedAt) {
+				$authorship->delete(new \DateTime(date('c', $result->deletedAt)), $result->deletedBy);
 			}
 
 			$page->authorship = $authorship;
 			
 			// Remove unneeded properties from the page object which are loaded from the
-			// Db to fill vaious things. This is the neatest way i can think of doing it.
+			// Db to fill vaious things. This is the neatest way I can think of doing it.
 			$blankPage = new Page;
-			foreach ($result[0] as $k => $v) {
+			foreach ($result as $k => $v) {
 				if (!property_exists($blankPage, $k)) {
 					unset($page->{$k});
 				}
