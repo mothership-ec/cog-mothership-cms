@@ -17,6 +17,15 @@ class Loader
 {
 	protected $_locale;
 	protected $_query;
+	
+	/**
+	 * var to toggle the loading of deleted pages
+	 * 
+	 * (default value: false)
+	 * 
+	 * @var bool
+	 */
+	protected $_loadDeleted = false;
 
 	/**
 	 * Constructor.
@@ -48,7 +57,7 @@ class Loader
 		$return = array();
 
 		foreach ($pageIDs as $pageID) {
-			$return[$pageID] = $this->_load($pageID);
+			$return[$pageID] = array_filter($this->_load($pageID));
 		}
 
 		return $return;
@@ -236,6 +245,12 @@ class Loader
 
 		return count($result) ? $this->getById($result->flatten()) : false;
 	}
+	
+	public function includeDeleted($bool)
+	{
+		$this->_loadDeleted = $bool;
+		return $this;
+	}
 
 
 	/**
@@ -304,6 +319,10 @@ class Loader
 			array($pageID));
 
 		if (count($result)) {
+
+			if ($result[0]->deletedAt && !$this->_loadDeleted) {
+				return false;
+			}
 			
 			$page = new Page;
 			
@@ -318,19 +337,16 @@ class Loader
 			$page->publishDateRange = new DateRange($from, $to);
 			$page->slug = new Slug($result[0]->slug);
 			
-			
-			$authorship = new Authorship;
 			// Load authorship details
+			$authorship = new Authorship;
 			$authorship->create(new \DateTime(date('c', $result[0]->createdAt)), $result[0]->createdBy);
-
 			if ($result[0]->updatedAt) {
 				$authorship->delete(new \DateTime(date('c', $result[0]->updatedAt)), $result[0]->updatedBy);
 			}			
-
 			if ($result[0]->deletedAt) {
 				$authorship->delete(new \DateTime(date('c', $result[0]->deletedAt)), $result[0]->deletedBy);
 			}
-			
+
 			$page->authorship = $authorship;
 			
 			// Remove unneeded properties from the page object which are loaded from the
