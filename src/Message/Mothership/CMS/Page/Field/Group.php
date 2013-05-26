@@ -10,6 +10,9 @@ namespace Message\Mothership\CMS\Page\Field;
 class Group
 {
 	protected $_fields = array();
+	// am i repeatable?
+	// whats my min/max?
+	// description
 
 	/**
 	 * Constructor.

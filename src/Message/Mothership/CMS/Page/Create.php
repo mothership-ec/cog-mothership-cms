@@ -60,6 +60,8 @@ class Create
 			$pageType->getName(),
 		));
 
+		// add it to the tree. we need to know the parent page
+
 		$loader = new Loader('the locale thing', $this->_query);
 		$page   = $loader->getByID($result->id());
 

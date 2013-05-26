@@ -30,4 +30,14 @@ class Field
 	{
 		return $this->_value;
 	}
+	// extend this class for each field type
+	// name
+	// localisable
+	// type
+	public function getFormField()
+	{
+		// return a Symfony field object
+		// with validation information set
+		// contextual help
+	}
 }
