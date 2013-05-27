@@ -1,6 +1,7 @@
 <?php
 
 namespace Message\Mothership\CMS\Asset;
+
 use Message\Cog\DB\Query;
 
 class Loader {
