@@ -1,11 +1,6 @@
 <?php
 
 namespace Message\Mothership\CMS\Asset;
-
-use Message\Mothership\CMS\PageTypeInterface;
-use Message\Cog\ValueObject\DateRange;
-use Message\Cog\ValueObject\Authorship;
-use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
 
 class Loader {
@@ -13,7 +8,7 @@ class Loader {
 	protected $_locale;
 	protected $_query;
 
-	public function __construct(/*\Locale*/ $locale, $query)
+	public function __construct(/*\Locale*/ $locale, Query $query)
 	{
 		$this->_locale = $locale;
 		$this->_query = $query;
@@ -56,11 +51,11 @@ class Loader {
 			WHERE
 				type_id = ?i',
 			array(
-				$typeID
+				$typeID,
 			)
 		);
 
-		return count($result) ? $this->getByID($result->flatten() : false;
+		return count($result) ? $this->getByID($result->flatten()) : false;
 
 	}
 
@@ -84,7 +79,7 @@ class Loader {
 				asset
 		');
 
-		return count($result) ? $this->getByID($result->flatten() : false;
+		return count($result) ? $this->getByID($result->flatten()) : false;
 
 	}
 
@@ -106,7 +101,8 @@ class Loader {
 				$user->id
 			)
 		);
-		return count($result) ? $this->getByID($result->flatten() : false;
+
+		return count($result) ? $this->getByID($result->flatten()) : false;
 
 	}
 
