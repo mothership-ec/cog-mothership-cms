@@ -158,7 +158,6 @@ class Loader {
 			if ($asset->deletedAt) {
 				$asset->deletedAt = new \DateTime(date('c',$asset->deletedAt));
 			}
-			var_dump($asset); exit;
 			return $asset;
 		}
 
