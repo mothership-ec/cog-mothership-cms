@@ -9,6 +9,15 @@ class Loader {
 	protected $_locale;
 	protected $_query;
 
+	/**
+	 * var to toggle the loading of deleted assets
+	 * 
+	 * (default value: false)
+	 * 
+	 * @var bool
+	 */
+	protected $_loadDeleted = false;
+
 	public function __construct(/*\Locale*/ $locale, Query $query)
 	{
 		$this->_locale = $locale;
@@ -117,6 +126,18 @@ class Loader {
 
 	}
 
+	/**
+	 * Toggle whether or not to load deleted assets
+	 * 
+	 * @param bool $bool 	true / false as to whether to include deleted items
+	 * @return 	$this 		Loader object in order to chain the methods
+	 */
+	public function includeDeleted($bool)
+	{
+		$this->_loadDeleted = $bool;
+		return $this;
+	}
+
 	protected function _load($assetID)
 	{
 		$result = $this->_query->run('
@@ -148,6 +169,10 @@ class Loader {
 		if (count($result)) {
 			$asset = new Asset;
 			$asset = $result->bind($asset);
+			
+			if ($asset->deletedAt && !$this->_loadDeleted) {
+				return false;
+			}
 
 			$asset->createdAt = new \DateTime(date('c',$asset->createdAt));
 
