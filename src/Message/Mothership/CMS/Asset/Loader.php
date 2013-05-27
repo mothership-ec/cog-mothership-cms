@@ -148,6 +148,17 @@ class Loader {
 		if (count($result)) {
 			$asset = new Asset;
 			$asset = $result->bind($asset);
+
+			$asset->createdAt = new \DateTime(date('c',$asset->createdAt));
+
+			if ($asset->updatedAt) {
+				$asset->updatedAt = new \DateTime(date('c',$asset->updatedAt));
+			}
+
+			if ($asset->deletedAt) {
+				$asset->deletedAt = new \DateTime(date('c',$asset->deletedAt));
+			}
+			var_dump($asset); exit;
 			return $asset;
 		}
 
