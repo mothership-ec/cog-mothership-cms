@@ -4,6 +4,7 @@ namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Event\Event;
+use Message\Mothership\CMS\Page\Loader;
 use Message\Mothership\CMS\Event\PageEvent;
 
 use Message\Cog\Event\DispatcherInterface;
@@ -39,6 +40,14 @@ class Delete
 	 */
 	public function delete(Page $page)
 	{
+		// Check that the page doesn't have children pages
+		$loader = new Loader('gb', $this->_query);
+
+		// Throw an exception if it does
+		if ($loader->getChildren($page)) {
+			throw new \Exception('Cannot delete page that has children pages.');
+		}
+
 		$page->authorship->delete(new \Datetime, 0);
 		$result = $this->_query->run("
 			UPDATE
