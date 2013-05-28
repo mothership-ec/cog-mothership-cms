@@ -21,6 +21,7 @@ use Message\Cog\DB\NestedSetHelper;
  */
 class Create
 {
+	protected $_loader;
 	protected $_query;
 	protected $_eventDispatcher;
 	protected $_nestedSetHelper;
@@ -28,13 +29,16 @@ class Create
 	/**
 	 * Constructor.
 	 *
+	 * @param Loader              $loader          The page loader
 	 * @param DBQuery             $query           The database query instance to use
 	 * @param DispatcherInterface $eventDispatcher The event dispatcher
 	 * @param NestedSetHelper     $nestedSetHelper The nested set helper, set up
 	 *                                             for the `Page` table
 	 */
-	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher, NestedSetHelper $nestedSetHelper)
+	public function __construct(Loader $loader, DBQuery $query,
+		DispatcherInterface $eventDispatcher, NestedSetHelper $nestedSetHelper)
 	{
+		$this->_loader          = $loader;
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
 		$this->_nestedSetHelper = $nestedSetHelper;
@@ -59,28 +63,31 @@ class Create
 	 */
 	public function create(PageTypeInterface $pageType, $title, Page $parent = null)
 	{
+		if ($parent && !$parent->type->allowChildPages) { // Is there a better property name?
+			//throw exception
+		}
+
 		// Create the page without adding it to the nested set tree
-		$result = $this->_query->run("
+		$result = $this->_query->run('
 			INSERT INTO
 				page
 			SET
 				created_at    = UNIX_TIMESTAMP(),
 				created_by    = 0,
-				title         = ?s,
-				type          = ?s,
+				title         = :title?s,
+				type          = :type?s,
 				publish_state = 0
-		", array(
-			$title,
-			$pageType->getName(),
+		', array(
+			'title' => $title,
+			'type'  => $pageType->getName(),
 		));
 
-		$loader = new Loader('the locale thing', $this->_query);
 		$pageID = (int) $result->id();
 
 		// Add the page to the nested set tree
 		$this->_nestedSetHelper->insertChildAtEnd($pageID, $parent ? $parent->id : false, true)->commit();
 
-		$page  = $loader->getByID($pageID);
+		$page  = $this->_loader->getByID($pageID);
 		$event = new PageEvent($page);
 
 		// Dispatch the page created event
