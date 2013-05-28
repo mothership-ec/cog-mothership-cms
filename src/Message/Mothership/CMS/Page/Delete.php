@@ -55,17 +55,17 @@ class Delete
 		));
 
 		$this->_eventDispatcher->dispatch(
-			Event::PAGE_DELETE,
+			PageEvent::DELETE,
 			new PageEvent($page)
 		);
 
 		return $page;
 	}
-	
-	
+
+
 	/**
 	 * Restores the currently deleted page to it's former self.
-	 * 
+	 *
 	 * @param Page 		$page instance of the deleted page to be reinstated
 	 * @return Page 	$page instance of the page after it has been reinstated
 	 */
@@ -86,7 +86,7 @@ class Delete
 		));
 
 		$this->_eventDispatcher->dispatch(
-			Event::PAGE_RESTORE,
+			PageEvent::RESTORE,
 			new PageEvent($page)
 		);
 
