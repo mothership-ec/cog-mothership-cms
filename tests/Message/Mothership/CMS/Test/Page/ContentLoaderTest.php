@@ -3,7 +3,6 @@
 namespace Message\Mothership\CMS\Test\Page;
 
 use Message\Mothership\CMS\Page\ContentLoader;
-
 use Message\Cog\DB\Adapter\Faux\Connection;
 use Message\Cog\DB\Query;
 
