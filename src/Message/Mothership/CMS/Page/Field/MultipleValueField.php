@@ -11,39 +11,16 @@ namespace Message\Mothership\CMS\Page\Field;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class MultipleValueField extends Field
+abstract class MultipleValueField extends Field
 {
-	protected $_values = array();
+	protected $_value = array();
 
 	/**
-	 * Constructor.
-	 *
-	 * @param mixed $value Array of field values
-	 */
-	public function __construct(array $values = array())
-	{
-		foreach ($values as $name => $value) {
-			$this->add($name, $value);
-		}
-	}
-
-	/**
-	 * Print the class directly. This returns all of the field values
-	 * concatenated with a colon character.
-	 *
-	 * @return string The field values as a string
-	 */
-	public function __toString()
-	{
-		return implode(':', $this->_values);
-	}
-
-	/**
-	 * @see add()
+	 * @see setValue()
 	 */
 	public function __set($name, $value)
 	{
-		$this->add($name, $value);
+		$this->setValue($name, $value);
 	}
 
 	/**
@@ -57,8 +34,8 @@ class MultipleValueField extends Field
 	 */
 	public function __get($name)
 	{
-		if (isset($this->_values[$name])) {
-			return $this->_values[$name];
+		if (isset($this->_value[$name])) {
+			return $this->_value[$name];
 		}
 
 		throw new \OutOfBoundsException(sprintf('Field value does not exist: `%s`', $name));
@@ -73,7 +50,14 @@ class MultipleValueField extends Field
 	 */
 	public function __isset($name)
 	{
-		return isset($this->_values[$name]);
+		return isset($this->_value[$name]);
+	}
+
+	public function setValues(array $values)
+	{
+		foreach ($values as $name => $value) {
+			$this->add($name, $value);
+		}
 	}
 
 	/**
@@ -84,12 +68,23 @@ class MultipleValueField extends Field
 	 *
 	 * @throws \InvalidArgumentException If the field name is falsey
 	 */
-	public function add($name, $value)
+	public function setValue($name, $value)
 	{
 		if (!$name) {
 			throw new \InvalidArgumentException('Page field value must have a name');
 		}
 
-		$this->_values[$name] = $value;
+		$this->_value[$name] = $value;
+	}
+
+	/**
+	 * Print the class directly. This returns all of the field values
+	 * concatenated with a colon character.
+	 *
+	 * @return string The field values as a string
+	 */
+	public function getValue()
+	{
+		return implode(':', $this->_value);
 	}
 }

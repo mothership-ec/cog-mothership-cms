@@ -9,21 +9,25 @@ namespace Message\Mothership\CMS\Page\Field;
  */
 class Group
 {
+	protected $_name;
+	protected $_label;
+
+	protected $_repeatable = false;
+	protected $_repeatableMin;
+	protected $_repeatableMax;
+
 	protected $_fields = array();
-	// am i repeatable?
-	// whats my min/max?
-	// description
+	protected $_idFieldName;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param array $fields Array of fields in this group
 	 */
-	public function __construct(array $fields = array())
+	public function __construct($name, $label = null)
 	{
-		foreach ($fields as $name => $field) {
-			$this->add($name, $field);
-		}
+		$this->_name  = $name;
+		$this->_label = $label ?: $name;
 	}
 
 	/**
@@ -72,12 +76,40 @@ class Group
 	 *
 	 * @throws \InvalidArgumentException If the name is falsey
 	 */
-	public function add($name, Field $field)
+	public function add($name, Field $field, $identifier = false)
 	{
 		if (!$name) {
 			throw new \InvalidArgumentException('Page field group field must have a name');
 		}
 
 		$this->_fields[$name] = $field;
+
+		if ($identifier === true) {
+			$this->_idFieldName = $name;
+		}
+	}
+
+	public function setRepeatable($repeatable = true, $min = null, $max = null)
+	{
+		$this->_repeatable = (bool) $repeatable;
+
+		if ($min) {
+			$this->_repeatableMin = (int) $min;
+		}
+
+		if ($max) {
+			$this->_repeatableMax = (int) $max;
+		}
+
+		return $this;
+	}
+
+	public function getIdentifierField()
+	{
+		if (!$this->_idFieldName || !isset($this->_fields[$this->_idFieldName])) {
+			throw new \LogicException('No identifier field has been set yet.');
+		}
+
+		return $this->_fields[$name];
 	}
 }

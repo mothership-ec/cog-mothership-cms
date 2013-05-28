@@ -6,19 +6,26 @@ namespace Message\Mothership\CMS\Page\Field;
  * Represents a simple field of a page.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
+ *
+ * @todo Represent contextual help somehow?
  */
-class Field
+abstract class Field
 {
+	protected $_name;
+	protected $_label;
+	protected $_localisable = false;
 	protected $_value;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param mixed $value The field's value
+	 * @param string $name  The field's name
+	 * @param string $label The field's label. If blank, the name will be used
 	 */
-	public function __construct($value)
+	public function __construct($name, $label = null)
 	{
-		$this->_value = $value;
+		$this->_name  = $name;
+		$this->_label = $label ?: $name;
 	}
 
 	/**
@@ -28,16 +35,34 @@ class Field
 	 */
 	public function __toString()
 	{
+		return $this->getValue();
+	}
+
+	public function setValue($value)
+	{
+		$this->_value = $value;
+
+		return $this;
+	}
+
+	public function setLocalisable($localisable = true)
+	{
+		$this->_localisable = (bool) $localisable;
+
+		return $this;
+	}
+
+	public function getValue()
+	{
 		return $this->_value;
 	}
-	// extend this class for each field type
-	// name
-	// localisable
-	// type
-	public function getFormField()
+
+	public function isLocalisable()
 	{
-		// return a Symfony field object
-		// with validation information set
-		// contextual help
+		return $this->_localisable;
 	}
+
+	abstract public function getFormField();
+		// return a Symfony field object without label (set by page type)
+		// contextual help
 }
