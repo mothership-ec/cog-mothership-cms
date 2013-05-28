@@ -14,6 +14,8 @@ use Message\Cog\DB\Query as DBQuery;
  * Decorator for deleting pages.
  *
  * @author Daniel Hannah <danny@message.co.uk>
+ *
+ * @todo implement deleted_by setting correctly once User cogule is complete.
  */
 class Delete
 {
@@ -33,10 +35,14 @@ class Delete
 	}
 
 	/**
-	 * Delete a page by marking it as deleted in the DB
+	 * Delete a page by marking it as deleted in the database.
 	 *
-	 * @param  Page 	$page The page that needs to be deleted
-	 * @return Page		The page that has been deleted
+	 * @param  Page $page The page to be deleted
+	 *
+	 * @return Page       The page that was been deleted, with the "delete"
+	 *                    authorship data set
+	 *
+	 * @throws \InvalidArgumentException If the page has child pages
 	 */
 	public function delete(Page $page)
 	{
@@ -45,22 +51,22 @@ class Delete
 
 		// Throw an exception if it does
 		if ($loader->getChildren($page)) {
-			throw new \Exception('Cannot delete page that has children pages.');
+			throw new \InvalidArgumentException(sprintf('Cannot delete page #%i because it has children pages', $page->id));
 		}
 
 		$page->authorship->delete(new \Datetime, 0);
-		$result = $this->_query->run("
+		$result = $this->_query->run('
 			UPDATE
 				page
 			SET
-				deleted_at = ?i,
-				deleted_by = ?i
+				deleted_at = :at?i,
+				deleted_by = :by?i
 			WHERE
-				page_id = ?i
-		", array(
-			$page->authorship->deletedAt()->getTimestamp(),
-			$page->authorship->deletedBy(),
-			$page->id,
+				page_id = :id?i
+		', array(
+			'at' => $page->authorship->deletedAt()->getTimestamp(),
+			'by' => $page->authorship->deletedBy(),
+			'id' => $page->id,
 		));
 
 		$this->_eventDispatcher->dispatch(
@@ -73,16 +79,18 @@ class Delete
 
 
 	/**
-	 * Restores the currently deleted page to it's former self.
+	 * Restores a currently deleted page to its former self.
 	 *
-	 * @param Page 		$page instance of the deleted page to be reinstated
-	 * @return Page 	$page instance of the page after it has been reinstated
+	 * @param Page page   The deleted page to be restored
+	 *
+	 * @return Page $page The restored page, with the "delete" authorship data
+	 *                    cleared
 	 */
 	public function restore(Page $page)
 	{
 		$page->authorship->restore();
 
-		$result = $this->_query->run("
+		$result = $this->_query->run('
 			UPDATE
 				page
 			SET
@@ -90,9 +98,7 @@ class Delete
 				deleted_by = NULL
 			WHERE
 				page_id = ?i
-		", array(
-			$page->id,
-		));
+		', $page->id);
 
 		$this->_eventDispatcher->dispatch(
 			PageEvent::RESTORE,
