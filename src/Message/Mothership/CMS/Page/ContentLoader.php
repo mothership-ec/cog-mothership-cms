@@ -13,6 +13,8 @@ use Message\Cog\DB\Result as DBResult;
  * @todo determine when a group is repeatable by checking the page type, rather
  *       than making assumptions based on the data
  *
+ * @todo Rewrite this class following the changes to Fields.
+ *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
 class ContentLoader

@@ -6,6 +6,10 @@ namespace Message\Mothership\CMS\Page\Field;
  * Wrapper for a repeatable set of field groups.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
+ *
+ * @todo Perhaps this class should be renamed. Seems misleading, like this class
+ * represents a group that is repeatable? What it actually is is a wrapper for
+ * field values for a repeatable group
  */
 class Repeatable implements \IteratorAggregate, \Countable
 {

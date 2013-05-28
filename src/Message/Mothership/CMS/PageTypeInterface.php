@@ -27,4 +27,5 @@ interface PageTypeInterface
 	public function getFields();
 		// array of Field and Group instances
 		// nice api
+		// validation stuff set in here, not in the field objects
 }
