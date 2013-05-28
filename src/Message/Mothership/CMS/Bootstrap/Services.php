@@ -23,6 +23,7 @@ class Services implements ServicesInterface
 
 		$serviceContainer['cms.page.create'] = $serviceContainer->share(function($c) {
 			return new \Message\Mothership\CMS\Page\Create(
+				$c['cms.page.loader'],
 				$c['db.query'],
 				$c['event.dispatcher'],
 				$c['cms.page.nested_set_helper']
