@@ -43,6 +43,8 @@ class Create
 	/**
 	 * Create a page.
 	 *
+	 * The newly created page is always added to the end of the target section.
+	 *
 	 * Once the page is created, the event defined as `Event\PageEvent::CREATE`
 	 * is fired with the instance of the `Page` that was created. Whatever the
 	 * event returns as the `Page` instance is then returned.
@@ -76,14 +78,14 @@ class Create
 		$pageID = (int) $result->id();
 
 		// Add the page to the nested set tree
-		$this->_nestedSetHelper->insertChildAtEnd($pageID, $parent->id)->run();
+		$this->_nestedSetHelper->insertChildAtEnd($pageID, $parent ? $parent->id : false, true)->commit();
 
 		$page  = $loader->getByID($pageID);
 		$event = new PageEvent($page);
 
 		// Dispatch the page created event
 		$this->_eventDispatcher->dispatch(
-			Event::PAGE_CREATE,
+			PageEvent::CREATE,
 			$event
 		);
 
