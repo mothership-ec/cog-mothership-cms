@@ -11,16 +11,17 @@ use Message\Cog\DB\Query;
 /**
  * Responsible for loading page data and returning prepared instances of `Page`.
  *
- * Useage as follows:
+ * Usage as follows:
  *
+ * <code>
  * # Load by pageID
  * $loader = new Loader($locale, $query);
  * $page = $loader->getByID(1); // returns pageID 1
- * 
+ *
  * # Load deleted page - deleted pages are not loaded by default
  * $page = $loader->getByID(3); // returns false as deleted so do the following
  * $page = $loader->includeDeleted(true)->getByID(3); // this will now return the deletd page object
- * 
+ *
  * # Load by slug
  * // you can use either a slug object or a string
  * $slug = new Slug('/blog/hello-world);
@@ -33,21 +34,21 @@ use Message\Cog\DB\Query;
  *
  * # You can also load by type
  * $pages = $loader->getByType(new PageTypeInterface\Blog); // Returns array of page types
+ * </code>
  *
- *
- * @author	  Joe Holdcroft <joe@message.co.uk>
- * @author	  Danny Hannah <danny@message.co.uk>
+ * @author Joe Holdcroft <joe@message.co.uk>
+ * @author Danny Hannah <danny@message.co.uk>
  */
 class Loader
 {
 	protected $_locale;
 	protected $_query;
-	
+
 	/**
 	 * var to toggle the loading of deleted pages
-	 * 
+	 *
 	 * (default value: false)
-	 * 
+	 *
 	 * @var bool
 	 */
 	protected $_loadDeleted = false;
@@ -84,7 +85,7 @@ class Loader
 		foreach ($pageIDs as $pageID) {
 			$return[$pageID] = $this->_load($pageID);
 		}
-		
+
 		return array_filter($return);
 	}
 
@@ -127,7 +128,7 @@ class Loader
 			'.$where.'',
 			$params
 		);
-		
+
 		// If there is a result then retun a page object
 		if (count($result)) {
 			return $this->getByID($result->page_id);
@@ -141,11 +142,11 @@ class Loader
 
 		return false;
 	}
-	
-	
+
+
 	/**
 	 * Find a page by an ancestral slug
-	 * 
+	 *
 	 * @param string $slug		Slug to check for
 	 * @return Page|false		Prepared `Page` instance, or false if not found
 	 */
@@ -159,7 +160,7 @@ class Loader
 			WHERE
 				slug = ?s
 		', $slug);
-		
+
 
 		return count($result) ? $this->getByID($result->page_id) : false;
 	}
@@ -181,9 +182,9 @@ class Loader
 			WHERE
 				type = ?s
 		', strtolower($pageType->getName()));
-		
+
 		return count($result) ? $this->getById($result->flatten()) : false;
-		
+
 	}
 
 	/**
@@ -228,13 +229,13 @@ class Loader
 		// complications and have to change the query a fair bit. This way is simpler.
 		if ($page->depth == 0) {
 			$result = $this->_query->run('
-			    SELECT 
+			    SELECT
 			        page.page_id
 			    FROM
 			        page
 			    WHERE
 			    	page.position_depth = 0
-				AND 
+				AND
 					page.page_id <> ?i
 			', array(
 			    $page->id,
@@ -243,18 +244,18 @@ class Loader
 		} else {
 			// Get the parent, then get the children of that parent based on it's position.
 			$result = $this->_query->run('
-			    SELECT 
+			    SELECT
 			        children.page_id
 			    FROM
 			        page AS parent
 			    LEFT JOIN page AS children
 			        ON (
-			        	children.position_left > parent.position_left 
-			        	AND children.position_right < parent.position_right  
+			        	children.position_left > parent.position_left
+			        	AND children.position_right < parent.position_right
 			        	AND children.position_depth = ?i
 			        )
-			    
-			    WHERE	
+
+			    WHERE
 			        parent.position_left < ?i
 			        AND parent.position_right > ?i
 			        AND parent.position_depth = ?i
@@ -271,10 +272,10 @@ class Loader
 		return count($result) ? $this->getById($result->flatten()) : false;
 	}
 
-	
+
 	/**
 	 * Toggle whether or not to load deleted pages
-	 * 
+	 *
 	 * @param bool $bool 	true / false as to whether to include deleted items
 	 * @return 	$this 		Loader object in order to chain the methods
 	 */
@@ -287,7 +288,7 @@ class Loader
 
 	/**
 	 * Load the given page from the DB and populate the Page object
-	 * 
+	 *
 	 * @param int 			$pageID id of the page to load
 	 * @return Page|false 	populated Page object or false if not found
 	 */
@@ -311,11 +312,11 @@ class Loader
 				CONCAT((
 					SELECT
 						CONCAT(\'/\',GROUP_CONCAT(p.slug ORDER BY p.position_depth ASC SEPARATOR \'/\'))
-					FROM 
+					FROM
 						page AS p
 					WHERE
 						p.position_left < page.position_left
-					AND 
+					AND
 						p.position_right > page.position_right),\'/\',page.slug) AS slug,
 
 				page.position_left AS `left`,
@@ -351,9 +352,9 @@ class Loader
 			array($pageID));
 
 		if (count($result)) {
-			
+
 			$page = new Page;
-			
+
 			// We can use bind here to populate the Page object
 			$page = $result->bind($page);
 
@@ -370,19 +371,19 @@ class Loader
 			// Load the DateRange object for publishDateRange
 			$page->publishDateRange = new DateRange($from, $to);
 			$page->slug = new Slug($result->slug);
-			
+
 			// Load authorship details
 			$authorship = new Authorship;
 			$authorship->create(new \DateTime(date('c', $result->createdAt)), $result->createdBy);
 			if ($result->updatedAt) {
 				$authorship->delete(new \DateTime(date('c', $result->updatedAt)), $result->updatedBy);
-			}			
+			}
 			if ($result->deletedAt) {
 				$authorship->delete(new \DateTime(date('c', $result->deletedAt)), $result->deletedBy);
 			}
 
 			$page->authorship = $authorship;
-			
+
 			// Remove unneeded properties from the page object which are loaded from the
 			// Db to fill vaious things. This is the neatest way I can think of doing it.
 			$blankPage = new Page;
@@ -390,7 +391,7 @@ class Loader
 				if (!property_exists($blankPage, $k)) {
 					unset($page->{$k});
 				}
-			}		
+			}
 
 			return $page;
 
