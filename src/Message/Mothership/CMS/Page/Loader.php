@@ -131,7 +131,7 @@ class Loader
 
 		// If there is a result then retun a page object
 		if (count($result)) {
-			return $this->getByID($result->page_id);
+			return $this->getByID($result->first()->page_id);
 		}
 
 		// If no result has been returned at this point and $checkHistory is true
@@ -162,7 +162,7 @@ class Loader
 		', $slug);
 
 
-		return count($result) ? $this->getByID($result->page_id) : false;
+		return count($result) ? $this->getByID($result->first()->page_id) : false;
 	}
 
 	/**
@@ -294,6 +294,7 @@ class Loader
 	 */
 	protected function _load($pageID)
 	{
+
 		$result = $this->_query->run('
 			SELECT
 				/* locale, */
@@ -363,6 +364,7 @@ class Loader
 			if ($result->deletedAt && !$this->_loadDeleted) {
 				return false;
 			}
+
 
 			// Create two DateTime objects for the publishDateRange
 			$from = new \DateTime(date('c', $result->publishAt));

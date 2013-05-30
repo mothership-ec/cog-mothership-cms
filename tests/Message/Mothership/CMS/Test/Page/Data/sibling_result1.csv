@@ -1,2 +1,2 @@
-"id","title","type","publishState","publishAt","unpublishAt","slug","left","right","depth","metaTitle","metaDescription","metaHtmlHead","metaHtmlFoot","visibilitySearch","visibilityMenu","visibilityAggregator","password","access","accessGroups","commentsEnabled","commentsAccess","commentsAccessGroups","commentsApproval","commentsExpiry"
-5,"Staff","staff_index",1,1369228378,1369229378,NULL,9,20,0,NULL,NULL,NULL,NULL,0,0,0,NULL,0,NULL,0,0,0,NULL,NULL
+"id","title","type","publishState","publishAt","unpublishAt","slug","left","right","depth","metaTitle","metaDescription","metaHtmlHead","metaHtmlFoot","visibilitySearch","visibilityMenu","visibilityAggregator","password","access","accessGroups","commentsEnabled","commentsAccess","commentsAccessGroups","commentsApproval","commentsExpiry","deletedAt","createdAt","createdBy","updatedAt"
+5,"Staff","staff_index",1,1369228378,1369229378,NULL,9,20,0,NULL,NULL,NULL,NULL,0,0,0,NULL,0,NULL,0,0,0,NULL,NULL,"",1369743806,1,""

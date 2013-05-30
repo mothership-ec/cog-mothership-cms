@@ -27,17 +27,17 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 		$page = $loader->getByID(1);
 		$this->assertTrue($page instanceof Page);
 
-		// test that an array of Page objects are returned if an array of them are 
+		// test that an array of Page objects are returned if an array of them are
 		// passed through
 		$page = $loader->getByID(0);
 		$this->assertFalse($page);
-		
+
 		$pageTypes = array(1,2,3);
 		$page = $loader->getByID($pageTypes);
 		$this->assertEquals(count($page), count($pageTypes));
-		
+
 	}
-	
+
 	public function testGetBySlug()
 	{
 
@@ -52,14 +52,14 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 
 		// Check that a page instance is returned for a valid slug from a current page with history false
 		$loader = $this->_getLoader($paths);
-		
+
 		$page = $loader->getBySlug('/blog/hello-world');
-		$this->assertTrue($page instanceof Page);	
+		$this->assertTrue($page instanceof Page);
 
 		// Check that a page instance is returned for a historical slug
 		$page = $loader->getBySlug('/blog/hello-world-old', true);
 		$this->assertTrue($page instanceof Page);
-		
+
 		$page = $loader->getBySlug('/blog/blah-blah', false);
 
 		$this->assertFalse($page);
@@ -78,11 +78,11 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 
 		// Check that a page instance is returned for a valid slug from a current page with history false
 		$loader = $this->_getLoader($paths);
-		
+
 		$pages = $loader->getByType(new Blog);
-		
+
 		$this->assertTrue(is_array($pages));
-		
+
 		foreach ($pages as $page) {
 			$this->assertTrue($page instanceof $page);
 		}
@@ -105,7 +105,7 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 		$page = $loader->getByID(2);
 		$children = $loader->getChildren($page);
 
-		$this->assertEquals(count($children),3);	
+		$this->assertEquals(count($children),3);
 	}
 
 	public function testGetSiblings()
@@ -127,9 +127,9 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 		// Return the blog page as this has children
 		$page = $loader->getByID(2);
 		$siblings = $loader->getSiblings($page);
-		
+
 		$this->assertTrue(is_array($siblings));
-		
+
 		foreach ($siblings as $pageObject) {
 			$this->assertTrue($pageObject instanceof Page);
 		}
@@ -137,7 +137,7 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 		$page = $loader->getByID(3);
 
 		$siblings = $loader->getSiblings($page);
-		
+
 		$this->assertTrue(is_array($siblings));
 		$this->assertEquals(count($siblings),2);
 
@@ -146,13 +146,13 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 		}
 
 	}
-	
+
 	protected function _getLoader(array $paths)
 	{
 		$connection = new ConnectionCsv;
 		$connection->setSequence($paths);
 		$query = new Query($connection);
-		
+
 		return new \Message\Mothership\CMS\Page\Loader('gb', $query);
 	}
 
