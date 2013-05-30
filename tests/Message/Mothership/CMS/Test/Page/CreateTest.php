@@ -4,6 +4,8 @@ namespace Message\Mothership\CMS\Test\Page;
 
 use Message\Mothership\CMS\Page\Create;
 
+use Message\Mothership\CMS\Event\PageEvent;
+
 use Message\Mothership\CMS\Test\PageType\Blog;
 
 use Message\Cog\DB\Adapter\Faux\Connection as FauxConnection;
@@ -55,7 +57,7 @@ class CreateTest extends \PHPUnit_Framework_TestCase
 
 	public function testInsertQuery()
 	{
-
+		$this->markTestIncomplete('It\'s tricky to test the query currently. Ideally I\'d be able to test that the query contains certain regex and tokens - unfortunately mocks don\'t support regex parameters');
 	}
 
 	public function testAddedToTree()
@@ -87,16 +89,19 @@ class CreateTest extends \PHPUnit_Framework_TestCase
 		$this->_create->create(new Blog, 'Another new blog page', $parent);
 	}
 
-	public function testEventDispatched()
+	public function testEventDispatchedAndCreateReturnsPageFromEvent()
 	{
-		// set up expectation on the mock
-	}
+		$trans = $this->getMock('Message\Cog\DB\Transaction', array('commit'), array(), '', false);
 
-	/**
-	 * @depends testEventDispatched
-	 */
-	public function testCreateReturnsPageFromEvent()
-	{
+		$this->_nestedSetHelper
+			->expects($this->any())
+			->method('insertChildAtEnd')
+			->will($this->returnValue($trans));
 
+		$page  = $this->_create->create(new Blog, 'A blog page');
+		$event = $this->_eventDispatcher->getDispatchedEvent(PageEvent::CREATE);
+
+		$this->assertInstanceOf('Message\Mothership\CMS\Event\PageEvent', $event);
+		$this->assertSame($page, $event->getPage());
 	}
 }
