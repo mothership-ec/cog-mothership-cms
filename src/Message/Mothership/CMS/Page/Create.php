@@ -17,7 +17,6 @@ use Message\Cog\DB\NestedSetHelper;
  *
  * @todo Implement the created_by setting. Is there a service for the current
  *       user?
- * @todo Pass the default Locale to Loader when it's instantiated and we have it
  */
 class Create
 {
@@ -60,12 +59,14 @@ class Create
 	 *
 	 * @return Page                        The page that was created (which may
 	 *                                     have been overwritten by an event listener)
+	 *
+	 * @todo Throw an exception if the parent's page type does not allow child elements
 	 */
 	public function create(PageTypeInterface $pageType, $title, Page $parent = null)
 	{
-		if ($parent && !$parent->type->allowChildPages) { // Is there a better property name?
+		#if ($parent && !$parent->type->allowChildPages) { // Is there a better property name? Is a property even good? What's the best waaaay?
 			//throw exception
-		}
+		#}
 
 		// Create the page without adding it to the nested set tree
 		$result = $this->_query->run('
