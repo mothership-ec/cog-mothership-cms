@@ -8,6 +8,8 @@ use Message\Cog\ValueObject\Authorship;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
 
+use DateTime;
+
 /**
  * Responsible for loading page data and returning prepared instances of `Page`.
  *
@@ -294,7 +296,6 @@ class Loader
 	 */
 	protected function _load($pageID)
 	{
-
 		$result = $this->_query->run('
 			SELECT
 				/* locale, */
@@ -349,56 +350,42 @@ class Loader
 			LEFT JOIN
 				page_access_group ON (page_access_group.page_id = page.page_id)
 			WHERE
-				page.page_id = ?i',
-			array($pageID));
+				page.page_id = ?i', $pageID);
 
-		if (count($result)) {
-
-			$page = new Page;
-
-			// We can use bind here to populate the Page object
-			$page = $result->bind($page);
-
-			$result = $result->first();
-
-			if ($result->deletedAt && !$this->_loadDeleted) {
-				return false;
-			}
-
-
-			// Create two DateTime objects for the publishDateRange
-			$from = new \DateTime(date('c', $result->publishAt));
-			$to = new \DateTime(date('c', $result->unpublishAt));
-
-			// Load the DateRange object for publishDateRange
-			$page->publishDateRange = new DateRange($from, $to);
-			$page->slug = new Slug($result->slug);
-
-			// Load authorship details
-			$authorship = new Authorship;
-			$authorship->create(new \DateTime(date('c', $result->createdAt)), $result->createdBy);
-			if ($result->updatedAt) {
-				$authorship->delete(new \DateTime(date('c', $result->updatedAt)), $result->updatedBy);
-			}
-			if ($result->deletedAt) {
-				$authorship->delete(new \DateTime(date('c', $result->deletedAt)), $result->deletedBy);
-			}
-
-			$page->authorship = $authorship;
-
-			// Remove unneeded properties from the page object which are loaded from the
-			// Db to fill vaious things. This is the neatest way I can think of doing it.
-			$blankPage = new Page;
-			foreach ($result as $k => $v) {
-				if (!property_exists($blankPage, $k)) {
-					unset($page->{$k});
-				}
-			}
-
-			return $page;
-
+		if (0 === count($result)) {
+			return false;
 		}
 
-		return false;
+		$page = new Page;
+		$data = $result->first();
+
+		// Skip deleted pages
+		if ($data->deletedAt && !$this->_loadDeleted) {
+			return false;
+		}
+
+		// Bind the properties that exist on Page
+		$result->bind($page);
+
+		// Load the DateRange object for publishDateRange
+		$page->publishDateRange = new DateRange(
+			new DateTime('@' . $data->publishAt),
+			new DateTime('@' . $data->unpublishAt)
+		);
+		$page->slug = new Slug($data->slug);
+
+		// Load authorship details
+		$page->authorship = new Authorship;
+		$page->authorship->create(new DateTime('@' . $data->createdAt), $data->createdBy);
+
+		if ($data->updatedAt) {
+			$page->authorship->delete(new DateTime('@' . $data->updatedAt), $data->updatedBy);
+		}
+
+		if ($data->deletedAt) {
+			$page->authorship->delete(new DateTime('@' . $data->deletedAt), $data->deletedBy);
+		}
+
+		return $page;
 	}
 }

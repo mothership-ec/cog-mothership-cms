@@ -2,8 +2,9 @@
 
 namespace Message\Mothership\CMS\Test\Page;
 
-use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Loader;
+
+use Message\Mothership\CMS\Page\Page;
 use Message\Cog\DB\Adapter\Faux\ConnectionCsv;
 use Message\Cog\DB\Query;
 use Message\Mothership\CMS\Test\PageType\Blog;
@@ -23,9 +24,9 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 
 		$loader = $this->_getLoader($paths);
 
-		// test that the corrcet instance is returned for a single ID
+		// test that the correct instance is returned for a single ID
 		$page = $loader->getByID(1);
-		$this->assertTrue($page instanceof Page);
+		$this->assertInstanceOf('Message\Mothership\CMS\Page\Page', $page);
 
 		// test that an array of Page objects are returned if an array of them are
 		// passed through
@@ -110,7 +111,6 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 
 	public function testGetSiblings()
 	{
-
 		$paths = array(
 			__DIR__.'/Data/full_table_results_siblings.csv',
 			__DIR__.'/Data/blog_sibling.csv',
@@ -153,7 +153,6 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 		$connection->setSequence($paths);
 		$query = new Query($connection);
 
-		return new \Message\Mothership\CMS\Page\Loader('gb', $query);
+		return new Loader('gb', $query);
 	}
-
 }
