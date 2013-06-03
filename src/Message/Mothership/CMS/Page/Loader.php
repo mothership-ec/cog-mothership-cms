@@ -378,7 +378,7 @@ class Loader
 			$authorship = new Authorship;
 			$authorship->create(new \DateTime(date('c', $result->createdAt)), $result->createdBy);
 			if ($result->updatedAt) {
-				$authorship->delete(new \DateTime(date('c', $result->updatedAt)), $result->updatedBy);
+				$authorship->update(new \DateTime(date('c', $result->updatedAt)), $result->updatedBy);
 			}
 			if ($result->deletedAt) {
 				$authorship->delete(new \DateTime(date('c', $result->deletedAt)), $result->deletedBy);

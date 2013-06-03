@@ -3,15 +3,21 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "c0f77d0fa442331d9101e3931152d6b0",
+    "hash": "6dff416fef4f2e1cfd597098b3f0eb90",
     "packages": [
         {
             "name": "message/cog",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@server.local:cog/cog.git",
-                "reference": "36dd7d4c3644a5d33534d44855218bcc6052f7e4"
+                "url": "git@github.com:messagedigital/cog.git",
+                "reference": "65061950522f8ec5c2a53f0bad18e95c3a4684e4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/messagedigital/cog/zipball/65061950522f8ec5c2a53f0bad18e95c3a4684e4",
+                "reference": "65061950522f8ec5c2a53f0bad18e95c3a4684e4",
+                "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
@@ -24,12 +30,15 @@
                 "pimple/pimple": "1.0.1",
                 "symfony/console": "2.1.*",
                 "symfony/event-dispatcher": "2.1.*",
+                "symfony/filesystem": "2.2.*",
+                "symfony/finder": "2.2.*",
                 "symfony/http-foundation": "2.1.*",
                 "symfony/process": "2.1.*",
                 "symfony/routing": "2.1.*",
                 "symfony/templating": "2.1.*",
                 "symfony/yaml": "2.1.*",
-                "treasure-chest/treasure-chest": "0.1.*"
+                "treasure-chest/treasure-chest": "0.1.*",
+                "twig/twig": "1.13.*"
             },
             "require-dev": {
                 "mikey179/vfsstream": "1.1.*"
@@ -65,20 +74,28 @@
             ],
             "support": {
                 "wiki": "http://server.local/wiki/projects/cog",
-                "issues": "http://server.local:3000/cog/issues"
+                "issues": "http://server.local:3000/cog/issues",
+                "source": "https://github.com/messagedigital/cog/tree/master"
             },
-            "time": "2013-05-23 14:09:35"
+            "time": "2013-06-03 14:41:25"
         },
         {
             "name": "message/cog-mothership-cp",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@server.local:cog/cog-mothership-cp.git",
-                "reference": "ef95573fa8c99df08e61b56968848aed024340dd"
+                "url": "git@github.com:messagedigital/cog-mothership-cp.git",
+                "reference": "ecf761b2fd0d7e1e61ce03806a1de9c51534d68e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/messagedigital/cog-mothership-cp/zipball/ecf761b2fd0d7e1e61ce03806a1de9c51534d68e",
+                "reference": "ecf761b2fd0d7e1e61ce03806a1de9c51534d68e",
+                "shasum": ""
             },
             "require": {
                 "message/cog": "dev-master",
+                "message/cog-user": "dev-master",
                 "php": ">=5.3.0"
             },
             "type": "library",
@@ -105,17 +122,24 @@
             ],
             "support": {
                 "wiki": "http://server.local/wiki/projects/cog",
-                "issues": "http://server.local:3000/cog/cog-mothership-cp/issues"
+                "issues": "http://server.local:3000/cog/cog-mothership-cp/issues",
+                "source": "https://github.com/messagedigital/cog-mothership-cp/tree/master"
             },
-            "time": "2013-05-23 16:54:40"
+            "time": "2013-06-03 11:16:04"
         },
         {
             "name": "message/cog-user",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@server.local:cog/cog-user.git",
-                "reference": "c62d8ecd9240283825146ce8293135ed0c430daa"
+                "url": "git@github.com:messagedigital/cog-user.git",
+                "reference": "df4bd7d081271ec64a4017b36fe192ecd0ca6375"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/messagedigital/cog-user/zipball/df4bd7d081271ec64a4017b36fe192ecd0ca6375",
+                "reference": "df4bd7d081271ec64a4017b36fe192ecd0ca6375",
+                "shasum": ""
             },
             "require": {
                 "message/cog": "dev-master",
@@ -145,9 +169,10 @@
             ],
             "support": {
                 "wiki": "http://server.local/wiki/projects/cog",
-                "issues": "http://server.local:3000/cog/cog-user/issues"
+                "issues": "http://server.local:3000/cog/cog-user/issues",
+                "source": "https://github.com/messagedigital/cog-user/tree/master"
             },
-            "time": "2013-05-23 16:53:20"
+            "time": "2013-06-03 13:56:29"
         },
         {
             "name": "mtdowling/cron-expression",
@@ -243,12 +268,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "fcbb61c19246ca26512d3d7535a041909914f2c7"
+                "reference": "v2.1.11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/fcbb61c19246ca26512d3d7535a041909914f2c7",
-                "reference": "fcbb61c19246ca26512d3d7535a041909914f2c7",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/v2.1.11",
+                "reference": "v2.1.11",
                 "shasum": ""
             },
             "require": {
@@ -276,7 +301,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2013-05-17 21:54:02"
+            "time": "2013-05-26 18:42:07"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -285,12 +310,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "v2.1.10"
+                "reference": "v2.1.11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/v2.1.10",
-                "reference": "v2.1.10",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/v2.1.11",
+                "reference": "v2.1.11",
                 "shasum": ""
             },
             "require": {
@@ -328,18 +353,112 @@
             "time": "2013-02-11 11:26:14"
         },
         {
+            "name": "symfony/filesystem",
+            "version": "2.2.x-dev",
+            "target-dir": "Symfony/Component/Filesystem",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Filesystem.git",
+                "reference": "v2.2.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/v2.2.2",
+                "reference": "v2.2.2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Filesystem\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Filesystem Component",
+            "homepage": "http://symfony.com",
+            "time": "2013-05-06 20:02:13"
+        },
+        {
+            "name": "symfony/finder",
+            "version": "2.2.x-dev",
+            "target-dir": "Symfony/Component/Finder",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Finder.git",
+                "reference": "v2.2.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Finder/zipball/v2.2.2",
+                "reference": "v2.2.2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Finder\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Finder Component",
+            "homepage": "http://symfony.com",
+            "time": "2013-05-27 20:26:32"
+        },
+        {
             "name": "symfony/http-foundation",
             "version": "2.1.x-dev",
             "target-dir": "Symfony/Component/HttpFoundation",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpFoundation.git",
-                "reference": "v2.1.10"
+                "reference": "v2.1.11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/v2.1.10",
-                "reference": "v2.1.10",
+                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/v2.1.11",
+                "reference": "v2.1.11",
                 "shasum": ""
             },
             "require": {
@@ -368,7 +487,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "http://symfony.com",
-            "time": "2013-04-30 17:01:33"
+            "time": "2013-05-26 18:42:07"
         },
         {
             "name": "symfony/process",
@@ -472,12 +591,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Templating.git",
-                "reference": "v2.1.10"
+                "reference": "v2.1.11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Templating/zipball/v2.1.10",
-                "reference": "v2.1.10",
+                "url": "https://api.github.com/repos/symfony/Templating/zipball/v2.1.11",
+                "reference": "v2.1.11",
                 "shasum": ""
             },
             "require": {
@@ -514,12 +633,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "347a7a02204433c6926ecc3f13e805bdc30e8f9f"
+                "reference": "v2.1.11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/347a7a02204433c6926ecc3f13e805bdc30e8f9f",
-                "reference": "347a7a02204433c6926ecc3f13e805bdc30e8f9f",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/v2.1.11",
+                "reference": "v2.1.11",
                 "shasum": ""
             },
             "require": {
@@ -596,6 +715,55 @@
                 "memcached"
             ],
             "time": "2013-01-25 17:27:49"
+        },
+        {
+            "name": "twig/twig",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fabpot/Twig.git",
+                "reference": "fca6a9562dc032a7ba3ab8278b731b72efa8bd9c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fabpot/Twig/zipball/fca6a9562dc032a7ba3ab8278b731b72efa8bd9c",
+                "reference": "fca6a9562dc032a7ba3ab8278b731b72efa8bd9c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.13-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Twig_": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Armin Ronacher",
+                    "email": "armin.ronacher@active-4.com"
+                }
+            ],
+            "description": "Twig, the flexible, fast, and secure template language for PHP",
+            "homepage": "http://twig.sensiolabs.org",
+            "keywords": [
+                "templating"
+            ],
+            "time": "2013-05-29 14:58:12"
         }
     ],
     "packages-dev": [
@@ -608,7 +776,8 @@
     "stability-flags": {
         "message/cog": 20,
         "message/cog-user": 20,
-        "message/cog-mothership-cp": 20
+        "message/cog-mothership-cp": 20,
+        "message/cog-mothership-file-manager": 20
     },
     "platform": {
         "php": ">=5.3.0"
