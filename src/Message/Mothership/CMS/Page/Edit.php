@@ -31,6 +31,9 @@ class Edit {
 	/**
 	 * Pass thorugh the updated Page object and save it in the DB
 	 *
+	 * @todo Need o do something with the nested set helper when moving a page
+	 *       and things
+	 *
 	 * @param  Page   $page Page object to be update
 	 * @return Page|false   Updated Page object
 	 */
@@ -39,35 +42,7 @@ class Edit {
 
 		// update the updated datetime
 		$page->authorship->update(new \DateTime, 1);
-// var_dump(array(
-// 					'pageID' => $page->id,
-// 					'title' => $page->title,
-// 					'type' => $page->type,
-// 					'publishState' => $page->publishState,
-// 					'publishAt' => $page->publishDateRange->getStart()->getTimestamp(),
-// 					'unpublishAt' => $page->publishDateRange->getEnd()->getTimestamp(),
-// 					'updatedAt'	=> $page->authorship->updatedAt()->getTimestamp(),
-// 					'updatedBy' => $page->authorship->updatedBy(),
-// 					'slug' => $page->slug->getLastSegment(),
-// 					'left' => $page->left,
-// 					'right' => $page->right,
-// 					'depth' => $page->depth,
-// 					'metaTitle' => $page->metaTitle,
-// 					'metaDescription' => $page->metaDescription,
-// 					'metaHtmlHead' => $page->metaHtmlHead,
-// 					'metaHtmlFoot' => $page->metaHtmlFoot,
-// 					'visibilitySearch' => $page->visibilitySearch,
-// 					'visibilityMenu' => $page->visibilityMenu,
-// 					'visibilityAggregator' => $page->visibilityAggregator,
-// 					'password' => $page->password,
-// 					'access' => $page->access,
-// 					'accessGroups' => $page->accessGroups,
-// 					'commentsEnabled' => $page->commentsEnabled,
-// 					'commentsAccess' => $page->commentsAccess,
-// 					'commentsAccessGroups' => $page->commentsAccessGroups,
-// 					'commentsApproval' => $page->commentsApproval,
-// 					'commentsExpiry' => $page->commentsExpiry
-// 		)); exit;
+
 		$result = $this->_query->run('
 			UPDATE
 				page
@@ -137,7 +112,7 @@ class Edit {
 		return $result->affected() ? $page : false;
 	}
 
-	public function publish(Page $page)
+	public function publish(Page $page, $userID = null)
 	{
 		// If there is a unpublished date in the furture then keep it and set
 		// publish date to now. If unpublish is in the past or null then set it
