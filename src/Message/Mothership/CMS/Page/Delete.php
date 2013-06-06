@@ -7,6 +7,8 @@ use Message\Mothership\CMS\Event\Event;
 use Message\Mothership\CMS\Page\Loader;
 use Message\Mothership\CMS\Event\PageEvent;
 
+use Message\User\User;
+
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;
 
@@ -21,6 +23,7 @@ class Delete
 {
 	protected $_query;
 	protected $_eventDispatcher;
+	protected $_user;
 
 	/**
 	 * Constructor.
@@ -28,10 +31,11 @@ class Delete
 	 * @param DBQuery             $query           The database query instance to use
 	 * @param DispatcherInterface $eventDispatcher The event dispatcher
 	 */
-	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher)
+	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher, User $user)
 	{
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
+		$this->_user			= $user;
 	}
 
 	/**
@@ -49,12 +53,14 @@ class Delete
 		// Check that the page doesn't have children pages
 		$loader = new Loader('gb', $this->_query);
 
+		// $user = $this->_services['user.current'];
+
 		// Throw an exception if it does
 		if ($loader->getChildren($page)) {
 			throw new \InvalidArgumentException(sprintf('Cannot delete page #%i because it has children pages', $page->id));
 		}
 
-		$page->authorship->delete(new \Datetime, 0);
+		$page->authorship->delete(new \Datetime, $user->id);
 		$result = $this->_query->run('
 			UPDATE
 				page
