@@ -7,6 +7,7 @@ use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
+use Message\Cog\DB\Result;
 
 use DateTime;
 
@@ -78,17 +79,8 @@ class Loader
 	 */
 	public function getByID($pageIDs)
 	{
-		if (!is_array($pageIDs)) {
-			return $this->_load($pageIDs);
-		}
-
-		$return = array();
-
-		foreach ($pageIDs as $pageID) {
-			$return[$pageID] = $this->_load($pageID);
-		}
-
-		return array_filter($return);
+		$this->_returnAsArray = is_array($pageIDs);
+		return $this->_load($pageIDs);
 	}
 
 	/**
@@ -289,10 +281,11 @@ class Loader
 
 
 	/**
-	 * Load the given page from the DB and populate the Page object
+	 * Load all the given pages and pass the results onto the _loadPage method
 	 *
-	 * @param int 			$pageID id of the page to load
-	 * @return Page|false 	populated Page object or false if not found
+	 * @param int|array		$pageID id of the page to load
+	 * @return Page|false 			populated Page object or array of Page
+	 *                              objects or false if not found
 	 */
 	protected function _load($pageID)
 	{
@@ -350,42 +343,56 @@ class Loader
 			LEFT JOIN
 				page_access_group ON (page_access_group.page_id = page.page_id)
 			WHERE
-				page.page_id = ?i', $pageID);
+				page.page_id IN (?ij)',
+				array(
+					(array) $pageID,
+				)
+			);
 
 		if (0 === count($result)) {
 			return false;
 		}
 
-		$page = new Page;
-		$data = $result->first();
+		return $this->_loadPage($result);
+	}
 
-		// Skip deleted pages
-		if ($data->deletedAt && !$this->_loadDeleted) {
-			return false;
+	/**
+	 * Load the results into Page objects and return them
+	 *
+	 * @param  Result 		$results db result of the pages to load
+	 * @return Page|array   array of Page objects or somtimes singular
+	 */
+	protected function _loadPage(Result $results)
+	{
+		$pages = $results->bindTo('\Message\Mothership\CMS\Page\Page');
+
+		foreach ($results as $key => $data) {
+
+			// Skip deleted pages
+			if ($data->deletedAt && !$this->_loadDeleted) {
+				unset($pages[$key]);
+				continue;
+			}
+
+			// Load the DateRange object for publishDateRange
+			$pages[$key]->publishDateRange = new DateRange(
+				new DateTime('@' . $data->publishAt),
+				new DateTime('@' . $data->unpublishAt)
+			);
+			$pages[$key]->slug = new Slug($data->slug);
+
+			// Load authorship details
+			$pages[$key]->authorship = new Authorship;
+			$pages[$key]->authorship->create(new DateTime('@' . $data->createdAt), $data->createdBy);
+
+			if ($data->updatedAt) {
+				$pages[$key]->authorship->delete(new DateTime('@' . $data->updatedAt), $data->updatedBy);
+			}
+
+			if ($data->deletedAt) {
+				$pages[$key]->authorship->delete(new DateTime('@' . $data->deletedAt), $data->deletedBy);
+			}
 		}
-
-		// Bind the properties that exist on Page
-		$result->bind($page);
-
-		// Load the DateRange object for publishDateRange
-		$page->publishDateRange = new DateRange(
-			new DateTime('@' . $data->publishAt),
-			new DateTime('@' . $data->unpublishAt)
-		);
-		$page->slug = new Slug($data->slug);
-
-		// Load authorship details
-		$page->authorship = new Authorship;
-		$page->authorship->create(new DateTime('@' . $data->createdAt), $data->createdBy);
-
-		if ($data->updatedAt) {
-			$page->authorship->delete(new DateTime('@' . $data->updatedAt), $data->updatedBy);
-		}
-
-		if ($data->deletedAt) {
-			$page->authorship->delete(new DateTime('@' . $data->deletedAt), $data->deletedBy);
-		}
-
-		return $page;
+		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
 	}
 }
