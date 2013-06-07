@@ -386,7 +386,7 @@ class Loader
 			$pages[$key]->authorship->create(new DateTime('@' . $data->createdAt), $data->createdBy);
 
 			if ($data->updatedAt) {
-				$pages[$key]->authorship->delete(new DateTime('@' . $data->updatedAt), $data->updatedBy);
+				$pages[$key]->authorship->update(new DateTime('@' . $data->updatedAt), $data->updatedBy);
 			}
 
 			if ($data->deletedAt) {
