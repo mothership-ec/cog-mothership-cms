@@ -4,7 +4,7 @@ namespace Message\Mothership\CMS\Test\Page;
 
 use Message\Mothership\CMS\Page\Create;
 
-use Message\Mothership\CMS\Event\PageEvent;
+use Message\Mothership\CMS\Page\Event;
 
 use Message\Mothership\CMS\Test\PageType\Blog;
 
@@ -30,7 +30,10 @@ class CreateTest extends \PHPUnit_Framework_TestCase
 		$this->_query           = $this->getMock('Message\Cog\DB\Query', array('query'), array(
 			new FauxConnection(array('insertId' => 4))
 		));
-		$this->_nestedSetHelper = $this->getMock('Message\Cog\DB\NestedSetHelper', array('insertChildAtEnd'));
+		$this->_nestedSetHelper = $this->getMock('Message\Cog\DB\NestedSetHelper', array('insertChildAtEnd'), array(
+			$this->_query,
+			$this->getMock('Message\Cog\DB\Transaction', array(), array(), '', false)
+		));
 		$this->_loader          = $this->getMock('Message\Mothership\CMS\Page\Loader', array('getByID'), array(), '', false);
 		$this->_create          = new Create(
 			$this->_loader,
@@ -99,9 +102,9 @@ class CreateTest extends \PHPUnit_Framework_TestCase
 			->will($this->returnValue($trans));
 
 		$page  = $this->_create->create(new Blog, 'A blog page');
-		$event = $this->_eventDispatcher->getDispatchedEvent(PageEvent::CREATE);
+		$event = $this->_eventDispatcher->getDispatchedEvent(Event::CREATE);
 
-		$this->assertInstanceOf('Message\Mothership\CMS\Event\PageEvent', $event);
+		$this->assertInstanceOf('Message\Mothership\CMS\Page\Event', $event);
 		$this->assertSame($page, $event->getPage());
 	}
 }

@@ -19,15 +19,15 @@ use DateTime;
  * <code>
  * # Load by pageID
  * $loader = new Loader($locale, $query);
- * $page = $loader->getByID(1); // returns pageID 1
+ * $page = $loader->getByID(1); // returns page object
  *
  * # Load deleted page - deleted pages are not loaded by default
  * $page = $loader->getByID(3); // returns false as deleted so do the following
- * $page = $loader->includeDeleted(true)->getByID(3); // this will now return the deletd page object
+ * $page = $loader->includeDeleted(true)->getByID(3); // this will now return the deleted page object
  *
  * # Load by slug
  * // you can use either a slug object or a string
- * $slug = new Slug('/blog/hello-world);
+ * $slug = new Slug('/blog/hello-world');
  * $page = $loader->getBySlug($slug); // returns page object
  *
  * # You can then load that pages siblings, or the children
@@ -36,7 +36,7 @@ use DateTime;
  * $children = $loader->includeDeleted(true)->getChildren($page); // returns array of Page objects inc deleted pages
  *
  * # You can also load by type
- * $pages = $loader->getByType(new PageTypeInterface\Blog); // Returns array of page types
+ * $pages = $loader->getByType(new PageType\Blog); // returns array of page types
  * </code>
  *
  * @author Joe Holdcroft <joe@message.co.uk>
@@ -80,6 +80,7 @@ class Loader
 	public function getByID($pageIDs)
 	{
 		$this->_returnAsArray = is_array($pageIDs);
+
 		return $this->_load($pageIDs);
 	}
 

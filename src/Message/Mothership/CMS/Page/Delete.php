@@ -5,7 +5,6 @@ namespace Message\Mothership\CMS\Page;
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Event\Event;
 use Message\Mothership\CMS\Page\Loader;
-use Message\Mothership\CMS\Event\PageEvent;
 
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;
@@ -49,7 +48,6 @@ class Delete
 	 */
 	public function delete(Page $page)
 	{
-
 		// Throw an exception if it does
 		if ($this->_loader->getChildren($page)) {
 			throw new \InvalidArgumentException(sprintf('Cannot delete page #%i because it has children pages', $page->id));
@@ -71,8 +69,8 @@ class Delete
 		));
 
 		$this->_eventDispatcher->dispatch(
-			PageEvent::DELETE,
-			new PageEvent($page)
+			Event::DELETE,
+			new Event($page)
 		);
 
 		return $page;
@@ -102,8 +100,8 @@ class Delete
 		', $page->id);
 
 		$this->_eventDispatcher->dispatch(
-			PageEvent::RESTORE,
-			new PageEvent($page)
+			Event::RESTORE,
+			new Event($page)
 		);
 
 		return $page;

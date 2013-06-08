@@ -3,8 +3,6 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\PageTypeInterface;
-use Message\Mothership\CMS\Event\Event;
-use Message\Mothership\CMS\Event\PageEvent;
 
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;
@@ -48,9 +46,9 @@ class Create
 	 *
 	 * The newly created page is always added to the end of the target section.
 	 *
-	 * Once the page is created, the event defined as `Event\PageEvent::CREATE`
-	 * is fired with the instance of the `Page` that was created. Whatever the
-	 * event returns as the `Page` instance is then returned.
+	 * Once the page is created, the event defined as `Event::CREATE` is fired
+	 * with the instance of the `Page` that was created. Whatever the event
+	 * returns as the `Page` instance is then returned.
 	 *
 	 * @param  PageTypeInterface $pageType The page type to use for the page
 	 * @param  string            $title    The page title
@@ -89,11 +87,11 @@ class Create
 		$this->_nestedSetHelper->insertChildAtEnd($pageID, $parent ? $parent->id : false, true)->commit();
 
 		$page  = $this->_loader->getByID($pageID);
-		$event = new PageEvent($page);
+		$event = new Event($page);
 
 		// Dispatch the page created event
 		$this->_eventDispatcher->dispatch(
-			PageEvent::CREATE,
+			$event::CREATE,
 			$event
 		);
 
