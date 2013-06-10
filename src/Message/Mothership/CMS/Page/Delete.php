@@ -23,7 +23,7 @@ class Delete
 {
 	protected $_query;
 	protected $_eventDispatcher;
-	protected $_user;
+	protected $_currentUser;
 
 	/**
 	 * Constructor.
@@ -31,11 +31,11 @@ class Delete
 	 * @param DBQuery             $query           The database query instance to use
 	 * @param DispatcherInterface $eventDispatcher The event dispatcher
 	 */
-	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher, User $user)
+	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher, User $user = null)
 	{
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
-		$this->_user			= $user;
+		$this->_currentUser		= $user;
 	}
 
 	/**
@@ -53,14 +53,18 @@ class Delete
 		// Check that the page doesn't have children pages
 		$loader = new Loader('gb', $this->_query);
 
-		// $user = $this->_services['user.current'];
-
 		// Throw an exception if it does
 		if ($loader->getChildren($page)) {
 			throw new \InvalidArgumentException(sprintf('Cannot delete page #%i because it has children pages', $page->id));
 		}
 
-		$page->authorship->delete(new \Datetime, $user->id);
+		if(isset($this->_currentUser)) {
+			$user = $this->_currentUser->id;
+		} else {
+			$user = null;
+		}
+
+		$page->authorship->delete(new \Datetime, $user);
 		$result = $this->_query->run('
 			UPDATE
 				page
