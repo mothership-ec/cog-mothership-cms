@@ -3,13 +3,13 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\PageTypeInterface;
+
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
+use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
 use Message\Cog\DB\Result;
-
-use DateTime;
 
 /**
  * Responsible for loading page data and returning prepared instances of `Page`.
@@ -377,21 +377,21 @@ class Loader
 
 			// Load the DateRange object for publishDateRange
 			$pages[$key]->publishDateRange = new DateRange(
-				new DateTime('@' . $data->publishAt),
-				new DateTime('@' . $data->unpublishAt)
+				new DateTimeImmutable('@' . $data->publishAt),
+				new DateTimeImmutable('@' . $data->unpublishAt)
 			);
 			$pages[$key]->slug = new Slug($data->slug);
 
 			// Load authorship details
 			$pages[$key]->authorship = new Authorship;
-			$pages[$key]->authorship->create(new DateTime('@' . $data->createdAt), $data->createdBy);
+			$pages[$key]->authorship->create(new DateTimeImmutable('@' . $data->createdAt), $data->createdBy);
 
 			if ($data->updatedAt) {
-				$pages[$key]->authorship->update(new DateTime('@' . $data->updatedAt), $data->updatedBy);
+				$pages[$key]->authorship->update(new DateTimeImmutable('@' . $data->updatedAt), $data->updatedBy);
 			}
 
 			if ($data->deletedAt) {
-				$pages[$key]->authorship->delete(new DateTime('@' . $data->deletedAt), $data->deletedBy);
+				$pages[$key]->authorship->delete(new DateTimeImmutable('@' . $data->deletedAt), $data->deletedBy);
 			}
 		}
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
