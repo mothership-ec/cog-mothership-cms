@@ -98,7 +98,14 @@ class Delete
 	 */
 	public function restore(Page $page)
 	{
-		$page->authorship->restore();
+
+		if(isset($this->_currentUser)) {
+			$user = $this->_currentUser->id;
+		} else {
+			$user = null;
+		}
+
+		$page->authorship->restore(new \Datetime, $user);
 
 		$result = $this->_query->run('
 			UPDATE
