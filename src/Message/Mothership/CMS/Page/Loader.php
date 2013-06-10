@@ -87,30 +87,36 @@ class Loader
 	/**
 	 * Get a page by its slug.
 	 *
-	 * @param string  $slug		 The slug to check for
+	 * @param string  $slug		 	The slug to check for
 	 * @param boolean $checkHistory True to check through historical slug data
 	 *
-	 * @return Page|false			  Prepared `Page` instance, or false if not found
+	 * @return Page|false			Prepared `Page` instance, or false if not found
 	 */
 	public function getBySlug($slug, $checkHistory = true)
 	{
-		$path = trim($slug, '/');
-		$parts = array_reverse(explode('/', $path));
-		$base	 = array_shift($parts);
+		// Clean up the slug
+		$path 	= trim($slug, '/');
+		// Turn it into an array and reverse it.
+		$parts 	= array_reverse(explode('/', $path));
+		$base 	= array_shift($parts);
 
-		$joins = '';
-		$where = '';
+		$joins 	= '';
+		$where 	= '';
 		$params = array(
 			$base,
 			count($parts),
 		);
 
+		// Loop thorough the parts of the url and build joins in order to get
+		// all the parent slugs so we can build the full slug because we do not
+		// store the full slug in the db
 		for ($i = 2; $i <= count($parts) +1; $i++) {
 			$joins.= " JOIN page level$i ON (level$i.position_left < level".($i-1).".position_left AND level$i.position_right > level".($i-1).".position_right)";
 			$where.= " AND level$i.slug = ?s";
 			$params[] = $parts[$i-2];
 		}
 
+		// Run the query and add in the joins we made above
 		$result = $this->_query->run('
 			SELECT
 				level1.page_id
@@ -128,13 +134,11 @@ class Loader
 		if (count($result)) {
 			return $this->getByID($result->first()->page_id);
 		}
-
 		// If no result has been returned at this point and $checkHistory is true
 		// then we will check the history to see if it existed in the past
 		if ($checkHistory && $page = $this->checkSlugHistory($slug)) {
 			return $page;
 		}
-
 		return false;
 	}
 
