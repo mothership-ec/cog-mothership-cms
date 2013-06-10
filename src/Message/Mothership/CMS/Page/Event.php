@@ -9,10 +9,12 @@ namespace Message\Mothership\CMS\Page;
  */
 class Event extends \Message\Cog\Event\Event
 {
-	const CREATE  = 'cms.page.create';
-	const EDIT    = 'cms.page.edit';
-	const DELETE  = 'cms.page.delete';
-	const RESTORE = 'cms.page.restore';
+	const CREATE    = 'cms.page.create';
+	const EDIT      = 'cms.page.edit';
+	const DELETE    = 'cms.page.delete';
+	const RESTORE   = 'cms.page.restore';
+	const PUBLISH   = 'cms.page.publish';
+	const UNPUBLISH = 'cms.page.unpublish';
 
 	protected $_page;
 
