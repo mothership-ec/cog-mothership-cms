@@ -11,9 +11,19 @@ class Blog implements PageTypeInterface
 		return 'blog';
 	}
 
+	public function getDisplayName()
+	{
+		return 'Blog';
+	}
+
 	public function getDescription()
 	{
 		return 'A blog page type, for use when unit testing.';
+	}
+
+	public function allowChildren()
+	{
+		return false;
 	}
 
 	public function setFields(\Message\Mothership\CMS\PageTypeFieldFactory $factory)
@@ -29,13 +39,13 @@ class Blog implements PageTypeInterface
 
 		$group = new \Message\Mothership\CMS\Field\Group('promo', 'Promotions');
 		$group
+			->setDescription('These are promotions to make people buy your stuff!')
 			->setRepeatable(true, 3, 6)
-			->add(new \Message\Mothership\CMS\Field\Type\Text('title', 'Promotion title'), true)
+			->add(new \Message\Mothership\CMS\Field\Type\Text('title', 'Promotion title'), true) // second param here could mean "this is the title field"
 			->add(new \Message\Mothership\CMS\Field\Type\RichText('description', 'Promotion description'))
 			->add(new \Message\Mothership\CMS\Field\Type\Link('url', 'Promotion link destination'))
-			->add(new \Message\Mothership\CMS\Field\Type\File('file', 'Promotion background image')); // some way to tell it to only show image files?
-
-		return array($strapline, $group);
+			->add($factory->getField('file', 'file', 'Promotion background image')->setAllowedTypes(\Message\Mothership\FileManager\Type::IMAGE))
+			->setTitleField('title'); // defaults to anything named 'title', if set
 
 		// quick style
 		$factory->addField('text', 'strapline', 'The catchy strapline')
@@ -48,6 +58,6 @@ class Blog implements PageTypeInterface
 			->add($factory->getField('link', 'url', 'Link destination'))
 			->add($factory->getField('file', 'image', 'Background image')->setAllowedTypes('image'));
 
-		return $factory;
+		return $factory; // not necessary
 	}
 }

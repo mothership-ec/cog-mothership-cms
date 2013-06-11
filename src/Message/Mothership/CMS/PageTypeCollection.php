@@ -16,12 +16,10 @@ class PageTypeCollection implements \IteratorAggregate, \Countable
 	 *
 	 * @param array|null $pageTypes An array of page types to add
 	 */
-	public function __construct(array $pageTypes = null)
+	public function __construct(array $pageTypes = array())
 	{
-		if (is_array($pageTypes)) {
-			foreach ($pageTypes as $name => $pageType) {
-				$this->add($pageType);
-			}
+		foreach ($pageTypes as $name => $pageType) {
+			$this->add($pageType);
 		}
 	}
 
@@ -31,12 +29,37 @@ class PageTypeCollection implements \IteratorAggregate, \Countable
 	 * @param PageTypeInterface $pageType The page type to add
 	 *
 	 * @return PageTypeCollection         Returns $this for chainability
+	 *
+	 * @throws \InvalidArgumentException  If a page type with the same name has
+	 *                                    already been set on this collection
 	 */
 	public function add(PageTypeInterface $pageType)
 	{
-		$this->_pageTypes[] = $pageType;
+		if (isset($this->_pageTypes[$pageType->getName()])) {
+			throw new \InvalidArgumentException(sprintf('Page type `%s` is already defined', $pageType->getName()));
+		}
+
+		$this->_pageTypes[$pageType->getName()] = $pageType;
 
 		return $this;
+	}
+
+	/**
+	 * Get a page type set on this collection by name.
+	 *
+	 * @param  string $name      The page type name
+	 *
+	 * @return PageTypeInterface The page type instance
+	 *
+	 * @throws \InvalidArgumentException If the page type has not been set
+	 */
+	public function get($name)
+	{
+		if (!isset($this->_pageTypes[$name])) {
+			throw new \InvalidArgumentException(sprintf('Page type `%s` not set on collection', $name));
+		}
+
+		return $this->_pageTypes[$name];
 	}
 
 	/**
