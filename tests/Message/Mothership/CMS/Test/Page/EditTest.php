@@ -19,6 +19,23 @@ class EditTest extends \PHPUnit_Framework_TestCase
 	{
 		$connection = new Connection(array('affectedRows' => 1));
 		// For testDuplicateFieldNameException
+		$connection->setPattern('/page_id([\s]+?)IN \(1\)/', array(
+			array(
+				'id'			=> 1,
+				'publishAt'     => strtotime('-1 Day'),
+				'unpublishAt'   => strtotime('+1 day'),
+				'createdBy'     => time(),
+				'createdAt'     => time(),
+				'deletedBy'		=> null,
+				'deletedAt'		=> null,
+				'updatedBy'     => null,
+				'updatedAt'     => null,
+				'slug'			=> '/blog/hello-world',
+			),
+		));
+		$loader = new Loader('gb', new Query($connection));
+		$page = $loader->getByID(1);
+		$despatcher = new FauxDispatcher;
 		$connection->setPattern('/page_id([\s]+?)= 1/', array(
 			array(
 				'id'			=> 1,
@@ -32,24 +49,7 @@ class EditTest extends \PHPUnit_Framework_TestCase
 				'updatedAt'     => null,
 				'slug'			=> '/blog/hello-world',
 			),
-			array(
-				'id'			=> 1,
-				'publishAt'     => strtotime('-1 Day'),
-				'unpublishAt'   => strtotime('+1 day'),
-				'createdBy'     => time(),
-				'createdAt'     => time(),
-				'deletedBy'		=> null,
-				'deletedAt'		=> null,
-				'updatedBy'     => 1,
-				'updatedAt'     => time(),
-				'slug'			=> '/blog/hello-world-edit',
-				'title'			=> 'updated',
-			),
 		));
-		$loader = new Loader('gb', new Query($connection));
-		$page = $loader->getByID(1);
-
-		$despatcher = new FauxDispatcher;
 		$edit = new Edit($loader, new Query($connection), $despatcher);
 		$page->title = 'updated';
 
@@ -67,11 +67,25 @@ class EditTest extends \PHPUnit_Framework_TestCase
 	{
 		$connection = new Connection(array('affectedRows' => 1));
 		// For testDuplicateFieldNameException
-		$connection->setPattern('/page_id([\s]+?)= 1/', array(
+		$connection->setPattern('/page_id([\s]+?)IN \(1\)/', array(
 			array(
 				'id'			=> 1,
 				'publishAt'     => strtotime('-2 Day'),
 				'unpublishAt'   => strtotime('-1 day'),
+				'createdBy'     => time(),
+				'createdAt'     => time(),
+				'deletedBy'		=> null,
+				'deletedAt'		=> null,
+				'updatedBy'     => null,
+				'updatedAt'     => null,
+				'slug'			=> '/blog/hello-world',
+			),
+		));
+		$connection->setPattern('/page_id([\s]+?)= 1/', array(
+			array(
+				'id'			=> 1,
+				'publishAt'     => strtotime('-1 Day'),
+				'unpublishAt'   => strtotime('+1 day'),
 				'createdBy'     => time(),
 				'createdAt'     => time(),
 				'deletedBy'		=> null,
@@ -107,7 +121,7 @@ class EditTest extends \PHPUnit_Framework_TestCase
 	{
 		$connection = new Connection(array('affectedRows' => 1));
 		// For testDuplicateFieldNameException
-		$connection->setPattern('/page_id([\s]+?)= 1/', array(
+		$connection->setPattern('/page_id([\s]+?)IN \(1\)/', array(
 			array(
 				'id'			=> 1,
 				'publishAt'     => strtotime('+2 Day'),
@@ -121,7 +135,20 @@ class EditTest extends \PHPUnit_Framework_TestCase
 				'slug'			=> '/blog/hello-world',
 			),
 		));
-
+		$connection->setPattern('/page_id([\s]+?)= 1/', array(
+			array(
+				'id'			=> 1,
+				'publishAt'     => strtotime('-1 Day'),
+				'unpublishAt'   => strtotime('+1 day'),
+				'createdBy'     => time(),
+				'createdAt'     => time(),
+				'deletedBy'		=> null,
+				'deletedAt'		=> null,
+				'updatedBy'     => null,
+				'updatedAt'     => null,
+				'slug'			=> '/blog/hello-world',
+			),
+		));
 		$loader = new Loader('gb', new Query($connection));
 		$page = $loader->getByID(1);
 

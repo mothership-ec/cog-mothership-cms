@@ -3,8 +3,7 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\PageTypeInterface;
-use Message\Mothership\CMS\Event\Event;
-use Message\Mothership\CMS\Event\PageEvent;
+use Message\Mothership\CMS\Page\Event;
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\DB\NestedSetHelper;
@@ -108,11 +107,11 @@ class Edit {
 					'commentsExpiry' => $page->commentsExpiry
 		));
 
-		$event = new PageEvent($page);
+		$event = new Event($page);
 
 		// Dispatch the edit event
 		$this->_eventDispatcher->dispatch(
-			PageEvent::EDIT,
+			Event::EDIT,
 			$event
 		);
 
