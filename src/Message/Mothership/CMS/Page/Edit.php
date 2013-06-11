@@ -108,6 +108,14 @@ class Edit {
 					'commentsExpiry' => $page->commentsExpiry
 		));
 
+		$event = new PageEvent($page);
+
+		// Dispatch the edit event
+		$this->_eventDispatcher->dispatch(
+			PageEvent::EDIT,
+			$event
+		);
+
 		return $result->affected() ? $page : false;
 	}
 
