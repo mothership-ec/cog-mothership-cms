@@ -12,9 +12,25 @@ namespace Message\Mothership\CMS\Field;
  */
 interface FieldInterface
 {
+	/**
+	 * Constructor.
+	 *
+	 * @param string $name  Identifier name for this field (unique to the page type)
+	 * @param string $label An optional human-readable label for this field
+	 */
 	public function __construct($name, $label = null);
 
+	/**
+	 * Get the identifier name for this field.
+	 *
+	 * @return string
+	 */
 	public function getName();
 
+	/**
+	 * Get the human-readable label for this field.
+	 *
+	 * @return string
+	 */
 	public function getLabel();
 }

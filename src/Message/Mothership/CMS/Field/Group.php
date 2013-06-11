@@ -109,11 +109,17 @@ class Group implements FieldInterface
 		return $this->_fields[$name];
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function getName()
 	{
 		return $this->_name;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function getLabel()
 	{
 		return $this->_label;

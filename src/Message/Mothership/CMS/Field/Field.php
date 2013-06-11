@@ -57,11 +57,17 @@ abstract class Field implements FieldInterface
 		return $this->_value;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function getName()
 	{
 		return $this->_name;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function getLabel()
 	{
 		return $this->_label;
