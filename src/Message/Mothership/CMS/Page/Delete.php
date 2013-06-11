@@ -58,11 +58,7 @@ class Delete
 			throw new \InvalidArgumentException(sprintf('Cannot delete page #%i because it has children pages', $page->id));
 		}
 
-		if(isset($this->_currentUser)) {
-			$user = $this->_currentUser->id;
-		} else {
-			$user = '';
-		}
+		$page->authorship->delete(new \Datetime, $this->_currentUser ? $this->_currentUser->id : null);
 
 		$page->authorship->delete(new \Datetime, $user);
 		$result = $this->_query->run('
@@ -70,7 +66,7 @@ class Delete
 				page
 			SET
 				deleted_at = :at?i,
-				deleted_by = :by?i
+				deleted_by = :by?in
 			WHERE
 				page_id = :id?i
 		', array(
@@ -98,13 +94,8 @@ class Delete
 	 */
 	public function restore(Page $page)
 	{
-		if(isset($this->_currentUser)) {
-			$user = $this->_currentUser->id;
-		} else {
-			$user = '';
-		}
 
-		$page->authorship->restore(new \Datetime, $user);
+		$page->authorship->delete(new \Datetime, $this->_currentUser ? $this->_currentUser->id : null);
 
 		$result = $this->_query->run('
 			UPDATE
