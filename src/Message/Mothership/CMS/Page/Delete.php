@@ -32,7 +32,7 @@ class Delete
 	 * @param DispatcherInterface $eventDispatcher 	The event dispatcher
 	 * @param Loader 			  $loader 			The page loader
 	 */
-	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher, User $user = null)
+	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher, Loader $loader, User $user = null)
 	{
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
@@ -59,7 +59,6 @@ class Delete
 
 		$page->authorship->delete(new \Datetime, $this->_currentUser ? $this->_currentUser->id : null);
 
-		$page->authorship->delete(new \Datetime, $user);
 		$result = $this->_query->run('
 			UPDATE
 				page

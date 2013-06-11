@@ -34,6 +34,7 @@ class Services implements ServicesInterface
 			return new \Message\Mothership\CMS\Page\Delete(
 				$c['db.query'],
 				$c['event.dispatcher'],
+				$c['cms.page.loader'],
 				$c['user.current']
 			);
 		};
