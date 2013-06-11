@@ -9,7 +9,7 @@ namespace Message\Mothership\CMS\Field;
  *
  * @todo Represent contextual help somehow?
  */
-abstract class Field
+abstract class Field implements FieldInterface
 {
 	protected $_name;
 	protected $_label;
@@ -55,6 +55,16 @@ abstract class Field
 	public function getValue()
 	{
 		return $this->_value;
+	}
+
+	public function getName()
+	{
+		return $this->_name;
+	}
+
+	public function getLabel()
+	{
+		return $this->_label;
 	}
 
 	public function isLocalisable()

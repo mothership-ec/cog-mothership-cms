@@ -7,7 +7,7 @@ namespace Message\Mothership\CMS\Field;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class Group
+class Group implements FieldInterface
 {
 	protected $_name;
 	protected $_label;
@@ -107,5 +107,15 @@ class Group
 		}
 
 		return $this->_fields[$name];
+	}
+
+	public function getName()
+	{
+		return $this->_name;
+	}
+
+	public function getLabel()
+	{
+		return $this->_label;
 	}
 }
