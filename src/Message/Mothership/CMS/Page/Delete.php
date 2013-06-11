@@ -5,7 +5,6 @@ namespace Message\Mothership\CMS\Page;
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Event\Event;
 use Message\Mothership\CMS\Page\Loader;
-use Message\Mothership\CMS\Event\PageEvent;
 
 use Message\User\User;
 
@@ -24,12 +23,14 @@ class Delete
 	protected $_query;
 	protected $_eventDispatcher;
 	protected $_currentUser;
+	protected $_loader;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param DBQuery             $query           The database query instance to use
-	 * @param DispatcherInterface $eventDispatcher The event dispatcher
+	 * @param DBQuery             $query           	The database query instance to use
+	 * @param DispatcherInterface $eventDispatcher 	The event dispatcher
+	 * @param Loader 			  $loader 			The page loader
 	 */
 	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher, User $user = null)
 	{
@@ -50,11 +51,8 @@ class Delete
 	 */
 	public function delete(Page $page)
 	{
-		// Check that the page doesn't have children pages
-		$loader = new Loader('gb', $this->_query);
-
 		// Throw an exception if it does
-		if ($loader->getChildren($page)) {
+		if ($this->_loader->getChildren($page)) {
 			throw new \InvalidArgumentException(sprintf('Cannot delete page #%i because it has children pages', $page->id));
 		}
 
@@ -76,8 +74,8 @@ class Delete
 		));
 
 		$this->_eventDispatcher->dispatch(
-			PageEvent::DELETE,
-			new PageEvent($page)
+			Event::DELETE,
+			new Event($page)
 		);
 
 		return $page;
@@ -108,8 +106,8 @@ class Delete
 		', $page->id);
 
 		$this->_eventDispatcher->dispatch(
-			PageEvent::RESTORE,
-			new PageEvent($page)
+			Event::RESTORE,
+			new Event($page)
 		);
 
 		return $page;

@@ -29,7 +29,11 @@ class Page
 	public $metaDescription;
 	public $metaHtmlHead;
 	public $metaHtmlFoot;
-	// do we need to store meta _inherit flags?
+
+	public $metaTitleInherit;
+	public $metaDescriptionInherit;
+	public $metaHtmlHeadInherit;
+	public $metaHtmlFootInherit;
 
 	public $visibilitySearch;
 	public $visibilityMenu;
