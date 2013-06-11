@@ -5,11 +5,12 @@ namespace Message\Mothership\CMS\Page;
 use Message\Mothership\CMS\PageTypeInterface;
 use Message\Mothership\CMS\Event\Event;
 use Message\Mothership\CMS\Event\PageEvent;
-
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\DB\NestedSetHelper;
 use Message\Cog\ValueObject\DateRange;
+use Message\Cog\ValueObject\DateTimeImmutable;
+use Message\User\User;
 
 
 class Edit {
@@ -37,11 +38,11 @@ class Edit {
 	 * @param  Page   $page Page object to be update
 	 * @return Page|false   Updated Page object
 	 */
-	public function save(Page $page)
+	public function save(Page $page, User $user = null)
 	{
 
 		// update the updated datetime
-		$page->authorship->update(new \DateTime, 1);
+		$page->authorship->update(new \DateTimeImmutable, is_null($user) ? null : $user->id );
 
 		$result = $this->_query->run('
 			UPDATE
@@ -108,35 +109,67 @@ class Edit {
 					'commentsExpiry' => $page->commentsExpiry
 		));
 
-		var_dump($page); exit;
 		return $result->affected() ? $page : false;
 	}
 
-	public function publish(Page $page, $userID = null)
+	/**
+	 * Make the page as Published
+	 *
+	 * If there is a unpublished date in the furture then keep it and set
+	 * publish date to now.
+	 * If unpublish is in the past or null then set it to null so it won't
+	 * unpublish itself.
+	 *
+	 * @param  Page   	$page   Page to update as Published
+	 * @param  User 	$user 	User who initiated action
+	 * @return Page 	$page 	Updated page object
+	 */
+	public function publish(Page $page, User $user = null)
 	{
-		// If there is a unpublished date in the furture then keep it and set
-		// publish date to now. If unpublish is in the past or null then set it
-		// to null and
+		// Get the end data if there is one
 		$end = $page->publishDateRange->getEnd();
-
+		// If the end date is in the past then set it to null
 		if ($page->publishDateRange->getEnd()->getTimestamp() < time()) {
 			$end = null;
 		}
-
-		$start = new \DateTime();
-
+		// Create a start date from now
+		$start = new DateTimeImmutable;
+		// Build the date range object with the new dates and assign it to
+		// the page object
 		$page->publishDateRange = new DateRange($start, $end);
-
-
-		$page->publishAt = new \DateTime();
-		$this->save($page);
-
+		// Set the publish state to 1
+		$page->publishState = 1;
+		// Save the page to the DB
+		$this->save($page, $user);
+		// Return the updated page object
 		return $page;
 	}
 
-	public function unpublish(Page $page)
+	/**
+	 * Update the page to be unpublished
+	 *
+	 * @param  Page   $page Page to update as unpublished
+	 *
+	 * @return Page   $page Updated Page object
+	 */
+	public function unpublish(Page $page, User $user = null)
 	{
-
+		// Set the end time to now
+		$end = new DateTimeImmutable;
+		// If the start date is in the new end time then set it to null
+		if ($page->publishDateRange->getStart()->getTimestamp() > $end->getTimestamp()) {
+			$start = null;
+		} else {
+			$start = $page->publishDateRange->getStart();
+		}
+		// Set the new unpublsih date range
+		$page->publishDateRange = new DateRange($start, $end);
+		// Se tthe publish state to 0
+		$page->publishState = 0;
+		// Save the page to the DB
+		$this->save($page, $user);
+		// Return the updated Page object
+		return $page;
 	}
 
 }
