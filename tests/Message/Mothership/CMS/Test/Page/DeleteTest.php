@@ -21,6 +21,21 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
 
 	public function testDelete()
 	{
+		$loader = new Loader('gb', new Query($connection));
+		$page = $loader->getByID(1);
+		
+		$delete->delete($page);
+
+		$this->assertNotNull($page->authorship->deletedAt()->getTimestamp());
+	}
+	
+	public function testRestore()
+	{
+		
+	}
+
+	public function testForChildrenPagesException()
+	{
 		$connection = new Connection;
 		// For testDuplicateFieldNameException
 		$connection->setPattern('/page_id([\s]+?)= 1/', array(
@@ -49,16 +64,9 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
 				'slug'			=> '/blog/hello-world',
 			),
 		));
-		$loader = new Loader('gb', new Query($connection));
-		$page = $loader->getByID(1);
-		
+
 		$delete->delete($page);
 
-		$this->assertNotNull($page->authorship->deletedAt()->getTimestamp());
-	}
-	
-	public function testRestore()
-	{
-		
+		$this->assertThrowsException('Cannot delete page #%i because it has children pages');
 	}
 }

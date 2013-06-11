@@ -98,7 +98,6 @@ class Delete
 	 */
 	public function restore(Page $page)
 	{
-
 		if(isset($this->_currentUser)) {
 			$user = $this->_currentUser->id;
 		} else {
