@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Test\PageType;
 
 use Message\Mothership\CMS\PageType\PageTypeInterface;
+use Message\Mothership\CMS\Field\Factory as FieldFactory;
 
 class Blog implements PageTypeInterface
 {
@@ -31,7 +32,7 @@ class Blog implements PageTypeInterface
 		'::View:PageTypes:Blog';
 	}
 
-	public function setFields(\Message\Mothership\CMS\PageTypeFieldFactory $factory)
+	public function setFields(FieldFactory $factory)
 	{
 		// full style
 		$strapline = new \Message\Mothership\CMS\Field\Type\Text('strapline', 'The catchy strapline');
