@@ -61,7 +61,7 @@ class Delete
 		if(isset($this->_currentUser)) {
 			$user = $this->_currentUser->id;
 		} else {
-			$user = null;
+			$user = '';
 		}
 
 		$page->authorship->delete(new \Datetime, $user);
@@ -101,7 +101,7 @@ class Delete
 		if(isset($this->_currentUser)) {
 			$user = $this->_currentUser->id;
 		} else {
-			$user = null;
+			$user = '';
 		}
 
 		$page->authorship->restore(new \Datetime, $user);
