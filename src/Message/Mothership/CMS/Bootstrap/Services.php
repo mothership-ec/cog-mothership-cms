@@ -28,22 +28,14 @@ class Services implements ServicesInterface
 				$c['event.dispatcher'],
 				$c['cms.page.nested_set_helper']
 			);
-		};
+		});
 
 		$serviceContainer['cms.page.delete'] = function($c){
 			return new \Message\Mothership\CMS\Page\Delete(
 				$c['db.query'],
 				$c['event.dispatcher'],
 				$c['user.current']
-			);
-		};
 
-		$serviceContainer['cms.page.delete'] = function($c) {
-			return new \Message\Mothership\CMS\Page\Delete(
-				$c['db.query'],
-				$c['event.dispatcher'],
-				$c['cms.page.loader']
-			);
 		};
 	}
 }

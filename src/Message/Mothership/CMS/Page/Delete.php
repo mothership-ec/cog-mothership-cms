@@ -37,6 +37,7 @@ class Delete
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
 		$this->_currentUser		= $user;
+		$this->_loader 			= $loader;
 	}
 
 	/**
