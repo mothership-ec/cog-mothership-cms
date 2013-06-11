@@ -1,10 +1,10 @@
 <?php
 
-namespace Message\Mothership\CMS\Page\Field\Type;
+namespace Message\Mothership\CMS\Field\Type;
 
-use Message\Mothership\CMS\Page\Field;
+use Message\Mothership\CMS\Field;
 
-class File extends MultipleValueField
+class File extends Field\MultipleValueField
 {
 	public function getFormField()
 	{

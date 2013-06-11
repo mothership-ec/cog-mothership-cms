@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\CMS\Page\Field;
+namespace Message\Mothership\CMS\Field;
 
 /**
  * Represents a group of fields on a page.
@@ -76,17 +76,13 @@ class Group
 	 *
 	 * @throws \InvalidArgumentException If the name is falsey
 	 */
-	public function add($name, Field $field, $identifier = false)
+	public function add($name, Field $field)
 	{
 		if (!$name) {
 			throw new \InvalidArgumentException('Page field group field must have a name');
 		}
 
 		$this->_fields[$name] = $field;
-
-		if ($identifier === true) {
-			$this->_idFieldName = $name;
-		}
 	}
 
 	public function setRepeatable($repeatable = true, $min = null, $max = null)

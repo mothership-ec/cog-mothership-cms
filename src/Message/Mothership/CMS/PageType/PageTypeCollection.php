@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\CMS;
+namespace Message\Mothership\CMS\PageType;
 
 /**
  * A container for all page types available to the system.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\CMS\Page\Field;
+namespace Message\Mothership\CMS\Field;
 
 /**
  * Represents a simple field of a page.
@@ -63,6 +63,4 @@ abstract class Field
 	}
 
 	abstract public function getFormField();
-		// return a Symfony field object without label (set by page type)
-		// contextual help
 }

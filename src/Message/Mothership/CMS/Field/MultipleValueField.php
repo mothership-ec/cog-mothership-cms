@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\CMS\Page\Field;
+namespace Message\Mothership\CMS\Field;
 
 /**
  * Represents a field of a page that has multiple, separate values.

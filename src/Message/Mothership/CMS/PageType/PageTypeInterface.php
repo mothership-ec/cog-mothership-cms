@@ -1,6 +1,8 @@
 <?php
 
-namespace Message\Mothership\CMS;
+namespace Message\Mothership\CMS\PageType;
+
+use Message\Mothership\CMS\Field\Factory;
 
 /**
  * Interface that must be used by all page type objects.
@@ -41,9 +43,19 @@ interface PageTypeInterface
 	 */
 	public function allowChildren();
 
+	/**
+	 * Get a cog reference to the view file to use when rendering pages of this
+	 * type.
+	 *
+	 * @return string The cog reference
+	 */
+	public function getViewReference();
 
-	public function getFields();
-		// array of Field and Group instances
-		// nice api
-		// validation stuff set in here, not in the field objects
+	/**
+	 * Set the content fields & groups for this page type on a field factory
+	 * instance.
+	 *
+	 * @param  Factory $factory The field factory to use
+	 */
+	public function setFields(Factory $factory);
 }

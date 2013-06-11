@@ -2,7 +2,7 @@
 
 namespace Message\Mothership\CMS\Test\PageType;
 
-use Message\Mothership\CMS\PageTypeInterface;
+use Message\Mothership\CMS\PageType\PageTypeInterface;
 
 class Blog implements PageTypeInterface
 {
@@ -26,6 +26,11 @@ class Blog implements PageTypeInterface
 		return false;
 	}
 
+	public function getViewReference()
+	{
+		'::View:PageTypes:Blog';
+	}
+
 	public function setFields(\Message\Mothership\CMS\PageTypeFieldFactory $factory)
 	{
 		// full style
@@ -41,7 +46,7 @@ class Blog implements PageTypeInterface
 		$group
 			->setDescription('These are promotions to make people buy your stuff!')
 			->setRepeatable(true, 3, 6)
-			->add(new \Message\Mothership\CMS\Field\Type\Text('title', 'Promotion title'), true) // second param here could mean "this is the title field"
+			->add(new \Message\Mothership\CMS\Field\Type\Text('title', 'Promotion title'))
 			->add(new \Message\Mothership\CMS\Field\Type\RichText('description', 'Promotion description'))
 			->add(new \Message\Mothership\CMS\Field\Type\Link('url', 'Promotion link destination'))
 			->add($factory->getField('file', 'file', 'Promotion background image')->setAllowedTypes(\Message\Mothership\FileManager\Type::IMAGE))
@@ -54,7 +59,11 @@ class Blog implements PageTypeInterface
 		$factory->addGroup('promo', 'Promotions')
 			->setRepeatable(true, 3, 6)
 			->add($factory->getField('text', 'title', 'Title'), true)
-			->add($factory->getField('richtext', 'description', 'Description'))
+			->add($factory->getField('richtext', 'description', 'Description')
+					setallowedTypes(1)7->validator()
+						->max(100)
+						->matches('link')
+			)
 			->add($factory->getField('link', 'url', 'Link destination'))
 			->add($factory->getField('file', 'image', 'Background image')->setAllowedTypes('image'));
 
