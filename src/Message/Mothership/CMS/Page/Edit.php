@@ -155,19 +155,19 @@ class Edit {
 	/**
 	 * Update the page to be unpublished
 	 *
-	 * @param  Page   $page Page to update as unpublished
-	 *
-	 * @return Page   $page Updated Page object
+	 * @param  Page   	$page Page to update as unpublished
+	 * @param  User 	$user User of who invoked the action
+	 * @return Page   	$page Updated Page object
 	 */
 	public function unpublish(Page $page, User $user = null)
 	{
 		// Set the end time to now
 		$end = new DateTimeImmutable;
+		$start = $page->publishDateRange->getStart();
+
 		// If the start date is in the new end time then set it to null
 		if ($page->publishDateRange->getStart()->getTimestamp() > $end->getTimestamp()) {
 			$start = null;
-		} else {
-			$start = $page->publishDateRange->getStart();
 		}
 		// Set the new unpublsih date range
 		$page->publishDateRange = new DateRange($start, $end);
