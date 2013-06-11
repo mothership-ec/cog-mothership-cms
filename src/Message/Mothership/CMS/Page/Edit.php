@@ -35,14 +35,13 @@ class Edit {
 	 * @todo Need o do something with the nested set helper when moving a page
 	 *       and things
 	 *
-	 * @param  Page   $page Page object to be update
-	 * @return Page|false   Updated Page object
+	 * @param  Page   		$page 	Page object to be update
+	 * @return Page|false   		Updated Page object
 	 */
 	public function save(Page $page, User $user = null)
 	{
-
 		// update the updated datetime
-		$page->authorship->update(new \DateTimeImmutable, is_null($user) ? null : $user->id );
+		$page->authorship->update(new DateTimeImmutable, is_null($user) ? null : $user->id );
 
 		$result = $this->_query->run('
 			UPDATE
@@ -84,8 +83,8 @@ class Edit {
 					'title' => $page->title,
 					'type' => $page->type,
 					'publishState' => $page->publishState,
-					'publishAt' => $page->publishDateRange->getStart()->getTimestamp(),
-					'unpublishAt' => $page->publishDateRange->getEnd()->getTimestamp(),
+					'publishAt' => $page->publishDateRange->getStart() ? $page->publishDateRange->getStart()->getTimestamp() : null,
+					'unpublishAt' => $page->publishDateRange->getEnd() ? $page->publishDateRange->getEnd()->getTimestamp() : null,
 					'updatedAt'	=> $page->authorship->updatedAt()->getTimestamp(),
 					'updatedBy' => $page->authorship->updatedBy(),
 					'slug' => $page->slug->getLastSegment(),

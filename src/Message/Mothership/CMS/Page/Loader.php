@@ -6,6 +6,7 @@ use Message\Mothership\CMS\PageTypeInterface;
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
 use Message\Cog\ValueObject\Slug;
+use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\DB\Query;
 
 /**
@@ -367,8 +368,8 @@ class Loader
 
 
 			// Create two DateTime objects for the publishDateRange
-			$from = new \DateTime(date('c', $result->publishAt));
-			$to = new \DateTime(date('c', $result->unpublishAt));
+			$from = new DateTimeImmutable('@'.$result->publishAt);
+			$to = new DateTimeImmutable('@'.$result->unpublishAt);
 
 			// Load the DateRange object for publishDateRange
 			$page->publishDateRange = new DateRange($from, $to);
@@ -376,12 +377,12 @@ class Loader
 
 			// Load authorship details
 			$authorship = new Authorship;
-			$authorship->create(new \DateTime(date('c', $result->createdAt)), $result->createdBy);
+			$authorship->create(new DateTimeImmutable('@'.$result->createdAt), $result->createdBy);
 			if ($result->updatedAt) {
-				$authorship->update(new \DateTime(date('c', $result->updatedAt)), $result->updatedBy);
+				$authorship->update(new DateTimeImmutable('@'.$result->updatedAt), $result->updatedBy);
 			}
 			if ($result->deletedAt) {
-				$authorship->delete(new \DateTime(date('c', $result->deletedAt)), $result->deletedBy);
+				$authorship->delete(new DateTimeImmutable('@'.$result->deletedAt), $result->deletedBy);
 			}
 
 			$page->authorship = $authorship;
