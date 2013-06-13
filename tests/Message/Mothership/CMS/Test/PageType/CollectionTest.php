@@ -1,19 +1,19 @@
 <?php
 
-namespace Message\Mothership\CMS\Test;
+namespace Message\Mothership\CMS\Test\PageType;
 
-use Message\Mothership\CMS\PageTypeCollection;
+use Message\Mothership\CMS\PageType\Collection;
 
-class PageTypeCollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
 	public function testConstructorAndIteration()
 	{
 		$pageTypes = array(
-			new PageType\Blog,
-			new PageType\Blog,
-			new PageType\Blog,
-			new PageType\Blog,
-			new PageType\Blog,
+			new Blog,
+			new Blog,
+			new Blog,
+			new Blog,
+			new Blog,
 		);
 		$collection = new PageTypeCollection($pageTypes);
 
@@ -27,7 +27,7 @@ class PageTypeCollectionTest extends \PHPUnit_Framework_TestCase
 	public function testAdd()
 	{
 		$collection = new PageTypeCollection;
-		$pageType   = new PageType\Blog;
+		$pageType   = new Blog;
 
 		$this->assertEquals($collection, $collection->add($pageType));
 
@@ -43,12 +43,12 @@ class PageTypeCollectionTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(0, count($collection));
 		$this->assertEquals(0, $collection->count());
 
-		$collection->add(new PageType\Blog);
+		$collection->add(new Blog);
 
 		$this->assertEquals(1, count($collection));
 		$this->assertEquals(1, $collection->count());
 
-		$collection->add(new PageType\Blog);
+		$collection->add(new Blog);
 
 		$this->assertEquals(2, count($collection));
 		$this->assertEquals(2, $collection->count());
