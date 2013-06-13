@@ -2,21 +2,32 @@
 
 namespace Message\Mothership\CMS\Field\Type;
 
-use Message\Mothership\CMS\Field;
+use Message\Mothership\CMS\Field\Field;
 
 use Message\Mothership\FileManager\File\Type as FileType;
 
-class File extends Field\MultipleValueField
+/**
+ * A field for a file in the file manager database.
+ *
+ * @author Joe Holdcroft <joe@message.co.uk>
+ */
+class File extends Field
 {
 	protected $_allowedTypes;
 
 	public function getFormField()
 	{
-		// i dunno :(
+		// ...
 	}
 
 	public function setAllowedTypes($types)
 	{
-		// set the allowed file types (image = 1 etc, check big paper)
+		if (!is_array($types)) {
+			$types = array($types);
+		}
+
+		$this->_allowedTypes = $types;
+
+		return $this;
 	}
 }
