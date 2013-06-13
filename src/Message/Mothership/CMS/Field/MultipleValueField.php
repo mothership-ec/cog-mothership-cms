@@ -86,7 +86,7 @@ abstract class MultipleValueField extends Field
 				'Value key `%s` invalid. Allowed names: `%s`',
 				$key,
 				implode('`, `', $this->getValueKeys())
-			);
+			));
 		}
 
 		$this->_value[$key] = $value;

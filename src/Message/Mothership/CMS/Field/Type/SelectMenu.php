@@ -22,9 +22,13 @@ class SelectMenu extends Field
 	 * Set the options available on this select menu.
 	 *
 	 * @param array $options Array of options
+	 *
+	 * @return SelectMenu    Returns $this for chainability
 	 */
 	public function setOptions(array $options)
 	{
 		$this->_options = $options;
+
+		return $this;
 	}
 }

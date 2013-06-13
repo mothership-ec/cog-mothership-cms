@@ -105,7 +105,7 @@ class Group implements FieldInterface
 		$this->_fields[$field->getName()] = $field;
 
 		// If no identifier field is set yet and this field is a good candidate, set it
-		if (!$this->getIdentifierField() && in_array($field->getName, array(
+		if (!$this->getIdentifierField() && in_array($field->getName(), array(
 			'id',
 			'identifier',
 			'title',

@@ -37,11 +37,15 @@ class Services implements ServicesInterface
 		};
 
 		$serviceContainer['cms.page.delete'] = function($c) {
-			return new \Message\Mothership\CMS\Page\Delete(
+			return new CMS\Page\Delete(
 				$c['db.query'],
 				$c['event.dispatcher'],
 				$c['cms.page.loader']
 			);
+		};
+
+		$serviceContainer['cms.field.factory'] = function($c) {
+			return new CMS\Field\Factory;
 		};
 	}
 }

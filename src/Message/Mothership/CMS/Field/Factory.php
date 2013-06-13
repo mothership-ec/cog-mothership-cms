@@ -20,13 +20,15 @@ class Factory
 	 * @param  string      $name  The name to use for the field
 	 * @param  string|null $label The optional label for the field
 	 *
-	 * @return Factory            Returns $this for chainability
+	 * @return Field              The field that was added
 	 */
 	public function addField($type, $name, $label = null)
 	{
-		$this->_add($this->getField($type, $name, $label));
+		$field = $this->getField($type, $name, $label);
 
-		return $this;
+		$this->add($field);
+
+		return $field;
 	}
 
 	/**
@@ -37,13 +39,40 @@ class Factory
 	 * @param  string      $name  The name to use for the group
 	 * @param  string|null $label The optional label for the group
 	 *
-	 * @return Factory            Returns $this for chainability
+	 * @return Group              The group that was added
 	 */
-	public function addGroup($type, $label = null)
+	public function addGroup($name, $label = null)
 	{
-		$this->_add($this->getGroup($name, $label));
+		$group = $this->getGroup($name, $label);
 
-		return $this;
+		$this->add($group);
+
+		return $group;
+	}
+
+	/**
+	 * Add a field or a field group to the factory.
+	 *
+	 * @param FieldInterface $field The field or group to add
+	 *
+	 * @return FieldInterface       The field or group that was added
+	 *
+	 * @throws \InvalidArgumentException If a field with the identifier returned
+	 *                                   from `getName()` on the field already exists
+	 */
+	public function add(FieldInterface $field)
+	{
+		// Check if a field with this name already exists
+		if (isset($this->_fields[$field->getName()])) {
+			throw new \InvalidArgumentException(sprintf(
+				'A field with the name `%s` already exists on the field factory',
+				$field->getName()
+			));
+		}
+
+		$this->_fields[$field->getName()] = $field;
+
+		return $field;
 	}
 
 	/**
@@ -63,11 +92,11 @@ class Factory
 
 		// Check if a class exists for this field type
 		if (!class_exists($className)) {
-			throw new \InvalidArgumentException(
+			throw new \InvalidArgumentException(sprintf(
 				'Field type `%s` does not exist (class `%s` not found)',
 				$type,
 				$className
-			);
+			));
 		}
 
 		return new $className($name, $label);
@@ -84,26 +113,5 @@ class Factory
 	public function getGroup($name, $label = null)
 	{
 		return new Group($name, $label);
-	}
-
-	/**
-	 * Add a field or a field group to the factory.
-	 *
-	 * @param FieldInterface $field The field or group to add
-	 *
-	 * @throws \InvalidArgumentException If a field with the identifier returned
-	 *                                   from `getName()` on the field already exists
-	 */
-	protected function _add(FieldInterface $field)
-	{
-		// Check if a field with this name already exists
-		if (isset($this->_fields[$field->getName()])) {
-			throw new \InvalidArgumentException(sprintf(
-				'A field with the name `%s` already exists on the field factory',
-				$field->getName()
-			));
-		}
-
-		$this->_fields[$field->getName()] = $field;
 	}
 }
