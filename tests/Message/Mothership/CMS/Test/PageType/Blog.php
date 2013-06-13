@@ -38,7 +38,7 @@ class Blog implements PageTypeInterface
 		$strapline = new \Message\Mothership\CMS\Field\Type\Text('strapline', 'The catchy strapline');
 		$strapline
 			->setLocalisable(true);
-		// set contextual help
+
 		// set form field label - will we need to tell the field what it's label? see above
 		// set validation
 		//
