@@ -17,10 +17,7 @@ abstract class Field implements FieldInterface
 	protected $_value;
 
 	/**
-	 * Constructor.
-	 *
-	 * @param string $name  The field's name
-	 * @param string $label The field's label. If blank, the name will be used
+	 * {@inheritDoc}
 	 */
 	public function __construct($name, $label = null)
 	{

@@ -20,9 +20,7 @@ class Group implements FieldInterface
 	protected $_idFieldName;
 
 	/**
-	 * Constructor.
-	 *
-	 * @param array $fields Array of fields in this group
+	 * {@inheritDoc}
 	 */
 	public function __construct($name, $label = null)
 	{
