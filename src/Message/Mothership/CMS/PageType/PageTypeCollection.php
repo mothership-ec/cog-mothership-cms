@@ -7,7 +7,7 @@ namespace Message\Mothership\CMS\PageType;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class PageTypeCollection implements \IteratorAggregate, \Countable
+class Collection implements \IteratorAggregate, \Countable
 {
 	protected $_pageTypes = array();
 

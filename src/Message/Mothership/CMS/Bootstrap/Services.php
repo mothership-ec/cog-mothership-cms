@@ -2,12 +2,18 @@
 
 namespace Message\Mothership\CMS\Bootstrap;
 
+use Message\Mothership\CMS;
+
 use Message\Cog\Bootstrap\ServicesInterface;
 
 class Services implements ServicesInterface
 {
 	public function registerServices($serviceContainer)
 	{
+		$serviceContainer['cms.page.types'] = $serviceContainer->share(function($c) {
+			return new CMS\PageType\Collection;
+		});
+
 		$serviceContainer['cms.page.nested_set_helper'] = function($c) {
 			$helper = $c['db.nested_set_helper'];
 
@@ -15,14 +21,14 @@ class Services implements ServicesInterface
 		};
 
 		$serviceContainer['cms.page.loader'] = $serviceContainer->share(function($c) {
-			return new \Message\Mothership\CMS\Page\Loader('Locale class', $c['db.query']);
+			return new CMS\Page\Loader('Locale class', $c['db.query']);
 		});
 		$serviceContainer['cms.page.content_loader'] = $serviceContainer->share(function($c) {
-			return new \Message\Mothership\CMS\Page\ContentLoader($c['db.query']);
+			return new CMS\Page\ContentLoader($c['db.query']);
 		});
 
 		$serviceContainer['cms.page.create'] = $serviceContainer->share(function($c) {
-			return new \Message\Mothership\CMS\Page\Create(
+			return new CMS\Page\Create(
 				$c['db.query'],
 				$c['event.dispatcher'],
 				$c['cms.page.nested_set_helper']
