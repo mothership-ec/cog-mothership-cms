@@ -8,24 +8,17 @@ class Create extends \Message\Cog\Controller\Controller
 {
 	public function index()
 	{
-		// $loader = $this->_services['cms.page.loader'];
-		// $values = $this->buildTree( $loader->getAll() );
-		//var_dump($this->_services['cms.page.types']); exit;
-		$pageTypes = array(
-			'blog',
-			'product',
-			'listing'
-		);
-
 		return $this->render('Message:Mothership:CMS::create', array(
-			'pageTypes' => $pageTypes
+			'pageTypes' => $this->_services['cms.page.types']
 		));
 	}
 
 	public function process()
 	{
 		if ($data = $this->get('request')->request->get('create')) {
-			var_dump($this->_services); exit;
+			$pageType = $this->_services['cms.page.types']->get($data['type']);
+			$page = $this->_services['cms.page.create']->create($pageType,$data['title']);
+			return $this->redirect($this->generateUrl('ms.cms.dashboard'));
 		}
 	}
 }

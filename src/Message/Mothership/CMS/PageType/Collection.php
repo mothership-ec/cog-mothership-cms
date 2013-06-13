@@ -33,7 +33,7 @@ class Collection implements \IteratorAggregate, \Countable
 	 * @throws \InvalidArgumentException  If a page type with the same name has
 	 *                                    already been set on this collection
 	 */
-	public function add(PageTypeInterface $pageType)
+	public function add(\Message\Mothership\CMS\PageTypeInterface $pageType)
 	{
 		if (isset($this->_pageTypes[$pageType->getName()])) {
 			throw new \InvalidArgumentException(sprintf('Page type `%s` is already defined', $pageType->getName()));
