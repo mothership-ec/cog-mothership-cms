@@ -3,10 +3,13 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\PageTypeInterface;
+
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
+use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
+use Message\Cog\DB\Result;
 
 /**
  * Responsible for loading page data and returning prepared instances of `Page`.
@@ -16,15 +19,15 @@ use Message\Cog\DB\Query;
  * <code>
  * # Load by pageID
  * $loader = new Loader($locale, $query);
- * $page = $loader->getByID(1); // returns pageID 1
+ * $page = $loader->getByID(1); // returns page object
  *
  * # Load deleted page - deleted pages are not loaded by default
  * $page = $loader->getByID(3); // returns false as deleted so do the following
- * $page = $loader->includeDeleted(true)->getByID(3); // this will now return the deletd page object
+ * $page = $loader->includeDeleted(true)->getByID(3); // this will now return the deleted page object
  *
  * # Load by slug
  * // you can use either a slug object or a string
- * $slug = new Slug('/blog/hello-world);
+ * $slug = new Slug('/blog/hello-world');
  * $page = $loader->getBySlug($slug); // returns page object
  *
  * # You can then load that pages siblings, or the children
@@ -33,7 +36,7 @@ use Message\Cog\DB\Query;
  * $children = $loader->includeDeleted(true)->getChildren($page); // returns array of Page objects inc deleted pages
  *
  * # You can also load by type
- * $pages = $loader->getByType(new PageTypeInterface\Blog); // Returns array of page types
+ * $pages = $loader->getByType(new PageType\Blog); // returns array of page types
  * </code>
  *
  * @author Joe Holdcroft <joe@message.co.uk>
@@ -76,46 +79,44 @@ class Loader
 	 */
 	public function getByID($pageIDs)
 	{
-		if (!is_array($pageIDs)) {
-			return $this->_load($pageIDs);
-		}
+		$this->_returnAsArray = is_array($pageIDs);
 
-		$return = array();
-
-		foreach ($pageIDs as $pageID) {
-			$return[$pageID] = $this->_load($pageID);
-		}
-
-		return array_filter($return);
+		return $this->_load($pageIDs);
 	}
 
 	/**
 	 * Get a page by its slug.
 	 *
-	 * @param string  $slug		 The slug to check for
+	 * @param string  $slug		 	The slug to check for
 	 * @param boolean $checkHistory True to check through historical slug data
 	 *
-	 * @return Page|false			  Prepared `Page` instance, or false if not found
+	 * @return Page|false			Prepared `Page` instance, or false if not found
 	 */
 	public function getBySlug($slug, $checkHistory = true)
 	{
-		$path = trim($slug, '/');
-		$parts = array_reverse(explode('/', $path));
-		$base	 = array_shift($parts);
+		// Clean up the slug
+		$path 	= trim($slug, '/');
+		// Turn it into an array and reverse it.
+		$parts 	= array_reverse(explode('/', $path));
+		$base 	= array_shift($parts);
 
-		$joins = '';
-		$where = '';
+		$joins 	= '';
+		$where 	= '';
 		$params = array(
 			$base,
 			count($parts),
 		);
 
+		// Loop thorough the parts of the url and build joins in order to get
+		// all the parent slugs so we can build the full slug because we do not
+		// store the full slug in the db
 		for ($i = 2; $i <= count($parts) +1; $i++) {
 			$joins.= " JOIN page level$i ON (level$i.position_left < level".($i-1).".position_left AND level$i.position_right > level".($i-1).".position_right)";
 			$where.= " AND level$i.slug = ?s";
 			$params[] = $parts[$i-2];
 		}
 
+		// Run the query and add in the joins we made above
 		$result = $this->_query->run('
 			SELECT
 				level1.page_id
@@ -131,15 +132,13 @@ class Loader
 
 		// If there is a result then retun a page object
 		if (count($result)) {
-			return $this->getByID($result->page_id);
+			return $this->getByID($result->first()->page_id);
 		}
-
 		// If no result has been returned at this point and $checkHistory is true
 		// then we will check the history to see if it existed in the past
 		if ($checkHistory && $page = $this->checkSlugHistory($slug)) {
 			return $page;
 		}
-
 		return false;
 	}
 
@@ -162,7 +161,7 @@ class Loader
 		', $slug);
 
 
-		return count($result) ? $this->getByID($result->page_id) : false;
+		return count($result) ? $this->getByID($result->first()->page_id) : false;
 	}
 
 	/**
@@ -287,10 +286,11 @@ class Loader
 
 
 	/**
-	 * Load the given page from the DB and populate the Page object
+	 * Load all the given pages and pass the results onto the _loadPage method
 	 *
-	 * @param int 			$pageID id of the page to load
-	 * @return Page|false 	populated Page object or false if not found
+	 * @param int|array		$pageID id of the page to load
+	 * @return Page|false 			populated Page object or array of Page
+	 *                              objects or false if not found
 	 */
 	protected function _load($pageID)
 	{
@@ -348,55 +348,56 @@ class Loader
 			LEFT JOIN
 				page_access_group ON (page_access_group.page_id = page.page_id)
 			WHERE
-				page.page_id = ?i',
-			array($pageID));
+				page.page_id IN (?ij)',
+				array(
+					(array) $pageID,
+				)
+			);
 
-		if (count($result)) {
-
-			$page = new Page;
-
-			// We can use bind here to populate the Page object
-			$page = $result->bind($page);
-
-			$result = $result->first();
-
-			if ($result->deletedAt && !$this->_loadDeleted) {
-				return false;
-			}
-
-			// Create two DateTime objects for the publishDateRange
-			$from = new \DateTime(date('c', $result->publishAt));
-			$to = new \DateTime(date('c', $result->unpublishAt));
-
-			// Load the DateRange object for publishDateRange
-			$page->publishDateRange = new DateRange($from, $to);
-			$page->slug = new Slug($result->slug);
-
-			// Load authorship details
-			$authorship = new Authorship;
-			$authorship->create(new \DateTime(date('c', $result->createdAt)), $result->createdBy);
-			if ($result->updatedAt) {
-				$authorship->delete(new \DateTime(date('c', $result->updatedAt)), $result->updatedBy);
-			}
-			if ($result->deletedAt) {
-				$authorship->delete(new \DateTime(date('c', $result->deletedAt)), $result->deletedBy);
-			}
-
-			$page->authorship = $authorship;
-
-			// Remove unneeded properties from the page object which are loaded from the
-			// Db to fill vaious things. This is the neatest way I can think of doing it.
-			$blankPage = new Page;
-			foreach ($result as $k => $v) {
-				if (!property_exists($blankPage, $k)) {
-					unset($page->{$k});
-				}
-			}
-
-			return $page;
-
+		if (0 === count($result)) {
+			return false;
 		}
 
-		return false;
+		return $this->_loadPage($result);
+	}
+
+	/**
+	 * Load the results into Page objects and return them
+	 *
+	 * @param  Result 		$results db result of the pages to load
+	 * @return Page|array   array of Page objects or somtimes singular
+	 */
+	protected function _loadPage(Result $results)
+	{
+		$pages = $results->bindTo('\Message\Mothership\CMS\Page\Page');
+
+		foreach ($results as $key => $data) {
+
+			// Skip deleted pages
+			if ($data->deletedAt && !$this->_loadDeleted) {
+				unset($pages[$key]);
+				continue;
+			}
+
+			// Load the DateRange object for publishDateRange
+			$pages[$key]->publishDateRange = new DateRange(
+				new DateTimeImmutable('@' . $data->publishAt),
+				new DateTimeImmutable('@' . $data->unpublishAt)
+			);
+			$pages[$key]->slug = new Slug($data->slug);
+
+			// Load authorship details
+			$pages[$key]->authorship = new Authorship;
+			$pages[$key]->authorship->create(new DateTimeImmutable('@' . $data->createdAt), $data->createdBy);
+
+			if ($data->updatedAt) {
+				$pages[$key]->authorship->update(new DateTimeImmutable('@' . $data->updatedAt), $data->updatedBy);
+			}
+
+			if ($data->deletedAt) {
+				$pages[$key]->authorship->delete(new DateTimeImmutable('@' . $data->deletedAt), $data->deletedBy);
+			}
+		}
+		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
 	}
 }

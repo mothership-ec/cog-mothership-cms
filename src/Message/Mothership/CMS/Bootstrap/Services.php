@@ -27,12 +27,21 @@ class Services implements ServicesInterface
 			return new CMS\Page\ContentLoader($c['db.query']);
 		});
 
-		$serviceContainer['cms.page.create'] = $serviceContainer->share(function($c) {
+		$serviceContainer['cms.page.create'] = function($c) {
 			return new CMS\Page\Create(
+				$c['cms.page.loader'],
 				$c['db.query'],
 				$c['event.dispatcher'],
 				$c['cms.page.nested_set_helper']
 			);
-		});
+		};
+
+		$serviceContainer['cms.page.delete'] = function($c) {
+			return new \Message\Mothership\CMS\Page\Delete(
+				$c['db.query'],
+				$c['event.dispatcher'],
+				$c['cms.page.loader']
+			);
+		};
 	}
 }

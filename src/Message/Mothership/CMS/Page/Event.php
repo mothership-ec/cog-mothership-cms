@@ -1,20 +1,20 @@
 <?php
 
-namespace Message\Mothership\CMS\Event;
-
-use Message\Mothership\CMS\Page\Page;
+namespace Message\Mothership\CMS\Page;
 
 /**
  * Event class for events relating to CMS pages.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class PageEvent extends Event
+class Event extends \Message\Cog\Event\Event
 {
-	const CREATE  = 'cms.page.create';
-	const EDIT    = 'cms.page.edit';
-	const DELETE  = 'cms.page.delete';
-	const RESTORE = 'cms.page.restore';
+	const CREATE    = 'cms.page.create';
+	const EDIT      = 'cms.page.edit';
+	const DELETE    = 'cms.page.delete';
+	const RESTORE   = 'cms.page.restore';
+	const PUBLISH   = 'cms.page.publish';
+	const UNPUBLISH = 'cms.page.unpublish';
 
 	protected $_page;
 
@@ -23,7 +23,7 @@ class PageEvent extends Event
 	 *
 	 * @see setPage()
 	 *
-	 * @param Page $page The relevant page for this event.
+	 * @param Page $page The relevant page for this event
 	 */
 	public function __construct(Page $page)
 	{
