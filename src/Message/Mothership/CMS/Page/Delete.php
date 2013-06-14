@@ -6,15 +6,16 @@ use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Event\Event;
 use Message\Mothership\CMS\Page\Loader;
 
+use Message\User\UserInterface;
+
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;
+use Message\Cog\ValueObject\DateTimeImmutable;
 
 /**
- * Decorator for deleting pages.
+ * Decorator for deleting & restoring pages.
  *
- * @author Daniel Hannah <danny@message.co.uk>
- *
- * @todo implement deleted_by setting correctly once User cogule is complete.
+ * @author Danny Hannah <danny@message.co.uk>
  */
 class Delete
 {
@@ -25,15 +26,18 @@ class Delete
 	/**
 	 * Constructor.
 	 *
-	 * @param DBQuery             $query           	The database query instance to use
-	 * @param DispatcherInterface $eventDispatcher 	The event dispatcher
-	 * @param Loader 			  $loader 			The page loader
+	 * @param DBQuery             $query           The database query instance to use
+	 * @param DispatcherInterface $eventDispatcher The event dispatcher
+	 * @param Loader              $loader          The page loader
+	 * @param UserInterface       $currentUser     The currently logged in user
 	 */
-	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher, Loader $loader)
+	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher,
+		Loader $loader, UserInterface $user)
 	{
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
-		$this->_loader 			= $loader;
+		$this->_loader          = $loader;
+		$this->_currentUser     = $user;
 	}
 
 	/**
@@ -48,18 +52,18 @@ class Delete
 	 */
 	public function delete(Page $page)
 	{
-		// Throw an exception if it does
 		if ($this->_loader->getChildren($page)) {
-			throw new \InvalidArgumentException(sprintf('Cannot delete page #%i because it has children pages', $page->id));
+			throw new \InvalidArgumentException(sprintf('Cannot delete page #%i because it has child pages', $page->id));
 		}
 
-		$page->authorship->delete(new \Datetime, 0);
+		$page->authorship->delete(new DateTimeImmutable, $this->_currentUser->id);
+
 		$result = $this->_query->run('
 			UPDATE
 				page
 			SET
 				deleted_at = :at?i,
-				deleted_by = :by?i
+				deleted_by = :by?in
 			WHERE
 				page_id = :id?i
 		', array(
@@ -68,12 +72,14 @@ class Delete
 			'id' => $page->id,
 		));
 
+		$event = new Event($page);
+
 		$this->_eventDispatcher->dispatch(
-			Event::DELETE,
-			new Event($page)
+			$event::DELETE,
+			$event
 		);
 
-		return $page;
+		return $event->getPage();
 	}
 
 
@@ -99,11 +105,13 @@ class Delete
 				page_id = ?i
 		', $page->id);
 
+		$event = new Event($page);
+
 		$this->_eventDispatcher->dispatch(
-			Event::RESTORE,
-			new Event($page)
+			$event::RESTORE,
+			$event
 		);
 
-		return $page;
+		return $event->getPage();
 	}
 }
