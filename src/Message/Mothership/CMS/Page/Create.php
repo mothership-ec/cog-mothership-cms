@@ -70,7 +70,7 @@ class Create
 				'Cannot create a page within page #%i because it\'s type (%s) does not allow child pages.',
 				$parent->id,
 				$parent->type->getName()
-			);
+			));
 		}
 
 		// Create the page without adding it to the nested set tree
