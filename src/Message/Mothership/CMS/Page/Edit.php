@@ -56,7 +56,6 @@ class Edit {
 			SET
 				page.title = :title?s,
 				page.type = :type?s,
-				page.publish_state = :publishState?i,
 				page.publish_at = :publishAt?i,
 				page.unpublish_at = :unpublishAt?i,
 				page.updated_at = :updatedAt?i,
@@ -89,7 +88,6 @@ class Edit {
 					'pageID' => $page->id,
 					'title' => $page->title,
 					'type' => $page->type,
-					'publishState' => $page->publishState,
 					'publishAt' => $page->publishDateRange->getStart() ? $page->publishDateRange->getStart()->getTimestamp() : null,
 					'unpublishAt' => $page->publishDateRange->getEnd() ? $page->publishDateRange->getEnd()->getTimestamp() : null,
 					'updatedAt'	=> $page->authorship->updatedAt()->getTimestamp(),
@@ -126,6 +124,28 @@ class Edit {
 		return $event->getpage();
 	}
 
+
+	protected function _savePublishData(Page $page)
+	{
+		$result = $this->_query->run('
+			UPDATE
+				page
+			SET
+				publish_at = ?dn,
+				unpublish_at = ?dn
+			WHERE
+				page_id = ?i
+			', array(
+				$page->publishDateRange->getStart(),
+				$page->publishDateRange->getEnd(),
+				$page->id
+			)
+		);
+
+		return $result->affected() ? $page : false;
+
+	}
+
 	/**
 	 * Set the page as Published
 	 *
@@ -147,14 +167,12 @@ class Edit {
 			$end = null;
 		}
 		// Create a start date from now
-		$start = new DateTimeImmutable;
+		$start = new DateTimeImmutable('-2 days');
 		// Build the date range object with the new dates and assign it to
 		// the page object
 		$page->publishDateRange = new DateRange($start, $end);
 		// Save the page to the DB
-		$this->save($page, $this->_user);
-		// Return the updated page object
-		return $page;
+		return $this->_savePublishData($page);
 	}
 
 	/**
@@ -176,12 +194,12 @@ class Edit {
 		}
 		// Set the new unpublsih date range
 		$page->publishDateRange = new DateRange($start, $end);
-		// Se tthe publish state to 0
-		$page->publishState = 0;
 		// Save the page to the DB
-		$this->save($page, $this->_user);
+		$this->_savePublishData($page);
 		// Return the updated Page object
 		return $page;
 	}
+
+
 
 }
