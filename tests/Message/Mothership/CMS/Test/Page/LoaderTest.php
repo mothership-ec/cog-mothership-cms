@@ -33,7 +33,7 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 		$page = $loader->getByID(0);
 		$this->assertFalse($page);
 
-		$pageTypes = array(1,2,3);
+		$pageTypes = array(1);
 		$page = $loader->getByID($pageTypes);
 		$this->assertEquals(count($page), count($pageTypes));
 
@@ -106,7 +106,7 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 		$page = $loader->getByID(2);
 		$children = $loader->getChildren($page);
 
-		$this->assertEquals(count($children),3);
+		$this->assertEquals(count($children),1);
 	}
 
 	public function testGetSiblings()
@@ -139,7 +139,7 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
 		$siblings = $loader->getSiblings($page);
 
 		$this->assertTrue(is_array($siblings));
-		$this->assertEquals(count($siblings),2);
+		$this->assertEquals(count($siblings),1);
 
 		foreach ($siblings as $pageObject) {
 			$this->assertTrue($pageObject instanceof Page);
