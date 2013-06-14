@@ -124,28 +124,6 @@ class Edit {
 		return $event->getpage();
 	}
 
-
-	protected function _savePublishData(Page $page)
-	{
-		$result = $this->_query->run('
-			UPDATE
-				page
-			SET
-				publish_at = ?dn,
-				unpublish_at = ?dn
-			WHERE
-				page_id = ?i
-			', array(
-				$page->publishDateRange->getStart(),
-				$page->publishDateRange->getEnd(),
-				$page->id
-			)
-		);
-
-		return $result->affected() ? $page : false;
-
-	}
-
 	/**
 	 * Set the page as Published
 	 *
@@ -198,6 +176,34 @@ class Edit {
 		$this->_savePublishData($page);
 		// Return the updated Page object
 		return $page;
+	}
+
+	/**
+	 * Save only the publish data in the DB
+	 *
+	 * @param  Page   	$page 	page object to be updated
+	 *
+	 * @return Page|false 		returns page object if successful or false if not.
+	 */
+	protected function _savePublishData(Page $page)
+	{
+		$result = $this->_query->run('
+			UPDATE
+				page
+			SET
+				publish_at = ?dn,
+				unpublish_at = ?dn
+			WHERE
+				page_id = ?i
+			', array(
+				$page->publishDateRange->getStart(),
+				$page->publishDateRange->getEnd(),
+				$page->id
+			)
+		);
+
+		return $result->affected() ? $page : false;
+
 	}
 
 
