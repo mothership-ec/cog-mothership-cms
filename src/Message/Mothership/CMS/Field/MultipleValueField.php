@@ -11,7 +11,7 @@ namespace Message\Mothership\CMS\Field;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-abstract class MultipleValueField extends Field
+abstract class MultipleValueField extends BaseField
 {
 	protected $_value = array();
 
@@ -54,14 +54,14 @@ abstract class MultipleValueField extends Field
 	}
 
 	/**
-	 * Set an array of the values
+	 * Set all values for this field.
 	 *
-	 * @param array $values [description]
+	 * @param array $values Array of values
 	 */
 	public function setValues(array $values)
 	{
 		foreach ($values as $name => $value) {
-			$this->add($name, $value);
+			$this->setValue($name, $value);
 		}
 	}
 
@@ -95,6 +95,8 @@ abstract class MultipleValueField extends Field
 	/**
 	 * Print the class directly. This returns all of the field values
 	 * concatenated with a colon character.
+	 *
+	 * {@inheritdoc}
 	 *
 	 * @return string The field values as a string
 	 */

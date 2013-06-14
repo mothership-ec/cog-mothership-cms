@@ -9,15 +9,19 @@ class RepeatableContainerTest extends \PHPUnit_Framework_TestCase
 	public function testConstructorAndIteration()
 	{
 		$groups = array(
-			$this->getMock('Message\Mothership\CMS\Page\Field\Group', array(), array(array(
-				$this->getMock('Message\Mothership\CMS\Page\Field\Field', array(), array('Field value')),
-				$this->getMock('Message\Mothership\CMS\Page\Field\MultipleValueField', array(), array(array(55, 24))),
-			))),
-			$this->getMock('Message\Mothership\CMS\Page\Field\Group'),
-			$this->getMock('Message\Mothership\CMS\Page\Field\Group', array(), array(array(
-				$this->getMock('Message\Mothership\CMS\Page\Field\Field', array(), array('My title'))
-			))),
+			0 => $this->getMock('Message\Mothership\CMS\Field\Group', array(), array('mygroup')),
+			1 => $this->getMock('Message\Mothership\CMS\Field\Group', array(), array('anothergroup')),
+			2 => $this->getMock('Message\Mothership\CMS\Field\Group', array(), array('third')),
 		);
+
+		$groups[0]->add($this->getMockForAbstractClass('Message\Mothership\CMS\Field\Field', array('my_field')));
+		$groups[0]->add($this->getMockForAbstractClass('Message\Mothership\CMS\Field\MultipleValueField', array('multi_field')));
+
+		$groups[1]->add($this->getMockForAbstractClass('Message\Mothership\CMS\Field\Field', array('my_field')));
+		$groups[1]->add($this->getMockForAbstractClass('Message\Mothership\CMS\Field\MultipleValueField', array('multi_field')));
+
+		$groups[2]->add($this->getMockForAbstractClass('Message\Mothership\CMS\Field\Field', array('my_field')));
+		$groups[2]->add($this->getMockForAbstractClass('Message\Mothership\CMS\Field\MultipleValueField', array('multi_field')));
 
 		$fields = new RepeatableContainer($groups);
 
@@ -40,11 +44,11 @@ class RepeatableContainerTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @depends testConstructorAndIteration
 	 */
-	public function testAdding($fields)
+	public function testAddingAndGetting($fields)
 	{
 		$this->assertSame(3, count($fields));
 
-		$group = $this->getMock('Message\Mothership\CMS\Page\Field\Group');
+		$group = $this->getMock('Message\Mothership\CMS\Field\Group', array(), array('groupdude'));
 		$fields->add($group);
 
 		$this->assertSame(4, count($fields));
@@ -54,6 +58,8 @@ class RepeatableContainerTest extends \PHPUnit_Framework_TestCase
 				$this->assertSame($group, $fieldGroup);
 			}
 		}
+
+		$this->assertSame($group, $fields->get(3));
 	}
 
 	public function testGetIterator()

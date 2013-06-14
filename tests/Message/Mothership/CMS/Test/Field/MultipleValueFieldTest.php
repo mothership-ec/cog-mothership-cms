@@ -74,7 +74,7 @@ class MultipleValueFieldTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @dataProvider Message\Mothership\CMS\Test\Page\Field\GroupTest::getFalseyValues
+	 * @dataProvider Message\Mothership\CMS\Test\Field\GroupTest::getFalseyValues
 	 *
 	 * @expectedException        \InvalidArgumentException
 	 * @expectedExceptionMessage must have a name
@@ -87,7 +87,7 @@ class MultipleValueFieldTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @dataProvider Message\Mothership\CMS\Test\Page\Field\GroupTest::getFalseyValues
+	 * @dataProvider Message\Mothership\CMS\Test\Field\GroupTest::getFalseyValues
 	 *
 	 * @expectedException        \InvalidArgumentException
 	 * @expectedExceptionMessage must have a name
@@ -100,7 +100,7 @@ class MultipleValueFieldTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @dataProvider Message\Mothership\CMS\Test\Page\Field\GroupTest::getFalseyValues
+	 * @dataProvider Message\Mothership\CMS\Test\Field\GroupTest::getFalseyValues
 	 *
 	 * @expectedException        \InvalidArgumentException
 	 * @expectedExceptionMessage must have a name

@@ -7,68 +7,8 @@ namespace Message\Mothership\CMS\Field;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-abstract class Field implements FieldInterface
+abstract class Field extends BaseField
 {
-	protected $_name;
-	protected $_label;
-	protected $_localisable = false;
-	protected $_value;
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function __construct($name, $label = null)
-	{
-		$this->_name  = $name;
-		$this->_label = $label ?: $name;
-	}
-
-	/**
-	 * Print the class directly. This returns the field value.
-	 *
-	 * @return string|null The field value
-	 */
-	public function __toString()
-	{
-		return $this->getValue();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getName()
-	{
-		return $this->_name;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getLabel()
-	{
-		return $this->_label;
-	}
-
-	/**
-	 * Get the value for this field.
-	 *
-	 * @return mixed
-	 */
-	public function getValue()
-	{
-		return $this->_value;
-	}
-
-	/**
-	 * Checks if this field is localisable.
-	 *
-	 * @return boolean True if this field is localisable, false otherwise
-	 */
-	public function isLocalisable()
-	{
-		return $this->_localisable;
-	}
-
 	/**
 	 * Set the value for this field.
 	 *
@@ -82,22 +22,10 @@ abstract class Field implements FieldInterface
 	}
 
 	/**
-	 * Toggle whether this field is localisable.
-	 *
-	 * @param boolean $localisable Whether the field should be localisable
+	 * {@inheritdoc}
 	 */
-	public function setLocalisable($localisable = true)
+	public function getValue()
 	{
-		$this->_localisable = (bool) $localisable;
-
-		return $this;
+		return $this->_value;
 	}
-
-	/**
-	 * Get the form field to use when rendering this field in a form.
-	 *
-	 * @todo set the return docblock here when we know the form field class hint
-	 * @return ?
-	 */
-	abstract public function getFormField();
 }

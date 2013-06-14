@@ -2,7 +2,8 @@
 
 namespace Message\Mothership\CMS\Test\PageType;
 
-use Message\Mothership\CMS\PageTypeInterface;
+use Message\Mothership\CMS\PageType\PageTypeInterface;
+use Message\Mothership\CMS\Field\Factory as FieldFactory;
 
 class Home implements PageTypeInterface
 {
@@ -11,13 +12,28 @@ class Home implements PageTypeInterface
 		return 'home';
 	}
 
+	public function getDisplayName()
+	{
+		return 'Home';
+	}
+
 	public function getDescription()
 	{
 		return 'The home page!';
 	}
 
-	public function getFields()
+	public function allowChildren()
 	{
-		// crazy shiz happens here.
+		return false;
+	}
+
+	public function getViewReference()
+	{
+
+	}
+
+	public function setFields(FieldFactory $factory)
+	{
+
 	}
 }

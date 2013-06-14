@@ -125,7 +125,7 @@ class Group implements FieldInterface
 	 *
 	 * @return Group        Returns $this for chainability
 	 */
-	public function add(Field $field)
+	public function add(BaseField $field)
 	{
 		$this->_fields[$field->getName()] = $field;
 
