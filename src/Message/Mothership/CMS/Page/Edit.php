@@ -9,6 +9,7 @@ use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\DB\NestedSetHelper;
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\DateTimeImmutable;
+use Message\User\UserInterface;
 use Message\User\User;
 
 
@@ -19,8 +20,12 @@ class Edit {
 	protected $_eventDispatcher;
 	protected $_nestedSetHelper;
 
-	public function __construct(Loader $loader, DBQuery $query,
-		DispatcherInterface $eventDispatcher, NestedSetHelper $nestedSetHelper = null)
+	public function __construct(
+		Loader $loader,
+		DBQuery $query,
+		DispatcherInterface $eventDispatcher,
+		NestedSetHelper $nestedSetHelper,
+		UserInterface $user)
 	{
 		$this->_loader          = $loader;
 		$this->_query           = $query;
@@ -29,18 +34,19 @@ class Edit {
 	}
 
 	/**
-	 * Pass thorugh the updated Page object and save it in the DB
+	 * Pass through the updated Page object and save it in the DB
 	 *
 	 * @todo Need o do something with the nested set helper when moving a page
 	 *       and things
 	 *
 	 * @param  Page   		$page 	Page object to be update
+	 *
 	 * @return Page|false   		Updated Page object
 	 */
-	public function save(Page $page, User $user = null)
+	public function save(Page $page, User $user)
 	{
 		// update the updated datetime
-		$page->authorship->update(new DateTimeImmutable, is_null($user) ? null : $user->id );
+		$page->authorship->update(new DateTimeImmutable, $user->id);
 
 		$result = $this->_query->run('
 			UPDATE
@@ -115,19 +121,20 @@ class Edit {
 			$event
 		);
 
-		return $result->affected() ? $page : false;
+		return $event->getpage();
 	}
 
 	/**
-	 * Make the page as Published
+	 * Set the page as Published
 	 *
-	 * If there is a unpublished date in the furture then keep it and set
+	 * If there is a unpublished date in the future then keep it and set
 	 * publish date to now.
 	 * If unpublish is in the past or null then set it to null so it won't
 	 * unpublish itself.
 	 *
 	 * @param  Page   	$page   Page to update as Published
 	 * @param  User 	$user 	User who initiated action
+	 *
 	 * @return Page 	$page 	Updated page object
 	 */
 	public function publish(Page $page, User $user = null)
@@ -156,6 +163,7 @@ class Edit {
 	 *
 	 * @param  Page   	$page Page to update as unpublished
 	 * @param  User 	$user User of who invoked the action
+	 *
 	 * @return Page   	$page Updated Page object
 	 */
 	public function unpublish(Page $page, User $user = null)
