@@ -2,11 +2,13 @@
 
 namespace Message\Mothership\CMS\Controller;
 
-class Create extends \Message\Cog\Controller\Controller
+class Edit extends \Message\Cog\Controller\Controller
 {
-	public function index()
+	public function index($pageID)
 	{
-		return $this->render('Message:Mothership:CMS::create', array(
+		$page = $this->_services['cms.page.loader']->getByID($pageID);
+		return $this->render('Message:Mothership:CMS::edit', array(
+			'page'	=> $page,
 			'pageTypes' => $this->_services['cms.page.types']
 		));
 	}

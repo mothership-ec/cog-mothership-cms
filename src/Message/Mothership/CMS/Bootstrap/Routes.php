@@ -15,5 +15,7 @@ class Routes implements RoutesInterface
 			->setFormat('ANY');
 		$router['ms.cms']->add('ms.cms.create.process', '/create/process', '::Controller:Create#process')
 			->setMethod('POST');
+		$router['ms.cms']->add('ms.cms.edit', '/edit/{pageID}', '::Controller:Edit#index')
+			->setRequirement('pageID', '\d+');
 	}
 }
