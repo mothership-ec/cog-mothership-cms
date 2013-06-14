@@ -54,13 +54,6 @@ abstract class BaseField implements FieldInterface
 	}
 
 	/**
-	 * Get the value for this field.
-	 *
-	 * @return mixed
-	 */
-	abstract public function getValue();
-
-	/**
 	 * Checks if this field is localisable.
 	 *
 	 * @return boolean True if this field is localisable, false otherwise
@@ -81,6 +74,13 @@ abstract class BaseField implements FieldInterface
 
 		return $this;
 	}
+
+	/**
+	 * Get the value for this field.
+	 *
+	 * @return mixed
+	 */
+	abstract public function getValue();
 
 	/**
 	 * Get the form field to use when rendering this field in a form.
