@@ -163,7 +163,7 @@ class Edit {
 		// Get the end data if there is one
 		$end = $page->publishDateRange->getEnd();
 		// If the end date is in the past then set it to null
-		if ($page->publishDateRange->getEnd()->getTimestamp() < time()) {
+		if ($end && $end->getTimestamp() < time()) {
 			$end = null;
 		}
 		// Create a start date from now
@@ -189,7 +189,7 @@ class Edit {
 		$start = $page->publishDateRange->getStart();
 
 		// If the start date is in the new end time then set it to null
-		if ($page->publishDateRange->getStart()->getTimestamp() > $end->getTimestamp()) {
+		if ($start && $start->getTimestamp() > $end->getTimestamp()) {
 			$start = null;
 		}
 		// Set the new unpublsih date range
