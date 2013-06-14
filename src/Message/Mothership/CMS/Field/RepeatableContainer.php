@@ -43,6 +43,11 @@ class RepeatableContainer implements \IteratorAggregate, \Countable
 		return count($this->_groups);
 	}
 
+	public function get($index)
+	{
+		return isset($this->_groups[$index]) ? $this->_groups[$index] : false;
+	}
+
 	/**
 	 * Get the iterator to use for this iterable class.
 	 *

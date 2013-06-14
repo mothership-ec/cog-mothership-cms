@@ -9,7 +9,7 @@ namespace Message\Mothership\CMS\Field;
  */
 class Factory
 {
-	protected $_fields;
+	protected $_fields = array();
 
 	/**
 	 * Add a new field to the factory.
@@ -76,6 +76,19 @@ class Factory
 	}
 
 	/**
+	 * Clear all fields and groups set on this factory, restoring it to a fresh
+	 * instance.
+	 *
+	 * @return Factory Returns $this for chainability
+	 */
+	public function clear()
+	{
+		$this->_fields = array();
+
+		return $this;
+	}
+
+	/**
 	 * Get a new instance of a field.
 	 *
 	 * @param  string      $type  The field type to get
@@ -113,5 +126,27 @@ class Factory
 	public function getGroup($name, $label = null)
 	{
 		return new Group($name, $label);
+	}
+
+	/**
+	 * Get a specific field/group that has been set on this factory.
+	 *
+	 * @param  string $name Name of the field (or group)
+	 *
+	 * @return FieldInterface|null
+	 */
+	public function get($name)
+	{
+		return isset($this->_fields[$name]) ? $this->_fields[$name] : false;
+	}
+
+	/**
+	 * Get all fields/groups set on this factory.
+	 *
+	 * @return array
+	 */
+	public function getAll()
+	{
+		return $this->_fields;
 	}
 }

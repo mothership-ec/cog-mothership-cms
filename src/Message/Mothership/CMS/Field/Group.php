@@ -75,6 +75,16 @@ class Group implements FieldInterface
 	}
 
 	/**
+	 * Check if this group is a repeatable group.
+	 *
+	 * @return boolean
+	 */
+	public function isRepeatable()
+	{
+		return $this->_repeatable;
+	}
+
+	/**
 	 * Get the field set as the "identifier field".
 	 *
 	 * @return Field|false The field instance, or false if no identifier field set
@@ -110,6 +120,7 @@ class Group implements FieldInterface
 			'identifier',
 			'title',
 			'heading',
+			'name',
 		))) {
 			$this->setIdentifierField($field->getName());
 		}
