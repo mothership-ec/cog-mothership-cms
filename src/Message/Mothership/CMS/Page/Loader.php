@@ -364,14 +364,15 @@ class Loader
 	}
 
 	/**
-	 * Load the results into Page objects and return them
+	 * Load the results into instances of `Page` and return them.
 	 *
-	 * @param  Result 		$results db result of the pages to load
-	 * @return Page|array   array of Page objects or somtimes singular
+	 * @param  Result $results  Database result of page load query
+	 *
+	 * @return Page|array[Page] Singular Page object, or array of page objects
 	 */
 	protected function _loadPage(Result $results)
 	{
-		$pages = $results->bindTo('\Message\Mothership\CMS\Page\Page');
+		$pages = $results->bindTo('Message\\Mothership\\CMS\\Page\\Page');
 
 		foreach ($results as $key => $data) {
 
@@ -403,6 +404,7 @@ class Loader
 				$pages[$key]->authorship->delete(new DateTimeImmutable('@' . $data->deletedAt), $data->deletedBy);
 			}
 		}
+
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
 	}
 }
