@@ -1,10 +1,10 @@
 <?php
 
-namespace Message\Mothership\CMS\Test\Page\Field;
+namespace Message\Mothership\CMS\Test\Field;
 
-use Message\Mothership\CMS\Page\Field\Repeatable;
+use Message\Mothership\CMS\Field\RepeatableContainer;
 
-class RepeatableTest extends \PHPUnit_Framework_TestCase
+class RepeatableContainerTest extends \PHPUnit_Framework_TestCase
 {
 	public function testConstructorAndIteration()
 	{
@@ -19,7 +19,7 @@ class RepeatableTest extends \PHPUnit_Framework_TestCase
 			))),
 		);
 
-		$fields = new Repeatable($groups);
+		$fields = new RepeatableContainer($groups);
 
 		foreach ($fields as $key => $fieldGroup) {
 			$this->assertSame($groups[$key], $fieldGroup);
@@ -58,7 +58,7 @@ class RepeatableTest extends \PHPUnit_Framework_TestCase
 
 	public function testGetIterator()
 	{
-		$fields = new Repeatable;
+		$fields = new RepeatableContainer;
 
 		$this->assertInstanceOf('\Traversable', $fields->getIterator());
 	}
