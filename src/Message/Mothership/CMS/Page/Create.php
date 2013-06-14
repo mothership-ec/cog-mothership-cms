@@ -60,13 +60,18 @@ class Create
 	 * @return Page                        The page that was created (which may
 	 *                                     have been overwritten by an event listener)
 	 *
-	 * @todo Throw an exception if the parent's page type does not allow child elements
+	 * @throws \InvalidArgumentException If the parent page's type does not allow
+	 *                                   child pages
 	 */
 	public function create(PageTypeInterface $pageType, $title, Page $parent = null)
 	{
-		#if ($parent && !$parent->type->allowChildPages) { // Is there a better property name? Is a property even good? What's the best waaaay?
-			//throw exception
-		#}
+		if ($parent && !$parent->type->allowChildren()) {
+			throw new \InvalidArgumentException(sprintf(
+				'Cannot create a page within page #%i because it\'s type (%s) does not allow child pages.',
+				$parent->id,
+				$parent->type->getName()
+			);
+		}
 
 		// Create the page without adding it to the nested set tree
 		$result = $this->_query->run('
