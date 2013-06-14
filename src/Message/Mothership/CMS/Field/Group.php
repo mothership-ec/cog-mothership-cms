@@ -59,6 +59,21 @@ class Group implements FieldInterface
 	}
 
 	/**
+	 * Post-cloning method call. This performs "deep cloning" of the object, by
+	 * cloning each field.
+	 *
+	 * This method is important because without it, when the group is cloned,
+	 * the fields within the group will still point to the original instances
+	 * rather than being cloned themselves.
+	 */
+	public function __clone()
+	{
+		foreach ($this->_fields as $name => $field) {
+			$this->_fields[$name] = clone $field;
+		}
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public function getName()

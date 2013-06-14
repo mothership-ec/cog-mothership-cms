@@ -7,7 +7,7 @@ namespace Message\Mothership\CMS\Field;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class Factory
+class Factory implements \IteratorAggregate, \Countable
 {
 	protected $_fields = array();
 
@@ -141,12 +141,23 @@ class Factory
 	}
 
 	/**
-	 * Get all fields/groups set on this factory.
+	 * Get the number of fields registered on this factory.
 	 *
-	 * @return array
+	 * @return int The number of fields registered
 	 */
-	public function getAll()
+	public function count()
 	{
-		return $this->_fields;
+		return count($this->_fields);
+	}
+
+	/**
+	 * Get the iterator object to use for iterating over this class.
+	 *
+	 * @return \ArrayIterator An \ArrayIterator instance for the `_fields`
+	 *                        property
+	 */
+	public function getIterator()
+	{
+		return new \ArrayIterator($this->_fields);
 	}
 }

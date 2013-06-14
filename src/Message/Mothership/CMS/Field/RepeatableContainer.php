@@ -43,8 +43,17 @@ class RepeatableContainer implements \IteratorAggregate, \Countable
 		return count($this->_groups);
 	}
 
+	/**
+	 * Get a group at a specific index from this container.
+	 *
+	 * @param  int $index  The index
+	 *
+	 * @return Group|false The group instance, or false if it doesn't exist
+	 */
 	public function get($index)
 	{
+		$index = (int) $index;
+
 		return isset($this->_groups[$index]) ? $this->_groups[$index] : false;
 	}
 

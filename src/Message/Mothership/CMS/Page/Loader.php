@@ -2,7 +2,8 @@
 
 namespace Message\Mothership\CMS\Page;
 
-use Message\Mothership\CMS\PageTypeInterface;
+use Message\Mothership\CMS\PageType\PageTypeInterface;
+use Message\Mothership\CMS\PageType\Collection;
 
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
@@ -46,6 +47,7 @@ class Loader
 {
 	protected $_locale;
 	protected $_query;
+	protected $_pageTypes;
 
 	/**
 	 * var to toggle the loading of deleted pages
@@ -61,10 +63,11 @@ class Loader
 	 *
 	 * @param \Locale $locale The locale to use for loading translations
 	 */
-	public function __construct(/* \Locale */ $locale, Query $query)
+	public function __construct(/* \Locale */ $locale, Query $query, Collection $pageTypes)
 	{
-		$this->_locale = $locale;
-		$this->_query = $query;
+		$this->_locale    = $locale;
+		$this->_query     = $query;
+		$this->_pageTypes = $pageTypes;
 	}
 
 	/**
@@ -300,7 +303,6 @@ class Loader
 				page.page_id AS id,
 				page.title AS title,
 				page.type AS type,
-				page.publish_state AS publishState,
 				page.publish_at AS publishAt,
 				page.unpublish_at AS unpublishAt,
 				page.created_at AS createdAt,
@@ -378,6 +380,9 @@ class Loader
 				unset($pages[$key]);
 				continue;
 			}
+
+			// Get the page type
+			$pages[$key]->type = $this->_pageTypes->get($data->type);
 
 			// Load the DateRange object for publishDateRange
 			$pages[$key]->publishDateRange = new DateRange(
