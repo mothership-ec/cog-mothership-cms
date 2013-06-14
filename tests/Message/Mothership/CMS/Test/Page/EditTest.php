@@ -15,6 +15,8 @@ use Message\Cog\ValueObject\DateTimeImmutable;
 
 class EditTest extends \PHPUnit_Framework_TestCase
 {
+	protected $_nestedSetHelper;
+
 	public function testSave()
 	{
 		$connection = new Connection(array('affectedRows' => 1));
@@ -36,6 +38,10 @@ class EditTest extends \PHPUnit_Framework_TestCase
 		$loader = new Loader('gb', new Query($connection));
 		$page = $loader->getByID(1);
 		$despatcher = new FauxDispatcher;
+		$this->_nestedSetHelper = $this->getMock('Message\Cog\DB\NestedSetHelper', array('insertChildAtEnd'), array(
+			 new Query($connection),
+			$this->getMock('Message\Cog\DB\Transaction', array(), array(), '', false)
+		));
 		$connection->setPattern('/page_id([\s]+?)= 1/', array(
 			array(
 				'id'			=> 1,
@@ -50,7 +56,7 @@ class EditTest extends \PHPUnit_Framework_TestCase
 				'slug'			=> '/blog/hello-world',
 			),
 		));
-		$edit = new Edit($loader, new Query($connection), $despatcher);
+		$edit = new Edit($loader, new Query($connection), $despatcher, $this->_nestedSetHelper);
 		$page->title = 'updated';
 
 		$returnedPage = $edit->save($page);
