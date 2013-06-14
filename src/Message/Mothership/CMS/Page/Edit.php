@@ -19,7 +19,7 @@ class Edit {
 	protected $_query;
 	protected $_eventDispatcher;
 	protected $_nestedSetHelper;
-	protected $_user;
+	protected $_currentUser;
 
 	public function __construct(
 		Loader $loader,
@@ -32,7 +32,7 @@ class Edit {
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
 		$this->_nestedSetHelper = $nestedSetHelper;
-		$this->_user			= $user;
+		$this->_currentUser		= $user;
 	}
 
 	/**
@@ -48,7 +48,7 @@ class Edit {
 	public function save(Page $page)
 	{
 		// update the updated datetime
-		$page->authorship->update(new DateTimeImmutable, $this->_user->id);
+		$page->authorship->update(new DateTimeImmutable, $this->_currentUser->id);
 
 		$result = $this->_query->run('
 			UPDATE
