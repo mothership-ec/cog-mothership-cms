@@ -4,7 +4,7 @@ namespace Message\Mothership\CMS\Page;
 
 class Edit
 {
-	public function __construct(Query $query, User $currentUser)
+	public function __construct(Query $query, UserInterface $currentUser)
 	{
 
 	}
