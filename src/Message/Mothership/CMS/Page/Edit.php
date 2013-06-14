@@ -19,6 +19,7 @@ class Edit {
 	protected $_query;
 	protected $_eventDispatcher;
 	protected $_nestedSetHelper;
+	protected $_user;
 
 	public function __construct(
 		Loader $loader,
@@ -31,6 +32,7 @@ class Edit {
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
 		$this->_nestedSetHelper = $nestedSetHelper;
+		$this->_user			= $user;
 	}
 
 	/**
@@ -43,10 +45,10 @@ class Edit {
 	 *
 	 * @return Page|false   		Updated Page object
 	 */
-	public function save(Page $page, User $user)
+	public function save(Page $page)
 	{
 		// update the updated datetime
-		$page->authorship->update(new DateTimeImmutable, $user->id);
+		$page->authorship->update(new DateTimeImmutable, $this->_user->id);
 
 		$result = $this->_query->run('
 			UPDATE
@@ -133,11 +135,10 @@ class Edit {
 	 * unpublish itself.
 	 *
 	 * @param  Page   	$page   Page to update as Published
-	 * @param  User 	$user 	User who initiated action
 	 *
 	 * @return Page 	$page 	Updated page object
 	 */
-	public function publish(Page $page, User $user = null)
+	public function publish(Page $page)
 	{
 		// Get the end data if there is one
 		$end = $page->publishDateRange->getEnd();
@@ -150,10 +151,8 @@ class Edit {
 		// Build the date range object with the new dates and assign it to
 		// the page object
 		$page->publishDateRange = new DateRange($start, $end);
-		// Set the publish state to 1
-		$page->publishState = 1;
 		// Save the page to the DB
-		$this->save($page, $user);
+		$this->save($page, $this->_user);
 		// Return the updated page object
 		return $page;
 	}
@@ -162,11 +161,10 @@ class Edit {
 	 * Update the page to be unpublished
 	 *
 	 * @param  Page   	$page Page to update as unpublished
-	 * @param  User 	$user User of who invoked the action
 	 *
 	 * @return Page   	$page Updated Page object
 	 */
-	public function unpublish(Page $page, User $user = null)
+	public function unpublish(Page $page)
 	{
 		// Set the end time to now
 		$end = new DateTimeImmutable;
@@ -181,7 +179,7 @@ class Edit {
 		// Se tthe publish state to 0
 		$page->publishState = 0;
 		// Save the page to the DB
-		$this->save($page, $user);
+		$this->save($page, $this->_user);
 		// Return the updated Page object
 		return $page;
 	}
