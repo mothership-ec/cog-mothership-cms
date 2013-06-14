@@ -14,6 +14,9 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
 
 	public function testDelete()
 	{
+       $this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
 		$connection = new Connection;
 		// For testDuplicateFieldNameException
 		$connection->setPattern('/page_id([\s]+?)= 1/', array(
@@ -44,12 +47,12 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
 		));
 		$loader = new Loader('gb', new Query($connection));
 		$page = $loader->getByID(1);
-		
+
 
 	}
-	
+
 	public function testRestore()
 	{
-		
+
 	}
 }

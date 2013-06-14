@@ -4,6 +4,8 @@ namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\PageTypeInterface;
 
+use Message\User\UserInterface;
+
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\DB\NestedSetHelper;
@@ -12,9 +14,6 @@ use Message\Cog\DB\NestedSetHelper;
  * Decorator for creating pages.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
- *
- * @todo Implement the created_by setting. Is there a service for the current
- *       user?
  */
 class Create
 {
@@ -22,6 +21,7 @@ class Create
 	protected $_query;
 	protected $_eventDispatcher;
 	protected $_nestedSetHelper;
+	protected $_currentUser;
 
 	/**
 	 * Constructor.
@@ -31,14 +31,16 @@ class Create
 	 * @param DispatcherInterface $eventDispatcher The event dispatcher
 	 * @param NestedSetHelper     $nestedSetHelper The nested set helper, set up
 	 *                                             for the `Page` table
+	 * @param UserInterface       $user            The currently logged in user
 	 */
-	public function __construct(Loader $loader, DBQuery $query,
-		DispatcherInterface $eventDispatcher, NestedSetHelper $nestedSetHelper)
+	public function __construct(Loader $loader, DBQuery $query, DispatcherInterface $eventDispatcher,
+		NestedSetHelper $nestedSetHelper, UserInterface $user)
 	{
 		$this->_loader          = $loader;
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
 		$this->_nestedSetHelper = $nestedSetHelper;
+		$this->_currentUser     = $user;
 	}
 
 	/**
@@ -72,13 +74,14 @@ class Create
 				page
 			SET
 				created_at    = UNIX_TIMESTAMP(),
-				created_by    = 0,
+				created_by    = :createdBy?in,
 				title         = :title?s,
 				type          = :type?s,
 				unpublish_at  = UNIX_TIMESTAMP()
 		', array(
-			'title' => $title,
-			'type'  => $pageType->getName(),
+			'title'     => $title,
+			'type'      => $pageType->getName(),
+			'createdBy' => $this->_currentUser->id,
 		));
 
 		$pageID = (int) $result->id();
