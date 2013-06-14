@@ -17,7 +17,6 @@ class Page
 	public $id;
 	public $title;
 	public $type;
-	public $publishState;
 	public $publishDateRange;
 	public $slug;
 

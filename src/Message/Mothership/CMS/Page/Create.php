@@ -75,7 +75,7 @@ class Create
 				created_by    = 0,
 				title         = :title?s,
 				type          = :type?s,
-				publish_state = 0
+				unpublish_at  = UNIX_TIMESTAMP()
 		', array(
 			'title' => $title,
 			'type'  => $pageType->getName(),

@@ -300,7 +300,6 @@ class Loader
 				page.page_id AS id,
 				page.title AS title,
 				page.type AS type,
-				page.publish_state AS publishState,
 				page.publish_at AS publishAt,
 				page.unpublish_at AS unpublishAt,
 				page.created_at AS createdAt,
