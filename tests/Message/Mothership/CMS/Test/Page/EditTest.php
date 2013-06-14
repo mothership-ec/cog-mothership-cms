@@ -8,14 +8,19 @@ use Message\Cog\DB\Query;
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Loader;
 use Message\Mothership\CMS\Page\Edit;
-use Message\Mothership\User\User;
+use Message\User\User;
 use Message\Cog\Test\Event\FauxDispatcher;
 use Message\Cog\ValueObject\DateTimeImmutable;
-
 
 class EditTest extends \PHPUnit_Framework_TestCase
 {
 	protected $_nestedSetHelper;
+	protected $_user;
+
+	public function setUp()
+	{
+		$this->_user = new User;
+	}
 
 	public function testSave()
 	{
@@ -56,7 +61,7 @@ class EditTest extends \PHPUnit_Framework_TestCase
 				'slug'			=> '/blog/hello-world',
 			),
 		));
-		$edit = new Edit($loader, new Query($connection), $despatcher, $this->_nestedSetHelper);
+		$edit = new Edit($loader, new Query($connection), $despatcher, $this->_nestedSetHelper, $this->_user);
 		$page->title = 'updated';
 
 		$returnedPage = $edit->save($page);
@@ -102,11 +107,16 @@ class EditTest extends \PHPUnit_Framework_TestCase
 			),
 		));
 
+		$this->_nestedSetHelper = $this->getMock('Message\Cog\DB\NestedSetHelper', array('insertChildAtEnd'), array(
+			 new Query($connection),
+			$this->getMock('Message\Cog\DB\Transaction', array(), array(), '', false)
+		));
+
 		$loader = new Loader('gb', new Query($connection));
 		$page = $loader->getByID(1);
 
 		$despatcher = new FauxDispatcher;
-		$edit = new Edit($loader, new Query($connection), $despatcher);
+		$edit = new Edit($loader, new Query($connection), $despatcher, $this->_nestedSetHelper, $this->_user);
 		$returnedPage = $edit->publish($page, null);
 
 		$date = new DateTimeImmutable;
@@ -158,8 +168,13 @@ class EditTest extends \PHPUnit_Framework_TestCase
 		$loader = new Loader('gb', new Query($connection));
 		$page = $loader->getByID(1);
 
+		$this->_nestedSetHelper = $this->getMock('Message\Cog\DB\NestedSetHelper', array('insertChildAtEnd'), array(
+			 new Query($connection),
+			$this->getMock('Message\Cog\DB\Transaction', array(), array(), '', false)
+		));
+
 		$despatcher = new FauxDispatcher;
-		$edit = new Edit($loader, new Query($connection), $despatcher);
+		$edit = new Edit($loader, new Query($connection), $despatcher, $this->_nestedSetHelper, $this->_user);
 		$returnedPage = $edit->unpublish($page, null);
 
 		$date = new DateTimeImmutable;
