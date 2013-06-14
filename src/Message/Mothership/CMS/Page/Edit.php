@@ -167,7 +167,7 @@ class Edit {
 			$end = null;
 		}
 		// Create a start date from now
-		$start = new DateTimeImmutable('-2 days');
+		$start = new DateTimeImmutable;
 		// Build the date range object with the new dates and assign it to
 		// the page object
 		$page->publishDateRange = new DateRange($start, $end);

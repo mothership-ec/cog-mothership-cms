@@ -117,7 +117,7 @@ class EditTest extends \PHPUnit_Framework_TestCase
 
 		$despatcher = new FauxDispatcher;
 		$edit = new Edit($loader, new Query($connection), $despatcher, $this->_nestedSetHelper, $this->_user);
-		$returnedPage = $edit->publish($page, null);
+		$returnedPage = $edit->publish($page);
 
 		$date = new DateTimeImmutable;
 

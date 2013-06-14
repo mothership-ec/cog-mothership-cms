@@ -58,12 +58,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog.git",
-                "reference": "2673dc3f8713ffbf48631aa5d1b8a846b5487846"
+                "reference": "78184b06bddf8bb1aa55e55dbaeabaf34590cc62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/messagedigital/cog/zipball/2673dc3f8713ffbf48631aa5d1b8a846b5487846",
-                "reference": "2673dc3f8713ffbf48631aa5d1b8a846b5487846",
+                "url": "https://api.github.com/repos/messagedigital/cog/zipball/78184b06bddf8bb1aa55e55dbaeabaf34590cc62",
+                "reference": "78184b06bddf8bb1aa55e55dbaeabaf34590cc62",
                 "shasum": ""
             },
             "require": {
@@ -127,7 +127,7 @@
                 "issues": "http://server.local:3000/cog/issues",
                 "source": "https://github.com/messagedigital/cog/tree/master"
             },
-            "time": "2013-06-13 09:21:07"
+            "time": "2013-06-14 11:33:56"
         },
         {
             "name": "message/cog-mothership-cp",
