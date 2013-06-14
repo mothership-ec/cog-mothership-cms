@@ -2,6 +2,8 @@
 
 namespace Message\Mothership\CMS\PageType;
 
+use Message\Mothership\CMS\PageTypeInterface;
+
 /**
  * A container for all page types available to the system.
  *

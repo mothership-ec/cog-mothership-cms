@@ -9,24 +9,21 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 	public function testConstructorAndIteration()
 	{
 		$pageTypes = array(
-			new Blog,
-			new Blog,
-			new Blog,
-			new Blog,
-			new Blog,
+			'blog' => new Blog,
+			'home' => new Home,
 		);
-		$collection = new PageTypeCollection($pageTypes);
+		$collection = new Collection($pageTypes);
 
 		$this->assertEquals(count($pageTypes), $collection->count());
 
-		foreach ($collection as $key => $pageType) {
-			$this->assertEquals($pageTypes[$key], $pageType);
+		foreach ($collection as $pageType) {
+			$this->assertEquals($pageTypes[$pageType->getName()], $pageType);
 		}
 	}
 
 	public function testAdd()
 	{
-		$collection = new PageTypeCollection;
+		$collection = new Collection;
 		$pageType   = new Blog;
 
 		$this->assertEquals($collection, $collection->add($pageType));
@@ -38,7 +35,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 
 	public function testCount()
 	{
-		$collection = new PageTypeCollection;
+		$collection = new Collection;
 
 		$this->assertEquals(0, count($collection));
 		$this->assertEquals(0, $collection->count());
@@ -48,7 +45,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(1, count($collection));
 		$this->assertEquals(1, $collection->count());
 
-		$collection->add(new Blog);
+		$collection->add(new Home);
 
 		$this->assertEquals(2, count($collection));
 		$this->assertEquals(2, $collection->count());
@@ -56,7 +53,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 
 	public function testGetIterator()
 	{
-		$collection = new PageTypeCollection;
+		$collection = new Collection;
 		$this->assertInstanceOf('\Iterator', $collection->getIterator());
 	}
 }
