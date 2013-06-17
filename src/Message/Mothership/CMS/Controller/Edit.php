@@ -13,12 +13,15 @@ class Edit extends \Message\Cog\Controller\Controller
 		));
 	}
 
-	public function process()
+	public function process($pageID)
 	{
-		if ($data = $this->get('request')->request->get('create')) {
-			$pageType = $this->_services['cms.page.types']->get($data['type']);
-			$page = $this->_services['cms.page.create']->create($pageType,$data['title']);
-			return $this->redirect($this->generateUrl('ms.cms.dashboard'));
+		if ($data = $this->get('request')->request->get('edit')) {
+			$page = $this->_services['cms.page.loader']->getByID($pageID);
+			$page->type = $this->_services['cms.page.types']->get($data['type']);
+			$page->title = $data['title'];
+			//$page->slug = $data['slug'];
+			$page = $this->_services['cms.page.edit']->save($page);
+			return $this->redirect($this->generateUrl('ms.cms.edit', array('pageID' => $pageID)));
 		}
 	}
 }

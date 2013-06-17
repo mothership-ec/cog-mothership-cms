@@ -48,19 +48,16 @@ class Edit {
 	public function save(Page $page)
 	{
 		$page->authorship->update(new DateTimeImmutable, $this->_currentUser->id);
-
 		$result = $this->_query->run('
 			UPDATE
 				page
 			SET
 				page.title = :title?s,
 				page.type = :type?s,
-				page.publish_at = :publishAt?i,
-				page.unpublish_at = :unpublishAt?i,
+				page.publish_at = :publishAt?,
+				page.unpublish_at = :unpublishAt?,
 				page.updated_at = :updatedAt?i,
 				page.created_by = :updatedBy?i,
-				page.deleted_at = :deletedAt?i,
-				page.deleted_by = :deletedBy?i,
 				page.position_left = :left?i,
 				page.position_right = :right?i,
 				page.position_depth = :depth?i,
@@ -86,7 +83,7 @@ class Edit {
 				array(
 					'pageID' => $page->id,
 					'title' => $page->title,
-					'type' => $page->type,
+					'type' => $page->type->getName(),
 					'publishAt' => $page->publishDateRange->getStart() ? $page->publishDateRange->getStart()->getTimestamp() : null,
 					'unpublishAt' => $page->publishDateRange->getEnd() ? $page->publishDateRange->getEnd()->getTimestamp() : null,
 					'updatedAt'	=> $page->authorship->updatedAt()->getTimestamp(),

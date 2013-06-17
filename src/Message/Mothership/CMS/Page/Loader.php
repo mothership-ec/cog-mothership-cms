@@ -416,7 +416,7 @@ class Loader
 			if ($data->unpublishAt) {
 				$data->unpublishAt = new DateTimeImmutable('@' . $data->unpublishAt);
 			}
-
+			//var_dump(array($data->publishAt, $data->unpublishAt));
 			// Load the DateRange object for publishDateRange
 			$pages[$key]->publishDateRange = new DateRange($data->publishAt, $data->unpublishAt);
 

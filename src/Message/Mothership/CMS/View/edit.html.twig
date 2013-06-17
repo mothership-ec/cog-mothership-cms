@@ -6,21 +6,21 @@
 
 {% block main %}
 	<h1>Editing {{ page.title }}</h1>
-	<form action="/admin/cms/edit/process" method="post">
+	<form action="/admin/cms/edit/process/{{ page.id }}" method="post">
 
 		<label for="edit-title">Title</label>
 		<input type="text" name="edit[title]" id="edit-title" value="{{ page.title}}" />
 
-		<label for="edit-title">Title</label>
-		<input type="text" name="edit[title]" id="edit-title" value="{{ page.title}}" />
+		<label for="edit-slug">Url slug</label>
+		<input type="text" name="edit[slug]" id="edit-slug" value="{{ page.slug.getLastSegment }}" />
 
-		<label for="edit-type">Title</label>
-		<select name="edit[type]" id="edit-select">
+		<label for="edit-type">Page type</label>
+		<select name="edit[type]" id="edit-type">
 			{% for type in pageTypes %}
 				<option value="{{ type.getName }}">{{ type.getName }}</option>
 			{% endfor %}
 		</select>
 
-		<button type="submit" name="edit[submit]" id="edit-submit" value="Edit Page">Edit Page</button>
+		<button type="submit" id="edit-submit" value="Edit Page">Edit Page</button>
 	</form>
 {% endblock %}
