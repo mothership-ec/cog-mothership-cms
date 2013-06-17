@@ -21,8 +21,11 @@ class Frontend extends Controller
 			}
 
 			// Otherwise, throw a 404
-			throw $this->createNotFoundException();
+			throw $this->createNotFoundException('Page not found.');
 		}
+
+		// Check permissions
+		$authorisation = $this->get('cms.page.authorisation');
 
 		// Render the view for the page type
 		return $this->render($page->type->getViewReference(), array(

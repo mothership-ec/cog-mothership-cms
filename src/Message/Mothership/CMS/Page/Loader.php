@@ -3,7 +3,9 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\PageType\PageTypeInterface;
-use Message\Mothership\CMS\PageType\Collection;
+use Message\Mothership\CMS\PageType\Collection as PageTypeCollection;
+
+use Message\User\Group\Collection as UserGroupCollection;
 
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
@@ -61,13 +63,18 @@ class Loader
 	/**
 	 * Constructor.
 	 *
-	 * @param \Locale $locale The locale to use for loading translations
+	 * @param \Locale             $locale    The current locale
+	 * @param Query               $query     Database query instance to use
+	 * @param PageTypeCollection  $pageTypes Page types available to the system
+	 * @param UserGroupCollection $groups    User groups available to the system
 	 */
-	public function __construct(/* \Locale */ $locale, Query $query, Collection $pageTypes)
+	public function __construct(/* \Locale */ $locale, Query $query,
+		PageTypeCollection $pageTypes, UserGroupCollection $groups)
 	{
-		$this->_locale    = $locale;
-		$this->_query     = $query;
-		$this->_pageTypes = $pageTypes;
+		$this->_locale     = $locale;
+		$this->_query      = $query;
+		$this->_pageTypes  = $pageTypes;
+		$this->_userGroups = $groups;
 	}
 
 	/**
@@ -337,7 +344,7 @@ class Loader
 				page.password AS password,
 				page.access AS access,
 
-				page_access_group.group_id AS accessGroups,
+				GROUP_CONCAT(page_access_group.group_name) AS accessGroups,
 
 				page.comment_enabled AS commentsEnabled,
 				page.comment_access AS commentsAccess,
@@ -350,7 +357,9 @@ class Loader
 			LEFT JOIN
 				page_access_group ON (page_access_group.page_id = page.page_id)
 			WHERE
-				page.page_id IN (?ij)',
+				page.page_id IN (?ij)
+			GROUP BY
+				page.page_id',
 				array(
 					(array) $pageID,
 				)
@@ -402,6 +411,14 @@ class Loader
 
 			if ($data->deletedAt) {
 				$pages[$key]->authorship->delete(new DateTimeImmutable('@' . $data->deletedAt), $data->deletedBy);
+			}
+
+			// Load access groups
+			$groups = array_filter(explode(',', $data->accessGroups));
+			foreach ($groups as $groupName) {
+				if ($group = $this->_userGroups->get(trim($groupName))) {
+					$pages[$key]->accessGroups[$group->getName()] = $group;
+				}
 			}
 		}
 

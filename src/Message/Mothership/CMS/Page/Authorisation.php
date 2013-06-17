@@ -2,6 +2,8 @@
 
 namespace Message\Mothership\CMS\Page;
 
+use Message\User\UserInterface;
+
 /**
  * Helper class for determining if a page is viewable by the current user based
  * on the various authorisation and access settings.
@@ -10,61 +12,59 @@ namespace Message\Mothership\CMS\Page;
  */
 class Authorisation
 {
-	protected $_page;
-	protected $_user;
+	protected $_currentUser;
 
 	/**
-	 * Get an instance of the given page along with an instance of the User
+	 * Constructor.
 	 *
-	 * @param Page $page
-	 * @param User $user
+	 * @param UserInterface $user The currently logged in user
 	 */
-	public function __construct(Page $page, $user)
+	public function __construct(UserInterface $user)
 	{
-		$this->_page = $page;
-		$this->_user = $user;
+		$this->_currentUser = $user;
 	}
 
 	/**
 	 * Check that a given string matches the stored password for the page.
 	 *
+	 * @param  Page  $page     The page to check
 	 * @param  mixed $password The password to check for
 	 * @return bool  		   Result of the check
 	 *
 	 * @throws \Exception      If the given page has no password set
 	 */
-	public function validatePassword($password)
+	public function validatePassword(Page $page, $password)
 	{
-		if (!$this->_page->password) {
+		if (!$page->password) {
 			throw new \Exception('This page has no password');
 		}
-	
-		return $this->_page->password == $password;
+
+		return $page->password == $password;
 	}
 
 	/**
 	 * Check whether the given page is viewable by the given user
 	 *
-	 * @return bool			   Result of the check
+	 * @param Page      $page The page to check
+	 * @param User|null $user The user to check authorisation for, or if null
+	 *                        the current user is used
+	 *
+	 * @return bool           Result of the check
 	 */
-	public function isViewable()
+	public function isViewable(Page $page, UserInterface $user = null)
 	{
+		$user = $user ?: $this->_currentUser;
+
 
 	}
 
 	/**
-	 * Check that the given page is ready to be viewed and not in a draft or
-	 * hidden state.
+	 * Check that the given page is published.
 	 *
-	 * @return bool			   Result of the check
+	 * @return bool Result of the check
 	 */
 	public function isPublished()
 	{
-		if (!$this->_page->publishState 
-		 || !$this->_page->publishDateRange->isInRange()
-		) {
-			return false;
-		}
-		return true;
+		return $this->_page->publishDateRange->isInRange();
 	}
 }
