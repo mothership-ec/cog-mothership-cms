@@ -155,7 +155,7 @@ class Loader
 			SELECT
 				page_id
 			FROM
-				slug_history
+				page_slug_history
 			WHERE
 				slug = ?s
 		', $slug);
@@ -380,8 +380,8 @@ class Loader
 
 			// Load the DateRange object for publishDateRange
 			$pages[$key]->publishDateRange = new DateRange(
-				new DateTimeImmutable('@' . $data->publishAt),
-				new DateTimeImmutable('@' . $data->unpublishAt)
+				$data->publishAt   ? new DateTimeImmutable('@' . $data->publishAt)   : null,
+				$data->unpublishAt ? new DateTimeImmutable('@' . $data->unpublishAt) : null
 			);
 			$pages[$key]->slug = new Slug($data->slug);
 
