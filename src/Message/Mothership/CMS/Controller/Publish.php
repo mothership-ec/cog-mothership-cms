@@ -25,8 +25,7 @@ class Publish extends \Message\Cog\Controller\Controller
 				$this->_savePubishDates($data);
 			}
 		}
-		var_dump($this->generateUrl('ms.cms.edit', array('pageID' => $pageID))); exit;
-		return $this->redirect($this->generateUrl('ms.cms.edit', array('pageID' => $pageID))); exit;
+		return $this->redirect($this->generateUrl('ms.cms.edit', array('pageID' => $pageID)));
 	}
 
 	protected function _publish()
