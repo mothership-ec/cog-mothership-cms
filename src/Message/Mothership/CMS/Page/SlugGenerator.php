@@ -4,6 +4,8 @@ namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\Exception;
 
+use Message\Cog\ValueObject\Slug;
+
 /**
  * Page slug generator.
  *
@@ -83,8 +85,11 @@ class SlugGenerator
 
 		// If the generated slug exists either historically or on a live page,
 		// try again with a flag for uniqueness
-		if ($redirectPage && $this->_loader->getBySlug($slug->getFull())) {
-			return $this->generate($title . '-' . $attempt, $parent, $attempt + 1);
+		if ($redirectPage || $this->_loader->getBySlug($slug->getFull())) {
+			$newTitle  = $attempt > 1 ? substr($title, 0, strrpos($title, '-')) : $title;
+			$newTitle .= '-' . $attempt;
+
+			return $this->generate($newTitle, $parent, $attempt + 1);
 		}
 
 		// Otherwise, return the slug as it's good to use!
