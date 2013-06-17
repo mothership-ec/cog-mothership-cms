@@ -36,7 +36,8 @@ class Services implements ServicesInterface
 				$c['cms.page.loader'],
 				$c['db.query'],
 				$c['event.dispatcher'],
-				$c['cms.page.nested_set_helper']
+				$c['cms.page.nested_set_helper'],
+				$c['user.current']
 			);
 		};
 
@@ -44,7 +45,8 @@ class Services implements ServicesInterface
 			return new CMS\Page\Delete(
 				$c['db.query'],
 				$c['event.dispatcher'],
-				$c['cms.page.loader']
+				$c['cms.page.loader'],
+				$c['user.current']
 			);
 		};
 
