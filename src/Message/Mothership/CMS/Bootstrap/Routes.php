@@ -19,5 +19,7 @@ class Routes implements RoutesInterface
 			->setRequirement('pageID', '\d+');
 		$router['ms.cms']->add('ms.cms.edit.process', '/edit/process/{pageID}', '::Controller:Edit#process')
 			->setMethod('POST');
+		$router['ms.cms']->add('ms.cms.publish', '/edit/publish/{pageID}', '::Controller:Publish#process')
+			->setMethod('POST');
 	}
 }

@@ -1,0 +1,27 @@
+<form action="{{ url('ms.cms.publish',{pageID:page.id}) }}" method="post">
+	{% if isPublished %}
+		<button name="publish[publish]" class="publish" type="submit" value="unpublish">Unpublish</button>
+	{% else %}
+		<button name="publish[publish]" class="publish" type="submit" value="publish">Publish</button>
+	{% endif %}
+	<label>Publish from
+		<input type="date" name="publish[publish-date]" class="text-input"
+		value="{{ page.publishDateRange.getStart is empty ? '' :page.publishDateRange.getStart|date("Y-m-d") }}" />
+	</label>
+	<label>Time
+		<input type="time" name="publish[publish-time]" class="text-input"
+			value="{{ page.publishDateRange.getStart is empty ? '' : page.publishDateRange.getStart|date("H:i") }}" />
+	</label>
+
+	<label>Unpublish at
+		<input type="date" name="publish[unpublish-date]" class="text-input"
+			value="{{ page.publishDateRange.getEnd is empty ? '' : page.publishDateRange.getEnd|date("Y-m-d") }}" />
+	</label>
+
+	<label>Time
+		<input type="time" name="publish[unpublish-time]" class="text-input"
+			value="{{ page.publishDateRange.getEnd is empty ? '' : page.publishDateRange.getEnd|date("H:i") }}" />
+	</label>
+
+	<button name="publish[save]" type="submit" value="Save">Save Range</button>
+</form>

@@ -6,7 +6,11 @@
 
 {% block main %}
 
-	{{ render(controller('Message:Mothership:CMS::Controller:PublishToggle#index'))}}
+	{{ render(controller('Message:Mothership:CMS::Controller:PublishBar#index',
+		{
+			pageID: page.id
+		}
+	))}}
 
 	<h1>Editing {{ page.title }}</h1>
 	<form action="{{ url('ms.cms.edit.process',{pageID:page.id}) }}" method="post">

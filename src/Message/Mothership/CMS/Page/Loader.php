@@ -402,7 +402,6 @@ class Loader
 		$pages = $results->bindTo('\Message\Mothership\CMS\Page\Page');
 
 		foreach ($results as $key => $data) {
-
 			// Skip deleted pages
 			if ($data->deletedAt && !$this->_loadDeleted) {
 				unset($pages[$key]);
@@ -410,13 +409,13 @@ class Loader
 			}
 
 			if ($data->publishAt) {
-				$data->publishAt = new DateTimeImmutable('@' . $data->publishAt);
+				$data->publishAt = new DateTimeImmutable(date('c',$data->publishAt));
 			}
 
 			if ($data->unpublishAt) {
-				$data->unpublishAt = new DateTimeImmutable('@' . $data->unpublishAt);
+				$data->unpublishAt = new DateTimeImmutable(date('c',$data->unpublishAt));
 			}
-			//var_dump(array($data->publishAt, $data->unpublishAt));
+
 			// Load the DateRange object for publishDateRange
 			$pages[$key]->publishDateRange = new DateRange($data->publishAt, $data->unpublishAt);
 
@@ -424,16 +423,17 @@ class Loader
 
 			// Load authorship details
 			$pages[$key]->authorship = new Authorship;
-			$pages[$key]->authorship->create(new DateTimeImmutable('@' . $data->createdAt), $data->createdBy);
+			$pages[$key]->authorship->create(new DateTimeImmutable(date('c',$data->createdAt)), $data->createdBy);
 
 			if ($data->updatedAt) {
-				$pages[$key]->authorship->update(new DateTimeImmutable('@' . $data->updatedAt), $data->updatedBy);
+				$pages[$key]->authorship->update(new DateTimeImmutable(date('c',$data->updatedAt)), $data->updatedBy);
 			}
 
 			if ($data->deletedAt) {
-				$pages[$key]->authorship->delete(new DateTimeImmutable('@' . $data->deletedAt), $data->deletedBy);
+				$pages[$key]->authorship->delete(new DateTimeImmutable(date('c',$data->deletedAt)), $data->deletedBy);
 			}
 		}
+
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
 	}
 }
