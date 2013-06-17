@@ -21,7 +21,7 @@ class Frontend extends Controller
 			}
 
 			// Otherwise, throw a 404
-			return $this->createNotFoundException();
+			throw $this->createNotFoundException();
 		}
 
 		// Render the view for the page type

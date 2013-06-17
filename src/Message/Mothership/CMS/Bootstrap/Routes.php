@@ -10,9 +10,9 @@ class Routes implements RoutesInterface
 {
 	public function registerRoutes($routes)
 	{
-		$routes['ms.cms']->setPrefix('/test');
+		$routes['ms.cms']->setPrefix('/');
 
 		$routes['ms.cms']->add('ms.cms.frontend', '/{slug}', '::Controller:Frontend#renderPage')
-			->setRequirement('slug', '[a-z0-9\-]+');
+			->setRequirement('slug', '[a-z0-9\-\/]+');
 	}
 }
