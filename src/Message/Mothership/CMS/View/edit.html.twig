@@ -11,9 +11,6 @@
 		<label for="edit-title">Title</label>
 		<input type="text" name="edit[title]" id="edit-title" value="{{ page.title}}" />
 
-		<label for="edit-slug">Url slug</label>
-		<input type="text" name="edit[slug]" id="edit-slug" value="{{ page.slug.getLastSegment }}" />
-
 		<label for="edit-type">Page type</label>
 		<select name="edit[type]" id="edit-type">
 			{% for type in pageTypes %}
