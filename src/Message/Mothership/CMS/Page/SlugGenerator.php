@@ -85,7 +85,7 @@ class SlugGenerator
 
 		// If the generated slug exists either historically or on a live page,
 		// try again with a flag for uniqueness
-		if ($redirectPage || $this->_loader->getBySlug($slug->getFull())) {
+		if ($redirectPage || $this->_loader->getBySlug($slug->getFull(), false)) {
 			$newTitle  = $attempt > 1 ? substr($title, 0, strrpos($title, '-')) : $title;
 			$newTitle .= '-' . $attempt;
 
