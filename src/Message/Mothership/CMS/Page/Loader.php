@@ -377,6 +377,8 @@ class Loader
 				page_access_group ON (page_access_group.page_id = page.page_id)
 			WHERE
 				page.page_id IN (?ij)
+			AND
+				page.position_left IS NOT NULL
 			ORDER BY
 				position_left ASC',
 				array(

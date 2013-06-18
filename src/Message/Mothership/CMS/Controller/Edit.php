@@ -25,4 +25,11 @@ class Edit extends \Message\Cog\Controller\Controller
 			return $this->redirectToRoute('ms.cms.edit', array('pageID' => $pageID));
 		}
 	}
+
+	public function move($pageID, $nextToID)
+	{
+		$page = $this->_services['cms.page.loader']->getByID($pageID);
+		$page = $this->_services['cms.page.edit']->movePage($page, $nextToID);
+
+	}
 }

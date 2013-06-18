@@ -35,6 +35,17 @@ class Edit {
 		$this->_currentUser		= $user;
 	}
 
+	public function movePage(Page $page, $aboveNodeID)
+	{
+		$trans = $this->_nestedSetHelper->remove($page->id);
+		$this->_nestedSetHelper->insertAfter($page->id, $aboveNodeID);
+		// print_r('<pre>');
+		// print_r($trans); exit;
+		// print_r('</pre>');
+		$trans->commit();
+		exit;
+	}
+
 	/**
 	 * Pass through the updated Page object and save it in the DB
 	 *
@@ -47,6 +58,8 @@ class Edit {
 	 */
 	public function save(Page $page)
 	{
+
+		var_dump($this->_nestedSetHelper); exit;
 		$page->authorship->update(new DateTimeImmutable, $this->_currentUser->id);
 		$result = $this->_query->run('
 			UPDATE
