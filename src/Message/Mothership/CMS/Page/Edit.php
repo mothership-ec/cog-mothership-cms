@@ -81,32 +81,32 @@ class Edit {
 			WHERE
 				page.page_id = :pageID?i',
 				array(
-					'pageID' => $page->id,
-					'title' => $page->title,
-					'type' => $page->type->getName(),
-					'publishAt' => $page->publishDateRange->getStart(),
-					'unpublishAt' => $page->publishDateRange->getEnd(),
-					'updatedAt'	=> $page->authorship->updatedAt(),
-					'updatedBy' => $page->authorship->updatedBy(),
-					'slug' => $page->slug->getLastSegment(),
-					'left' => $page->left,
-					'right' => $page->right,
-					'depth' => $page->depth,
-					'metaTitle' => $page->metaTitle,
-					'metaDescription' => $page->metaDescription,
-					'metaHtmlHead' => $page->metaHtmlHead,
-					'metaHtmlFoot' => $page->metaHtmlFoot,
-					'visibilitySearch' => $page->visibilitySearch,
-					'visibilityMenu' => $page->visibilityMenu,
+					'pageID'               => $page->id,
+					'title'                => $page->title,
+					'type'                 => $page->type->getName(),
+					'publishAt'            => $page->publishDateRange->getStart(),
+					'unpublishAt'          => $page->publishDateRange->getEnd(),
+					'updatedAt'            => $page->authorship->updatedAt(),
+					'updatedBy'            => $page->authorship->updatedBy(),
+					'slug'                 => $page->slug->getLastSegment(),
+					'left'                 => $page->left,
+					'right'                => $page->right,
+					'depth'                => $page->depth,
+					'metaTitle'            => $page->metaTitle,
+					'metaDescription'      => $page->metaDescription,
+					'metaHtmlHead'         => $page->metaHtmlHead,
+					'metaHtmlFoot'         => $page->metaHtmlFoot,
+					'visibilitySearch'     => $page->visibilitySearch,
+					'visibilityMenu'       => $page->visibilityMenu,
 					'visibilityAggregator' => $page->visibilityAggregator,
-					'password' => $page->password,
-					'access' => $page->access,
-					'accessGroups' => $page->accessGroups,
-					'commentsEnabled' => $page->commentsEnabled,
-					'commentsAccess' => $page->commentsAccess,
+					'password'             => $page->password,
+					'access'               => $page->access,
+					'accessGroups'         => $page->accessGroups,
+					'commentsEnabled'      => $page->commentsEnabled,
+					'commentsAccess'       => $page->commentsAccess,
 					'commentsAccessGroups' => $page->commentsAccessGroups,
-					'commentsApproval' => $page->commentsApproval,
-					'commentsExpiry' => $page->commentsExpiry
+					'commentsApproval'     => $page->commentsApproval,
+					'commentsExpiry'       => $page->commentsExpiry,
 		));
 
 		$event = new Event($page);
@@ -194,7 +194,7 @@ class Edit {
 			', array(
 				$page->publishDateRange->getStart(),
 				$page->publishDateRange->getEnd(),
-				$page->id
+				$page->id,
 			)
 		);
 
