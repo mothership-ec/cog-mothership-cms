@@ -14,41 +14,65 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 		);
 		$collection = new Collection($pageTypes);
 
-		$this->assertEquals(count($pageTypes), $collection->count());
+		$this->assertSame(count($pageTypes), $collection->count());
 
 		foreach ($collection as $pageType) {
-			$this->assertEquals($pageTypes[$pageType->getName()], $pageType);
+			$this->assertSame($pageTypes[$pageType->getName()], $pageType);
 		}
 	}
 
-	public function testAdd()
+	public function testAddAndGet()
 	{
 		$collection = new Collection;
 		$pageType   = new Blog;
 
-		$this->assertEquals($collection, $collection->add($pageType));
+		$this->assertSame($collection, $collection->add($pageType));
 
-		foreach ($collection as $name => $type) {
-			$this->assertEquals($pageType, $type);
-		}
+		$this->assertSame($pageType, $collection->get($pageType->getName()));
+
+		return $collection;
+	}
+
+	/**
+	 * @expectedException        \InvalidArgumentException
+	 * @expectedExceptionMessage already defined
+	 */
+	public function testAddingPageTypeTwice()
+	{
+		$collection = new Collection;
+
+		$collection
+			->add(new Blog)
+			->add(new Blog);
+	}
+
+	/**
+	 * @expectedException        \InvalidArgumentException
+	 * @expectedExceptionMessage not set
+	 */
+	public function testGetUnknownPageType()
+	{
+		$collection = new Collection;
+
+		$collection->get('doesnotexist');
 	}
 
 	public function testCount()
 	{
 		$collection = new Collection;
 
-		$this->assertEquals(0, count($collection));
-		$this->assertEquals(0, $collection->count());
+		$this->assertSame(0, count($collection));
+		$this->assertSame(0, $collection->count());
 
 		$collection->add(new Blog);
 
-		$this->assertEquals(1, count($collection));
-		$this->assertEquals(1, $collection->count());
+		$this->assertSame(1, count($collection));
+		$this->assertSame(1, $collection->count());
 
 		$collection->add(new Home);
 
-		$this->assertEquals(2, count($collection));
-		$this->assertEquals(2, $collection->count());
+		$this->assertSame(2, count($collection));
+		$this->assertSame(2, $collection->count());
 	}
 
 	public function testGetIterator()
