@@ -21,7 +21,7 @@ class Edit
 
 	public function publish(Page $page)
 	{
-		$page->authorship->update(new DateTimeImmutable, $this->_currentUser->id)
+		$page->authorship->update(new DateTimeImmutable, $this->_currentUser->id);
 
 		$this->_query->run('
 			UPDATE
