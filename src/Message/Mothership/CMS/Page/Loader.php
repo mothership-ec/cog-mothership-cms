@@ -61,7 +61,9 @@ class Loader
 	/**
 	 * Constructor.
 	 *
-	 * @param \Locale $locale The locale to use for loading translations
+	 * @param \Locale 	 $locale 			The locale to use for loading translations
+	 * @param Query 	 $query 			The query object
+	 * @param Collection $pageCollections 	Collection of page objects so we can load them correctly
 	 */
 	public function __construct(/* \Locale */ $locale, Query $query, Collection $pageCollections)
 	{
