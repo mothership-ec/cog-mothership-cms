@@ -4,23 +4,23 @@
 	{% else %}
 		<button name="publish[publish]" class="publish" type="submit" value="publish">Publish</button>
 	{% endif %}
-	<label>Publish from
-		<input type="date" name="publish[publish-date]" class="text-input"
-		value="{{ page.publishDateRange.getStart is empty ? '' :page.publishDateRange.getStart|date("Y-m-d") }}" />
-	</label>
-	<label>Time
+	<label>Publish At
 		<input type="time" name="publish[publish-time]" class="text-input"
 			value="{{ page.publishDateRange.getStart is empty ? '' : page.publishDateRange.getStart|date("H:i") }}" />
 	</label>
-
-	<label>Unpublish at
-		<input type="date" name="publish[unpublish-date]" class="text-input"
-			value="{{ page.publishDateRange.getEnd is empty ? '' : page.publishDateRange.getEnd|date("Y-m-d") }}" />
+	<label>on
+		<input type="date" name="publish[publish-date]" class="text-input"
+		value="{{ page.publishDateRange.getStart is empty ? '' :page.publishDateRange.getStart|date("Y-m-d") }}" />
 	</label>
 
-	<label>Time
+	<label>Unpublish at
 		<input type="time" name="publish[unpublish-time]" class="text-input"
 			value="{{ page.publishDateRange.getEnd is empty ? '' : page.publishDateRange.getEnd|date("H:i") }}" />
+	</label>
+
+	<label>on
+		<input type="date" name="publish[unpublish-date]" class="text-input"
+			value="{{ page.publishDateRange.getEnd is empty ? '' : page.publishDateRange.getEnd|date("Y-m-d") }}" />
 	</label>
 
 	<button name="publish[save]" type="submit" value="Save">Save Range</button>

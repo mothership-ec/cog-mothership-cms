@@ -49,7 +49,6 @@ class Publish extends \Message\Cog\Controller\Controller
 		$to = $data['unpublish-date'] ? new DateTimeImmutable($data['unpublish-date'] .' '. $data['unpublish-time']) : null;
 
 		$page->publishDateRange = new DateRange($from, $to);
-		//var_dump($page->publishDateRange ); exit;
-		$page = $this->_services['cms.page.edit']->unpublish($page);
+		$page = $this->_services['cms.page.edit']->save($page);
 	}
 }

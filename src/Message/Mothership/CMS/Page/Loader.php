@@ -6,6 +6,7 @@ use Message\Mothership\CMS\PageTypeInterface;
 
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
+use Message\Mothership\CMS\PageType\Collection;
 use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
@@ -46,6 +47,7 @@ class Loader
 {
 	protected $_locale;
 	protected $_query;
+	protected $_collections;
 
 	/**
 	 * var to toggle the loading of deleted pages
@@ -61,10 +63,11 @@ class Loader
 	 *
 	 * @param \Locale $locale The locale to use for loading translations
 	 */
-	public function __construct(/* \Locale */ $locale, Query $query)
+	public function __construct(/* \Locale */ $locale, Query $query, Collection $pageCollections)
 	{
 		$this->_locale = $locale;
 		$this->_query = $query;
+		$this->_collections = $pageCollections;
 	}
 
 	/**
@@ -420,6 +423,8 @@ class Loader
 			$pages[$key]->publishDateRange = new DateRange($data->publishAt, $data->unpublishAt);
 
 			$pages[$key]->slug = new Slug($data->slug);
+			$pageType = $this->_collections->get('blog');
+			$pages[$key]->type = new $pageType;
 
 			// Load authorship details
 			$pages[$key]->authorship = new Authorship;
