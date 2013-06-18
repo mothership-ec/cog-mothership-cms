@@ -423,7 +423,7 @@ class Loader
 			$pages[$key]->publishDateRange = new DateRange($data->publishAt, $data->unpublishAt);
 
 			$pages[$key]->slug = new Slug($data->slug);
-			$pageType = $this->_collections->get('blog');
+			$pageType = $this->_collections->get($data->type);
 			$pages[$key]->type = new $pageType;
 
 			// Load authorship details
