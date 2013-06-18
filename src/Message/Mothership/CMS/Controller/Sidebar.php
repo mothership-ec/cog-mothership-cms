@@ -23,19 +23,20 @@ class Sidebar extends \Message\Cog\Controller\Controller
 	 *
 	 * @return array 				array of nested page objects
 	 */
-	public function buildTree( &$arr, &$prev_sub = null, $cur_depth = 0 ) {
+	public function buildTree(&$arr, &$prev_sub = null, $cur_depth = 0) {
 		$cur_sub = array();
-		while( $line = current( $arr ) ) {
-			if( $line->depth < $cur_depth ) {
+		while ($line = current($arr)) {
+			if ($line->depth < $cur_depth) {
 				return $cur_sub;
 			} elseif ($line->depth > $cur_depth) {
-				$prev_sub = $this->buildTree( $arr, $cur_sub, $cur_depth + 1 );
+				$prev_sub = $this->buildTree($arr, $cur_sub, $cur_depth + 1);
 			} else {
 				$cur_sub[$line->id] = $line;
 				$prev_sub =& $cur_sub[$line->id]->children;
-				next( $arr );
+				next($arr);
 			}
 		}
+
 		return $cur_sub;
 	}
 

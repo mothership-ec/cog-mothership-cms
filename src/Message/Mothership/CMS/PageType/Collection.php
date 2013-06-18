@@ -2,7 +2,7 @@
 
 namespace Message\Mothership\CMS\PageType;
 
-use Message\Mothership\CMS\PageTypeInterface;
+use \Message\Mothership\CMS\PageTypeInterface;
 
 /**
  * A container for all page types available to the system.
@@ -35,7 +35,7 @@ class Collection implements \IteratorAggregate, \Countable
 	 * @throws \InvalidArgumentException  If a page type with the same name has
 	 *                                    already been set on this collection
 	 */
-	public function add(\Message\Mothership\CMS\PageTypeInterface $pageType)
+	public function add(PageTypeInterface $pageType)
 	{
 		if (isset($this->_pageTypes[$pageType->getName()])) {
 			throw new \InvalidArgumentException(sprintf('Page type `%s` is already defined', $pageType->getName()));
