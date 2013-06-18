@@ -190,14 +190,43 @@ class Loader
 	}
 
 	/**
+	 * Return all files in an array
+	 * @return Array|File|false - 	returns either an array of File objects, a
+	 * 								single file object or false
+	 */
+	public function getAll()
+	{
+		$result = $this->_query->run('
+			SELECT
+				page_id
+			FROM
+				page
+		');
+
+		return count($result) ? $this->getByID($result->flatten()) : false;
+	}
+
+	public function getTopLevel()
+	{
+		return $this->getChildren(null);
+	}
+
+	/**
 	 * Get the child pages for a page.
 	 *
-	 * @param Page $page The page to find the children for
+	 * @param Page|null $page The page to find the children for
 	 *
 	 * @return array[Page]	 An array of prepared `Page` instances
 	 */
-	public function getChildren(Page $page)
+	public function getChildren(Page $page = null)
 	{
+		if (!$page) {
+			$page = new Page;
+			$page->left = 0;
+			$page->right = 99999;
+			$page->depth = -1;
+		}
+
 		$result = $this->_query->run('
 			SELECT
 				page_id
@@ -311,7 +340,7 @@ class Loader
 				page.created_by AS updatedBy,
 				page.deleted_at AS deletedAt,
 				page.deleted_by AS deletedBy,
-				CONCAT((
+				IFNULL(CONCAT((
 					SELECT
 						CONCAT(\'/\',GROUP_CONCAT(p.slug ORDER BY p.position_depth ASC SEPARATOR \'/\'))
 					FROM
@@ -319,7 +348,7 @@ class Loader
 					WHERE
 						p.position_left < page.position_left
 					AND
-						p.position_right > page.position_right),\'/\',page.slug) AS slug,
+						p.position_right > page.position_right),\'/\',page.slug),page.slug) AS slug,
 
 				page.position_left AS `left`,
 				page.position_right AS `right`,
@@ -337,7 +366,7 @@ class Loader
 				page.password AS password,
 				page.access AS access,
 
-				page_access_group.group_id AS accessGroups,
+				page_access_group.group_name AS accessGroups,
 
 				page.comment_enabled AS commentsEnabled,
 				page.comment_access AS commentsAccess,
@@ -350,7 +379,9 @@ class Loader
 			LEFT JOIN
 				page_access_group ON (page_access_group.page_id = page.page_id)
 			WHERE
-				page.page_id IN (?ij)',
+				page.page_id IN (?ij)
+			ORDER BY
+				position_left ASC',
 				array(
 					(array) $pageID,
 				)
@@ -382,14 +413,20 @@ class Loader
 				continue;
 			}
 
+			if ($data->publishAt) {
+				$data->publishAt = new DateTimeImmutable('@' . $data->publishAt);
+			}
+
+			if ($data->unpublishAt) {
+				$data->unpublishAt = new DateTimeImmutable('@' . $data->unpublishAt);
+			}	
+
+			// Load the DateRange object for publishDateRange
+			$pages[$key]->publishDateRange = new DateRange($data->publishAt, $data->unpublishAt);
+
 			// Get the page type
 			$pages[$key]->type = $this->_pageTypes->get($data->type);
 
-			// Load the DateRange object for publishDateRange
-			$pages[$key]->publishDateRange = new DateRange(
-				new DateTimeImmutable('@' . $data->publishAt),
-				new DateTimeImmutable('@' . $data->unpublishAt)
-			);
 			$pages[$key]->slug = new Slug($data->slug);
 
 			// Load authorship details

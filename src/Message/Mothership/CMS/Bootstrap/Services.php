@@ -36,7 +36,8 @@ class Services implements ServicesInterface
 				$c['cms.page.loader'],
 				$c['db.query'],
 				$c['event.dispatcher'],
-				$c['cms.page.nested_set_helper']
+				$c['cms.page.nested_set_helper'],
+				$c['user.current']
 			);
 		};
 
@@ -45,6 +46,16 @@ class Services implements ServicesInterface
 				$c['db.query'],
 				$c['event.dispatcher'],
 				$c['cms.page.loader']
+			);
+		};
+
+		$serviceContainer['cms.page.edit'] = function($c) {
+			return new \Message\Mothership\CMS\Page\Edit(
+				$c['cms.page.loader'],
+				$c['db.query'],
+				$c['event.dispatcher'],
+				$c['cms.page.nested_set_helper'],
+				$c['user.current']
 			);
 		};
 
