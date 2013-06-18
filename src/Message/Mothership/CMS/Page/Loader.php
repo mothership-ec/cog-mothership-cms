@@ -59,7 +59,7 @@ class Loader
 	protected $_loadDeleted = false;
 
 	/**
-	 * Constructor.
+	 * Constructor
 	 *
 	 * @param \Locale 	 $locale 			The locale to use for loading translations
 	 * @param Query 	 $query 			The query object
