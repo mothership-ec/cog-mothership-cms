@@ -344,7 +344,7 @@ class Loader
 				page.password AS password,
 				page.access AS access,
 
-				GROUP_CONCAT(page_access_group.group_name) AS accessGroups,
+				GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups,
 
 				page.comment_enabled AS commentsEnabled,
 				page.comment_access AS commentsAccess,

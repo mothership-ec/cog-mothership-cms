@@ -28,9 +28,14 @@ class Services implements ServicesInterface
 				$c['user.groups']
 			);
 		});
+
 		$serviceContainer['cms.page.content_loader'] = $serviceContainer->share(function($c) {
 			return new CMS\Page\ContentLoader($c['db.query'], $c['cms.field.factory']);
 		});
+
+		$serviceContainer['cms.page.authorisation'] = function($c) {
+			return new CMS\Page\Authorisation($c['user.group.loader'], $c['user.current']);
+		};
 
 		$serviceContainer['cms.page.create'] = function($c) {
 			return new CMS\Page\Create(
