@@ -363,7 +363,7 @@ class Loader
 				page.password AS password,
 				page.access AS access,
 
-				page_access_group.group_id AS accessGroups,
+				page_access_group.group_name AS accessGroups,
 
 				page.comment_enabled AS commentsEnabled,
 				page.comment_access AS commentsAccess,
