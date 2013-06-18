@@ -2,7 +2,7 @@
 
 namespace Message\Mothership\CMS\Page;
 
-use Message\Mothership\CMS\PageTypeInterface;
+use Message\Mothership\CMS\PageType\PageTypeInterface;
 use Message\Mothership\CMS\Page\Event;
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;

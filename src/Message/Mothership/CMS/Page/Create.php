@@ -2,7 +2,7 @@
 
 namespace Message\Mothership\CMS\Page;
 
-use Message\Mothership\CMS\PageTypeInterface;
+use Message\Mothership\CMS\PageType\PageTypeInterface;
 
 use Message\User\UserInterface;
 

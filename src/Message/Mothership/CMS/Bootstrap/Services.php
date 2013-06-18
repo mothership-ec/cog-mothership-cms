@@ -60,7 +60,7 @@ class Services implements ServicesInterface
 		};
 
 		$serviceContainer['cms.field.factory'] = function($c) {
-			return new CMS\Field\Factory;
+			return new CMS\Field\Factory($c['form.handler']);
 		};
 	}
 }

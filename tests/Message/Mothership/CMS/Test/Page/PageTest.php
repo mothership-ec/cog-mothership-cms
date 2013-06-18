@@ -18,6 +18,6 @@ class PageTest extends \PHPUnit_Framework_TestCase
 		// TODO: create blog page type fixture class to use here.
 		$this->_page->type = 'blog';
 
-		#$this->assertInstanceOf('Message\Mothership\CMS\PageTypeInterface', $this->_page->getType());
+		#$this->assertInstanceOf('Message\Mothership\CMS\PageType\\PageTypeInterface', $this->_page->getType());
 	}
 }
