@@ -1,9 +1,10 @@
-<form action="{{ url('ms.cms.publish',{pageID:page.id}) }}" method="post">
-	{% if isPublished %}
-		<button name="publish[publish]" class="publish" type="submit" value="unpublish">Unpublish</button>
-	{% else %}
-		<button name="publish[publish]" class="publish" type="submit" value="publish">Publish</button>
-	{% endif %}
+{% if isPublished %}
+<a href="{{ url('ms.cp.cms.edit.unpublish', {pageID: page.id}) }}">Unpublish</a>
+{% else %}
+<a href="{{ url('ms.cp.cms.edit.publish', {pageID: page.id}) }}">Publish</a>
+{% endif %}
+
+<form action="{{ url('ms.cp.cms.edit.publish_scheduling',{pageID:page.id}) }}" method="post">
 	<label>Publish At
 		<input type="time" name="publish[publish-time]" class="text-input"
 			value="{{ page.publishDateRange.getStart is empty ? '' : page.publishDateRange.getStart|date("H:i") }}" />
