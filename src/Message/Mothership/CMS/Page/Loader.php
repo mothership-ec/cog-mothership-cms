@@ -6,6 +6,7 @@ use Message\Mothership\CMS\PageTypeInterface;
 
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
+use Message\Mothership\CMS\PageType\Collection;
 use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
@@ -46,6 +47,7 @@ class Loader
 {
 	protected $_locale;
 	protected $_query;
+	protected $_collections;
 
 	/**
 	 * var to toggle the loading of deleted pages
@@ -57,14 +59,17 @@ class Loader
 	protected $_loadDeleted = false;
 
 	/**
-	 * Constructor.
+	 * Constructor
 	 *
-	 * @param \Locale $locale The locale to use for loading translations
+	 * @param \Locale 	 $locale 			The locale to use for loading translations
+	 * @param Query 	 $query 			The query object
+	 * @param Collection $pageCollections 	Collection of page objects so we can load them correctly
 	 */
-	public function __construct(/* \Locale */ $locale, Query $query)
+	public function __construct(/* \Locale */ $locale, Query $query, Collection $pageCollections)
 	{
 		$this->_locale = $locale;
 		$this->_query = $query;
+		$this->_collections = $pageCollections;
 	}
 
 	/**
@@ -402,7 +407,6 @@ class Loader
 		$pages = $results->bindTo('\Message\Mothership\CMS\Page\Page');
 
 		foreach ($results as $key => $data) {
-
 			// Skip deleted pages
 			if ($data->deletedAt && !$this->_loadDeleted) {
 				unset($pages[$key]);
@@ -410,30 +414,33 @@ class Loader
 			}
 
 			if ($data->publishAt) {
-				$data->publishAt = new DateTimeImmutable('@' . $data->publishAt);
+				$data->publishAt = new DateTimeImmutable(date('c',$data->publishAt));
 			}
 
 			if ($data->unpublishAt) {
-				$data->unpublishAt = new DateTimeImmutable('@' . $data->unpublishAt);
+				$data->unpublishAt = new DateTimeImmutable(date('c',$data->unpublishAt));
 			}
 
 			// Load the DateRange object for publishDateRange
 			$pages[$key]->publishDateRange = new DateRange($data->publishAt, $data->unpublishAt);
 
 			$pages[$key]->slug = new Slug($data->slug);
+			$pageType = $this->_collections->get($data->type);
+			$pages[$key]->type = new $pageType;
 
 			// Load authorship details
 			$pages[$key]->authorship = new Authorship;
-			$pages[$key]->authorship->create(new DateTimeImmutable('@' . $data->createdAt), $data->createdBy);
+			$pages[$key]->authorship->create(new DateTimeImmutable(date('c',$data->createdAt)), $data->createdBy);
 
 			if ($data->updatedAt) {
-				$pages[$key]->authorship->update(new DateTimeImmutable('@' . $data->updatedAt), $data->updatedBy);
+				$pages[$key]->authorship->update(new DateTimeImmutable(date('c',$data->updatedAt)), $data->updatedBy);
 			}
 
 			if ($data->deletedAt) {
-				$pages[$key]->authorship->delete(new DateTimeImmutable('@' . $data->deletedAt), $data->deletedBy);
+				$pages[$key]->authorship->delete(new DateTimeImmutable(date('c',$data->deletedAt)), $data->deletedBy);
 			}
 		}
+
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
 	}
 }

@@ -7,7 +7,8 @@ class Sidebar extends \Message\Cog\Controller\Controller
 	public function index()
 	{
 		$loader = $this->_services['cms.page.loader'];
-		$values = $this->buildTree( $loader->getAll() );
+		$pages  = $loader->getAll();
+		$values = $this->buildTree($pages);
 
 		return $this->render('Message:Mothership:CMS::sidebar', array(
 			'tree' => $values,

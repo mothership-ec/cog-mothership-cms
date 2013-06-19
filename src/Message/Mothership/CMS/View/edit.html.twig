@@ -5,11 +5,16 @@
 {% endblock %}
 
 {% block main %}
+
+	{{ render(controller('Message:Mothership:CMS::Controller:Publishing#renderForm', {
+		pageID: page.id
+	})) }}
+
 	<h1>Editing {{ page.title }}</h1>
-	<form action="/admin/cms/edit/process/{{ page.id }}" method="post">
+	<form action="{{ url('ms.cp.cms.edit.process',{pageID: page.id}) }}" method="post">
 
 		<label for="edit-title">Title</label>
-		<input type="text" name="edit[title]" id="edit-title" value="{{ page.title}}" />
+		<input type="text" name="edit[title]" id="edit-title" value="{{ page.title }}" />
 
 		<label for="edit-type">Page type</label>
 		<select name="edit[type]" id="edit-type">
