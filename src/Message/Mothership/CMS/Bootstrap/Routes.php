@@ -19,7 +19,7 @@ class Routes implements RoutesInterface
 		$router['ms.cp.cms']->add('ms.cp.cms.create', '/create', '::Controller:Create#index')
 			->setFormat('ANY');
 
-		$router['ms.cp.cms']->add('ms.cp.cms.edit.process', '/edit/{pageID}', '::Controller:Edit#process')
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.process', '/edit/{pageID}', '::Controller:Edit#updateTitle')
 			->setRequirement('pageID', '\d+')
 			->setMethod('POST');
 
@@ -37,5 +37,14 @@ class Routes implements RoutesInterface
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.publish_scheduling', '/edit/{pageID}/scheduling', '::Controller:Publishing#schedule')
 			->setRequirement('pageID', '\d+')
 			->setMethod('POST');
+
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.content', '/edit/{pageID}/content', '::Controller:Edit#content')
+			->setRequirement('pageID', '\d+');
+
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.attributes', '/edit/{pageID}/attributes', '::Controller:Edit#attributes')
+			->setRequirement('pageID', '\d+');
+
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.metadata', '/edit/{pageID}/metadata', '::Controller:Edit#metadata')
+			->setRequirement('pageID', '\d+');
 	}
 }

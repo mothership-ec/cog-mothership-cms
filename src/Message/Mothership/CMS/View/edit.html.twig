@@ -5,24 +5,32 @@
 {% endblock %}
 
 {% block main %}
+	<hgroup>
+		<h1>{{ page.title }}</h1>
+		<h2>{{ page.type.getDisplayName() }}</h2>
+	</hgroup>
 
-	{{ render(controller('Message:Mothership:CMS::Controller:Publishing#renderForm', {
-		pageID: page.id
-	})) }}
-
-	<h1>Editing {{ page.title }}</h1>
 	<form action="{{ url('ms.cp.cms.edit.process',{pageID: page.id}) }}" method="post">
 
 		<label for="edit-title">Title</label>
 		<input type="text" name="edit[title]" id="edit-title" value="{{ page.title }}" />
 
-		<label for="edit-type">Page type</label>
-		<select name="edit[type]" id="edit-type">
-			{% for type in pageTypes %}
-				<option value="{{ type.getName }}">{{ type.getName }}</option>
-			{% endfor %}
-		</select>
-
-		<button type="submit" id="edit-submit" value="Edit Page">Edit Page</button>
+		<button type="submit" id="edit-submit" value="Update Title">Update Title</button>
 	</form>
+
+	<ul class="tabs">
+		<li><a href="{{ url('ms.cp.cms.edit.content', {pageID: page.id}) }}">Content</a></li>
+		<li><a href="{{ url('ms.cp.cms.edit.attributes', {pageID: page.id}) }}">Attributes</a></li>
+		<li><a href="{{ url('ms.cp.cms.edit.metadata', {pageID: page.id}) }}">Meta details</a></li>
+	</ul>
+
+	DELETE BUTTON
+
+	{{ render(controller('Message:Mothership:CMS::Controller:Publishing#renderForm', {
+		pageID: page.id
+	})) }}
+
+	<section>
+		{% block form %}{% endblock %}
+	</section>
 {% endblock %}
