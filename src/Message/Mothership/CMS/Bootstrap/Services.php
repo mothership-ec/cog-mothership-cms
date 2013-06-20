@@ -14,6 +14,10 @@ class Services implements ServicesInterface
 			return new CMS\PageType\Collection;
 		});
 
+		$serviceContainer['cms.page.slug_generator'] = function($c) {
+			return new CMS\Page\SlugGenerator($c['cms.page.loader'], (array) $c['cfg']->cms->slug->substitutions);
+		};
+
 		$serviceContainer['cms.page.nested_set_helper'] = function($c) {
 			$helper = $c['db.nested_set_helper'];
 
@@ -38,6 +42,7 @@ class Services implements ServicesInterface
 				$c['db.query'],
 				$c['event.dispatcher'],
 				$c['cms.page.nested_set_helper'],
+				$c['cms.page.slug_generator'],
 				$c['user.current']
 			);
 		};
@@ -60,6 +65,5 @@ class Services implements ServicesInterface
 				$c['user.current']
 			);
 		};
-
 	}
 }
