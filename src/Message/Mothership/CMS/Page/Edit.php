@@ -2,7 +2,7 @@
 
 namespace Message\Mothership\CMS\Page;
 
-use Message\Mothership\CMS\PageTypeInterface;
+use Message\Mothership\CMS\PageType\PageTypeInterface;
 use Message\Mothership\CMS\Page\Event;
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;
@@ -48,8 +48,9 @@ class Edit {
 	public function save(Page $page)
 	{
 		$page->authorship->update(new DateTimeImmutable, $this->_currentUser->id);
-		$result = $this->_query->run('
-			UPDATE
+
+		$result = $this->_query->run(
+			'UPDATE
 				page
 			SET
 				page.title = :title?s,
@@ -80,34 +81,34 @@ class Edit {
 				page.comment_expiry = :commentsExpiry?i
 			WHERE
 				page.page_id = :pageID?i',
-				array(
-					'pageID'               => $page->id,
-					'title'                => $page->title,
-					'type'                 => $page->type->getName(),
-					'publishAt'            => $page->publishDateRange->getStart(),
-					'unpublishAt'          => $page->publishDateRange->getEnd(),
-					'updatedAt'            => $page->authorship->updatedAt(),
-					'updatedBy'            => $page->authorship->updatedBy(),
-					'slug'                 => $page->slug->getLastSegment(),
-					'left'                 => $page->left,
-					'right'                => $page->right,
-					'depth'                => $page->depth,
-					'metaTitle'            => $page->metaTitle,
-					'metaDescription'      => $page->metaDescription,
-					'metaHtmlHead'         => $page->metaHtmlHead,
-					'metaHtmlFoot'         => $page->metaHtmlFoot,
-					'visibilitySearch'     => $page->visibilitySearch,
-					'visibilityMenu'       => $page->visibilityMenu,
-					'visibilityAggregator' => $page->visibilityAggregator,
-					'password'             => $page->password,
-					'access'               => $page->access,
-					'accessGroups'         => $page->accessGroups,
-					'commentsEnabled'      => $page->commentsEnabled,
-					'commentsAccess'       => $page->commentsAccess,
-					'commentsAccessGroups' => $page->commentsAccessGroups,
-					'commentsApproval'     => $page->commentsApproval,
-					'commentsExpiry'       => $page->commentsExpiry,
-		));
+			array(
+				'pageID'               => $page->id,
+				'title'                => $page->title,
+				'type'                 => $page->type->getName(),
+				'publishAt'            => $page->publishDateRange->getStart(),
+				'unpublishAt'          => $page->publishDateRange->getEnd(),
+				'updatedAt'            => $page->authorship->updatedAt(),
+				'updatedBy'            => $page->authorship->updatedBy(),
+				'slug'                 => $page->slug->getLastSegment(),
+				'left'                 => $page->left,
+				'right'                => $page->right,
+				'depth'                => $page->depth,
+				'metaTitle'            => $page->metaTitle,
+				'metaDescription'      => $page->metaDescription,
+				'metaHtmlHead'         => $page->metaHtmlHead,
+				'metaHtmlFoot'         => $page->metaHtmlFoot,
+				'visibilitySearch'     => $page->visibilitySearch,
+				'visibilityMenu'       => $page->visibilityMenu,
+				'visibilityAggregator' => $page->visibilityAggregator,
+				'password'             => $page->password,
+				'access'               => $page->access,
+				'accessGroups'         => $page->accessGroups,
+				'commentsEnabled'      => $page->commentsEnabled,
+				'commentsAccess'       => $page->commentsAccess,
+				'commentsAccessGroups' => $page->commentsAccessGroups,
+				'commentsApproval'     => $page->commentsApproval,
+				'commentsExpiry'       => $page->commentsExpiry,
+			));
 
 		$event = new Event($page);
 
@@ -201,7 +202,4 @@ class Edit {
 		return $result->affected() ? $page : false;
 
 	}
-
-
-
 }

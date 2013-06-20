@@ -423,14 +423,14 @@ class Loader
 				continue;
 			}
 
-			// Get the page type
-			$pages[$key]->type = $this->_pageTypes->get($data->type);
-
 			// Load the DateRange object for publishDateRange
 			$pages[$key]->publishDateRange = new DateRange(
 				$data->publishAt   ? new DateTimeImmutable(date('c', $data->publishAt))   : null,
 				$data->unpublishAt ? new DateTimeImmutable(date('c', $data->unpublishAt)) : null
 			);
+
+			// Get the page type
+			$pages[$key]->type = $this->_pageTypes->get($data->type);
 
 			$pages[$key]->slug = new Slug($data->slug);
 			$pages[$key]->type = clone $this->_pageTypes->get($data->type);

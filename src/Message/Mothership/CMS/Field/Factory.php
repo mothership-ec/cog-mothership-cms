@@ -2,6 +2,8 @@
 
 namespace Message\Mothership\CMS\Field;
 
+use Message\Cog\Form\Handler;
+
 /**
  * Field factory, for building fields and groups of fields.
  *
@@ -10,6 +12,12 @@ namespace Message\Mothership\CMS\Field;
 class Factory implements \IteratorAggregate, \Countable
 {
 	protected $_fields = array();
+	protected $_form;
+
+	public function __construct(Handler $form)
+	{
+		$this->_form = $form;
+	}
 
 	/**
 	 * Add a new field to the factory.

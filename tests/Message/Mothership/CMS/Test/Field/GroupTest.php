@@ -17,31 +17,22 @@ class GroupTest extends \PHPUnit_Framework_TestCase
 		);
 	}
 
-	public function testConstructor()
+	public function testGetNameAndLabel()
 	{
-		$fields = array(
-			'title' => $this->getMock('Message\Mothership\CMS\Page\Field\Field', array(), array('My Title')),
-			'body' => $this->getMock('Message\Mothership\CMS\Page\Field\Field', array(), array('My body text for this field')),
-			'url' => $this->getMock('Message\Mothership\CMS\Page\Field\Field', array(), array('http://www.message.co.uk')),
-		);
+		$group = new Group('my_group', 'My lovely group');
 
-		$group = new Group($fields);
-
-		$this->assertSame($fields['title'], $group->title);
-		$this->assertSame($fields['body'], $group->body);
-		$this->assertSame($fields['url'], $group->url);
+		$this->assertSame('my_group', $group->getName());
+		$this->assertSame('My lovely group', $group->getLabel());
 	}
 
 	public function testGettingSetting()
 	{
-		$group = new Group;
-		$field = $this->getMock('Message\Mothership\CMS\Page\Field\Field', array(), array('This is a special field'));
+		$group = new Group('group1');
+		$field = $this->getMockForAbstractClass('Message\Mothership\CMS\Field\Field', array('my_field'));
 
-		$group->myField = $field;
-		$group->add('anotherField', $field);
+		$group->add($field);
 
-		$this->assertSame($field, $group->myField);
-		$this->assertSame($field, $group->anotherField);
+		$this->assertSame($field, $group->my_field);
 
 		return $group;
 	}
@@ -51,7 +42,7 @@ class GroupTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testIsset(Group $group)
 	{
-		$this->assertTrue(isset($group->myField));
+		$this->assertTrue(isset($group->my_field));
 		$this->assertFalse(isset($group->thisIsNotSet));
 	}
 
@@ -61,45 +52,68 @@ class GroupTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGettingUndefinedField()
 	{
-		$group = new Group;
+		$group = new Group('group2');
 
 		$group->iDunnoSomeField;
 	}
 
-	/**
-	 * @dataProvider getFalseyValues
-	 *
-	 * @expectedException        \InvalidArgumentException
-	 * @expectedExceptionMessage must have a name
-	 */
-	public function testAddingFalseyName($value)
+	public function testRepeatable()
 	{
-		$group = new Group;
-		$group->add($value, $this->getMock('Message\Mothership\CMS\Page\Field\Field', array(), array('This is a special field')));
+		$group = new Group('group');
+
+		$this->assertFalse($group->isRepeatable());
+		$this->assertSame($group, $group->setRepeatable(true));
+		$this->assertTrue($group->isRepeatable());
+		$this->assertSame($group, $group->setRepeatable(false));
+		$this->assertFalse($group->isRepeatable());
+	}
+
+	public function testIdentifierField()
+	{
+		$group = new Group('my_group');
+		$field = $this->getMockForAbstractClass('Message\Mothership\CMS\Field\Field', array('description'));
+
+		$this->assertFalse($group->getIdentifierField());
+
+		// Test automatic setting of field doesn't happen for a non-titley field
+		$group->add($field);
+
+		$this->assertFalse($group->getIdentifierField());
+
+		$this->assertSame($group, $group->setIdentifierField('description'));
+		$this->assertSame($field, $group->getIdentifierField());
 	}
 
 	/**
-	 * @dataProvider getFalseyValues
-	 *
 	 * @expectedException        \InvalidArgumentException
-	 * @expectedExceptionMessage must have a name
+	 * @expectedExceptionMessage does not exist
 	 */
-	public function testAddingFalseyNameAsProperty($value)
+	public function testSetUnknownIdentifierField()
 	{
-		$group = new Group;
-		$group->{$value} = $this->getMock('Message\Mothership\CMS\Page\Field\Field', array(), array('This is a special field'));
+		$group = new Group('my_group');
+
+		$group->setIdentifierField('dunno_what_this_is');
 	}
 
 	/**
-	 * @dataProvider getFalseyValues
-	 *
-	 * @expectedException        \InvalidArgumentException
-	 * @expectedExceptionMessage must have a name
+	 * @dataProvider getIdentifierFields
 	 */
-	public function testAddingFalseyNameConstructor($value)
+	public function testAutomaticIdentifierFieldSetting()
 	{
-		$group = new Group(array(
-			$value => $this->getMock('Message\Mothership\CMS\Page\Field\Field', array(), array('This is a special field')),
-		));
+
+	}
+
+	public function testIdentifierFieldNotSetAutomaticallyWhenAlreadySet()
+	{
+		$group = new Group('group5');
+		$field = $this->getMockForAbstractClass('Message\Mothership\CMS\Field\Field', array('my_field'));
+
+		$group
+			->add($field)
+			->setIdentifierField('my_field');
+
+		$group->add($this->getMockForAbstractClass('Message\Mothership\CMS\Field\Field', array('title')));
+
+		$this->assertSame($field, $group->getIdentifierField);
 	}
 }
