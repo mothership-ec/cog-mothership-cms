@@ -17,6 +17,7 @@ class Services implements ServicesInterface
 		$serviceContainer['cms.page.loader'] = $serviceContainer->share(function($c) {
 			return new \Message\Mothership\CMS\Page\Loader('Locale class', $c['db.query']);
 		});
+
 		$serviceContainer['cms.page.content_loader'] = $serviceContainer->share(function($c) {
 			return new \Message\Mothership\CMS\Page\ContentLoader($c['db.query']);
 		});

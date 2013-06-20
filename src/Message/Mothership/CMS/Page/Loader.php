@@ -381,21 +381,21 @@ class Loader
 
 			// Load the DateRange object for publishDateRange
 			$pages[$key]->publishDateRange = new DateRange(
-				new DateTimeImmutable('@' . $data->publishAt),
-				new DateTimeImmutable('@' . $data->unpublishAt)
+				new DateTimeImmutable('c', $data->publishAt),
+				new DateTimeImmutable('c', $data->unpublishAt)
 			);
 			$pages[$key]->slug = new Slug($data->slug);
 
 			// Load authorship details
 			$pages[$key]->authorship = new Authorship;
-			$pages[$key]->authorship->create(new DateTimeImmutable('@' . $data->createdAt), $data->createdBy);
+			$pages[$key]->authorship->create(new DateTimeImmutable('c', $data->createdAt), $data->createdBy);
 
 			if ($data->updatedAt) {
-				$pages[$key]->authorship->update(new DateTimeImmutable('@' . $data->updatedAt), $data->updatedBy);
+				$pages[$key]->authorship->update(new DateTimeImmutable('c', $data->updatedAt), $data->updatedBy);
 			}
 
 			if ($data->deletedAt) {
-				$pages[$key]->authorship->delete(new DateTimeImmutable('@' . $data->deletedAt), $data->deletedBy);
+				$pages[$key]->authorship->delete(new DateTimeImmutable('c', $data->deletedAt), $data->deletedBy);
 			}
 		}
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;

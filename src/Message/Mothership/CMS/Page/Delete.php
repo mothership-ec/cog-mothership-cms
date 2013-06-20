@@ -9,6 +9,7 @@ use Message\Mothership\CMS\Page\Loader;
 use Message\User\User;
 
 use Message\Cog\Event\DispatcherInterface;
+use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\DB\Query as DBQuery;
 
 /**
@@ -36,8 +37,8 @@ class Delete
 	{
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
-		$this->_currentUser		= $user;
 		$this->_loader 			= $loader;
+		$this->_currentUser		= $user;
 	}
 
 	/**
@@ -57,7 +58,7 @@ class Delete
 			throw new \InvalidArgumentException(sprintf('Cannot delete page #%i because it has children pages', $page->id));
 		}
 
-		$page->authorship->delete(new \Datetime, $this->_currentUser ? $this->_currentUser->id : null);
+		$page->authorship->delete(new DateTimeImmutable, $this->_currentUser->id);
 
 		$result = $this->_query->run('
 			UPDATE
@@ -93,7 +94,7 @@ class Delete
 	public function restore(Page $page)
 	{
 
-		$page->authorship->delete(new \Datetime, $this->_currentUser ? $this->_currentUser->id : null);
+		$page->authorship->delete(new DateTimeImmutable, $this->_currentUser->id);
 
 		$result = $this->_query->run('
 			UPDATE

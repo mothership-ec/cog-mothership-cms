@@ -7,6 +7,7 @@ use Message\Mothership\CMS\PageTypeInterface;
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\DB\NestedSetHelper;
+use Message\User\Event\Event;
 
 /**
  * Decorator for creating pages.
