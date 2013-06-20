@@ -25,11 +25,16 @@ class Services implements ServicesInterface
 		};
 
 		$serviceContainer['cms.page.loader'] = $serviceContainer->share(function($c) {
-			return new CMS\Page\Loader('Locale class', $c['db.query'], $c['cms.page.types']);
+			return new CMS\Page\Loader(
+				'Locale class',
+				$c['db.query'],
+				$c['cms.page.types'],
+				$c['user.groups']
+			);
 		});
 
 		$serviceContainer['cms.page.content_loader'] = $serviceContainer->share(function($c) {
-			return new CMS\Page\ContentLoader($c['db.query']);
+			return new CMS\Page\ContentLoader($c['db.query'], $c['cms.field.factory']);
 		});
 
 		$serviceContainer['cms.page.authorisation'] = function($c) {
@@ -64,6 +69,10 @@ class Services implements ServicesInterface
 				$c['cms.page.nested_set_helper'],
 				$c['user.current']
 			);
+		};
+
+		$serviceContainer['cms.field.factory'] = function($c) {
+			return new CMS\Field\Factory;
 		};
 	}
 }

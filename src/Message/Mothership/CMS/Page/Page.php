@@ -40,7 +40,7 @@ class Page
 
 	public $password;
 	public $access;
-	public $accessGroups;
+	public $accessGroups = array();
 
 	public $commentsEnabled;
 	public $commentsAccess;

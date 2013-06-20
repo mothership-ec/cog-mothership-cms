@@ -1,13 +1,13 @@
 <?php
 
-namespace Message\Mothership\CMS\Page\Field;
+namespace Message\Mothership\CMS\Field;
 
 /**
- * Wrapper for a repeatable set of field groups.
+ * Wrapper for a repeatable set of page field groups.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class Repeatable implements \IteratorAggregate, \Countable
+class RepeatableContainer implements \IteratorAggregate, \Countable
 {
 	protected $_groups = array();
 
@@ -41,6 +41,20 @@ class Repeatable implements \IteratorAggregate, \Countable
 	public function count()
 	{
 		return count($this->_groups);
+	}
+
+	/**
+	 * Get a group at a specific index from this container.
+	 *
+	 * @param  int $index  The index
+	 *
+	 * @return Group|false The group instance, or false if it doesn't exist
+	 */
+	public function get($index)
+	{
+		$index = (int) $index;
+
+		return isset($this->_groups[$index]) ? $this->_groups[$index] : false;
 	}
 
 	/**

@@ -1,8 +1,8 @@
 <?php
 
-namespace Message\Mothership\CMS\Test\Page\Field;
+namespace Message\Mothership\CMS\Test\Field;
 
-use Message\Mothership\CMS\Page\Field\Group;
+use Message\Mothership\CMS\Field\Group;
 
 class GroupTest extends \PHPUnit_Framework_TestCase
 {
