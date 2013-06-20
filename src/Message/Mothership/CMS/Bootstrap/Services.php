@@ -37,7 +37,7 @@ class Services implements ServicesInterface
 		};
 
 		$serviceContainer['cms.page.create'] = function($c) {
-			return new \Message\Mothership\CMS\Page\Create(
+			return new CMS\Page\Create(
 				$c['cms.page.loader'],
 				$c['db.query'],
 				$c['event.dispatcher'],
@@ -48,7 +48,7 @@ class Services implements ServicesInterface
 		};
 
 		$serviceContainer['cms.page.delete'] = function($c) {
-			return new \Message\Mothership\CMS\Page\Delete(
+			return new CMS\Page\Delete(
 				$c['db.query'],
 				$c['event.dispatcher'],
 				$c['cms.page.loader'],
@@ -57,7 +57,7 @@ class Services implements ServicesInterface
 		};
 
 		$serviceContainer['cms.page.edit'] = function($c) {
-			return new \Message\Mothership\CMS\Page\Edit(
+			return new CMS\Page\Edit(
 				$c['cms.page.loader'],
 				$c['db.query'],
 				$c['event.dispatcher'],
