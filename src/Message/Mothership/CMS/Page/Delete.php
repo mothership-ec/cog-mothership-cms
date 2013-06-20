@@ -3,7 +3,6 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\Page\Page;
-use Message\Mothership\CMS\Event\Event;
 use Message\Mothership\CMS\Page\Loader;
 
 use Message\User\UserInterface;

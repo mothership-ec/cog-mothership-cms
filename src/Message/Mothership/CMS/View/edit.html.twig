@@ -24,7 +24,10 @@
 		<li><a href="{{ url('ms.cp.cms.edit.metadata', {pageID: page.id}) }}">Meta details</a></li>
 	</ul>
 
-	DELETE BUTTON
+	<form action="{{ url('ms.cp.cms.delete',{pageID: page.id}) }}" method="post">
+		<input type="hidden" name="method" value="DELETE">
+		<button type="submit" id="edit-submit" value="Delete page">Delete page</button>
+	</form>
 
 	{{ render(controller('Message:Mothership:CMS::Controller:Publishing#renderForm', {
 		pageID: page.id
