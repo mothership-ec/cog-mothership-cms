@@ -21,6 +21,7 @@ class Delete
 	protected $_query;
 	protected $_eventDispatcher;
 	protected $_loader;
+	protected $_currentUser;
 
 	/**
 	 * Constructor.
@@ -80,7 +81,6 @@ class Delete
 
 		return $event->getPage();
 	}
-
 
 	/**
 	 * Restores a currently deleted page to its former self.
