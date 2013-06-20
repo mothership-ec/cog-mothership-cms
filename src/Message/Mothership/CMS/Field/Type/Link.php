@@ -16,9 +16,11 @@ class Link extends Field\MultipleValueField
 //	const SCOPE_ROUTE    = 'route'; # for a future version?
 	const SCOPE_ANY      = 'any';
 
-	public function getFormField()
+	public function getFormField($form)
 	{
-		// i dunno :(
+		$form->add($this->getName(), 'url', $this->getLabel(), array(
+			'attr' => array('data-translation-key' => $this->_translationKey)
+		));
 	}
 
 	public function setScope($scope)

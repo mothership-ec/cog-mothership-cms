@@ -11,12 +11,19 @@ use Message\Cog\Form\Handler;
  */
 class Factory implements \IteratorAggregate, \Countable
 {
+	protected $_validator;
+	protected $_pageTypeName;
 	protected $_fields = array();
-	protected $_form;
 
-	public function __construct(Handler $form)
+	public function __construct($validator, $pageTypeName)
 	{
-		$this->_form = $form;
+		$this->_validator    = $validator;
+		$this->_pageTypeName = $pageTypeName;
+	}
+
+	public function getValidator()
+	{
+		return $this->_validator;
 	}
 
 	/**
@@ -120,7 +127,10 @@ class Factory implements \IteratorAggregate, \Countable
 			));
 		}
 
-		return new $className($name, $label);
+		$field = new $className($this->_validator, $name, $label);
+		$field->setTranslationKey($this->_pageTypeName . '.' . $name);
+
+		return $field;
 	}
 
 	/**
@@ -133,7 +143,16 @@ class Factory implements \IteratorAggregate, \Countable
 	 */
 	public function getGroup($name, $label = null)
 	{
-		return new Group($name, $label);
+		// Create a new blank validator
+		$groupValidator = clone $this->_validator;
+		$groupValidator->clear();
+
+		$this->_validator->field($name, $label)->validateAgainst($groupValidator);
+
+		$group = new Group($groupValidator, $name, $label);
+		$group->setTranslationKey($this->_pageTypeName . '.' . $name);
+
+		return $group;
 	}
 
 	/**

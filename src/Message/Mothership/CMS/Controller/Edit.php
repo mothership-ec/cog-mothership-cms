@@ -26,7 +26,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		$page = $this->get('cms.page.edit')->save($page);
 
 		return $this->redirectToRoute('ms.cp.cms.edit', array(
-			'pageID' => $page->id
+			'pageID' => $page->id,
 		));
 	}
 

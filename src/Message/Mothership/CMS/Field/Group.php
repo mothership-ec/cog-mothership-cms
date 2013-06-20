@@ -2,6 +2,8 @@
 
 namespace Message\Mothership\CMS\Field;
 
+use Message\Cog\Validation\Validator;
+
 /**
  * Represents a group of page content fields.
  *
@@ -11,6 +13,8 @@ class Group implements FieldInterface
 {
 	protected $_name;
 	protected $_label;
+	protected $_validator;
+	protected $_translationKey;
 
 	protected $_repeatable = false;
 	protected $_repeatableMin;
@@ -22,10 +26,11 @@ class Group implements FieldInterface
 	/**
 	 * {@inheritDoc}
 	 */
-	public function __construct($name, $label = null)
+	public function __construct(Validator $validator, $name, $label = null)
 	{
-		$this->_name  = $name;
-		$this->_label = $label ?: $name;
+		$this->_validator = $validator;
+		$this->_name      = $name;
+		$this->_label     = $label ?: $name;
 	}
 
 	/**
@@ -127,6 +132,7 @@ class Group implements FieldInterface
 	 */
 	public function add(Field $field)
 	{
+		$field->setGroup($this);
 		$this->_fields[$field->getName()] = $field;
 
 		// If no identifier field is set yet and this field is a good candidate, set it
@@ -141,6 +147,27 @@ class Group implements FieldInterface
 		}
 
 		return $this;
+	}
+
+	public function addField($type, $name, $label)
+	{
+		$className = __NAMESPACE__ . '\\Type\\' . ucfirst($type);
+
+		// Check if a class exists for this field type
+		if (!class_exists($className)) {
+			throw new \InvalidArgumentException(sprintf(
+				'Field type `%s` does not exist (class `%s` not found)',
+				$type,
+				$className
+			));
+		}
+
+		$field = new $className($this->_validator, $name, $label);
+		$field->setTranslationKey($this->_translationKey . '.' . $name);
+
+		$this->add($field);
+
+		return $field;
 	}
 
 	/**
@@ -193,5 +220,20 @@ class Group implements FieldInterface
 		$this->_idFieldName	= $fieldName;
 
 		return $this;
+	}
+
+	public function getFields()
+	{
+		return $this->_fields;
+	}
+
+	public function setGroup(Group $group)
+	{
+		throw new \LogicException('Groups cant be added to themselves');
+	}
+
+	public function setTranslationKey($key)
+	{
+		$this->_translationKey = $key;
 	}
 }

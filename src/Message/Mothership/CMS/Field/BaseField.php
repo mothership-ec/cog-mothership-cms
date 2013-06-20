@@ -2,6 +2,8 @@
 
 namespace Message\Mothership\CMS\Field;
 
+use Message\Cog\Validation\Validator;
+
 /**
  * Base field object that should be inherited by both a normal field and a
  * "multiple value" field.
@@ -10,6 +12,7 @@ namespace Message\Mothership\CMS\Field;
  * method signatures are different for each subclass.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
+ * @author James Moss <james@message.co.uk>
  */
 abstract class BaseField implements FieldInterface
 {
@@ -17,14 +20,18 @@ abstract class BaseField implements FieldInterface
 	protected $_label;
 	protected $_localisable = false;
 	protected $_value;
+	protected $_validator;
+	protected $_group;
+	protected $_translationKey;
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public function __construct($name, $label = null)
+	public function __construct(Validator $validator, $name, $label = null)
 	{
-		$this->_name  = $name;
-		$this->_label = $label ?: $name;
+		$this->_validator = $validator;
+		$this->_name      = $name;
+		$this->_label     = $label ?: $name;
 	}
 
 	/**
@@ -53,6 +60,11 @@ abstract class BaseField implements FieldInterface
 		return $this->_label;
 	}
 
+	public function val()
+	{
+		return $this->_validator->field($this->getName(), $this->getLabel());
+	}
+
 	/**
 	 * Checks if this field is localisable.
 	 *
@@ -76,6 +88,19 @@ abstract class BaseField implements FieldInterface
 	}
 
 	/**
+	 * {inheritDoc}
+	 */
+	public function setGroup(Group $group)
+	{
+		$this->_group = $group;
+	}
+
+	public function setTranslationKey($key)
+	{
+		$this->_translationKey = $key;
+	}
+
+	/**
 	 * Get the value for this field.
 	 *
 	 * @return mixed
@@ -88,5 +113,5 @@ abstract class BaseField implements FieldInterface
 	 * @todo set the return docblock here when we know the form field class hint
 	 * @return ?
 	 */
-	abstract public function getFormField();
+	abstract public function getFormField($form);
 }

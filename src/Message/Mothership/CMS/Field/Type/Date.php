@@ -11,8 +11,10 @@ use Message\Mothership\CMS\Field\Field;
  */
 class Date extends Field
 {
-	public function getFormField()
+	public function getFormField($form)
 	{
-		// i dunno :(
+		$form->add($this->getName(), 'datetime', $this->getLabel(), array(
+			'attr' => array('data-translation-key' => $this->_translationKey)
+		));
 	}
 }

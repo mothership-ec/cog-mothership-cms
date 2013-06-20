@@ -13,7 +13,7 @@ class SelectMenu extends Field
 {
 	protected $_options;
 
-	public function getFormField()
+	public function getFormField($form)
 	{
 		// i dunno :(
 	}

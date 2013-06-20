@@ -15,9 +15,11 @@ class File extends Field
 {
 	protected $_allowedTypes;
 
-	public function getFormField()
+	public function getFormField($form)
 	{
-		// ...
+		$form->add($this->getName(), 'file', $this->getLabel(), array(
+			'attr' => array('data-translation-key' => $this->_translationKey)
+		));
 	}
 
 	public function setAllowedTypes($types)

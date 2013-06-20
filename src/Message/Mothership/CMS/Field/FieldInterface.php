@@ -2,6 +2,8 @@
 
 namespace Message\Mothership\CMS\Field;
 
+use Message\Cog\Validation\Validator;
+
 /**
  * Interface defining a page field or a group of page fields.
  *
@@ -18,7 +20,7 @@ interface FieldInterface
 	 * @param string $name  Identifier name for this field (unique to the page type)
 	 * @param string $label An optional human-readable label for this field
 	 */
-	public function __construct($name, $label = null);
+	public function __construct(Validator $validator, $name, $label = null);
 
 	/**
 	 * Get the identifier name for this field.
@@ -33,4 +35,13 @@ interface FieldInterface
 	 * @return string
 	 */
 	public function getLabel();
+
+	/**
+	 * Set the group that a field is within
+	 *
+	 * @param Group $group The group this field lives within
+	 */
+	public function setGroup(Group $group);
+
+	public function setTranslationKey($key);
 }
