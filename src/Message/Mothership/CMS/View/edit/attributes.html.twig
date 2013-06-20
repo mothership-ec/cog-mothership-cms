@@ -10,4 +10,15 @@ Things that are here:
 - access groups
 - tags
 
+<h2></h2>
+
+<dl class="authorship">
+	<dt>Created</dt>
+		<dd>at {{ page.authorship.createdAt|date('h:ia \\o\\n d/m/y') }} by {{ page.authorship.createdBy }}</dd>
+	{% if page.authorship.updatedAt is not null %}
+	<dt>Updated</dt>
+		<dd>at {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }} by {{ page.authorship.updatedBy }}</dd>
+	{% endif %}
+</dl>
+
 {% endblock %}
