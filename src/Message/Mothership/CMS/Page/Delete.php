@@ -3,7 +3,6 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Mothership\CMS\Page\Page;
-use Message\Mothership\CMS\Event\Event;
 use Message\Mothership\CMS\Page\Loader;
 
 use Message\User\UserInterface;
@@ -22,6 +21,7 @@ class Delete
 	protected $_query;
 	protected $_eventDispatcher;
 	protected $_loader;
+	protected $_currentUser;
 
 	/**
 	 * Constructor.
@@ -81,7 +81,6 @@ class Delete
 
 		return $event->getPage();
 	}
-
 
 	/**
 	 * Restores a currently deleted page to its former self.

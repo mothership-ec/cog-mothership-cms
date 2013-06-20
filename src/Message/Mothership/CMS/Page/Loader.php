@@ -9,6 +9,7 @@ use Message\User\Group\Collection as UserGroupCollection;
 
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
+use Message\Mothership\CMS\PageType\Collection;
 use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
@@ -61,7 +62,7 @@ class Loader
 	protected $_loadDeleted = false;
 
 	/**
-	 * Constructor.
+	 * Constructor
 	 *
 	 * @param \Locale             $locale    The current locale
 	 * @param Query               $query     Database query instance to use
@@ -197,14 +198,43 @@ class Loader
 	}
 
 	/**
+	 * Return all files in an array
+	 * @return Array|File|false - 	returns either an array of File objects, a
+	 * 								single file object or false
+	 */
+	public function getAll()
+	{
+		$result = $this->_query->run('
+			SELECT
+				page_id
+			FROM
+				page
+		');
+
+		return count($result) ? $this->getByID($result->flatten()) : false;
+	}
+
+	public function getTopLevel()
+	{
+		return $this->getChildren(null);
+	}
+
+	/**
 	 * Get the child pages for a page.
 	 *
-	 * @param Page $page The page to find the children for
+	 * @param Page|null $page The page to find the children for
 	 *
 	 * @return array[Page]	 An array of prepared `Page` instances
 	 */
-	public function getChildren(Page $page)
+	public function getChildren(Page $page = null)
 	{
+		if (!$page) {
+			$page = new Page;
+			$page->left = 0;
+			$page->right = 99999;
+			$page->depth = -1;
+		}
+
 		$result = $this->_query->run('
 			SELECT
 				page_id
@@ -318,7 +348,7 @@ class Loader
 				page.created_by AS updatedBy,
 				page.deleted_at AS deletedAt,
 				page.deleted_by AS deletedBy,
-				CONCAT((
+				IFNULL(CONCAT((
 					SELECT
 						CONCAT(\'/\',GROUP_CONCAT(p.slug ORDER BY p.position_depth ASC SEPARATOR \'/\'))
 					FROM
@@ -326,7 +356,7 @@ class Loader
 					WHERE
 						p.position_left < page.position_left
 					AND
-						p.position_right > page.position_right),\'/\',page.slug) AS slug,
+						p.position_right > page.position_right),\'/\',page.slug),page.slug) AS slug,
 
 				page.position_left AS `left`,
 				page.position_right AS `right`,
@@ -359,11 +389,13 @@ class Loader
 			WHERE
 				page.page_id IN (?ij)
 			GROUP BY
-				page.page_id',
-				array(
-					(array) $pageID,
-				)
-			);
+				page.page_id
+			ORDER BY
+				position_left ASC',
+			array(
+				(array) $pageID,
+			)
+		);
 
 		if (0 === count($result)) {
 			return false;
@@ -384,7 +416,6 @@ class Loader
 		$pages = $results->bindTo('Message\\Mothership\\CMS\\Page\\Page');
 
 		foreach ($results as $key => $data) {
-
 			// Skip deleted pages
 			if ($data->deletedAt && !$this->_loadDeleted) {
 				unset($pages[$key]);
@@ -396,21 +427,23 @@ class Loader
 
 			// Load the DateRange object for publishDateRange
 			$pages[$key]->publishDateRange = new DateRange(
-				$data->publishAt   ? new DateTimeImmutable('@' . $data->publishAt)   : null,
-				$data->unpublishAt ? new DateTimeImmutable('@' . $data->unpublishAt) : null
+				$data->publishAt   ? new DateTimeImmutable(date('c', $data->publishAt))   : null,
+				$data->unpublishAt ? new DateTimeImmutable(date('c', $data->unpublishAt)) : null
 			);
+
 			$pages[$key]->slug = new Slug($data->slug);
+			$pages[$key]->type = clone $this->_pageTypes->get($data->type);
 
 			// Load authorship details
 			$pages[$key]->authorship = new Authorship;
-			$pages[$key]->authorship->create(new DateTimeImmutable('@' . $data->createdAt), $data->createdBy);
+			$pages[$key]->authorship->create(new DateTimeImmutable(date('c',$data->createdAt)), $data->createdBy);
 
 			if ($data->updatedAt) {
-				$pages[$key]->authorship->update(new DateTimeImmutable('@' . $data->updatedAt), $data->updatedBy);
+				$pages[$key]->authorship->update(new DateTimeImmutable(date('c',$data->updatedAt)), $data->updatedBy);
 			}
 
 			if ($data->deletedAt) {
-				$pages[$key]->authorship->delete(new DateTimeImmutable('@' . $data->deletedAt), $data->deletedBy);
+				$pages[$key]->authorship->delete(new DateTimeImmutable(date('c',$data->deletedAt)), $data->deletedBy);
 			}
 
 			// Load access groups
