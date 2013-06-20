@@ -195,14 +195,11 @@ class Edit {
 			', array(
 				$page->publishDateRange->getStart(),
 				$page->publishDateRange->getEnd(),
-				$page->id
+				$page->id,
 			)
 		);
 
 		return $result->affected() ? $page : false;
 
 	}
-
-
-
 }
