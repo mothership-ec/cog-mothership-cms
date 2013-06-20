@@ -8,6 +8,12 @@ class Routes implements RoutesInterface
 {
 	public function registerRoutes($router)
 	{
+		$router['ms.cms']->setPrefix('/');
+
+		$router['ms.cms']->add('ms.cms.frontend', '/{slug}', '::Controller:Frontend#renderPage')
+			->setRequirement('slug', '[a-z0-9\-\/]+');
+
+
 		$router['ms.cp.cms']->setPrefix('/cms')->setParent('ms.cp');
 
 		$router['ms.cp.cms']->add('ms.cp.cms.dashboard', '/', '::Controller:Dashboard#index')

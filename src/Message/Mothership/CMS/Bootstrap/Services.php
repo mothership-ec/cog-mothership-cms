@@ -28,7 +28,8 @@ class Services implements ServicesInterface
 			return new CMS\Page\Loader(
 				'Locale class',
 				$c['db.query'],
-				$c['cms.page.types']
+				$c['cms.page.types'],
+				$c['user.groups']
 			);
 		});
 
