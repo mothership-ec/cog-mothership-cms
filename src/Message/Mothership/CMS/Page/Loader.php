@@ -7,6 +7,7 @@ use Message\Mothership\CMS\PageType\Collection;
 
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
+use Message\Mothership\CMS\PageType\Collection;
 use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
@@ -59,9 +60,11 @@ class Loader
 	protected $_loadDeleted = false;
 
 	/**
-	 * Constructor.
+	 * Constructor
 	 *
-	 * @param \Locale $locale The locale to use for loading translations
+	 * @param \Locale    $locale    The locale to use for loading translations
+	 * @param Query      $query     The query object
+	 * @param Collection $pageTypes Collection of page objects so we can load them correctly
 	 */
 	public function __construct(/* \Locale */ $locale, Query $query, Collection $pageTypes)
 	{
@@ -158,7 +161,7 @@ class Loader
 			SELECT
 				page_id
 			FROM
-				slug_history
+				page_slug_history
 			WHERE
 				slug = ?s
 		', $slug);
@@ -406,39 +409,34 @@ class Loader
 		$pages = $results->bindTo('Message\\Mothership\\CMS\\Page\\Page');
 
 		foreach ($results as $key => $data) {
-
 			// Skip deleted pages
 			if ($data->deletedAt && !$this->_loadDeleted) {
 				unset($pages[$key]);
 				continue;
 			}
 
-			if ($data->publishAt) {
-				$data->publishAt = new DateTimeImmutable('@' . $data->publishAt);
-			}
-
-			if ($data->unpublishAt) {
-				$data->unpublishAt = new DateTimeImmutable('@' . $data->unpublishAt);
-			}	
-
 			// Load the DateRange object for publishDateRange
-			$pages[$key]->publishDateRange = new DateRange($data->publishAt, $data->unpublishAt);
+			$pages[$key]->publishDateRange = new DateRange(
+				$data->publishAt   ? new DateTimeImmutable(date('c', $data->publishAt))   : null,
+				$data->unpublishAt ? new DateTimeImmutable(date('c', $data->unpublishAt)) : null
+			);
 
 			// Get the page type
 			$pages[$key]->type = $this->_pageTypes->get($data->type);
 
 			$pages[$key]->slug = new Slug($data->slug);
+			$pages[$key]->type = clone $this->_pageTypes->get($data->type);
 
 			// Load authorship details
 			$pages[$key]->authorship = new Authorship;
-			$pages[$key]->authorship->create(new DateTimeImmutable('@' . $data->createdAt), $data->createdBy);
+			$pages[$key]->authorship->create(new DateTimeImmutable(date('c',$data->createdAt)), $data->createdBy);
 
 			if ($data->updatedAt) {
-				$pages[$key]->authorship->update(new DateTimeImmutable('@' . $data->updatedAt), $data->updatedBy);
+				$pages[$key]->authorship->update(new DateTimeImmutable(date('c',$data->updatedAt)), $data->updatedBy);
 			}
 
 			if ($data->deletedAt) {
-				$pages[$key]->authorship->delete(new DateTimeImmutable('@' . $data->deletedAt), $data->deletedBy);
+				$pages[$key]->authorship->delete(new DateTimeImmutable(date('c',$data->deletedAt)), $data->deletedBy);
 			}
 		}
 
