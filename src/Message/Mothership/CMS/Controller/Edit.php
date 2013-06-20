@@ -2,6 +2,9 @@
 
 namespace Message\Mothership\CMS\Controller;
 
+use Message\Mothership\CMS\Field\Form;
+use Message\Mothership\CMS\Field\Factory;
+
 class Edit extends \Message\Cog\Controller\Controller
 {
 	/**
@@ -34,8 +37,18 @@ class Edit extends \Message\Cog\Controller\Controller
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
 
+		$factory = new Factory($this->get('validator'), 'translation_key');
+
+		
+
+		$handler = $this->get('form.handler');
+		$form = new Form($factory, $handler, $this->_services);
+
+		$form->generateForm();
+
 		return $this->render('::edit/content', array(
-			'page' => $page,
+			'page'         => $page,
+			'content_form' => $handler,
 		));
 	}
 
