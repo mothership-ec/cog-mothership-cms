@@ -4,4 +4,10 @@
 {{ form(content_form) }}
 
 
+{{ form_start(content_form) }}
+{{ form_rest(content_form) }}
+<button name="form[submit]" type="submit">Submit</button>
+{{ form_end(content_form) }}	
+
+
 {% endblock %}

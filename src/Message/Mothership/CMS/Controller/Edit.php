@@ -37,18 +37,21 @@ class Edit extends \Message\Cog\Controller\Controller
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
 
-		$factory = new Factory($this->get('validator'), 'translation_key');
+		$factory = new Factory($this->get('validator'), 'page_type.' . $page->type->getName());
+		$page->type->setFields($factory);
 
-		
+		$form = $this->get('form.handler');
+	
+		$contentForm = new Form($factory, $form, $this->_services);
+		$contentForm->generateForm();
 
-		$handler = $this->get('form.handler');
-		$form = new Form($factory, $handler, $this->_services);
-
-		$form->generateForm();
+		if ($form->isValid()) {
+			// save to the database
+		}
 
 		return $this->render('::edit/content', array(
 			'page'         => $page,
-			'content_form' => $handler,
+			'content_form' => $form,
 		));
 	}
 
