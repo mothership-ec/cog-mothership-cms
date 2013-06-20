@@ -21,6 +21,7 @@ class Create
 	protected $_query;
 	protected $_eventDispatcher;
 	protected $_nestedSetHelper;
+	protected $_slugGenerator;
 	protected $_currentUser;
 
 	/**
@@ -31,15 +32,17 @@ class Create
 	 * @param DispatcherInterface $eventDispatcher The event dispatcher
 	 * @param NestedSetHelper     $nestedSetHelper The nested set helper, set up
 	 *                                             for the `Page` table
+	 * @param SlugGenerator       $slugGenerator   The page slug generator
 	 * @param UserInterface       $user            The currently logged in user
 	 */
 	public function __construct(Loader $loader, DBQuery $query, DispatcherInterface $eventDispatcher,
-		NestedSetHelper $nestedSetHelper, UserInterface $user)
+		NestedSetHelper $nestedSetHelper, SlugGenerator $slugGenerator, UserInterface $user)
 	{
 		$this->_loader          = $loader;
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
 		$this->_nestedSetHelper = $nestedSetHelper;
+		$this->_slugGenerator   = $slugGenerator;
 		$this->_currentUser     = $user;
 	}
 
@@ -68,6 +71,9 @@ class Create
 			//throw exception
 		#}
 
+		// Generate the slug
+		$slug = $this->_slugGenerator->generate($title, $parent);
+
 		// Create the page without adding it to the nested set tree
 		$result = $this->_query->run('
 			INSERT INTO
@@ -77,10 +83,12 @@ class Create
 				created_by    = :createdBy?in,
 				title         = :title?s,
 				type          = :type?s,
+				slug          = :slug?s,
 				unpublish_at  = UNIX_TIMESTAMP()
 		', array(
 			'title'     => $title,
 			'type'      => $pageType->getName(),
+			'slug'      => $slug->getLastSegment(),
 			'createdBy' => $this->_currentUser->id,
 		));
 
