@@ -13,11 +13,15 @@ class Create extends \Message\Cog\Controller\Controller
 
 	public function process()
 	{
-		if ($data = $this->get('request')->request->get('create')) {
-			$pageType = $this->_services['cms.page.types']->get($data['type']);
-			$page = $this->_services['cms.page.create']->create($pageType,$data['title']);
-
-			return $this->redirect($this->generateUrl('ms.cms.dashboard'));
+		if (!$data = $this->get('request')->request->get('create')) {
+			return $this->redirect($this->get('request')->headers->get('referer'));
 		}
+
+		$type = $this->get('cms.page.types')->get($data['type']);
+		$page = $this->get('cms.page.create')->create($type, $data['title']);
+
+		return $this->redirectToRoute('ms.cp.cms.edit', array(
+			'pageID' => $page->id,
+		));
 	}
 }
