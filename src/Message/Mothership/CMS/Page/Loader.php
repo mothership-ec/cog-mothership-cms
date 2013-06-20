@@ -413,18 +413,10 @@ class Loader
 				continue;
 			}
 
-			if ($data->publishAt) {
-				$data->publishAt = new DateTimeImmutable(date('c',$data->publishAt));
-			}
-
-			if ($data->unpublishAt) {
-				$data->unpublishAt = new DateTimeImmutable(date('c',$data->unpublishAt));
-			}
-
 			// Load the DateRange object for publishDateRange
 			$pages[$key]->publishDateRange = new DateRange(
-				$data->publishAt   ? new DateTimeImmutable('@' . $data->publishAt)   : null,
-				$data->unpublishAt ? new DateTimeImmutable('@' . $data->unpublishAt) : null
+				$data->publishAt   ? new DateTimeImmutable(date('c', $data->publishAt))   : null,
+				$data->unpublishAt ? new DateTimeImmutable(date('c', $data->unpublishAt)) : null
 			);
 
 			$pages[$key]->slug = new Slug($data->slug);
