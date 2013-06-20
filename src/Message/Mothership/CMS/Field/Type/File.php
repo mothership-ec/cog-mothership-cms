@@ -18,7 +18,7 @@ class File extends Field
 	public function getFormField($form)
 	{
 		$form->add($this->getName(), 'file', $this->getLabel(), array(
-			'attr' => array('data-translation-key' => $this->_translationKey)
+			'attr' => array('data-help-key' => $this->_translationKey)
 		));
 	}
 

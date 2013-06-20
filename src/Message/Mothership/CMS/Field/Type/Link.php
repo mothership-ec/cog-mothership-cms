@@ -19,7 +19,7 @@ class Link extends Field\MultipleValueField
 	public function getFormField($form)
 	{
 		$form->add($this->getName(), 'url', $this->getLabel(), array(
-			'attr' => array('data-translation-key' => $this->_translationKey)
+			'attr' => array('data-help-key' => $this->_translationKey)
 		));
 	}
 
