@@ -162,6 +162,8 @@ class Loader
 	 */
 	public function checkSlugHistory($slug)
 	{
+		$slug = '/' . ltrim($slug, '/');
+
 		$result = $this->_query->run('
 			SELECT
 				page_id
@@ -171,8 +173,7 @@ class Loader
 				slug = ?s
 		', $slug);
 
-
-		return count($result) ? $this->getByID($result->first()->page_id) : false;
+		return count($result) ? $this->getByID($result->value()) : false;
 	}
 
 	/**
