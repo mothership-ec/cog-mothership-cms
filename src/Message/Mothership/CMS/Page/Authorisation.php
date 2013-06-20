@@ -49,7 +49,7 @@ class Authorisation
 	 */
 	public function isViewable()
 	{
-
+		
 	}
 
 	/**
