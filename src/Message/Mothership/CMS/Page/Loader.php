@@ -47,7 +47,7 @@ class Loader
 {
 	protected $_locale;
 	protected $_query;
-	protected $_collections;
+	protected $_pageTypes;
 
 	/**
 	 * var to toggle the loading of deleted pages
@@ -61,15 +61,15 @@ class Loader
 	/**
 	 * Constructor
 	 *
-	 * @param \Locale 	 $locale 			The locale to use for loading translations
-	 * @param Query 	 $query 			The query object
-	 * @param Collection $pageCollections 	Collection of page objects so we can load them correctly
+	 * @param \Locale    $locale    The locale to use for loading translations
+	 * @param Query      $query     The query object
+	 * @param Collection $pageTypes Collection of page objects so we can load them correctly
 	 */
-	public function __construct(/* \Locale */ $locale, Query $query, Collection $pageCollections)
+	public function __construct(/* \Locale */ $locale, Query $query, Collection $pageTypes)
 	{
-		$this->_locale = $locale;
-		$this->_query = $query;
-		$this->_collections = $pageCollections;
+		$this->_locale    = $locale;
+		$this->_query     = $query;
+		$this->_pageTypes = $pageTypes;
 	}
 
 	/**
@@ -420,8 +420,7 @@ class Loader
 			);
 
 			$pages[$key]->slug = new Slug($data->slug);
-			$pageType = $this->_collections->get($data->type);
-			$pages[$key]->type = new $pageType;
+			$pages[$key]->type = clone $this->_pageTypes->get($data->type);
 
 			// Load authorship details
 			$pages[$key]->authorship = new Authorship;
