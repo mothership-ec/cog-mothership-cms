@@ -423,6 +423,12 @@ class Loader
 				continue;
 			}
 
+			$pages[$key]->visibilitySearch     = (bool) $pages[$key]->visibilitySearch;
+			$pages[$key]->visibilityMenu       = (bool) $pages[$key]->visibilityMenu;
+			$pages[$key]->visibilityAggregator = (bool) $pages[$key]->visibilityAggregator;
+			$pages[$key]->commentsEnabled      = (bool) $pages[$key]->commentsEnabled;
+			$pages[$key]->commentsApproval     = (bool) $pages[$key]->commentsApproval;
+
 			// Load the DateRange object for publishDateRange
 			$pages[$key]->publishDateRange = new DateRange(
 				$data->publishAt   ? new DateTimeImmutable(date('c', $data->publishAt))   : null,

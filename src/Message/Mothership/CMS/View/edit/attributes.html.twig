@@ -1,16 +1,19 @@
 {% extends '::edit' %}
 {% block form %}
 
-Things that are here:
 
-- slug
-- type ... maybe in v2
-- visibility menu/search/aggregator
-- access
-- access groups
-- tags
+{{ form_row(form.slug) }}
 
-<h2></h2>
+{{ form_row(form.visibility_search) }}
+{{ form_row(form.visibility_menu) }}
+{{ form_row(form.visibility_aggregator) }}
+
+{{ form_row(form.access) }}
+{{ form_row(form.access_groups) }}
+
+{{ form_row(form.tags) }}
+
+<h2>Authorship information</h2>
 
 <dl class="authorship">
 	<dt>Created</dt>
@@ -20,5 +23,9 @@ Things that are here:
 		<dd>at {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }} by {{ page.authorship.updatedBy }}</dd>
 	{% endif %}
 </dl>
+
+<button type="submit">Save changes</button>
+
+{{ form_end(form) }}
 
 {% endblock %}
