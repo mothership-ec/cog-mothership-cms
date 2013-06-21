@@ -59,6 +59,11 @@ class Edit extends \Message\Cog\Controller\Controller
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
 
+		$form = $this->get('form')
+			->setName('attributes')
+			->setMethod('POST')
+			->setAction($this->generateUrl('ms.cp.cms.edit.attributes.action'));
+
 		return $this->render('::edit/attributes', array(
 			'page' => $page,
 		));
