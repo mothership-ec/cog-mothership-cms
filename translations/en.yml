@@ -1,0 +1,45 @@
+ms.cms:
+  attributes:
+    slug:
+      label: URL Segment
+      help:
+        short:
+        long:
+        example: /my-page
+    access:
+      label: Who can access this page?
+      options:
+        all:   Everybody
+        guest: Only visitors that aren't logged in
+        user:  Only logged in users
+        group: Only specific user groups
+    help:
+      short: Select the type of visitor that can access this page
+      long:  By default, anybody can access a page. You can set a page to only be accessible to guests; or any logged in user; or only logged in users that belong to a specific group. If the visitor tries to access a page that they do not have access to see, the system will return an "access denied" error.
+    access_groups:
+      label: Which user groups can access this page?
+      help:
+        short:
+        long:
+    visibility:
+      menu:
+        label: Should this page show in menus?
+        help:
+          short: -
+          long:
+      search:
+        label: Should this page show in search results?
+        help:
+          short: -
+          long:
+      aggregator:
+        label: Should this page show on aggregator pages?
+        help:
+          short: -
+          long:
+    tags:
+      label: Tags
+      help:
+        short: -
+        long:
+        example: products, shoes, 2013
