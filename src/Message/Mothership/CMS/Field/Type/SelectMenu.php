@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Field\Type;
 
 use Message\Mothership\CMS\Field\Field;
+use Message\Cog\Form\Handler;
 
 /**
  * A field that provides a select menu of pre-defined options.
@@ -13,7 +14,7 @@ class SelectMenu extends Field
 {
 	protected $_options;
 
-	public function getFormField($form)
+	public function getFormField(Handler $form)
 	{
 		// i dunno :(
 	}

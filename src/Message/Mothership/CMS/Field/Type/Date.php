@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Field\Type;
 
 use Message\Mothership\CMS\Field\Field;
+use Message\Cog\Form\Handler;
 
 /**
  * A field for a single date.
@@ -11,7 +12,7 @@ use Message\Mothership\CMS\Field\Field;
  */
 class Date extends Field
 {
-	public function getFormField($form)
+	public function getFormField(Handler $form)
 	{
 		$form->add($this->getName(), 'datetime', $this->getLabel(), array(
 			'attr' => array('data-help-key' => $this->_translationKey)

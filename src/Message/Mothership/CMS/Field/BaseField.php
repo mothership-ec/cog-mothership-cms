@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Field;
 
 use Message\Cog\Validation\Validator;
+use Message\Cog\Form\Handler;
 
 /**
  * Base field object that should be inherited by both a normal field and a
@@ -113,5 +114,5 @@ abstract class BaseField implements FieldInterface
 	 * @todo set the return docblock here when we know the form field class hint
 	 * @return ?
 	 */
-	abstract public function getFormField($form);
+	abstract public function getFormField(Handler $form);
 }

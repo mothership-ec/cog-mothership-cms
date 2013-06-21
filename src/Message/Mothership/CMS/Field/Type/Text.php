@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Field\Type;
 
 use Message\Mothership\CMS\Field\Field;
+use Message\Cog\Form\Handler;
 
 /**
  * A field for plain text.
@@ -11,7 +12,7 @@ use Message\Mothership\CMS\Field\Field;
  */
 class Text extends Field
 {
-	public function getFormField($form)
+	public function getFormField(Handler $form)
 	{
 		$form->add($this->getName(), 'text', $this->getLabel(), array(
 			'attr' => array('data-help-key' => $this->_translationKey)

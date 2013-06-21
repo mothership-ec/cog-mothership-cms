@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Field\Type;
 
 use Message\Mothership\CMS\Field;
+use Message\Cog\Form\Handler;
 
 /**
  * A field for a link to an internal page
@@ -16,7 +17,7 @@ class Link extends Field\MultipleValueField
 //	const SCOPE_ROUTE    = 'route'; # for a future version?
 	const SCOPE_ANY      = 'any';
 
-	public function getFormField($form)
+	public function getFormField(Handler $form)
 	{
 		$form->add($this->getName(), 'url', $this->getLabel(), array(
 			'attr' => array('data-help-key' => $this->_translationKey)

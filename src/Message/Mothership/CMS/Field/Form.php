@@ -45,6 +45,20 @@ class Form
 			$field->getFormField($groupHandler);
 		}
 
-		$this->_handler->add($groupHandler->getForm(), 'form', $group->getLabel());
+		if($group->isRepeatable()) {
+			$repeatableType = new RepeatableFormType;
+			$repeatableType->setForm($groupHandler);
+
+			// See http://symfony.com/doc/current/reference/forms/types/collection.html
+			$this->_handler->add($group->getName(), 'collection', $group->getLabel(), array(
+				'type'         => $repeatableType,
+				'allow_add'    => true,
+				'allow_delete' => true,
+			));
+		} else {
+			$this->_handler->add($groupHandler->getForm(), 'form', $group->getLabel());
+		}
+
+		
 	}
 }

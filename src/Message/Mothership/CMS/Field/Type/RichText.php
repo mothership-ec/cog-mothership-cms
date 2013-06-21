@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Field\Type;
 
 use Message\Mothership\CMS\Field\Field;
+use Message\Cog\Form\Handler;
 
 /**
  * A field for text written in a rich text markup language.
@@ -17,7 +18,7 @@ class RichText extends Field
 
 	public $_engine = 'markdown';
 
-	public function getFormField($form)
+	public function getFormField(Handler $form)
 	{
 		$form->add($this->getName(), 'textarea', $this->getLabel(), array(
 			'attr' => array('data-help-key' => $this->_translationKey)
