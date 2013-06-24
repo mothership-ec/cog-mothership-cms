@@ -10,7 +10,7 @@ use Message\Cog\Form\Handler;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class SelectMenu extends Field
+class Choice extends Field
 {
 	protected $_options;
 
