@@ -13,9 +13,9 @@ ms.cms:
         guest: Only visitors that aren't logged in
         user:  Only logged in users
         group: Only specific user groups
-    help:
-      short: Select the type of visitor that can access this page
-      long:  By default, anybody can access a page. You can set a page to only be accessible to guests; or any logged in user; or only logged in users that belong to a specific group. If the visitor tries to access a page that they do not have access to see, the system will return an "access denied" error.
+      help:
+        short: Select the type of visitor that can access this page
+        long:  By default, anybody can access a page. You can set a page to only be accessible to guests; or any logged in user; or only logged in users that belong to a specific group. If the visitor tries to access a page that they do not have access to see, the system will return an "access denied" error.
     access_groups:
       label: Which user groups can access this page?
       help:

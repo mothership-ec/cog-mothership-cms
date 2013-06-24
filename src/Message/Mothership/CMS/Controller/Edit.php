@@ -48,7 +48,9 @@ class Edit extends \Message\Cog\Controller\Controller
 		$form = $this->get('form')
 			->setName('attributes')
 			->setMethod('POST')
-			->setAction($this->generateUrl('ms.cp.cms.edit.attributes.action', array('pageID' => $pageID)))
+			->setAction($this->generateUrl('ms.cp.cms.edit.attributes.action', array(
+				'pageID' => $pageID,
+			)))
 			->setDefaultValues(array(
 				'slug'                  => $page->slug->getLastSegment(),
 				'visibility_menu'       => $page->visibilityMenu,
@@ -56,7 +58,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				'visibility_aggregator' => $page->visibilityAggregator,
 				'access'                => $page->access,
 				'access_groups'         => $page->accessGroups,
-				'tags'                  => implode(', ', $page->tags)
+				'tags'                  => implode(', ', $page->tags),
 			));
 
 		$form->add('slug', 'text', $this->trans('ms.cms.attributes.slug.label'))
