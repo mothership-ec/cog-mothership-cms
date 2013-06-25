@@ -79,7 +79,7 @@ class Authorisation
 				break;
 			// If this page is accessible to logged in users, check the user is logged in
 			case self::ACCESS_USER:
-				return ($user instanceof AnonymousUser);
+				return !($user instanceof AnonymousUser);
 				break;
 			// If this page is accessible to users in specific groups, check the user's groups
 			case self::ACCESS_USER_GROUP:
