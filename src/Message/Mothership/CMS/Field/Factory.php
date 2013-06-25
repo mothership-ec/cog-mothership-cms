@@ -15,7 +15,7 @@ use Message\Cog\Validation\Validator;
 class Factory implements \IteratorAggregate, \Countable
 {
 	protected $_validator;
-	protected $_pageTypeName;
+	protected $_baseTransKey;
 	protected $_fields = array();
 
 	/**
@@ -39,7 +39,7 @@ class Factory implements \IteratorAggregate, \Countable
 	{
 		$this->clear();
 
-		$this->_pageTypeName = $pageType->getName();
+		$this->_baseTransKey = 'page.' . $pageType->getName();
 
 		$pageType->setFields($this);
 
@@ -158,7 +158,7 @@ class Factory implements \IteratorAggregate, \Countable
 		}
 
 		$field = new $className($this->_validator, $name, $label);
-		$field->setTranslationKey($this->_pageTypeName . '.' . $name);
+		$field->setTranslationKey($this->_baseTransKey);
 
 		return $field;
 	}
@@ -180,7 +180,7 @@ class Factory implements \IteratorAggregate, \Countable
 		$this->_validator->field($name, $label)->validateAgainst($groupValidator);
 
 		$group = new Group($groupValidator, $name, $label);
-		$group->setTranslationKey($this->_pageTypeName . '.' . $name);
+		$group->setTranslationKey($this->_baseTransKey);
 
 		return $group;
 	}

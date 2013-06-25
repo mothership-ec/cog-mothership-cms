@@ -37,11 +37,9 @@ interface FieldInterface
 	public function getLabel();
 
 	/**
-	 * Set the group that a field is within
+	 * Set the root translation key for this field.
 	 *
-	 * @param Group $group The group this field lives within
+	 * @param string $key The root translation key.
 	 */
-	public function setGroup(Group $group);
-
 	public function setTranslationKey($key);
 }

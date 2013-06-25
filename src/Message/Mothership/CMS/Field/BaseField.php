@@ -61,6 +61,11 @@ abstract class BaseField implements FieldInterface
 		return $this->_label;
 	}
 
+	/**
+	 * Get the validator instance.
+	 *
+	 * @return Validator
+	 */
 	public function val()
 	{
 		return $this->_validator->field($this->getName(), $this->getLabel());
@@ -89,16 +94,13 @@ abstract class BaseField implements FieldInterface
 	}
 
 	/**
-	 * {inheritDoc}
+	 * Set the root translation key for this field.
+	 *
+	 * @param string $key The root translation key
 	 */
-	public function setGroup(Group $group)
-	{
-		$this->_group = $group;
-	}
-
 	public function setTranslationKey($key)
 	{
-		$this->_translationKey = $key;
+		$this->_translationKey = $key . '.' . $this->getName();
 	}
 
 	/**
@@ -109,10 +111,9 @@ abstract class BaseField implements FieldInterface
 	abstract public function getValue();
 
 	/**
-	 * Get the form field to use when rendering this field in a form.
+	 * Add the form field for this field to a form handler instance.
 	 *
-	 * @todo set the return docblock here when we know the form field class hint
-	 * @return ?
+	 * @param Handler $form The form handler instance
 	 */
 	abstract public function getFormField(Handler $form);
 }

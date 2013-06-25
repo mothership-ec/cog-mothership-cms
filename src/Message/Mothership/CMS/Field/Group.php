@@ -132,7 +132,7 @@ class Group implements FieldInterface
 	 */
 	public function add(FieldInterface $field)
 	{
-		$field->setGroup($this);
+		$field->setTranslationKey($this->_translationKey);
 		$this->_fields[$field->getName()] = $field;
 
 		// If no identifier field is set yet and this field is a good candidate, set it
@@ -147,27 +147,6 @@ class Group implements FieldInterface
 		}
 
 		return $this;
-	}
-
-	public function addField($type, $name, $label)
-	{
-		$className = __NAMESPACE__ . '\\Type\\' . ucfirst($type);
-
-		// Check if a class exists for this field type
-		if (!class_exists($className)) {
-			throw new \InvalidArgumentException(sprintf(
-				'Field type `%s` does not exist (class `%s` not found)',
-				$type,
-				$className
-			));
-		}
-
-		$field = new $className($this->_validator, $name, $label);
-		$field->setTranslationKey($this->_translationKey . '.' . $name);
-
-		$this->add($field);
-
-		return $field;
 	}
 
 	/**
@@ -222,18 +201,23 @@ class Group implements FieldInterface
 		return $this;
 	}
 
+	/**
+	 * Get all fields within this group
+	 *
+	 * @return array Array of fields in this group.
+	 */
 	public function getFields()
 	{
 		return $this->_fields;
 	}
 
-	public function setGroup(Group $group)
-	{
-		throw new \LogicException('Groups cant be added to themselves');
-	}
-
+	/**
+	 * Set the root translation key to use for this group.
+	 *
+	 * @param string $key The root translation key to use
+	 */
 	public function setTranslationKey($key)
 	{
-		$this->_translationKey = $key;
+		$this->_translationKey = $key . '.' . $this->getName();
 	}
 }
