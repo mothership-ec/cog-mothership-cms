@@ -3,7 +3,7 @@
 namespace Message\Mothership\CMS\Field;
 
 /**
- * Wrapper for a repeatable set of page field groups.
+ * Wrapper for Group instances where the groups are repeatable.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */

@@ -73,8 +73,12 @@ class Services implements ServicesInterface
 
 		$serviceContainer['cms.field.factory'] = function($c) {
 			$factory = new CMS\Field\Factory($c['validator']);
-			
+
 			return $factory;
+		};
+
+		$serviceContainer['cms.field.form'] = function($c) {
+			return new CMS\Field\Form($c);
 		};
 	}
 }

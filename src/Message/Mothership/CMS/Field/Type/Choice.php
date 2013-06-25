@@ -16,7 +16,10 @@ class Choice extends Field
 
 	public function getFormField(Handler $form)
 	{
-		// i dunno :(
+		$form->add($this->getName(), 'choice', $this->getLabel(), array(
+			'attr'    => array('data-help-key' => $this->_translationKey),
+			'choices' => $this->_options,
+		));
 	}
 
 	/**

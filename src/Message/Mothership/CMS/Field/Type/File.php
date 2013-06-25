@@ -3,8 +3,11 @@
 namespace Message\Mothership\CMS\Field\Type;
 
 use Message\Mothership\CMS\Field\Field;
+
 use Message\Mothership\FileManager\File\Type as FileType;
+
 use Message\Cog\Form\Handler;
+use Message\Cog\Filesystem;
 
 /**
  * A field for a file in the file manager database.
@@ -18,7 +21,8 @@ class File extends Field
 	public function getFormField(Handler $form)
 	{
 		$form->add($this->getName(), 'file', $this->getLabel(), array(
-			'attr' => array('data-help-key' => $this->_translationKey)
+			'attr'       => array('data-help-key' => $this->_translationKey),
+			'data_class' => 'Message\\Cog\\Filesystem\\File',
 		));
 	}
 
@@ -31,5 +35,10 @@ class File extends Field
 		$this->_allowedTypes = $types;
 
 		return $this;
+	}
+
+	public function getValue()
+	{
+		return new Filesystem\File($this->_value);
 	}
 }

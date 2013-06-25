@@ -66,11 +66,8 @@ class ContentLoader
 		$content = new Content;
 		$groups  = array();
 
-		// Clear the field factory
-		$this->_fieldFactory->clear();
-
-		// Set the fields on the field factory
-		$page->type->setFields($this->_fieldFactory);
+		// Build the fields
+		$this->_fieldFactory->build($page->type);
 
 		// Set up the fields on the Content instance
 		foreach ($this->_fieldFactory as $name => $field) {
@@ -118,6 +115,8 @@ class ContentLoader
 				}
 			}
 		}
+
+		$content->setValidator($this->_fieldFactory->getValidator());
 
 		return $content;
 	}

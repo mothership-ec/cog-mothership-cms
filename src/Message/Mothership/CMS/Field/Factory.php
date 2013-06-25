@@ -2,7 +2,10 @@
 
 namespace Message\Mothership\CMS\Field;
 
+use Message\Mothership\CMS\PageType\PageTypeInterface;
+
 use Message\Cog\Form\Handler;
+use Message\Cog\Validation\Validator;
 
 /**
  * Field factory, for building fields and groups of fields.
@@ -15,12 +18,39 @@ class Factory implements \IteratorAggregate, \Countable
 	protected $_pageTypeName;
 	protected $_fields = array();
 
-	public function __construct($validator, $pageTypeName)
+	/**
+	 * Constructor.
+	 *
+	 * @param Validator $validator The validator to use when building fields
+	 */
+	public function __construct(Validator $validator)
 	{
-		$this->_validator    = $validator;
-		$this->_pageTypeName = $pageTypeName;
+		$this->_validator = $validator;
 	}
 
+	/**
+	 * Build the fields for a given page type on this factory.
+	 *
+	 * @param  PageTypeInterface $pageType The page type to use
+	 *
+	 * @return Factory                     Returns $this for chainability
+	 */
+	public function build(PageTypeInterface $pageType)
+	{
+		$this->clear();
+
+		$this->_pageTypeName = $pageType->getName();
+
+		$pageType->setFields($this);
+
+		return $this;
+	}
+
+	/**
+	 * Get the validator set on this factory.
+	 *
+	 * @return Validator
+	 */
 	public function getValidator()
 	{
 		return $this->_validator;

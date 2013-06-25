@@ -4,12 +4,15 @@ namespace Message\Mothership\CMS\Controller;
 
 use Message\Mothership\CMS\Field\Form;
 use Message\Mothership\CMS\Field\Factory;
+use Message\Mothership\CMS\Field\RepeatableContainer;
 use Message\Mothership\CMS\Page\Authorisation;
 
 class Edit extends \Message\Cog\Controller\Controller
 {
 	/**
 	 * Index for editing, this just redirects to the content edit screen.
+	 *
+	 * @param int $pageID The page ID
 	 */
 	public function index($pageID)
 	{
@@ -18,6 +21,11 @@ class Edit extends \Message\Cog\Controller\Controller
 		));
 	}
 
+	/**
+	 * POST action for updating the page's title.
+	 *
+	 * @param int $pageID The page ID
+	 */
 	public function updateTitle($pageID)
 	{
 		if (!$data = $this->get('request')->request->get('edit')) {
@@ -34,28 +42,43 @@ class Edit extends \Message\Cog\Controller\Controller
 		));
 	}
 
+	/**
+	 * Render the content form.
+	 *
+	 * @param int $pageID The page ID
+	 */
 	public function content($pageID)
 	{
-		$page = $this->get('cms.page.loader')->getByID($pageID);
+		$page    = $this->get('cms.page.loader')->getByID($pageID);
+		$content = $this->get('cms.page.content_loader')->load($page);
+		$form    = $this->get('form')
+			->setMethod('POST'); // TODO: set action
+		$form    = $this->get('cms.field.form')->generate($form, $content);
 
-		$factory = new Factory($this->get('validator'), 'page_type.' . $page->type->getName());
-		$page->type->setFields($factory);
-
-		$form = $this->get('form.handler');
-
-		$contentForm = new Form($factory, $form, $this->_services);
-		$contentForm->generateForm();
-
-		if ($form->isValid()) {
-			// save to the database
+		// Build array of repeatable groups & their fields for use in the view
+		$repeatables = array();
+		foreach ($content as $name => $contentPart) {
+			if ($contentPart instanceof RepeatableContainer) {
+				$repeatables[$name] = array();
+				foreach ($contentPart->get(0)->getFields() as $field) {
+					$repeatables[$name][] = $field->getName();
+				}
+			}
 		}
 
 		return $this->render('::edit/content', array(
-			'page'         => $page,
-			'content_form' => $form,
+			'page'        => $page,
+			'form'        => $form,
+			'content'     => $content,
+			'repeatables' => $repeatables,
 		));
 	}
 
+	/**
+	 * Render the attributes form.
+	 *
+	 * @param int $pageID The page ID
+	 */
 	public function attributes($pageID)
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
@@ -104,6 +127,11 @@ class Edit extends \Message\Cog\Controller\Controller
 		));
 	}
 
+	/**
+	 * Render the metadata form.
+	 *
+	 * @param int $pageID The page ID
+	 */
 	public function metadata($pageID)
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
