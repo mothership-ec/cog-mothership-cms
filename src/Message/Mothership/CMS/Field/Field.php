@@ -28,23 +28,4 @@ abstract class Field extends BaseField
 	{
 		return $this->_value;
 	}
-
-	/**
-	 * Get the contextual help keys for this field, separated with a colon.
-	 *
-	 * The first key is the help key for this field type, formatted as:
-	 * `ms.cms.field_types.[type].help`.
-	 *
-	 * The second is the help key for the specific content field, formatted as:
-	 * `page.[pageType].[groupNameIfSet].[fieldName].help`
-	 *
-	 * @return string The contextual help keys separated with a colon.
-	 */
-	protected function _getHelpKeys()
-	{
-		$className = strtolower(get_class($this));
-		$className = trim(strrchr($className, '\\'), '\\');
-
-		return 'ms.cms.field_types.' . $className . '.help:' . $this->_translationKey . '.help';
-	}
 }
