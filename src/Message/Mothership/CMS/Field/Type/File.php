@@ -18,6 +18,11 @@ class File extends Field
 {
 	protected $_allowedTypes;
 
+	public function __toString()
+	{
+		return $this->getValue()->getPublicUrl();
+	}
+
 	public function getFormField(Handler $form)
 	{
 		$form->add($this->getName(), 'file', $this->getLabel(), array(
