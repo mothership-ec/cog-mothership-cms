@@ -15,7 +15,7 @@ class Boolean extends Field
 	public function getFormField(Handler $form)
 	{
 		$form->add($this->getName(), 'checkbox', $this->getLabel(), array(
-			'attr' => array('data-help-key' => $this->_translationKey)
+			'attr' => array('data-help-key' => $this->_getHelpKeys()),
 		));
 	}
 }

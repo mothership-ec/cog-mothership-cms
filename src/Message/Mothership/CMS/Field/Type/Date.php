@@ -15,7 +15,7 @@ class Date extends Field
 	public function getFormField(Handler $form)
 	{
 		$form->add($this->getName(), 'datetime', $this->getLabel(), array(
-			'attr' => array('data-help-key' => $this->_translationKey)
+			'attr' => array('data-help-key' => $this->_getHelpKeys()),
 		));
 	}
 }
