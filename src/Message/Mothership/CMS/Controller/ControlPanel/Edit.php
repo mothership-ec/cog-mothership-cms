@@ -1,11 +1,13 @@
 <?php
 
-namespace Message\Mothership\CMS\Controller;
+namespace Message\Mothership\CMS\Controller\ControlPanel;
 
+use Message\Mothership\CMS\Page\Authorisation;
+use Message\Mothership\CMS\Page\Page;
+use Message\Mothership\CMS\Page\Content;
 use Message\Mothership\CMS\Field\Form;
 use Message\Mothership\CMS\Field\Factory;
 use Message\Mothership\CMS\Field\RepeatableContainer;
-use Message\Mothership\CMS\Page\Authorisation;
 
 class Edit extends \Message\Cog\Controller\Controller
 {
@@ -51,9 +53,7 @@ class Edit extends \Message\Cog\Controller\Controller
 	{
 		$page    = $this->get('cms.page.loader')->getByID($pageID);
 		$content = $this->get('cms.page.content_loader')->load($page);
-		$form    = $this->get('form')
-			->setMethod('POST'); // TODO: set action
-		$form    = $this->get('cms.field.form')->generate($form, $content);
+		$form    = $this->_getContentForm($page, $content);
 
 		// Build array of repeatable groups & their fields for use in the view
 		$repeatables = array();
@@ -72,6 +72,21 @@ class Edit extends \Message\Cog\Controller\Controller
 			'content'     => $content,
 			'repeatables' => $repeatables,
 		));
+	}
+
+	public function contentAction($pageID)
+	{
+		$page = $this->get('cms.page.loader')->getByID($pageID);
+		$form = $this->_getContentForm($page);
+
+		// Redirect user back to the form if there are any errors
+		if (!$form->isValid()) {
+			return $this->redirect($this->get('request')->headers->get('referer'));
+		}
+
+		$data = $form->getFilteredData();
+
+		var_dump($form);exit;
 	}
 
 	/**
@@ -139,5 +154,20 @@ class Edit extends \Message\Cog\Controller\Controller
 		return $this->render('::edit/metadata', array(
 			'page' => $page,
 		));
+	}
+
+	protected function _getContentForm(Page $page, Content $content = null)
+	{
+		if (!$content) {
+			$content = $this->get('cms.page.content_loader')->load($page);
+		}
+
+		$form = $this->get('form')
+			->setMethod('POST')
+			->setAction($this->generateUrl('ms.cp.cms.edit.content.action', array(
+				'pageID' => $page->id,
+			)));
+
+		return $this->get('cms.field.form')->generate($form, $content);
 	}
 }

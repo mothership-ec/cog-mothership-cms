@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\CMS\Controller;
+namespace Message\Mothership\CMS\Controller\ControlPanel;
 
 class Create extends \Message\Cog\Controller\Controller
 {
