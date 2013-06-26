@@ -47,7 +47,9 @@
 				</section>
 			{% endfor %}
 			{% endif %}
-			<a href="#" data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}">Add another group</a>
+			<a href="#" data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}">
+				{{ 'ms.cms.repeatable_group.add'|transchoice(part.count, {'%name%': 'page.' ~ page.type.getName ~ '.' ~ name ~ '.name'|trans}) }}
+			</a>
 		</section>
 	{% endif %}
 {% endfor %}
