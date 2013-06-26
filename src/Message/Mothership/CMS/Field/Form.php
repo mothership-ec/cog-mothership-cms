@@ -118,12 +118,12 @@ class Form
 			));
 
 		// Add each field as a collection
-		foreach ($group->get(0)->getFields() as $fieldName => $field) {
+		foreach ($group->getFields() as $fieldName => $field) {
 			$field->getFormField($groupHandler);
 		}
 
 		// Add the form to the main form
-		$this->_form->add($groupHandler->getForm(), 'form', $group->get(0)->getLabel());
+		$this->_form->add($groupHandler->getForm(), 'form', $group->getLabel());
 	}
 
 	/**

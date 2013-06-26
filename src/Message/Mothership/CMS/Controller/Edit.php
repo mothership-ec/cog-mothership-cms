@@ -60,7 +60,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		foreach ($content as $name => $contentPart) {
 			if ($contentPart instanceof RepeatableContainer) {
 				$repeatables[$name] = array();
-				foreach ($contentPart->get(0)->getFields() as $field) {
+				foreach ($contentPart->getFields() as $field) {
 					$repeatables[$name][] = $field->getName();
 				}
 			}

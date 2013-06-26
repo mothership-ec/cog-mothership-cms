@@ -72,7 +72,7 @@ class ContentLoader
 		// Set up the fields on the Content instance
 		foreach ($this->_fieldFactory as $name => $field) {
 			$content->$name = ($field instanceof Field\Group && $field->isRepeatable())
-								? new Field\RepeatableContainer
+								? new Field\RepeatableContainer($field)
 								: $field;
 		}
 
@@ -87,7 +87,7 @@ class ContentLoader
 					if ($group instanceof Field\RepeatableContainer) {
 						// Ensure the right number of groups are defined
 						while (!$group->get($row->sequence)) {
-							$group->add(clone $this->_fieldFactory->get($row->group));
+							$group->add();
 						}
 
 						$group = $group->get($row->sequence);

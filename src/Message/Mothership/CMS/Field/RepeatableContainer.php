@@ -9,28 +9,49 @@ namespace Message\Mothership\CMS\Field;
  */
 class RepeatableContainer implements \IteratorAggregate, \Countable
 {
+	protected $_group;
 	protected $_groups = array();
 
 	/**
 	 * Constructor.
 	 *
-	 * @param array $groups Array of field groups
+	 * @param Group $group The repeatable group
 	 */
-	public function __construct(array $groups = array())
+	public function __construct(Group $group)
 	{
-		foreach ($groups as $group) {
-			$this->add($group);
-		}
+		$this->_group = $group;
 	}
 
 	/**
-	 * Add a group to this repeatable set
+	 * Magic call method, proxies unrecognised method calls to the `Group`
+	 * instance stored in this `RepeatableContainer`.
 	 *
-	 * @param Group $group The group to add
+	 * @param  string $method Method name
+	 * @param  array  $args   Array of arguments
+	 *
+	 * @return mixed          Value returned by calling the method on `Group`
+	 *
+	 * @throws \BadMethodCallException If the method doesn't exist on `Group`
 	 */
-	public function add(Group $group)
+	public function __call($method, array $args = array())
 	{
-		$this->_groups[] = $group;
+		if (!method_exists($this->_group, $method)) {
+			throw new \BadMethodCallException(sprintf(
+				'Bad method call to `%s:%s`',
+				get_class($this),
+				$method
+			));
+		}
+
+		return call_user_func_array(array($this->_group, $method), $args);
+	}
+
+	/**
+	 * Add a clone of the group to this repeatable set
+	 */
+	public function add()
+	{
+		$this->_groups[] = clone $this->_group;
 	}
 
 	/**

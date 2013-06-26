@@ -37,6 +37,7 @@
 		<section class="repeatable group">
 			<h2>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.name'|trans }}</h2>
 			<p>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.description'|trans }}</p>
+			{% if part.count > 0 %}
 			{% for i in range(0, part.count - 1) %}
 				<section>
 					{% for field in repeatables[name] %}
@@ -45,6 +46,7 @@
 					<a href="#">Remove this group</a>
 				</section>
 			{% endfor %}
+			{% endif %}
 			<a href="#" data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}">Add another group</a>
 		</section>
 	{% endif %}
