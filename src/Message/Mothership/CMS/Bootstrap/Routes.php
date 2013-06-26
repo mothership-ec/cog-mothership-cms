@@ -19,13 +19,13 @@ class Routes implements RoutesInterface
 		$router['ms.cp.cms']->add('ms.cp.cms.dashboard', '/', '::Controller:Dashboard#index')
 			->setFormat('ANY');
 
-		$router['ms.cp.cms']->add('ms.cp.cms.create.process', '/create', '::Controller:Create#process')
+		$router['ms.cp.cms']->add('ms.cp.cms.create.action', '/create', '::Controller:Create#process')
 			->setMethod('POST');
 
 		$router['ms.cp.cms']->add('ms.cp.cms.create', '/create', '::Controller:Create#index')
 			->setFormat('ANY');
 
-		$router['ms.cp.cms']->add('ms.cp.cms.edit.process', '/edit/{pageID}', '::Controller:Edit#updateTitle')
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.action', '/edit/{pageID}', '::Controller:Edit#updateTitle')
 			->setRequirement('pageID', '\d+')
 			->setMethod('POST');
 
@@ -46,6 +46,10 @@ class Routes implements RoutesInterface
 
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.content', '/edit/{pageID}/content', '::Controller:Edit#content')
 			->setRequirement('pageID', '\d+');
+
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.content.action', '/edit/{pageID}/content', '::Controller:Edit#contentAction')
+			->setRequirement('pageID', '\d+')
+			->setMethod('POST');
 
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.attributes', '/edit/{pageID}/attributes', '::Controller:Edit#attributes')
 			->setRequirement('pageID', '\d+');
