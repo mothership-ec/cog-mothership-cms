@@ -6,6 +6,8 @@ use Message\Mothership\CMS\PageType\PageTypeInterface;
 
 use Message\Cog\Form\Handler;
 use Message\Cog\Validation\Validator;
+use Message\Cog\Service\ContainerInterface;
+use Message\Cog\Service\ContainerAwareInterface;
 
 /**
  * Field factory, for building fields and groups of fields.
@@ -15,17 +17,21 @@ use Message\Cog\Validation\Validator;
 class Factory implements \IteratorAggregate, \Countable
 {
 	protected $_validator;
+	protected $_services;
+
 	protected $_baseTransKey;
 	protected $_fields = array();
 
 	/**
 	 * Constructor.
 	 *
-	 * @param Validator $validator The validator to use when building fields
+	 * @param Validator          $validator The validator to use for fields
+	 * @param ContainerInterface $container The service container
 	 */
-	public function __construct(Validator $validator)
+	public function __construct(Validator $validator, ContainerInterface $services)
 	{
 		$this->_validator = $validator;
+		$this->_services  = $services;
 	}
 
 	/**
@@ -159,6 +165,10 @@ class Factory implements \IteratorAggregate, \Countable
 
 		$field = new $className($this->_validator, $name, $label);
 		$field->setTranslationKey($this->_baseTransKey);
+
+		if ($field instanceof ContainerAwareInterface) {
+			$field->setContainer($this->_services);
+		}
 
 		return $field;
 	}
