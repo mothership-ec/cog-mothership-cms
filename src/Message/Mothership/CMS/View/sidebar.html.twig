@@ -6,7 +6,7 @@
 {% macro menu_links(links) %}
     {% for link in links %}
         <li>
-            <a href="{{ url('ms.cms.edit',{pageID: link.id}) }}">{{ link.title }}</a>
+            {{ link.left }}  <a href="{{ url('ms.cms.edit',{pageID: link.id}) }}">{{ link.title }}</a>  {{ link.right }}
             {% if link.children %}
                 <ul>
                     {{ _self.menu_links(link.children) }}

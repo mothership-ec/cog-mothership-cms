@@ -26,10 +26,17 @@ class Edit extends \Message\Cog\Controller\Controller
 		}
 	}
 
-	public function move($pageID, $nextToID)
+	public function move($pageID, $parent = false)
 	{
 		$page = $this->_services['cms.page.loader']->getByID($pageID);
-		$page = $this->_services['cms.page.edit']->movePage($page, $nextToID);
+		$parent = $this->_services['cms.page.loader']->getByID($parent);
+		if ($page->right < $parent->right) {
+			var_dump($this->_services['cms.page.edit']->moveNodeRight($page->id, $parent->id));
+			exit;
+		} else {
+			var_dump($this->_services['cms.page.edit']->moveNodeleft($page->id, $parent->id));
+			exit;
+		}
 
 	}
 }

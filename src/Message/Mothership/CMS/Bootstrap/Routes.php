@@ -17,9 +17,9 @@ class Routes implements RoutesInterface
 			->setMethod('POST');
 		$router['ms.cms']->add('ms.cms.edit', '/edit/{pageID}', '::Controller:Edit#index')
 			->setRequirement('pageID', '\d+');
-		$router['ms.cms']->add('ms.cms.edit.move', '/edit/move/{pageID}/{nextToID}', '::Controller:Edit#move')
+		$router['ms.cms']->add('ms.cms.edit.move', '/edit/move/{pageID}/{parent}', '::Controller:Edit#move')
 			->setRequirement('pageID', '\d+')
-			->setRequirement('nextToID', '\d+');
+			->setRequirement('parent', '\d+');
 		$router['ms.cms']->add('ms.cms.edit.process', '/edit/process/{pageID}', '::Controller:Edit#process')
 			->setMethod('POST');
 	}

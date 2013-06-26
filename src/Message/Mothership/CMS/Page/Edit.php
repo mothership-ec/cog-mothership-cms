@@ -35,16 +35,52 @@ class Edit {
 		$this->_currentUser		= $user;
 	}
 
-	public function movePage(Page $page, $aboveNodeID)
+	/**
+	 * Decides on which way to move the nodes in the tree. This is used when
+	 * moving a node to a completely new position in the tree rather than just
+	 * left or right. THis will also move the nodes children with it.
+	 *
+	 * @param  Page   		$page   The node to move
+	 * @param  Page|null 	$parent The new parent of the node
+	 *
+	 * @return
+	 */
+	public function moveNodePosition(Page $page, Page $parent = null)
 	{
-		$trans = $this->_nestedSetHelper->remove($page->id);
-		$this->_nestedSetHelper->insertAfter($page->id, $aboveNodeID);
-		// print_r('<pre>');
-		// print_r($trans); exit;
-		// print_r('</pre>');
-		$trans->commit();
+		if (is_null($parent) || $page->right < $parent->right) {
+			$trans = $this->_nestedSetHelper->moveNodeRight($page->id, $parent->id);
+		} else {
+			var_dump('left'); exit;
+			$trans = $this->_nestedSetHelper->moveNodeLeft($page->id, $parent->id);
+		}
+		if ($trans) {
+			return $trans->commit();
+		}
 		exit;
 	}
+
+	public function moveNodeRight($node, $newPosition)
+	{
+		$trans = $this->_nestedSetHelper->moveNodeRight($node, $newPosition);
+
+		if ($trans) {
+			$trans->commit();
+		} else {
+			throw new \Exception('Cannot move node #'.$node.' right');
+		}
+	}
+
+	public function moveNodeLeft($node, $newPosition)
+	{
+		$trans = $this->_nestedSetHelper->moveNodeLeft($node, $newPosition);
+
+		if ($trans) {
+			return $trans->commit();
+		} else {
+			throw new \Exception('Cannot move node #'.$node.' left');
+		}
+	}
+
 
 	/**
 	 * Pass through the updated Page object and save it in the DB
