@@ -2,7 +2,8 @@
 
 namespace Message\Mothership\CMS\Test\PageType;
 
-use Message\Mothership\CMS\PageTypeInterface;
+use Message\Mothership\CMS\PageType\PageTypeInterface;
+use Message\Mothership\CMS\Field\Factory as FieldFactory;
 
 class Blog implements PageTypeInterface
 {
@@ -11,13 +12,28 @@ class Blog implements PageTypeInterface
 		return 'blog';
 	}
 
+	public function getDisplayName()
+	{
+		return 'Blog';
+	}
+
 	public function getDescription()
 	{
 		return 'A blog page type, for use when unit testing.';
 	}
 
-	public function getFields()
+	public function allowChildren()
 	{
-		// crazy shiz happens here.
+		return false;
+	}
+
+	public function getViewReference()
+	{
+		'::View:PageTypes:Blog';
+	}
+
+	public function setFields(FieldFactory $factory)
+	{
+
 	}
 }

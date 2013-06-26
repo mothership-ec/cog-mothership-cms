@@ -29,9 +29,7 @@
 		<button type="submit" id="edit-submit" value="Delete page">Delete page</button>
 	</form>
 
-	{{ render(controller('Message:Mothership:CMS::Controller:Publishing#renderForm', {
-		pageID: page.id
-	})) }}
+	{{ render(controller('Message:Mothership:CMS::Controller:Publishing#renderForm', {pageID: page.id})) }}
 
 	<section>
 		{% block form %}{% endblock %}

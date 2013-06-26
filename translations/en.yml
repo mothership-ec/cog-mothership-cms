@@ -1,4 +1,6 @@
 ms.cms:
+  repeatable_group:
+    add: "{0} Add a %name%|]1,Inf] Add another %name%"
   attributes:
     slug:
       label: URL Segment
@@ -43,3 +45,74 @@ ms.cms:
         short: -
         long:
         example: products, shoes, 2013
+  metadata:
+    title:
+      label: Page title
+      help:
+        short: The title that shows in the browser tab
+        long:
+        example:
+    description:
+      label: Meta description
+      help:
+        short:
+        long:
+        example:
+    htmlHead:
+      label: HTML in the head
+      help:
+        short:
+        long:
+        example:
+    htmlFoot:
+      label: HTML in the foot
+      help:
+        short:
+        long:
+        example:
+  field_types:
+    text:
+      help:
+        short:
+        long: Just a regular text field. Formatting is not allowed here.
+        example: I am some text
+    boolean:
+      help:
+        short:
+        long:
+        example:
+    choice:
+      help:
+        short:
+        long:
+        example:
+    date:
+      help:
+        short:
+        long:
+        example:
+    file:
+      help:
+        short:
+        long:
+        example:
+    html:
+      help:
+        short:
+        long:
+        example:
+    integer:
+      help:
+        short:
+        long:
+        example:
+    link:
+      help:
+        short:
+        long:
+        example:
+    richtext:
+      help:
+        short:
+        long:
+        example:
