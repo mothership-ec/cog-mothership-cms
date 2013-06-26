@@ -31,7 +31,7 @@ class Edit extends \Message\Cog\Controller\Controller
 	public function updateTitle($pageID)
 	{
 		if (!$data = $this->get('request')->request->get('edit')) {
-			return $this->redirect($this->get('request')->headers->get('referer'));
+			return $this->redirectToReferer();
 		}
 
 		$page = $this->get('cms.page.loader')->getByID($pageID);
@@ -81,7 +81,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		// Redirect user back to the form if there are any errors
 		if (!$form->isValid()) {
-			return $this->redirect($this->get('request')->headers->get('referer'));
+			return $this->redirectToReferer();
 		}
 
 		$data = $form->getFilteredData();

@@ -22,7 +22,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 	{
 		// Send the user back if we don't have the form data we expect
 		if (!$data = $this->get('request')->request->get('publish')) {
-			return $this->redirect($this->get('request')->headers->get('referer'));
+			return $this->redirectToReferer();
 		}
 
 		$page = $this->_services['cms.page.loader']->getByID($this->_pageID);

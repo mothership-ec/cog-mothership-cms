@@ -14,7 +14,7 @@ class Create extends \Message\Cog\Controller\Controller
 	public function process()
 	{
 		if (!$data = $this->get('request')->request->get('create')) {
-			return $this->redirect($this->get('request')->headers->get('referer'));
+			return $this->redirectToReferer();
 		}
 
 		$type = $this->get('cms.page.types')->get($data['type']);
