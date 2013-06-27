@@ -415,7 +415,6 @@ class Loader
 	protected function _loadPage(Result $results)
 	{
 		$pages = $results->bindTo('Message\\Mothership\\CMS\\Page\\Page');
-
 		foreach ($results as $key => $data) {
 			// Skip deleted pages
 			if ($data->deletedAt && !$this->_loadDeleted) {
@@ -455,13 +454,13 @@ class Loader
 
 			// Load access groups
 			$groups = array_filter(explode(',', $data->accessGroups));
+			$pages[$key]->accessGroups = array();
 			foreach ($groups as $groupName) {
 				if ($group = $this->_userGroups->get(trim($groupName))) {
 					$pages[$key]->accessGroups[$group->getName()] = $group;
 				}
 			}
 		}
-
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
 	}
 }

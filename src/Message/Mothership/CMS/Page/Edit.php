@@ -71,6 +71,7 @@ class Edit {
 				page.visibility_aggregator = :visibilityAggregator?i,
 				page.password = :password?s,
 				page.access = :access?s,
+				page.slug 	= :slug?s,
 				/*
 				page_access_group.group_id = :accessGroups?i,
 				*/
@@ -108,10 +109,14 @@ class Edit {
 				'commentsAccessGroups' => $page->commentsAccessGroups,
 				'commentsApproval'     => $page->commentsApproval,
 				'commentsExpiry'       => $page->commentsExpiry,
-			));
+				'slug'				   => $page->slug->getLastSegment(),
+			)
+		);
+
+		// Update the user groups for this page in the DB
+		$this->_updateAccessGroups($page);
 
 		$event = new Event($page);
-
 		// Dispatch the edit event
 		$this->_eventDispatcher->dispatch(
 			Event::EDIT,
@@ -200,6 +205,47 @@ class Edit {
 		);
 
 		return $result->affected() ? $page : false;
+
+	}
+
+	/**
+	 * Update the database with the user groups for this page.
+	 *
+	 * @param  Page   $page Page object to update
+	 */
+	protected function _updateAccessGroups(Page $page)
+	{
+		// Remove any existing access groups as groups may havge been unselected
+		$result = $this->_query->run(
+			'DELETE FROM
+				page_access_group
+			WHERE
+				page_id = ?i',
+			array(
+				$page->id
+			)
+		);
+
+		// Build the insert query and parameters
+		$inserts = array();
+		$values = array();
+		foreach ($page->accessGroups as $groupName) {
+			$inserts[] = '(?i, ?s)';
+			$values[] = $page->id;
+			$values[] = $groupName;
+		}
+
+		// If there is changes to be made then run the built query
+		if ($values) {
+			$result = $this->_query->run(
+				'INSERT INTO
+					page_access_group
+					(page_id, group_name)
+				VALUES
+					'.implode(',',$inserts).'
+				', $values
+			);
+		}
 
 	}
 }

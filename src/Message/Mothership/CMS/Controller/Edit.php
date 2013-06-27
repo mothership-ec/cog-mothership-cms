@@ -121,8 +121,11 @@ class Edit extends \Message\Cog\Controller\Controller
 			$page->visibilitySearch 	= isset($data['visibility_search']);
 			$page->visibilityMenu 		= isset($data['visibility_menu']);
 			$page->visibilityAggregator = isset($data['visibility_aggregator']);
+			$page->access 				= $data['access'] ?: 0;
+			$page->accessGroups 		= $data['access_groups'];
+			$page = $this->get('cms.page.edit')->save($page);
 
-
+			return $this->redirectToRoute('ms.cp.cms.edit.attributes', array('pageID' => $page->id));
 		}
 	}
 
@@ -154,7 +157,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				'visibility_search'     => $page->visibilitySearch,
 				'visibility_aggregator' => $page->visibilityAggregator,
 				'access'                => $page->access,
-				'access_groups'         => $page->accessGroups,
+				'access_groups'         => array_keys($page->accessGroups),
 				'tags'                  => implode(', ', $page->tags),
 			));
 
