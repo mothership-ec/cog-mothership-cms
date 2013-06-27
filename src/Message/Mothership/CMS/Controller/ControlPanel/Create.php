@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\CMS\Controller;
+namespace Message\Mothership\CMS\Controller\ControlPanel;
 
 class Create extends \Message\Cog\Controller\Controller
 {
@@ -14,7 +14,7 @@ class Create extends \Message\Cog\Controller\Controller
 	public function process()
 	{
 		if (!$data = $this->get('request')->request->get('create')) {
-			return $this->redirect($this->get('request')->headers->get('referer'));
+			return $this->redirectToReferer();
 		}
 
 		$type = $this->get('cms.page.types')->get($data['type']);

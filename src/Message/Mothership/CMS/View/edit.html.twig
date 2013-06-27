@@ -1,7 +1,7 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
 
 {% block sidebar %}
-	{{ render(controller('Message:Mothership:CMS::Controller:Sidebar#index'))}}
+	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index'))}}
 {% endblock %}
 
 {% block main %}
@@ -10,7 +10,7 @@
 		<h2>{{ page.type.getDisplayName() }}</h2>
 	</hgroup>
 
-	<form action="{{ url('ms.cp.cms.edit.process',{pageID: page.id}) }}" method="post">
+	<form action="{{ url('ms.cp.cms.edit.action',{pageID: page.id}) }}" method="post">
 
 		<label for="edit-title">Title</label>
 		<input type="text" name="edit[title]" id="edit-title" value="{{ page.title }}" />
@@ -29,7 +29,7 @@
 		<button type="submit" id="edit-submit" value="Delete page">Delete page</button>
 	</form>
 
-	{{ render(controller('Message:Mothership:CMS::Controller:Publishing#renderForm', {pageID: page.id})) }}
+	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Publishing#renderForm', {pageID: page.id})) }}
 
 	<section>
 		{% block form %}{% endblock %}

@@ -2,8 +2,7 @@
 
 namespace Message\Mothership\CMS\Page;
 
-use Message\Mothership\CMS\Page\Page;
-use Message\Mothership\CMS\Page\Loader;
+use Message\Mothership\CMS\Exception;
 
 use Message\User\UserInterface;
 
@@ -48,12 +47,12 @@ class Delete
 	 * @return Page       The page that was been deleted, with the "delete"
 	 *                    authorship data set
 	 *
-	 * @throws \InvalidArgumentException If the page has child pages
+	 * @throws Exception\Exception If the page has child pages
 	 */
 	public function delete(Page $page)
 	{
 		if ($this->_loader->getChildren($page)) {
-			throw new \InvalidArgumentException(sprintf('Cannot delete page #%i because it has child pages', $page->id));
+			throw new Exception\Exception(sprintf('Page #%s cannot be deleted because it has child pages', $page->id));
 		}
 
 		$page->authorship->delete(new DateTimeImmutable, $this->_currentUser->id);
