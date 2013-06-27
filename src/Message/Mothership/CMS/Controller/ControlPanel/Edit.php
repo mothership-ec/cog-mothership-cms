@@ -99,13 +99,14 @@ class Edit extends \Message\Cog\Controller\Controller
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
 		$form = $this->_getAttibuteForm($page);
+
 		return $this->render('::edit/attributes', array(
 			'page' => $page,
 			'form' => $form,
 		));
 	}
 
-	protected function _getAttibuteForm($page)
+	protected function _getAttibuteForm(Page $page)
 	{
 		$form = $this->get('form')
 			->setName('attributes')
@@ -144,6 +145,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		$form->add('tags', 'textarea', $this->trans('ms.cms.attributes.tags.label'))
 			->val()->optional();
+
 		return $form;
 	}
 
@@ -157,11 +159,13 @@ class Edit extends \Message\Cog\Controller\Controller
 			// Check the slug doesn't already exist and that there isn't a
 			// historical slug of the same name
 			if ($checkSlug && (is_array($checkSlug) || $checkSlug->id != $pageID)) {
-				throw new \Exception('Page slug already exists');
+				$this->addFlash('error', 'This slug already exists');
+
+				return $this->redirectToReferer();
 			}
 
 			// If the slug has changed then create a new slug onject
-			if ($page->slug || $data['slug']) {
+			if ($page->slug != $data['slug']) {
 				// Get all the segements
 				$segements = $page->slug->getSegments();
 				// Remove the last one
@@ -182,6 +186,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			$page = $this->get('cms.page.edit')->save($page);
 
 		}
+		$this->addFlash('success', $this->trans('ms.cms.feedback.success', array('%task%' => 'Attributes')));
 
 		return $this->redirectToRoute('ms.cp.cms.edit.attributes', array('pageID' => $page->id));
 

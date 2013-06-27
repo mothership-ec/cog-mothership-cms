@@ -1,4 +1,6 @@
 ms.cms:
+  feedback:
+    success: '%task% were successfully updated'
   repeatable_group:
     add: "{0} Add a %name%|]1,Inf] Add another %name%"
   attributes:
