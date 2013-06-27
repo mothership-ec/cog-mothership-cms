@@ -42,28 +42,40 @@ class Publishing extends \Message\Cog\Controller\Controller
 		$page = $this->get('cms.page.loader')->getByID($pageID);
 		$hasFuture = $page->publishDateRange->getStart() ? $page->publishDateRange->getStart()->getTimestamp() > time(): false;
 		if (!$force && $hasFuture) {
-			$this->addFlash(
-				'warning', $this->trans(
-					'ms.cms.feedback.publish.schedule.warning',
-					array(
-						'task' 		=> 'publish',
-						'taskLink'	=> '<a href="'.$this->generateUrl('ms.cp.cms.edit.publish.force',
-							array(
-								'pageID' => $pageID
-							)).'">publish</a>'
-					)
+			$this->addFlash('warning', $this->trans('ms.cms.feedback.publish.schedule.warning',
+				array(
+					'%task%' 		=> 'publish',
+					'%taskLink%'	=> '<a href="'.$this->generateUrl('ms.cp.cms.edit.publish.force',array(
+						'pageID' => $pageID,
+						'force'	 => 1,
+					)).'">publish</a>'
+				)
 			));
-			return $this->redirectToReferrer();
+
+			return $this->redirectToReferer();
 		}
-
 		$this->get('cms.page.edit')->publish($page);
-
 		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
 	}
 
-	public function unpublish($pageID)
+	public function unpublish($pageID, $force = false)
 	{
-		$this->get('cms.page.edit')->unpublish($this->get('cms.page.loader')->getByID($pageID));
+		$page = $this->get('cms.page.loader')->getByID($pageID);
+		$hasFuture = $page->publishDateRange->getEnd() ? $page->publishDateRange->getEnd()->getTimestamp() > time(): false;
+		if (!$force && $hasFuture) {
+			$this->addFlash('warning', $this->trans('ms.cms.feedback.publish.schedule.warning',
+				array(
+					'%task%' 		=> 'unpublish',
+					'%taskLink%'	=> '<a href="'.$this->generateUrl('ms.cp.cms.edit.unpublish.force',array(
+						'pageID' => $pageID,
+						'force'	 => 1,
+					)).'">unpublish</a>'
+				)
+			));
+
+			return $this->redirectToReferer();
+		}
+		$this->get('cms.page.edit')->unpublish($page);
 
 		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
 	}
