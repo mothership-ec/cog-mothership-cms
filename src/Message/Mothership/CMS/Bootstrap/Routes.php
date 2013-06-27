@@ -51,12 +51,12 @@ class Routes implements RoutesInterface
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.content', '/edit/{pageID}/content', '::Controller:ControlPanel:Edit#content')
 			->setRequirement('pageID', '\d+');
 
-		$router['ms.cp.cms']->add('ms.cp.cms.edit.attributes', '/edit/{pageID}/attributes', '::Controller:ControlPanel:Edit#attributes')
-			->setRequirement('pageID', '\d+');
-
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.attributes.action', '/edit/{pageID}/attributes', '::Controller:ControlPanel:Edit#attributesAction')
 			->setRequirement('pageID', '\d+')
 			->setMethod('POST');
+
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.attributes', '/edit/{pageID}/attributes', '::Controller:ControlPanel:Edit#attributes')
+			->setRequirement('pageID', '\d+');
 
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.metadata', '/edit/{pageID}/metadata', '::Controller:ControlPanel:Edit#metadata')
 			->setRequirement('pageID', '\d+');
