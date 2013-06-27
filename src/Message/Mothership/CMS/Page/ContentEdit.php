@@ -9,6 +9,9 @@ use Message\User\UserInterface;
 use Message\Cog\DB;
 use Message\Cog\Event\DispatcherInterface;
 
+/**
+ * @todo implement Locale
+ */
 class ContentEdit
 {
 	protected $_query;
@@ -17,9 +20,9 @@ class ContentEdit
 
 	protected $_updates = array();
 
-	public function __construct(DB\Query $query, DispatcherInterface $eventDispatcher, UserInterface $user)
+	public function __construct(DB\Transaction $trans, DispatcherInterface $eventDispatcher, UserInterface $user)
 	{
-		$this->_query       = $query;
+		$this->_transaction = $trans;
 		$this->_dispatcher  = $eventDispatcher;
 		$this->_currentUser = $user;
 	}
@@ -28,9 +31,40 @@ class ContentEdit
 	{
 		$flattened = $this->flatten($content);
 
-		var_dump($content, $flattened);exit;
+		// Delete repeatable content, so any deleted groups are deleted
+		foreach ($content as $part) {
+			if ($part instanceof Field\RepeatableContainer) {
+				$this->_transaction->add('
+					DELETE FROM
+						page_content
+					WHERE
+						page_id    = :id?i
+					AND group_name = :group?s
+				', array(
+					'id'    => $page->id,
+					'group' => $part->getName(),
+				));
+			}
+		}
 
-		// REPLACE INTO queries in a transaction? or one big fat one?
+		// Replace the content
+		foreach ($flattened as $row) {
+			$this->_transaction->add('
+				REPLACE INTO
+					page_content
+				SET
+					page_id      = :id?i,
+					locale       = \'EN\', # TEMPORARY
+					field_name   = :field?s,
+					data_name    = :data_name?s,
+					group_name   = :group?s,
+					sequence     = :sequence?i,
+					value_string = :value?s,
+					value_int    = :value?i
+			', array_merge($row, array('id' => $page->id)));
+		}
+
+		return $this->_transaction->commit();
 	}
 
 	public function updateContent(array $data, Content $content)
@@ -144,75 +178,5 @@ class ContentEdit
 				'sequence'  => $sequence,
 			);
 		}
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-	public function flattenContent(Content $content)
-	{
-		$flattened = array();
-
-		foreach ($content as $name => $part) {
-			if ($part instanceof Field\RepeatableContainer) {
-				foreach ($part as $i => $group) {
-					$flattened = array_merge($flattened, $this->flattenGroup($group, $i));
-				}
-			}
-			elseif ($part instanceof Field\Group) {
-				$flattened = array_merge($flattened, $this->flattenGroup($part));
-			}
-			else {
-				$flattened = array_merge($flattened, $this->flattenField($part));
-			}
-		}
-
-		var_Dump($flattened);exit;
-	}
-
-	public function flattenGroup(Field\Group $group, $sequence = null)
-	{
-		$flattened[] = array();
-
-		foreach ($group->getFields() as $field) {
-			$flattened[] = array_merge($flattened, $this->flattenField($field, $group->getName(), $sequence));
-		}
-
-		return $flattened;
-	}
-
-	public function flattenField(Field\BaseField $field, $groupName = null, $sequence = null)
-	{
-		$flattened = array();
-
-		if ($field instanceof Field\Field) {
-			$flattened[] = array(
-				'field_name' => $field->getName(),
-				'value'      => $field->getValue(),
-				'group_name' => $groupName,
-				'sequence'   => $sequence,
-			);
-		}
-		elseif ($field instanceof Field\MultipleValueField) {
-			foreach ($field->getValues() as $key => $value) {
-				$flattened[] = array(
-					'field_name' => $field->getName(),
-					'value'      => $value,
-					'group_name' => $groupName,
-					'sequence'   => $sequence,
-				);
-			}
-		}
-
-		return $flattened;
 	}
 }

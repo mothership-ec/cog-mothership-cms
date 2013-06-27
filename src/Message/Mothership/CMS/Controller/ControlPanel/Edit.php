@@ -86,9 +86,14 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		$content = $this->get('cms.page.content_edit')->updateContent($form->getFilteredData(), $content);
 
-		$this->get('cms.page.content_edit')->save($page, $content);
+		if ($this->get('cms.page.content_edit')->save($page, $content)) {
+			$this->addFlash('success', 'Content updated successfully');
+		}
+		else {
+			$this->addFlash('error', 'An error occured while updating content');
+		}
 
-		var_dump($data);exit;
+		return $this->redirectToReferer();
 	}
 
 	/**

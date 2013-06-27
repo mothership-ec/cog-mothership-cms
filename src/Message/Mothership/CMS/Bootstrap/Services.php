@@ -38,7 +38,7 @@ class Services implements ServicesInterface
 		};
 
 		$serviceContainer['cms.page.content_edit'] = function($c) {
-			return new CMS\Page\ContentEdit($c['db.query'], $c['event.dispatcher'], $c['user.current']);
+			return new CMS\Page\ContentEdit($c['db.transaction'], $c['event.dispatcher'], $c['user.current']);
 		};
 
 		$serviceContainer['cms.page.authorisation'] = function($c) {
