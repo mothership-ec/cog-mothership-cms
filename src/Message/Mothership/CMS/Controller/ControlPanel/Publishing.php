@@ -4,6 +4,7 @@ namespace Message\Mothership\CMS\Controller\ControlPanel;
 
 use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\DateRange;
+use Message\Mothership\CMS\Page\Page;
 
 class Publishing extends \Message\Cog\Controller\Controller
 {
@@ -12,27 +13,27 @@ class Publishing extends \Message\Cog\Controller\Controller
 		$page        = $this->get('cms.page.loader')->getByID($pageID);
 		$isPublished = $this->get('cms.page.authorisation')->isPublished($page);
 
+		$form = $this->_getForm($page);
+
 		return $this->render('Message:Mothership:CMS::publishing', array(
 			'page'        => $page,
 			'isPublished' => $isPublished,
+			'form'		  => $form,
 		));
 	}
 
 	public function schedule($pageID)
 	{
-		// Send the user back if we don't have the form data we expect
-		if (!$data = $this->get('request')->request->get('publish')) {
-			return $this->redirectToReferer();
-		}
-
 		$page = $this->_services['cms.page.loader']->getByID($pageID);
 
-		$page->publishDateRange = new DateRange(
-			$data['publish-date'] ? new DateTimeImmutable($data['publish-date'] .' '. $data['publish-time']) : null,
-			$data['unpublish-date'] ? new DateTimeImmutable($data['unpublish-date'] .' '. $data['unpublish-time']) : null
-		);
-
-		$this->get('cms.page.edit')->save($page);
+		$form = $this->_getForm($page);
+		if ($form->isValid() && $data = $form->getFilteredData()) {
+			$page->publishDateRange = new DateRange(
+				$data['publish_date'] ? new DateTimeImmutable($data['publish_date']->format('c')) : null,
+				$data['unpublish_date'] ? new DateTimeImmutable($data['unpublish_date']->format('c')) : null
+			);
+			$this->get('cms.page.edit')->save($page);
+		}
 
 		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
 	}
@@ -55,6 +56,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 			return $this->redirectToReferer();
 		}
 		$this->get('cms.page.edit')->publish($page);
+
 		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
 	}
 
@@ -78,5 +80,22 @@ class Publishing extends \Message\Cog\Controller\Controller
 		$this->get('cms.page.edit')->unpublish($page);
 
 		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
+	}
+
+	protected function _getForm(Page $page)
+	{
+		$form = $this->get('form');
+ 		$form->setAction($this->generateUrl('ms.cp.cms.edit.publish_scheduling', array('pageID' => $page->id)))
+			->setMethod('post')
+			->setName('schedule')
+			->setDefaultValues(array(
+				'publish_date' => $page->publishDateRange->getStart(),
+				'unpublish_date' => $page->publishDateRange->getEnd(),
+			));;
+
+		$form->add('publish_date', 'datetime', 'on');
+		$form->add('unpublish_date', 'datetime', 'on');
+
+		return $form;
 	}
 }

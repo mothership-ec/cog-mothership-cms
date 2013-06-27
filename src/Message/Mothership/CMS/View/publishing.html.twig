@@ -4,7 +4,15 @@
 <a href="{{ url('ms.cp.cms.edit.publish', {pageID: page.id}) }}">Publish</a>
 {% endif %}
 
-<form action="{{ url('ms.cp.cms.edit.publish_scheduling',{pageID:page.id}) }}" method="post">
+{{ form_start(form) }}
+	{{ form_row(form.publish_date, {label: 'Publish at'}) }}
+	{{ form_row(form.unpublish_date, {label: 'Unpublish at'}) }}
+
+	<button name="schedule[save]" type="submit" value="Save">Save Range</button>
+
+{{ form_end(form) }}
+
+<!-- <form action="{{ url('ms.cp.cms.edit.publish_scheduling',{pageID:page.id}) }}" method="post">
 	<label>Publish At
 		<input type="time" name="publish[publish-time]" class="text-input"
 			value="{{ page.publishDateRange.getStart is empty ? '' : page.publishDateRange.getStart|date("H:i") }}" />
@@ -25,4 +33,4 @@
 	</label>
 
 	<button name="publish[save]" type="submit" value="Save">Save Range</button>
-</form>
+</form> -->
