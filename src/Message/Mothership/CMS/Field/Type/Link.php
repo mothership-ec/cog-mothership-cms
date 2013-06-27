@@ -33,7 +33,7 @@ class Link extends Field\MultipleValueField implements ContainerAwareInterface
 
 	public function getFormField(Handler $form)
 	{
-		$form->add($this->getName(), 'url', $this->getLabel(), array(
+		$form->add($this->getName(), new Field\FormType\Link, $this->getLabel(), array(
 			'attr' => array('data-help-key' => $this->_getHelpKeys()),
 		));
 	}

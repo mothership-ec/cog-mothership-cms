@@ -62,6 +62,14 @@ abstract class BaseField implements FieldInterface
 	}
 
 	/**
+	 * {@inheritdoc}
+	 */
+	public function getValue()
+	{
+		return $this->_value;
+	}
+
+	/**
 	 * Get the validator instance.
 	 *
 	 * @return Validator
@@ -121,13 +129,6 @@ abstract class BaseField implements FieldInterface
 
 		return 'ms.cms.field_types.' . $className . '.help:' . $this->_translationKey . '.help';
 	}
-
-	/**
-	 * Get the value for this field.
-	 *
-	 * @return mixed
-	 */
-	abstract public function getValue();
 
 	/**
 	 * Add the form field for this field to a form handler instance.
