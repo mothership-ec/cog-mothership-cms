@@ -24,18 +24,22 @@ class Services implements ServicesInterface
 			return $helper->setTable('page', 'page_id', 'position_left', 'position_right', 'position_depth');
 		};
 
-		$serviceContainer['cms.page.loader'] = $serviceContainer->share(function($c) {
+		$serviceContainer['cms.page.loader'] = function($c) {
 			return new CMS\Page\Loader(
 				'Locale class',
 				$c['db.query'],
 				$c['cms.page.types'],
 				$c['user.groups']
 			);
-		});
+		};
 
-		$serviceContainer['cms.page.content_loader'] = $serviceContainer->share(function($c) {
+		$serviceContainer['cms.page.content_loader'] = function($c) {
 			return new CMS\Page\ContentLoader($c['db.query'], $c['cms.field.factory']);
-		});
+		};
+
+		$serviceContainer['cms.page.content_edit'] = function($c) {
+			return new CMS\Page\ContentEdit($c['db.query'], $c['event.dispatcher'], $c['user.current']);
+		};
 
 		$serviceContainer['cms.page.authorisation'] = function($c) {
 			return new CMS\Page\Authorisation($c['user.group.loader'], $c['user.current']);

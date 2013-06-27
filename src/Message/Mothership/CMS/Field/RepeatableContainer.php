@@ -54,6 +54,11 @@ class RepeatableContainer implements \IteratorAggregate, \Countable
 		$this->_groups[] = clone $this->_group;
 	}
 
+	public function clear()
+	{
+		$this->_groups = array();
+	}
+
 	/**
 	 * Get the number of groups in this repeatable set.
 	 *
