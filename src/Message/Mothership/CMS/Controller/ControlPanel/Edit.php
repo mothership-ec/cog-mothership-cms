@@ -152,7 +152,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		$page = $this->get('cms.page.loader')->getByID($pageID);
 		$form = $this->_getAttibuteForm($page);
 
-		if ($data = $form->getFilteredData()) {
+		if ($form->isValid() && $data = $form->getFilteredData()) {
 			$checkSlug = $this->get('cms.page.loader')->getBySlug($data['slug'], true);
 			// Check the slug doesn't already exist and that there isn't a
 			// historical slug of the same name
@@ -181,8 +181,10 @@ class Edit extends \Message\Cog\Controller\Controller
 			$page->accessGroups 		= $data['access_groups'];
 			$page = $this->get('cms.page.edit')->save($page);
 
-			return $this->redirectToRoute('ms.cp.cms.edit.attributes', array('pageID' => $page->id));
 		}
+
+		return $this->redirectToRoute('ms.cp.cms.edit.attributes', array('pageID' => $page->id));
+
 	}
 
 	/**
