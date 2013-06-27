@@ -58,21 +58,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog.git",
-<<<<<<< HEAD
-                "reference": "e971a72a8a02dafc2bb840116028027a5358da44"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/messagedigital/cog/zipball/e971a72a8a02dafc2bb840116028027a5358da44",
-                "reference": "e971a72a8a02dafc2bb840116028027a5358da44",
-=======
                 "reference": "78184b06bddf8bb1aa55e55dbaeabaf34590cc62"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/messagedigital/cog/zipball/78184b06bddf8bb1aa55e55dbaeabaf34590cc62",
                 "reference": "78184b06bddf8bb1aa55e55dbaeabaf34590cc62",
->>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
                 "shasum": ""
             },
             "require": {
@@ -136,9 +127,6 @@
                 "issues": "http://server.local:3000/cog/issues",
                 "source": "https://github.com/messagedigital/cog/tree/master"
             },
-<<<<<<< HEAD
-            "time": "2013-06-08 13:22:50"
-=======
             "time": "2013-06-14 11:33:56"
         },
         {
@@ -188,7 +176,6 @@
                 "source": "https://github.com/messagedigital/cog-mothership-cp/tree/master"
             },
             "time": "2013-06-14 08:48:08"
->>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
         },
         {
             "name": "message/cog-user",
@@ -196,21 +183,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-user.git",
-<<<<<<< HEAD
-                "reference": "a5ad97895978af549b6f2e730bf4b1c03ee78b43"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/messagedigital/cog-user/zipball/a5ad97895978af549b6f2e730bf4b1c03ee78b43",
-                "reference": "a5ad97895978af549b6f2e730bf4b1c03ee78b43",
-=======
                 "reference": "7fc219a82ddcb1d00c7c81750a65d94ac87593eb"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/messagedigital/cog-user/zipball/7fc219a82ddcb1d00c7c81750a65d94ac87593eb",
                 "reference": "7fc219a82ddcb1d00c7c81750a65d94ac87593eb",
->>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
                 "shasum": ""
             },
             "require": {
@@ -244,11 +222,7 @@
                 "issues": "http://server.local:3000/cog/cog-user/issues",
                 "source": "https://github.com/messagedigital/cog-user/tree/master"
             },
-<<<<<<< HEAD
-            "time": "2013-06-07 14:04:19"
-=======
             "time": "2013-06-13 17:44:40"
->>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
         },
         {
             "name": "mtdowling/cron-expression",
@@ -382,21 +356,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-<<<<<<< HEAD
-                "reference": "036bcb3ec280f664489a9523c8939d404973c0b4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/036bcb3ec280f664489a9523c8939d404973c0b4",
-                "reference": "036bcb3ec280f664489a9523c8939d404973c0b4",
-=======
                 "reference": "a5e96b2363aca8a5400fec3bbcb3201a4b0513fb"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/Console/zipball/a5e96b2363aca8a5400fec3bbcb3201a4b0513fb",
                 "reference": "a5e96b2363aca8a5400fec3bbcb3201a4b0513fb",
->>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
                 "shasum": ""
             },
             "require": {
@@ -424,11 +389,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-<<<<<<< HEAD
-            "time": "2013-06-04 14:58:25"
-=======
             "time": "2013-06-11 07:34:22"
->>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
         },
         {
             "name": "symfony/debug",
@@ -589,21 +550,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
-<<<<<<< HEAD
-                "reference": "v2.2.2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Finder/zipball/v2.2.2",
-                "reference": "v2.2.2",
-=======
                 "reference": "95460adb3a71b0cf64236b608624412e3f554158"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/Finder/zipball/95460adb3a71b0cf64236b608624412e3f554158",
                 "reference": "95460adb3a71b0cf64236b608624412e3f554158",
->>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
                 "shasum": ""
             },
             "require": {
@@ -636,11 +588,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "http://symfony.com",
-<<<<<<< HEAD
-            "time": "2013-05-27 20:26:32"
-=======
             "time": "2013-06-10 18:35:46"
->>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
         },
         {
             "name": "symfony/http-foundation",
@@ -649,21 +597,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpFoundation.git",
-<<<<<<< HEAD
-                "reference": "e6bb516567125b1e7c8d07223170f53a836570e7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/e6bb516567125b1e7c8d07223170f53a836570e7",
-                "reference": "e6bb516567125b1e7c8d07223170f53a836570e7",
-=======
                 "reference": "7c5ae74fb00eed7a064ec036192d292b3ece1f36"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/7c5ae74fb00eed7a064ec036192d292b3ece1f36",
                 "reference": "7c5ae74fb00eed7a064ec036192d292b3ece1f36",
->>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
                 "shasum": ""
             },
             "require": {
@@ -699,11 +638,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "http://symfony.com",
-<<<<<<< HEAD
-            "time": "2013-06-06 15:05:59"
-=======
             "time": "2013-06-13 07:27:06"
->>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
         },
         {
             "name": "symfony/http-kernel",
@@ -712,21 +647,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpKernel.git",
-<<<<<<< HEAD
-                "reference": "4f0f6485abe0e2e8b8a94369fb98b8447fb1e3cc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/4f0f6485abe0e2e8b8a94369fb98b8447fb1e3cc",
-                "reference": "4f0f6485abe0e2e8b8a94369fb98b8447fb1e3cc",
-=======
                 "reference": "99b9acb3fc7590e0e4717b6ca03c14a292c70f1f"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/99b9acb3fc7590e0e4717b6ca03c14a292c70f1f",
                 "reference": "99b9acb3fc7590e0e4717b6ca03c14a292c70f1f",
->>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
                 "shasum": ""
             },
             "require": {
@@ -782,11 +708,7 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "http://symfony.com",
-<<<<<<< HEAD
-            "time": "2013-06-03 15:11:57"
-=======
             "time": "2013-06-11 11:46:38"
->>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
         },
         {
             "name": "symfony/process",
