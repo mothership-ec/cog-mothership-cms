@@ -36,6 +36,11 @@ class Routes implements RoutesInterface
 			->setRequirement('pageID', '\d+')
 			->enableCsrf('csrfHash');
 
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.publish.force', '/edit/{pageID}/publish/force/{csrfHash}', '::Controller:ControlPanel:Publishing#publish')
+			->setDefault('force', 1)
+			->setRequirement('pageID', '\d+')
+			->enableCsrf('csrfHash');
+
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.unpublish', '/edit/{pageID}/unpublish/{csrfHash}', '::Controller:ControlPanel:Publishing#unpublish')
 			->setRequirement('pageID', '\d+')
 			->enableCsrf('csrfHash');

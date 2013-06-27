@@ -25,7 +25,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 			return $this->redirectToReferer();
 		}
 
-		$page = $this->_services['cms.page.loader']->getByID($this->_pageID);
+		$page = $this->_services['cms.page.loader']->getByID($pageID);
 
 		$page->publishDateRange = new DateRange(
 			$data['publish-date'] ? new DateTimeImmutable($data['publish-date'] .' '. $data['publish-time']) : null,
@@ -37,9 +37,26 @@ class Publishing extends \Message\Cog\Controller\Controller
 		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
 	}
 
-	public function publish($pageID)
+	public function publish($pageID, $force = false)
 	{
-		$this->get('cms.page.edit')->publish($this->get('cms.page.loader')->getByID($pageID));
+		$page = $this->get('cms.page.loader')->getByID($pageID);
+		$hasFuture = $page->publishDateRange->getStart() ? $page->publishDateRange->getStart()->getTimestamp() > time(): false;
+		if (!$force && $hasFuture) {
+			$this->addFlash(
+				'warning', $this->trans(
+					'ms.cms.feedback.publish.schedule.warning',
+					array(
+						'task' 		=> 'publish',
+						'taskLink'	=> '<a href="'.$this->generateUrl('ms.cp.cms.edit.publish.force',
+							array(
+								'pageID' => $pageID
+							)).'">publish</a>'
+					)
+			));
+			return $this->redirectToReferrer();
+		}
+
+		$this->get('cms.page.edit')->publish($page);
 
 		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
 	}
