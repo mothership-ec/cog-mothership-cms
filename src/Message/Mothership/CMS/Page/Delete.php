@@ -32,7 +32,7 @@ class Delete
 	 * @param DispatcherInterface $eventDispatcher 	The event dispatcher
 	 * @param Loader 			  $loader 			The page loader
 	 */
-	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher, Loader $loader, User $user = null)
+	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher, Loader $loader, UserInterface $user = null)
 	{
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
