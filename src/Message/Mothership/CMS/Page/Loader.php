@@ -455,6 +455,7 @@ class Loader
 
 			// Load access groups
 			$groups = array_filter(explode(',', $data->accessGroups));
+			$pages[$key]->accessGroups = array();
 			foreach ($groups as $groupName) {
 				if ($group = $this->_userGroups->get(trim($groupName))) {
 					$pages[$key]->accessGroups[$group->getName()] = $group;
