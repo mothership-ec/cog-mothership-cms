@@ -6,17 +6,73 @@
     "hash": "6dff416fef4f2e1cfd597098b3f0eb90",
     "packages": [
         {
+            "name": "imagine/imagine",
+            "version": "v0.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/avalanche123/Imagine",
+                "reference": "v0.4.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/avalanche123/Imagine/archive/v0.4.1.zip",
+                "reference": "v0.4.1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "sami/sami": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Imagine": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bulat Shakirzyanov",
+                    "email": "mallluhuct@gmail.com",
+                    "homepage": "http://avalanche123.com"
+                }
+            ],
+            "description": "Image processing for PHP 5.3",
+            "homepage": "http://imagine.readthedocs.org/",
+            "keywords": [
+                "drawing",
+                "graphics",
+                "image manipulation",
+                "image processing"
+            ],
+            "time": "2012-12-13 18:31:18"
+        },
+        {
             "name": "message/cog",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog.git",
+<<<<<<< HEAD
                 "reference": "e971a72a8a02dafc2bb840116028027a5358da44"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/messagedigital/cog/zipball/e971a72a8a02dafc2bb840116028027a5358da44",
                 "reference": "e971a72a8a02dafc2bb840116028027a5358da44",
+=======
+                "reference": "78184b06bddf8bb1aa55e55dbaeabaf34590cc62"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/messagedigital/cog/zipball/78184b06bddf8bb1aa55e55dbaeabaf34590cc62",
+                "reference": "78184b06bddf8bb1aa55e55dbaeabaf34590cc62",
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
                 "shasum": ""
             },
             "require": {
@@ -25,6 +81,7 @@
                 "ext-json": "*",
                 "ext-mysqli": "*",
                 "ext-simplexml": "*",
+                "imagine/imagine": "0.4.*",
                 "mtdowling/cron-expression": "1.0.*",
                 "php": ">=5.3.0",
                 "pimple/pimple": "1.0.1",
@@ -36,6 +93,8 @@
                 "symfony/process": "2.1.*",
                 "symfony/routing": "2.3.*",
                 "symfony/templating": "2.1.*",
+                "symfony/translation": "2.3.*",
+                "symfony/twig-bridge": "2.3.*",
                 "symfony/yaml": "2.1.*",
                 "treasure-chest/treasure-chest": "0.1.*",
                 "twig/twig": "1.13.*"
@@ -77,7 +136,59 @@
                 "issues": "http://server.local:3000/cog/issues",
                 "source": "https://github.com/messagedigital/cog/tree/master"
             },
+<<<<<<< HEAD
             "time": "2013-06-08 13:22:50"
+=======
+            "time": "2013-06-14 11:33:56"
+        },
+        {
+            "name": "message/cog-mothership-cp",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:messagedigital/cog-mothership-cp.git",
+                "reference": "a9abda2186481c9f0384b29bcd3fa7563cd1a651"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/messagedigital/cog-mothership-cp/zipball/a9abda2186481c9f0384b29bcd3fa7563cd1a651",
+                "reference": "a9abda2186481c9f0384b29bcd3fa7563cd1a651",
+                "shasum": ""
+            },
+            "require": {
+                "message/cog": "dev-master",
+                "message/cog-user": "dev-master",
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Message\\Mothership\\ControlPanel": "src",
+                    "Message\\Mothership\\ControlPanel\\Test": "tests"
+                }
+            },
+            "authors": [
+                {
+                    "name": "The Message Development Team",
+                    "email": "dev@message.co.uk"
+                }
+            ],
+            "description": "Cog module for the Mothership Control Panel",
+            "homepage": "http://message.co.uk",
+            "keywords": [
+                "admin",
+                "cog",
+                "control panel",
+                "cp",
+                "mothership"
+            ],
+            "support": {
+                "wiki": "http://server.local/wiki/projects/cog",
+                "issues": "http://server.local:3000/cog/cog-mothership-cp/issues",
+                "source": "https://github.com/messagedigital/cog-mothership-cp/tree/master"
+            },
+            "time": "2013-06-14 08:48:08"
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
         },
         {
             "name": "message/cog-user",
@@ -85,12 +196,21 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-user.git",
+<<<<<<< HEAD
                 "reference": "a5ad97895978af549b6f2e730bf4b1c03ee78b43"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/messagedigital/cog-user/zipball/a5ad97895978af549b6f2e730bf4b1c03ee78b43",
                 "reference": "a5ad97895978af549b6f2e730bf4b1c03ee78b43",
+=======
+                "reference": "7fc219a82ddcb1d00c7c81750a65d94ac87593eb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/messagedigital/cog-user/zipball/7fc219a82ddcb1d00c7c81750a65d94ac87593eb",
+                "reference": "7fc219a82ddcb1d00c7c81750a65d94ac87593eb",
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
                 "shasum": ""
             },
             "require": {
@@ -124,7 +244,11 @@
                 "issues": "http://server.local:3000/cog/cog-user/issues",
                 "source": "https://github.com/messagedigital/cog-user/tree/master"
             },
+<<<<<<< HEAD
             "time": "2013-06-07 14:04:19"
+=======
+            "time": "2013-06-13 17:44:40"
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
         },
         {
             "name": "mtdowling/cron-expression",
@@ -258,12 +382,21 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
+<<<<<<< HEAD
                 "reference": "036bcb3ec280f664489a9523c8939d404973c0b4"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/Console/zipball/036bcb3ec280f664489a9523c8939d404973c0b4",
                 "reference": "036bcb3ec280f664489a9523c8939d404973c0b4",
+=======
+                "reference": "a5e96b2363aca8a5400fec3bbcb3201a4b0513fb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/a5e96b2363aca8a5400fec3bbcb3201a4b0513fb",
+                "reference": "a5e96b2363aca8a5400fec3bbcb3201a4b0513fb",
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
                 "shasum": ""
             },
             "require": {
@@ -291,7 +424,11 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
+<<<<<<< HEAD
             "time": "2013-06-04 14:58:25"
+=======
+            "time": "2013-06-11 07:34:22"
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
         },
         {
             "name": "symfony/debug",
@@ -452,12 +589,21 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
+<<<<<<< HEAD
                 "reference": "v2.2.2"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/Finder/zipball/v2.2.2",
                 "reference": "v2.2.2",
+=======
+                "reference": "95460adb3a71b0cf64236b608624412e3f554158"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Finder/zipball/95460adb3a71b0cf64236b608624412e3f554158",
+                "reference": "95460adb3a71b0cf64236b608624412e3f554158",
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
                 "shasum": ""
             },
             "require": {
@@ -490,7 +636,11 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "http://symfony.com",
+<<<<<<< HEAD
             "time": "2013-05-27 20:26:32"
+=======
+            "time": "2013-06-10 18:35:46"
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
         },
         {
             "name": "symfony/http-foundation",
@@ -499,12 +649,21 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpFoundation.git",
+<<<<<<< HEAD
                 "reference": "e6bb516567125b1e7c8d07223170f53a836570e7"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/e6bb516567125b1e7c8d07223170f53a836570e7",
                 "reference": "e6bb516567125b1e7c8d07223170f53a836570e7",
+=======
+                "reference": "7c5ae74fb00eed7a064ec036192d292b3ece1f36"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/7c5ae74fb00eed7a064ec036192d292b3ece1f36",
+                "reference": "7c5ae74fb00eed7a064ec036192d292b3ece1f36",
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
                 "shasum": ""
             },
             "require": {
@@ -540,7 +699,11 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "http://symfony.com",
+<<<<<<< HEAD
             "time": "2013-06-06 15:05:59"
+=======
+            "time": "2013-06-13 07:27:06"
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
         },
         {
             "name": "symfony/http-kernel",
@@ -549,12 +712,21 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpKernel.git",
+<<<<<<< HEAD
                 "reference": "4f0f6485abe0e2e8b8a94369fb98b8447fb1e3cc"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/4f0f6485abe0e2e8b8a94369fb98b8447fb1e3cc",
                 "reference": "4f0f6485abe0e2e8b8a94369fb98b8447fb1e3cc",
+=======
+                "reference": "99b9acb3fc7590e0e4717b6ca03c14a292c70f1f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/99b9acb3fc7590e0e4717b6ca03c14a292c70f1f",
+                "reference": "99b9acb3fc7590e0e4717b6ca03c14a292c70f1f",
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
                 "shasum": ""
             },
             "require": {
@@ -610,7 +782,11 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "http://symfony.com",
+<<<<<<< HEAD
             "time": "2013-06-03 15:11:57"
+=======
+            "time": "2013-06-11 11:46:38"
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
         },
         {
             "name": "symfony/process",
@@ -753,6 +929,127 @@
             "description": "Symfony Templating Component",
             "homepage": "http://symfony.com",
             "time": "2013-04-09 14:11:33"
+        },
+        {
+            "name": "symfony/translation",
+            "version": "2.3.x-dev",
+            "target-dir": "Symfony/Component/Translation",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Translation.git",
+                "reference": "v2.3.0-RC1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Translation/zipball/v2.3.0-RC1",
+                "reference": "v2.3.0-RC1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "symfony/config": ">=2.0,<3.0",
+                "symfony/yaml": ">=2.2,<3.0"
+            },
+            "suggest": {
+                "symfony/config": "",
+                "symfony/yaml": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Translation\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Translation Component",
+            "homepage": "http://symfony.com",
+            "time": "2013-05-13 14:36:40"
+        },
+        {
+            "name": "symfony/twig-bridge",
+            "version": "2.3.x-dev",
+            "target-dir": "Symfony/Bridge/Twig",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/TwigBridge.git",
+                "reference": "v2.3.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/TwigBridge/zipball/v2.3.1",
+                "reference": "v2.3.1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "twig/twig": ">=1.11.0,<2.0"
+            },
+            "require-dev": {
+                "symfony/form": "2.2.*",
+                "symfony/http-kernel": ">=2.2,<3.0",
+                "symfony/routing": ">=2.2,<3.0",
+                "symfony/security": ">=2.0,<3.0",
+                "symfony/templating": ">=2.1,<3.0",
+                "symfony/translation": ">=2.2,<3.0",
+                "symfony/yaml": ">=2.0,<3.0"
+            },
+            "suggest": {
+                "symfony/form": "",
+                "symfony/http-kernel": "",
+                "symfony/routing": "",
+                "symfony/security": "",
+                "symfony/templating": "",
+                "symfony/translation": "",
+                "symfony/yaml": ""
+            },
+            "type": "symfony-bridge",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Bridge\\Twig\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Twig Bridge",
+            "homepage": "http://symfony.com",
+            "time": "2013-05-16 10:19:58"
         },
         {
             "name": "symfony/yaml",

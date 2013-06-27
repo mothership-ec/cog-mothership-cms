@@ -1,0 +1,31 @@
+{% extends '::edit' %}
+{% block form %}
+
+
+{{ form_row(form.slug) }}
+
+{{ form_row(form.visibility_search) }}
+{{ form_row(form.visibility_menu) }}
+{{ form_row(form.visibility_aggregator) }}
+
+{{ form_row(form.access) }}
+{{ form_row(form.access_groups) }}
+
+{{ form_row(form.tags) }}
+
+<h2>Authorship information</h2>
+
+<dl class="authorship">
+	<dt>Created</dt>
+		<dd>at {{ page.authorship.createdAt|date('h:ia \\o\\n d/m/y') }} by {{ page.authorship.createdBy }}</dd>
+	{% if page.authorship.updatedAt is not null %}
+	<dt>Updated</dt>
+		<dd>at {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }} by {{ page.authorship.updatedBy }}</dd>
+	{% endif %}
+</dl>
+
+<button type="submit">Save changes</button>
+
+{{ form_end(form) }}
+
+{% endblock %}

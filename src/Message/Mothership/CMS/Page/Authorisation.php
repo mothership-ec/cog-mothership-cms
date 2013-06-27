@@ -2,69 +2,115 @@
 
 namespace Message\Mothership\CMS\Page;
 
+use Message\User\UserInterface;
+use Message\User\AnonymousUser;
+use Message\User\Group\Loader as GroupLoader;
+
 /**
  * Helper class for determining if a page is viewable by the current user based
  * on the various authorisation and access settings.
  *
  * @author Danny Hannah <danny@message.co.uk>
+ * @author Joe Holdcroft <joe@message.co.uk>
  */
 class Authorisation
 {
-	protected $_page;
-	protected $_user;
+	const ACCESS_ALL        = 0;
+	const ACCESS_GUEST      = 100;
+	const ACCESS_USER       = 200;
+	const ACCESS_USER_GROUP = 300;
+
+	protected $_groupLoader;
+	protected $_currentUser;
 
 	/**
-	 * Get an instance of the given page along with an instance of the User
+	 * Constructor.
 	 *
-	 * @param Page $page
-	 * @param User $user
+	 * @param GroupLoader   $groupLoader The user group loader
+	 * @param UserInterface $user        The currently logged in user
 	 */
-	public function __construct(Page $page, $user)
+	public function __construct(GroupLoader $groupLoader, UserInterface $user)
 	{
-		$this->_page = $page;
-		$this->_user = $user;
+		$this->_groupLoader = $groupLoader;
+		$this->_currentUser = $user;
 	}
 
 	/**
 	 * Check that a given string matches the stored password for the page.
 	 *
+	 * @param  Page  $page     The page to check
 	 * @param  mixed $password The password to check for
 	 * @return bool  		   Result of the check
 	 *
 	 * @throws \Exception      If the given page has no password set
 	 */
-	public function validatePassword($password)
+	public function validatePassword(Page $page, $password)
 	{
-		if (!$this->_page->password) {
+		if (!$page->password) {
 			throw new \Exception('This page has no password');
 		}
-	
-		return $this->_page->password == $password;
+
+		return $page->password == $password;
 	}
 
 	/**
-	 * Check whether the given page is viewable by the given user
+	 * Check whether the given page is viewable by the given user.
 	 *
-	 * @return bool			   Result of the check
-	 */
-	public function isViewable()
-	{
-
-	}
-
-	/**
-	 * Check that the given page is ready to be viewed and not in a draft or
-	 * hidden state.
+	 * @param Page      $page The page to check
+	 * @param User|null $user The user to check authorisation for, or if null
+	 *                        the current user is used
 	 *
-	 * @return bool			   Result of the check
+	 * @return bool           Result of the check
+	 *
+	 * @throws \RuntimeException If the access level on the page was not understood
 	 */
-	public function isPublished()
+	public function isViewable(Page $page, UserInterface $user = null)
 	{
-		if (!$this->_page->publishState 
-		 || !$this->_page->publishDateRange->isInRange()
-		) {
-			return false;
+		$user = $user ?: $this->_currentUser;
+
+		switch ($page->access) {
+			// If this page is accessible to anybody, it is always viewable
+			case self::ACCESS_ALL:
+				return true;
+				break;
+			// If this page is accessible to guests, check the user is not logged in
+			case self::ACCESS_GUEST:
+				return ($user instanceof AnonymousUser);
+				break;
+			// If this page is accessible to logged in users, check the user is logged in
+			case self::ACCESS_USER:
+				return ($user instanceof AnonymousUser);
+				break;
+			// If this page is accessible to users in specific groups, check the user's groups
+			case self::ACCESS_USER_GROUP:
+				$userGroups = $this->_groupLoader->getByUser($user);
+				foreach ($page->accessGroups as $pageGroup) {
+					foreach ($userGroups as $userGroup) {
+						if ($userGroup->getName() === $pageGroup->getName()) {
+							return true;
+						}
+					}
+				}
+
+				return false;
+				break;
+			default:
+				throw new \RuntimeException(sprintf('Invalid access level `%s` on page', $page->access));
+				break;
 		}
-		return true;
+
+		return false;
+	}
+
+	/**
+	 * Check that the given page is published.
+	 *
+	 * @param Page $page The page to check
+	 *
+	 * @return bool      Result of the check
+	 */
+	public function isPublished(Page $page)
+	{
+		return $page->publishDateRange->isInRange();
 	}
 }

@@ -1,3 +1,14 @@
+# Mothership CMS
+
+The `Message\Mothership\CMS` cogule provides a Content Management System for Mothership.
+
+## Routes
+
+This cogule defines two route collections:
+
+- **ms.cms**: The frontend where CMS pages should be renderd.
+- **ms.cp.cms**: The backend where the CMS is administered, within the Mothership Control Panel.
+
 ## Dispatched Events
 
 cms.page.create

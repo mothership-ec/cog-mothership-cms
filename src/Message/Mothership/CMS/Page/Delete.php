@@ -2,21 +2,20 @@
 
 namespace Message\Mothership\CMS\Page;
 
-use Message\Mothership\CMS\Page\Page;
-use Message\Mothership\CMS\Event\Event;
-use Message\Mothership\CMS\Page\Loader;
+use Message\Mothership\CMS\Exception;
+
+use Message\User\UserInterface;
 
 use Message\User\User;
 
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;
+use Message\Cog\ValueObject\DateTimeImmutable;
 
 /**
- * Decorator for deleting pages.
+ * Decorator for deleting & restoring pages.
  *
- * @author Daniel Hannah <danny@message.co.uk>
- *
- * @todo implement deleted_by setting correctly once User cogule is complete.
+ * @author Danny Hannah <danny@message.co.uk>
  */
 class Delete
 {
@@ -24,20 +23,24 @@ class Delete
 	protected $_eventDispatcher;
 	protected $_currentUser;
 	protected $_loader;
+	protected $_currentUser;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param DBQuery             $query           	The database query instance to use
-	 * @param DispatcherInterface $eventDispatcher 	The event dispatcher
-	 * @param Loader 			  $loader 			The page loader
+	 * @param DBQuery             $query           The database query instance to use
+	 * @param DispatcherInterface $eventDispatcher The event dispatcher
+	 * @param Loader              $loader          The page loader
+	 * @param UserInterface       $currentUser     The currently logged in user
 	 */
-	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher, Loader $loader, UserInterface $user = null)
+
+	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher,
+		Loader $loader, UserInterface $user)
 	{
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
-		$this->_currentUser		= $user;
-		$this->_loader 			= $loader;
+		$this->_loader          = $loader;
+		$this->_currentUser     = $user;
 	}
 
 	/**
@@ -48,16 +51,15 @@ class Delete
 	 * @return Page       The page that was been deleted, with the "delete"
 	 *                    authorship data set
 	 *
-	 * @throws \InvalidArgumentException If the page has child pages
+	 * @throws Exception\Exception If the page has child pages
 	 */
 	public function delete(Page $page)
 	{
-		// Throw an exception if it does
 		if ($this->_loader->getChildren($page)) {
-			throw new \InvalidArgumentException(sprintf('Cannot delete page #%i because it has children pages', $page->id));
+			throw new Exception\Exception(sprintf('Page #%s cannot be deleted because it has child pages', $page->id));
 		}
 
-		$page->authorship->delete(new \Datetime, $this->_currentUser ? $this->_currentUser->id : null);
+		$page->authorship->delete(new DateTimeImmutable, $this->_currentUser->id);
 
 		$result = $this->_query->run('
 			UPDATE
@@ -73,14 +75,15 @@ class Delete
 			'id' => $page->id,
 		));
 
+		$event = new Event($page);
+
 		$this->_eventDispatcher->dispatch(
-			Event::DELETE,
-			new Event($page)
+			$event::DELETE,
+			$event
 		);
 
-		return $page;
+		return $event->getPage();
 	}
-
 
 	/**
 	 * Restores a currently deleted page to its former self.
@@ -105,11 +108,13 @@ class Delete
 				page_id = ?i
 		', $page->id);
 
+		$event = new Event($page);
+
 		$this->_eventDispatcher->dispatch(
-			Event::RESTORE,
-			new Event($page)
+			$event::RESTORE,
+			$event
 		);
 
-		return $page;
+		return $event->getPage();
 	}
 }

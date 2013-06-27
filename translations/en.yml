@@ -1,0 +1,118 @@
+ms.cms:
+  repeatable_group:
+    add: "{0} Add a %name%|]1,Inf] Add another %name%"
+  attributes:
+    slug:
+      label: URL Segment
+      help:
+        short:
+        long:
+        example: /my-page
+    access:
+      label: Who can access this page?
+      options:
+        all:   Everybody
+        guest: Only visitors that aren't logged in
+        user:  Only logged in users
+        group: Only specific user groups
+      help:
+        short: Select the type of visitor that can access this page
+        long:  By default, anybody can access a page. You can set a page to only be accessible to guests; or any logged in user; or only logged in users that belong to a specific group. If the visitor tries to access a page that they do not have access to see, the system will return an "access denied" error.
+    access_groups:
+      label: Which user groups can access this page?
+      help:
+        short:
+        long:
+    visibility:
+      menu:
+        label: Should this page show in menus?
+        help:
+          short: -
+          long:
+      search:
+        label: Should this page show in search results?
+        help:
+          short: -
+          long:
+      aggregator:
+        label: Should this page show on aggregator pages?
+        help:
+          short: -
+          long:
+    tags:
+      label: Tags
+      help:
+        short: -
+        long:
+        example: products, shoes, 2013
+  metadata:
+    title:
+      label: Page title
+      help:
+        short: The title that shows in the browser tab
+        long:
+        example:
+    description:
+      label: Meta description
+      help:
+        short:
+        long:
+        example:
+    htmlHead:
+      label: HTML in the head
+      help:
+        short:
+        long:
+        example:
+    htmlFoot:
+      label: HTML in the foot
+      help:
+        short:
+        long:
+        example:
+  field_types:
+    text:
+      help:
+        short:
+        long: Just a regular text field. Formatting is not allowed here.
+        example: I am some text
+    boolean:
+      help:
+        short:
+        long:
+        example:
+    choice:
+      help:
+        short:
+        long:
+        example:
+    date:
+      help:
+        short:
+        long:
+        example:
+    file:
+      help:
+        short:
+        long:
+        example:
+    html:
+      help:
+        short:
+        long:
+        example:
+    integer:
+      help:
+        short:
+        long:
+        example:
+    link:
+      help:
+        short:
+        long:
+        example:
+    richtext:
+      help:
+        short:
+        long:
+        example:

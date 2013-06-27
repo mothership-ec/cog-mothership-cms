@@ -2,7 +2,9 @@
 
 namespace Message\Mothership\CMS\Page;
 
-use Message\Mothership\CMS\PageTypeInterface;
+use Message\Mothership\CMS\PageType\PageTypeInterface;
+
+use Message\User\UserInterface;
 
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;
@@ -12,9 +14,6 @@ use Message\Cog\DB\NestedSetHelper;
  * Decorator for creating pages.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
- *
- * @todo Implement the created_by setting. Is there a service for the current
- *       user?
  */
 class Create
 {
@@ -22,6 +21,8 @@ class Create
 	protected $_query;
 	protected $_eventDispatcher;
 	protected $_nestedSetHelper;
+	protected $_slugGenerator;
+	protected $_currentUser;
 
 	/**
 	 * Constructor.
@@ -31,14 +32,18 @@ class Create
 	 * @param DispatcherInterface $eventDispatcher The event dispatcher
 	 * @param NestedSetHelper     $nestedSetHelper The nested set helper, set up
 	 *                                             for the `Page` table
+	 * @param SlugGenerator       $slugGenerator   The page slug generator
+	 * @param UserInterface       $user            The currently logged in user
 	 */
-	public function __construct(Loader $loader, DBQuery $query,
-		DispatcherInterface $eventDispatcher, NestedSetHelper $nestedSetHelper)
+	public function __construct(Loader $loader, DBQuery $query, DispatcherInterface $eventDispatcher,
+		NestedSetHelper $nestedSetHelper, SlugGenerator $slugGenerator, UserInterface $user)
 	{
 		$this->_loader          = $loader;
 		$this->_query           = $query;
 		$this->_eventDispatcher = $eventDispatcher;
 		$this->_nestedSetHelper = $nestedSetHelper;
+		$this->_slugGenerator   = $slugGenerator;
+		$this->_currentUser     = $user;
 	}
 
 	/**
@@ -58,13 +63,21 @@ class Create
 	 * @return Page                        The page that was created (which may
 	 *                                     have been overwritten by an event listener)
 	 *
-	 * @todo Throw an exception if the parent's page type does not allow child elements
+	 * @throws \InvalidArgumentException If the parent page's type does not allow
+	 *                                   child pages
 	 */
 	public function create(PageTypeInterface $pageType, $title, Page $parent = null)
 	{
-		#if ($parent && !$parent->type->allowChildPages) { // Is there a better property name? Is a property even good? What's the best waaaay?
-			//throw exception
-		#}
+		if ($parent && !$parent->type->allowChildren()) {
+			throw new \InvalidArgumentException(sprintf(
+				'Cannot create a page within page #%i because it\'s type (%s) does not allow child pages.',
+				$parent->id,
+				$parent->type->getName()
+			));
+		}
+
+		// Generate the slug
+		$slug = $this->_slugGenerator->generate($title, $parent);
 
 		// Create the page without adding it to the nested set tree
 		$result = $this->_query->run('
@@ -72,13 +85,16 @@ class Create
 				page
 			SET
 				created_at    = UNIX_TIMESTAMP(),
-				created_by    = 0,
+				created_by    = :createdBy?in,
 				title         = :title?s,
 				type          = :type?s,
-				publish_state = 0
+				slug          = :slug?s,
+				unpublish_at  = UNIX_TIMESTAMP()
 		', array(
-			'title' => $title,
-			'type'  => $pageType->getName(),
+			'title'     => $title,
+			'type'      => $pageType->getName(),
+			'slug'      => $slug->getLastSegment(),
+			'createdBy' => $this->_currentUser->id,
 		));
 
 		$pageID = (int) $result->id();

@@ -17,9 +17,9 @@ class Page
 	public $id;
 	public $title;
 	public $type;
-	public $publishState;
 	public $publishDateRange;
 	public $slug;
+	public $tags = array();
 
 	public $left;
 	public $right;
@@ -41,7 +41,7 @@ class Page
 
 	public $password;
 	public $access;
-	public $accessGroups;
+	public $accessGroups = array();
 
 	public $commentsEnabled;
 	public $commentsAccess;

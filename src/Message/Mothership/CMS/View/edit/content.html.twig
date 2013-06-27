@@ -1,0 +1,61 @@
+{% macro getRepeatablePrototype(form, groupName, fields) %}
+{% filter escape %}
+	<section>
+		{% for field in fields %}
+		{{ form_row(form[groupName][field].vars.prototype) }}
+		{% endfor %}
+		<a href="#">Remove this group</a>
+	</section>
+{% endfilter %}
+{% endmacro %}
+{% extends '::edit' %}
+{% block form %}
+
+{{ form_start(form) }}
+
+{# Loop through content parts #}
+{% for name, part in content %}
+	{# If this part is not repeatable group #}
+	{% if repeatables[name] is null %}
+		{# If this part is a group, output the title & description, then each field in it #}
+		{% if part.getFields is not null %}
+		<section class="group">
+			<h2>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.name'|trans }}</h2>
+			<p>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.description'|trans }}</p>
+			<section>
+				{% for field in part.getFields %}
+				{{ form_row(form[name][field.getName]) }}
+				{% endfor %}
+			</section>
+		</section>
+		{# If this part is a normal field, just output it #}
+		{% else %}
+		{{ form_row(form[name]) }}
+		{% endif %}
+	{# If this content part is a repeatable group, output the title & description, then each group #}
+	{% else %}
+		<section class="repeatable group">
+			<h2>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.name'|trans }}</h2>
+			<p>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.description'|trans }}</p>
+			{% if part.count > 0 %}
+			{% for i in range(0, part.count - 1) %}
+				<section>
+					{% for field in repeatables[name] %}
+					{{ form_row(form[name][field][i]) }}
+					{% endfor %}
+					<a href="#">Remove this group</a>
+				</section>
+			{% endfor %}
+			{% endif %}
+			<a href="#" data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}">
+				{{ 'ms.cms.repeatable_group.add'|transchoice(part.count, {'%name%': 'page.' ~ page.type.getName ~ '.' ~ name ~ '.name'|trans}) }}
+			</a>
+		</section>
+	{% endif %}
+{% endfor %}
+
+<button type="submit">Save changes</button>
+
+{{ form_end(form)}}
+
+{% endblock %}

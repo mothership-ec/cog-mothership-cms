@@ -21,6 +21,7 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
 
 	public function testDelete()
 	{
+<<<<<<< HEAD
 		$loader = new Loader('gb', new Query($connection));
 		$page = $loader->getByID(1);
 		
@@ -36,6 +37,11 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
 
 	public function testForChildrenPagesException()
 	{
+=======
+       $this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
 		$connection = new Connection;
 		// For testDuplicateFieldNameException
 		$connection->setPattern('/page_id([\s]+?)= 1/', array(
@@ -64,9 +70,21 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
 				'slug'			=> '/blog/hello-world',
 			),
 		));
+<<<<<<< HEAD
 
 		$delete->delete($page);
 
 		$this->assertThrowsException('Cannot delete page #%i because it has children pages');
+=======
+		$loader = new Loader('gb', new Query($connection));
+		$page = $loader->getByID(1);
+
+
+	}
+
+	public function testRestore()
+	{
+
+>>>>>>> b7e54c44e9089efb3dbfd069d62933031fcb93bc
 	}
 }

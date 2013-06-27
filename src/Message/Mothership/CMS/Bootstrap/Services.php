@@ -2,12 +2,22 @@
 
 namespace Message\Mothership\CMS\Bootstrap;
 
+use Message\Mothership\CMS;
+
 use Message\Cog\Bootstrap\ServicesInterface;
 
 class Services implements ServicesInterface
 {
 	public function registerServices($serviceContainer)
 	{
+		$serviceContainer['cms.page.types'] = $serviceContainer->share(function($c) {
+			return new CMS\PageType\Collection;
+		});
+
+		$serviceContainer['cms.page.slug_generator'] = function($c) {
+			return new CMS\Page\SlugGenerator($c['cms.page.loader'], (array) $c['cfg']->cms->slug->substitutions);
+		};
+
 		$serviceContainer['cms.page.nested_set_helper'] = function($c) {
 			$helper = $c['db.nested_set_helper'];
 
@@ -15,28 +25,60 @@ class Services implements ServicesInterface
 		};
 
 		$serviceContainer['cms.page.loader'] = $serviceContainer->share(function($c) {
-			return new \Message\Mothership\CMS\Page\Loader('Locale class', $c['db.query']);
-		});
-		$serviceContainer['cms.page.content_loader'] = $serviceContainer->share(function($c) {
-			return new \Message\Mothership\CMS\Page\ContentLoader($c['db.query']);
+			return new CMS\Page\Loader(
+				'Locale class',
+				$c['db.query'],
+				$c['cms.page.types'],
+				$c['user.groups']
+			);
 		});
 
+		$serviceContainer['cms.page.content_loader'] = $serviceContainer->share(function($c) {
+			return new CMS\Page\ContentLoader($c['db.query'], $c['cms.field.factory']);
+		});
+
+		$serviceContainer['cms.page.authorisation'] = function($c) {
+			return new CMS\Page\Authorisation($c['user.group.loader'], $c['user.current']);
+		};
+
 		$serviceContainer['cms.page.create'] = function($c) {
-			return new \Message\Mothership\CMS\Page\Create(
+			return new CMS\Page\Create(
 				$c['cms.page.loader'],
 				$c['db.query'],
 				$c['event.dispatcher'],
-				$c['cms.page.nested_set_helper']
+				$c['cms.page.nested_set_helper'],
+				$c['cms.page.slug_generator'],
+				$c['user.current']
 			);
 		};
 
-		$serviceContainer['cms.page.delete'] = function($c){
-			return new \Message\Mothership\CMS\Page\Delete(
+		$serviceContainer['cms.page.delete'] = function($c) {
+			return new CMS\Page\Delete(
 				$c['db.query'],
 				$c['event.dispatcher'],
 				$c['cms.page.loader'],
 				$c['user.current']
 			);
+		};
+
+		$serviceContainer['cms.page.edit'] = function($c) {
+			return new CMS\Page\Edit(
+				$c['cms.page.loader'],
+				$c['db.query'],
+				$c['event.dispatcher'],
+				$c['cms.page.nested_set_helper'],
+				$c['user.current']
+			);
+		};
+
+		$serviceContainer['cms.field.factory'] = function($c) {
+			$factory = new CMS\Field\Factory($c['validator'], $c);
+
+			return $factory;
+		};
+
+		$serviceContainer['cms.field.form'] = function($c) {
+			return new CMS\Field\Form($c);
 		};
 	}
 }

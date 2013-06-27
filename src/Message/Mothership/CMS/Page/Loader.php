@@ -2,10 +2,14 @@
 
 namespace Message\Mothership\CMS\Page;
 
-use Message\Mothership\CMS\PageTypeInterface;
+use Message\Mothership\CMS\PageType\PageTypeInterface;
+use Message\Mothership\CMS\PageType\Collection as PageTypeCollection;
+
+use Message\User\Group\Collection as UserGroupCollection;
 
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
+use Message\Mothership\CMS\PageType\Collection;
 use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
@@ -46,6 +50,7 @@ class Loader
 {
 	protected $_locale;
 	protected $_query;
+	protected $_pageTypes;
 
 	/**
 	 * var to toggle the loading of deleted pages
@@ -57,14 +62,20 @@ class Loader
 	protected $_loadDeleted = false;
 
 	/**
-	 * Constructor.
+	 * Constructor
 	 *
-	 * @param \Locale $locale The locale to use for loading translations
+	 * @param \Locale             $locale    The current locale
+	 * @param Query               $query     Database query instance to use
+	 * @param PageTypeCollection  $pageTypes Page types available to the system
+	 * @param UserGroupCollection $groups    User groups available to the system
 	 */
-	public function __construct(/* \Locale */ $locale, Query $query)
+	public function __construct(/* \Locale */ $locale, Query $query,
+		PageTypeCollection $pageTypes, UserGroupCollection $groups)
 	{
-		$this->_locale = $locale;
-		$this->_query = $query;
+		$this->_locale     = $locale;
+		$this->_query      = $query;
+		$this->_pageTypes  = $pageTypes;
+		$this->_userGroups = $groups;
 	}
 
 	/**
@@ -151,17 +162,18 @@ class Loader
 	 */
 	public function checkSlugHistory($slug)
 	{
+		$slug = '/' . ltrim($slug, '/');
+
 		$result = $this->_query->run('
 			SELECT
 				page_id
 			FROM
-				slug_history
+				page_slug_history
 			WHERE
 				slug = ?s
 		', $slug);
 
-
-		return count($result) ? $this->getByID($result->first()->page_id) : false;
+		return count($result) ? $this->getByID($result->value()) : false;
 	}
 
 	/**
@@ -187,14 +199,43 @@ class Loader
 	}
 
 	/**
+	 * Return all files in an array
+	 * @return Array|File|false - 	returns either an array of File objects, a
+	 * 								single file object or false
+	 */
+	public function getAll()
+	{
+		$result = $this->_query->run('
+			SELECT
+				page_id
+			FROM
+				page
+		');
+
+		return count($result) ? $this->getByID($result->flatten()) : false;
+	}
+
+	public function getTopLevel()
+	{
+		return $this->getChildren(null);
+	}
+
+	/**
 	 * Get the child pages for a page.
 	 *
-	 * @param Page $page The page to find the children for
+	 * @param Page|null $page The page to find the children for
 	 *
 	 * @return array[Page]	 An array of prepared `Page` instances
 	 */
-	public function getChildren(Page $page)
+	public function getChildren(Page $page = null)
 	{
+		if (!$page) {
+			$page = new Page;
+			$page->left = 0;
+			$page->right = 99999;
+			$page->depth = -1;
+		}
+
 		$result = $this->_query->run('
 			SELECT
 				page_id
@@ -300,7 +341,6 @@ class Loader
 				page.page_id AS id,
 				page.title AS title,
 				page.type AS type,
-				page.publish_state AS publishState,
 				page.publish_at AS publishAt,
 				page.unpublish_at AS unpublishAt,
 				page.created_at AS createdAt,
@@ -309,7 +349,7 @@ class Loader
 				page.created_by AS updatedBy,
 				page.deleted_at AS deletedAt,
 				page.deleted_by AS deletedBy,
-				CONCAT((
+				IFNULL(CONCAT((
 					SELECT
 						CONCAT(\'/\',GROUP_CONCAT(p.slug ORDER BY p.position_depth ASC SEPARATOR \'/\'))
 					FROM
@@ -317,7 +357,7 @@ class Loader
 					WHERE
 						p.position_left < page.position_left
 					AND
-						p.position_right > page.position_right),\'/\',page.slug) AS slug,
+						p.position_right > page.position_right),\'/\',page.slug),page.slug) AS slug,
 
 				page.position_left AS `left`,
 				page.position_right AS `right`,
@@ -335,7 +375,7 @@ class Loader
 				page.password AS password,
 				page.access AS access,
 
-				page_access_group.group_id AS accessGroups,
+				GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups,
 
 				page.comment_enabled AS commentsEnabled,
 				page.comment_access AS commentsAccess,
@@ -348,11 +388,15 @@ class Loader
 			LEFT JOIN
 				page_access_group ON (page_access_group.page_id = page.page_id)
 			WHERE
-				page.page_id IN (?ij)',
-				array(
-					(array) $pageID,
-				)
-			);
+				page.page_id IN (?ij)
+			GROUP BY
+				page.page_id
+			ORDER BY
+				position_left ASC',
+			array(
+				(array) $pageID,
+			)
+		);
 
 		if (0 === count($result)) {
 			return false;
@@ -362,42 +406,63 @@ class Loader
 	}
 
 	/**
-	 * Load the results into Page objects and return them
+	 * Load the results into instances of `Page` and return them.
 	 *
-	 * @param  Result 		$results db result of the pages to load
-	 * @return Page|array   array of Page objects or somtimes singular
+	 * @param  Result $results  Database result of page load query
+	 *
+	 * @return Page|array[Page] Singular Page object, or array of page objects
 	 */
 	protected function _loadPage(Result $results)
 	{
-		$pages = $results->bindTo('\Message\Mothership\CMS\Page\Page');
+		$pages = $results->bindTo('Message\\Mothership\\CMS\\Page\\Page');
 
 		foreach ($results as $key => $data) {
-
 			// Skip deleted pages
 			if ($data->deletedAt && !$this->_loadDeleted) {
 				unset($pages[$key]);
 				continue;
 			}
 
+			$pages[$key]->visibilitySearch     = (bool) $pages[$key]->visibilitySearch;
+			$pages[$key]->visibilityMenu       = (bool) $pages[$key]->visibilityMenu;
+			$pages[$key]->visibilityAggregator = (bool) $pages[$key]->visibilityAggregator;
+			$pages[$key]->commentsEnabled      = (bool) $pages[$key]->commentsEnabled;
+			$pages[$key]->commentsApproval     = (bool) $pages[$key]->commentsApproval;
+
 			// Load the DateRange object for publishDateRange
 			$pages[$key]->publishDateRange = new DateRange(
-				new DateTimeImmutable('@' . $data->publishAt),
-				new DateTimeImmutable('@' . $data->unpublishAt)
+				$data->publishAt   ? new DateTimeImmutable(date('c', $data->publishAt))   : null,
+				$data->unpublishAt ? new DateTimeImmutable(date('c', $data->unpublishAt)) : null
 			);
+
+			// Get the page type
+			$pages[$key]->type = $this->_pageTypes->get($data->type);
+
 			$pages[$key]->slug = new Slug($data->slug);
+			$pages[$key]->type = clone $this->_pageTypes->get($data->type);
 
 			// Load authorship details
 			$pages[$key]->authorship = new Authorship;
-			$pages[$key]->authorship->create(new DateTimeImmutable('@' . $data->createdAt), $data->createdBy);
+			$pages[$key]->authorship->create(new DateTimeImmutable(date('c',$data->createdAt)), $data->createdBy);
 
 			if ($data->updatedAt) {
-				$pages[$key]->authorship->update(new DateTimeImmutable('@' . $data->updatedAt), $data->updatedBy);
+				$pages[$key]->authorship->update(new DateTimeImmutable(date('c',$data->updatedAt)), $data->updatedBy);
 			}
 
 			if ($data->deletedAt) {
-				$pages[$key]->authorship->delete(new DateTimeImmutable('@' . $data->deletedAt), $data->deletedBy);
+				$pages[$key]->authorship->delete(new DateTimeImmutable(date('c',$data->deletedAt)), $data->deletedBy);
+			}
+
+			// Load access groups
+			$groups = array_filter(explode(',', $data->accessGroups));
+			$pages[$key]->accessGroups = array();
+			foreach ($groups as $groupName) {
+				if ($group = $this->_userGroups->get(trim($groupName))) {
+					$pages[$key]->accessGroups[$group->getName()] = $group;
+				}
 			}
 		}
+
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
 	}
 }
