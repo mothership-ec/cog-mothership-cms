@@ -57,7 +57,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 		}
 		$this->get('cms.page.edit')->publish($page);
 
-		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
+		return $this->redirectToReferer();
 	}
 
 	public function unpublish($pageID, $force = false)
@@ -79,7 +79,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 		}
 		$this->get('cms.page.edit')->unpublish($page);
 
-		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
+		return $this->redirectToReferer();
 	}
 
 	protected function _getForm(Page $page)
@@ -93,8 +93,13 @@ class Publishing extends \Message\Cog\Controller\Controller
 				'unpublish_date' => $page->publishDateRange->getEnd(),
 			));;
 
-		$form->add('publish_date', 'datetime', 'on');
-		$form->add('unpublish_date', 'datetime', 'on');
+		$form->add('publish_date', 'datetime', 'on')
+			->val()
+			->optional();
+
+		$form->add('unpublish_date', 'datetime', 'on')
+			->val()
+			->optional();
 
 		return $form;
 	}
