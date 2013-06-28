@@ -9,6 +9,7 @@ use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\DB\NestedSetHelper;
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\DateTimeImmutable;
+use Message\Cog\ValueObject\Slug;
 use Message\User\UserInterface;
 use Message\User\User;
 
@@ -71,10 +72,6 @@ class Edit {
 				page.visibility_aggregator = :visibilityAggregator?i,
 				page.password = :password?s,
 				page.access = :access?s,
-				page.slug 	= :slug?s,
-				/*
-				page_access_group.group_id = :accessGroups?i,
-				*/
 				page.comment_enabled = :commentsEnabled?i,
 				page.comment_access = :commentsAccess?i,
 				page.comment_access = :commentsAccessGroups?i,
@@ -109,7 +106,6 @@ class Edit {
 				'commentsAccessGroups' => $page->commentsAccessGroups,
 				'commentsApproval'     => $page->commentsApproval,
 				'commentsExpiry'       => $page->commentsExpiry,
-				'slug'				   => $page->slug->getLastSegment(),
 			)
 		);
 
@@ -125,6 +121,60 @@ class Edit {
 
 		return $event->getpage();
 	}
+
+	/**
+	 * Update the slug and insert the old slug into the historical slug table
+	 *
+	 * @param  Page   $page    	Page object to udpate
+	 * @param  string $newSlug  The new slug to update
+	 *
+	 * @return Page          	Return the updated Page object
+	 */
+	public function updateSlug(Page $page, $newSlug)
+	{
+		// Get all the segements
+		$segements = $page->slug->getSegments();
+		$date = new DateTimeImmutable;
+		$result = $this->_query->run('
+			INSERT INTO
+				page_slug_history
+			SET
+				page_id = ?i,
+				slug 	= ?s,
+				created_at = ?d,
+				created_by = ?i',
+			array(
+				$page->id,
+				$page->slug->getFull(),
+				$date,
+				$this->_currentUser->id,
+			)
+		);
+
+		$update = $this->_query->run('
+			UPDATE
+				page
+			SET
+				slug = ?s
+			WHERE
+				page_id = ?i',
+			array(
+				$newSlug,
+				$page->id,
+			)
+		);
+		// Remove the last one
+		$last = array_pop($segements);
+		// Set the new one to the end of the array
+		$segments[] = $newSlug;
+		// Create a new slug object
+		$slug = new Slug($segments);
+		// Add it to the page object
+		$page->slug = $slug;
+
+		return $page;
+	}
+
 
 	/**
 	 * Set the page as Published

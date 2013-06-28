@@ -166,16 +166,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 			// If the slug has changed then create a new slug onject
 			if ($page->slug != $data['slug']) {
-				// Get all the segements
-				$segements = $page->slug->getSegments();
-				// Remove the last one
-				$last = array_pop($segements);
-				// Set the new one to the end of the array
-				$segments[] = $data['slug'];
-				// Create a new slug object
-				$slug = new Slug($segments);
-				// Add it to the page object
-				$page->slug = $slug;
+				$page = $this->get('cms.page.edit')->updateSlug($page, $data['slug']);
 			}
 
 			$page->visibilitySearch 	= isset($data['visibility_search']);
