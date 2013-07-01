@@ -164,16 +164,36 @@ class Edit extends \Message\Cog\Controller\Controller
 		$form = $this->_getAttibuteForm($page);
 
 		if ($form->isValid() && $data = $form->getFilteredData()) {
-			$checkSlug = $this->get('cms.page.loader')->getBySlug($data['slug'], true);
-			// Check the slug doesn't already exist and that there isn't a
-			// historical slug of the same name
-			if ($checkSlug && (is_array($checkSlug) || $checkSlug->id != $pageID)) {
-				$this->addFlash('error', 'This slug already exists');
+			$slugSegments = $page->slug->getSegments();
+			$last  = array_pop($slugSegments);
+			$slugSegments[] = $data['slug'];
+			$checkSlug = $this->get('cms.page.loader')->getBySlug('/'.implode('/',$slugSegments), false);
+
+			// If checkSlug is false then check the history too
+			if (!$checkSlug) {
+				$historicalSlug = $this->get('cms.page.loader')
+											->includeDeleted(true)
+											->getBySlug($data['slug'], true);
+				var_dump($historicalSlug); exit;
+
+				if ($historicalSlug && $historicalSlug->id != $pageID) {
+					if ($historicalSlug->a) {
+					$this->addFlash('error', 'This slug has been used in the past and is being redirected to <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $checkSlug->id)).'">this page</a>. Would you like to use this slug anyway?'
+					);
+				}
+
+					return $this->redirectToReferer();
+				}
+			}
+
+			if ($checkSlug && $checkSlug->id != $pageID) {
+				$this->addFlash('error', 'This slug is already in use on <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $checkSlug->id)).'">this page</a>'
+				);
 
 				return $this->redirectToReferer();
 			}
 
-			// If the slug has changed then create a new slug object
+			// If the slug has changed then udpate the slug
 			if ($page->slug->getLastSegment() != $data['slug']) {
 				$page = $this->get('cms.page.edit')->updateSlug($page, $data['slug']);
 			}
@@ -188,7 +208,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		}
 		$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
 
-		return $this->redirectToRoute('ms.cp.cms.edit.attributes.', array('pageID' => $page->id));
+		return $this->redirectToRoute('ms.cp.cms.edit.attributes', array('pageID' => $page->id));
 
 	}
 
