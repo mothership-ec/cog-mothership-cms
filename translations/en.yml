@@ -1,6 +1,6 @@
 ms.cms:
   repeatable_group:
-    add: "{0} Add a %name%|]1,Inf] Add another %name%"
+    add: Add a %name%|Add another %name%
   attributes:
     slug:
       label: URL Segment
