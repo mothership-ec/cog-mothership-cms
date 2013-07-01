@@ -149,6 +149,15 @@ class Edit extends \Message\Cog\Controller\Controller
 		return $form;
 	}
 
+	/**
+	 * Validate the input and update the attributes
+	 *
+	 * @todo 	We need a way to check that the slug is still in the same position
+	 *        	As when we add moving of pages the slug might be different *or*
+	 *        	already exist in that new section.
+	 *
+	 * @param  	int 	$pageID 	id of the Page object to be loaded and updated
+	 */
 	public function attributesAction($pageID)
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
