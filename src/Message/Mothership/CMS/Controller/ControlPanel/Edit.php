@@ -165,7 +165,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			}
 
 			// If the slug has changed then create a new slug onject
-			if ($page->slug != $data['slug']) {
+			if ($page->slug->getLastSegment() != $data['slug']) {
 				$page = $this->get('cms.page.edit')->updateSlug($page, $data['slug']);
 			}
 
