@@ -86,6 +86,7 @@ class ContentEdit
 				}
 
 				// Set the values
+				$val = array_values($val);
 				foreach ($val as $i => $instance) {
 					foreach ($instance as $fieldName => $value) {
 						$part->get($i)->$fieldName->setValue($value);
