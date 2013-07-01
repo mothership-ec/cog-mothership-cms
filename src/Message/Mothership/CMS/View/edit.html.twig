@@ -5,12 +5,12 @@
 {% endblock %}
 
 {% block main %}
-	<hgroup>
+	<hgroup class="title">
 		<h1>{{ page.title }}</h1>
 		<h2>{{ page.type.getDisplayName() }}</h2>
 	</hgroup>
 
-	<form action="{{ url('ms.cp.cms.edit.action',{pageID: page.id}) }}" method="post">
+	<form class="edit-title" action="{{ url('ms.cp.cms.edit.action',{pageID: page.id}) }}" method="post">
 
 		<label for="edit-title">Title</label>
 		<input type="text" name="edit[title]" id="edit-title" value="{{ page.title }}" />
@@ -18,18 +18,22 @@
 		<button type="submit" id="edit-submit" value="Update Title">Update Title</button>
 	</form>
 
-	<ul class="tabs">
-		<li><a href="{{ url('ms.cp.cms.edit.content', {pageID: page.id}) }}">Content</a></li>
-		<li><a href="{{ url('ms.cp.cms.edit.attributes', {pageID: page.id}) }}">Attributes</a></li>
-		<li><a href="{{ url('ms.cp.cms.edit.metadata', {pageID: page.id}) }}">Meta details</a></li>
-	</ul>
+	<div class="topbar">
+		<ul class="tabs">
+			<li><a href="{{ url('ms.cp.cms.edit.content', {pageID: page.id}) }}">Content</a></li>
+			<li><a href="{{ url('ms.cp.cms.edit.attributes', {pageID: page.id}) }}">Attributes</a></li>
+			<li><a href="{{ url('ms.cp.cms.edit.metadata', {pageID: page.id}) }}">Meta details</a></li>
+		</ul>
 
-	<form action="{{ url('ms.cp.cms.delete',{pageID: page.id}) }}" method="post">
-		<input type="hidden" name="method" value="DELETE">
-		<button type="submit" id="edit-submit" value="Delete page">Delete page</button>
-	</form>
+		<form action="{{ url('ms.cp.cms.delete',{pageID: page.id}) }}" method="post">
+			<input type="hidden" name="method" value="DELETE">
+			<button type="submit" id="edit-submit" value="Delete page">Delete page</button>
+		</form>
+	</div>
 
+	<div class="publish">
 	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Publishing#renderForm', {pageID: page.id})) }}
+	</div>
 
 	<section>
 		{% block form %}{% endblock %}

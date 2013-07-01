@@ -1,4 +1,9 @@
-<a href="{{ url('ms.cp.cms.create')}}" class="create">Create</a>
+<form action="" class="search">
+    <input type="search" placeholder="Search content...">
+    <button>Search</button>
+</form>
+
+<a href="{{ url('ms.cp.cms.create')}}" class="create">Add a new page</a>
 
 <ol class="main-menu">
     {{ _self.menu_links(tree) }}
