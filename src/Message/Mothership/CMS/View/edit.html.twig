@@ -21,15 +21,19 @@
 	<div class="topbar">
 		{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Edit#tabs'))}}
 
-		<form action="{{ url('ms.cp.cms.delete',{pageID: page.id}) }}" method="post">
-			<input type="hidden" name="method" value="DELETE">
-			<button type="submit" id="edit-submit" value="Delete page">Delete page</button>
-		</form>
+		<div class="controls">
+			<form action="{{ url('ms.cp.cms.delete',{pageID: page.id}) }}" method="post">
+				<input type="hidden" name="method" value="DELETE">
+				<button type="submit" id="edit-submit" value="Delete page" class="delete-page">Delete page</button>
+			</form>
+			<div class="publish">
+				{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Publishing#renderForm', {pageID: page.id})) }}
+			</div>
+		</div>
+
 	</div>
 
-	<div class="publish">
-	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Publishing#renderForm', {pageID: page.id})) }}
-	</div>
+
 
 	<section>
 		{% block form %}{% endblock %}
