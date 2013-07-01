@@ -173,7 +173,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				return $this->redirectToReferer();
 			}
 
-			// If the slug has changed then create a new slug onject
+			// If the slug has changed then create a new slug object
 			if ($page->slug->getLastSegment() != $data['slug']) {
 				$page = $this->get('cms.page.edit')->updateSlug($page, $data['slug']);
 			}
@@ -186,9 +186,9 @@ class Edit extends \Message\Cog\Controller\Controller
 			$page = $this->get('cms.page.edit')->save($page);
 
 		}
-		$this->addFlash('success', $this->trans('ms.cms.feedback.success', array('%task%' => 'Attributes')));
+		$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
 
-		return $this->redirectToRoute('ms.cp.cms.edit.attributes', array('pageID' => $page->id));
+		return $this->redirectToRoute('ms.cp.cms.edit.attributes.', array('pageID' => $page->id));
 
 	}
 
