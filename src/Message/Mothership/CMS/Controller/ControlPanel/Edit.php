@@ -23,6 +23,28 @@ class Edit extends \Message\Cog\Controller\Controller
 		));
 	}
 
+	public function tabs()
+	{
+		$tabs = array(
+			'Content' => $this->generateUrl('ms.cp.cms.edit.content', array(
+				'pageID' => $this->get('http.request.master')->get('pageID')
+			)),
+			'Attributes' => $this->generateUrl('ms.cp.cms.edit.attributes', array(
+				'pageID' => $this->get('http.request.master')->get('pageID')
+			)),
+			'Metadata' => $this->generateUrl('ms.cp.cms.edit.metadata', array(
+				'pageID' => $this->get('http.request.master')->get('pageID')
+			)),
+		);
+
+		$current = ucfirst(trim(strrchr($this->get('http.request.master')->get('_controller'), '::'), ':'));
+
+		return $this->render('::edit/tabs', array(
+			'tabs'    => $tabs,
+			'current' => $current,
+		));
+	}
+
 	/**
 	 * POST action for updating the page's title.
 	 *

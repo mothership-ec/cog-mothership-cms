@@ -19,11 +19,7 @@
 	</form>
 
 	<div class="topbar">
-		<ul class="tabs">
-			<li><a href="{{ url('ms.cp.cms.edit.content', {pageID: page.id}) }}">Content</a></li>
-			<li><a href="{{ url('ms.cp.cms.edit.attributes', {pageID: page.id}) }}">Attributes</a></li>
-			<li><a href="{{ url('ms.cp.cms.edit.metadata', {pageID: page.id}) }}">Meta details</a></li>
-		</ul>
+		{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Edit#tabs'))}}
 
 		<form action="{{ url('ms.cp.cms.delete',{pageID: page.id}) }}" method="post">
 			<input type="hidden" name="method" value="DELETE">
