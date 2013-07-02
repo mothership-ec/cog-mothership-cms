@@ -22,6 +22,28 @@ class Edit extends \Message\Cog\Controller\Controller
 		));
 	}
 
+	public function tabs()
+	{
+		$tabs = array(
+			'Content' => $this->generateUrl('ms.cp.cms.edit.content', array(
+				'pageID' => $this->get('http.request.master')->get('pageID')
+			)),
+			'Attributes' => $this->generateUrl('ms.cp.cms.edit.attributes', array(
+				'pageID' => $this->get('http.request.master')->get('pageID')
+			)),
+			'Metadata' => $this->generateUrl('ms.cp.cms.edit.metadata', array(
+				'pageID' => $this->get('http.request.master')->get('pageID')
+			)),
+		);
+
+		$current = ucfirst(trim(strrchr($this->get('http.request.master')->get('_controller'), '::'), ':'));
+
+		return $this->render('::edit/tabs', array(
+			'tabs'    => $tabs,
+			'current' => $current,
+		));
+	}
+
 	/**
 	 * POST action for updating the page's title.
 	 *
@@ -150,19 +172,59 @@ class Edit extends \Message\Cog\Controller\Controller
 	}
 
 	/**
-	 * Render the metadata form.
+	 * Render metadata form
 	 *
-	 * @param int $pageID The page ID
+	 * @param int $pageID
+	 *
+	 * @return Response
 	 */
 	public function metadata($pageID)
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
 
+		$form = $this->_getMetadataForm($page);
+
 		return $this->render('::edit/metadata', array(
 			'page' => $page,
+			'form' => $form,
 		));
 	}
 
+	/**
+	 * Validate metadata and save to page
+	 *
+	 * @param int $pageID
+	 *
+	 * @return \Message\Cog\HTTP\RedirectResponse
+	 */
+	public function metadataAction($pageID)
+	{
+		$page   = $this->get('cms.page.loader')->getByID($pageID);
+		$form   = $this->_getMetadataForm($page);
+
+		if ($form->isValid() && ($data = $form->getFilteredData())) {
+
+			foreach ($data as $key => $value) {
+				$page->$key = (!empty($value)) ? $value : $page->$key;
+			}
+
+			$this->get('cms.page.edit')->save($page);
+
+			$this->addFlash('success', 'Metadata successfully saved');
+		}
+
+		return $this->redirectToReferer();
+
+	}
+
+	/**
+	 * Get content form
+	 *
+	 * @param Page $page
+	 * @param Content $content
+	 *
+	 * @return mixed
+	 */
 	protected function _getContentForm(Page $page, Content $content = null)
 	{
 		if (!$content) {
@@ -176,5 +238,58 @@ class Edit extends \Message\Cog\Controller\Controller
 			)));
 
 		return $this->get('cms.field.form')->generate($form, $content);
+	}
+
+	/**
+	 * Get form for metadata section of edit page
+	 *
+	 * @param Page $page
+	 *
+	 * @return \Message\Cog\Form\Handler
+	 */
+	protected function _getMetadataForm(Page $page, Content $content = null)
+	{
+		$defaults = array(
+			'metaTitle' => $page->metaTitle,
+			'metaDescription' => $page->metaDescription,
+			'metaHtmlHead' => $page->metaHtmlHead,
+			'metaHtmlFoot' => $page->metaHtmlFoot,
+		);
+
+		if (!$content) {
+			$content = $this->get('cms.page.content_loader')->load($page);
+		}
+
+		$form = $this->get('form');
+		$form->setAction($this->generateUrl('ms.cp.cms.edit.metadata.action', array(
+			'pageID' => $page->id
+		)))
+			->setMethod('post')
+			->setDefaultValues($defaults);
+		$form->add('metaTitle', 'text', $this->trans('ms.cms.metadata.title.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.metadata.title.help')
+		))
+			->val()
+			->optional()
+			->maxLength(255);
+		$form->add('metaDescription', 'textarea', $this->trans('ms.cms.metadata.description.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.metadata.description.help')
+		))
+			->val()
+			->optional();
+		$form->add('metaHtmlHead', 'textarea', $this->trans('ms.cms.metadata.htmlHead.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.metadata.htmlHead.help')
+		))
+			->val()
+			->optional();
+		$form->add('metaHtmlFoot', 'textarea', $this->trans('ms.cms.metadata.htmlFoot.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.metadata.htmlFoot.help')
+		))
+			->val()
+			->optional();
+
+		return $form;
+
+
 	}
 }
