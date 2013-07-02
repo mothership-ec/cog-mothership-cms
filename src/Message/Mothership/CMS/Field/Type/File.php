@@ -22,9 +22,23 @@ class File extends Field implements ContainerAwareInterface
 
 	protected $_allowedTypes;
 
+	/**
+	 * Cast this field to a string.
+	 *
+	 * This outputs the public path to the file, or a blank string if the file
+	 * could not be found.
+	 *
+	 * @return string Public path to the file
+	 */
 	public function __toString()
 	{
-		return $this->getValue()->getPublicUrl();
+		if ($file = $this->getValue()) {
+			$cogFile = new Filesystem\File($this->getValue()->url);
+
+			return $cogFile->getPublicUrl();
+		}
+
+		return '';
 	}
 
 	/**
