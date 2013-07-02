@@ -136,7 +136,7 @@ class Edit {
 		$segements = $page->slug->getSegments();
 		$date = new DateTimeImmutable;
 		$result = $this->_query->run('
-			INSERT INTO
+			REPLACE INTO
 				page_slug_history
 			SET
 				page_id = ?i,
@@ -175,6 +175,22 @@ class Edit {
 		return $page;
 	}
 
+	/**
+	 * Remove a given slug from the page_slug_history table
+	 *
+	 * @param  string 	$slug 	The slug to remove
+	 */
+	public function removeHistoricalSlug($slug)
+	{
+		$delete = $this->_query->run('
+			DELETE FROM
+				page_slug_history
+			WHERE
+				slug = ?s
+		', array(
+			$slug
+		));
+	}
 
 	/**
 	 * Set the page as Published

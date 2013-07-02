@@ -150,6 +150,29 @@ class Edit extends \Message\Cog\Controller\Controller
 	}
 
 	/**
+	 * Action to remove the slug from the history and add that slug to a new page
+	 *
+	 * @param  int 		$pageID 	The pageID of the page
+	 * @param  string 	$slug   	The slug to remove from history and update
+	 *                          	the given page
+	 */
+	public function forceSlugAction($pageID, $slug)
+	{
+		$page = $this->get('cms.page.loader')->getByID($pageID);
+
+		$slugSegments = $page->slug->getSegments();
+		$last  = array_pop($slugSegments);
+		$slugSegments[] = $slug;
+		$fullSlug = '/'.implode('/',$slugSegments);
+
+		$this->get('cms.page.edit')->removeHistoricalSlug($fullSlug);
+		$page = $this->_updateSlug($page, $slug);
+		$this->addFlash('success', 'The url was successfully updated');
+
+		return $this->redirectToReferer();
+	}
+
+	/**
 	 * Validate the input and update the attributes
 	 *
 	 * @todo 	We need a way to check that the slug is still in the same position
@@ -164,39 +187,8 @@ class Edit extends \Message\Cog\Controller\Controller
 		$form = $this->_getAttibuteForm($page);
 
 		if ($form->isValid() && $data = $form->getFilteredData()) {
-			$slugSegments = $page->slug->getSegments();
-			$last  = array_pop($slugSegments);
-			$slugSegments[] = $data['slug'];
-			$checkSlug = $this->get('cms.page.loader')->getBySlug('/'.implode('/',$slugSegments), false);
 
-			// If checkSlug is false then check the history too
-			if (!$checkSlug) {
-				$historicalSlug = $this->get('cms.page.loader')
-											->includeDeleted(true)
-											->getBySlug($data['slug'], true);
-				var_dump($historicalSlug); exit;
-
-				if ($historicalSlug && $historicalSlug->id != $pageID) {
-					if ($historicalSlug->a) {
-					$this->addFlash('error', 'This slug has been used in the past and is being redirected to <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $checkSlug->id)).'">this page</a>. Would you like to use this slug anyway?'
-					);
-				}
-
-					return $this->redirectToReferer();
-				}
-			}
-
-			if ($checkSlug && $checkSlug->id != $pageID) {
-				$this->addFlash('error', 'This slug is already in use on <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $checkSlug->id)).'">this page</a>'
-				);
-
-				return $this->redirectToReferer();
-			}
-
-			// If the slug has changed then udpate the slug
-			if ($page->slug->getLastSegment() != $data['slug']) {
-				$page = $this->get('cms.page.edit')->updateSlug($page, $data['slug']);
-			}
+			$page = $this->_updateSlug($page, $data['slug']);
 
 			$page->visibilitySearch 	= isset($data['visibility_search']);
 			$page->visibilityMenu 		= isset($data['visibility_menu']);
@@ -239,5 +231,62 @@ class Edit extends \Message\Cog\Controller\Controller
 			)));
 
 		return $this->get('cms.field.form')->generate($form, $content);
+	}
+
+	/**
+	 * Check to see whether we can update a slug or not. This also checks the
+	 * slug history and other pages and sets up the feedback to allow actions
+	 * to replace the old slug.
+	 *
+	 * @param  Page   	$page
+	 * @param  string 	$newSlug [description]
+	 *
+	 * @return Page 	$page
+	 */
+	protected function _updateSlug(Page $page, $newSlug)
+	{
+			// Flag as to whether to update the slug
+			$update = true;
+
+			$slugSegments = $page->slug->getSegments();
+			$last  = array_pop($slugSegments);
+			$slugSegments[] = $newSlug;
+			$slug = '/'.implode('/',$slugSegments);
+			$checkSlug = $this->get('cms.page.loader')->getBySlug($slug, false);
+
+			// If not slug has been found, we need to check the history too
+			if (!$checkSlug) {
+				// Check for the slug historicaly and show deleted ones too
+				$historicalSlug = $this->get('cms.page.loader')
+										->includeDeleted(true)
+										->getBySlug($slug, true);
+				// If there is a page returned and it's not this page then offer
+				// a link to remove the slug from history and use it anyway
+				if ($historicalSlug && $historicalSlug->id != $page->id) {
+					// If it's been deleted then offer a differnt message that a non deleted one
+					if (!is_null($historicalSlug->authorship->deletedAt())) {
+						$this->addFlash('error', 'The url <code>'.$historicalSlug->slug->getFull().'</code> is saved against a page which has been deleted. Would you like to use this url anyway? <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)).'">Yes please Mothership you clever thing!</a>');
+					} else {
+						$this->addFlash('error', 'The url <code>'.$historicalSlug->slug->getFull().'</code> has been used in the past and is being redirected to <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $historicalSlug->id)).'">'.$historicalSlug->title.'</a>. Would you like to use this url anyway? <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)).'">Yes please!</a>');
+					}
+					// We shouldn't update the slug as we need action
+					$update = false;
+				}
+			}
+
+			if ($checkSlug && $checkSlug->id != $page->id) {
+				$this->addFlash('error', 'The url <code>'.$checkSlug->slug->getFull().'</code> is already in use on the page <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $checkSlug->id)).'">'.$checkSlug->title.'</a>');
+				// We shouldn't update the slug as we need action
+				$update = false;
+			}
+
+			// If the slug has changed then update the slug
+			if ($update && $page->slug->getLastSegment() != $newSlug) {
+				$page = $this->get('cms.page.edit')->updateSlug($page, $newSlug);
+			}
+
+			// return the updated or unchanged page
+			return $page;
+
 	}
 }

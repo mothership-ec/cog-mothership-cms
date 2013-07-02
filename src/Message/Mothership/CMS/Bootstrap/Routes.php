@@ -55,6 +55,11 @@ class Routes implements RoutesInterface
 			->setRequirement('pageID', '\d+')
 			->setMethod('POST');
 
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.attributes.slug.force', '/edit/{pageID}/attributes/slug/{slug}/{csrfHash}', '::Controller:ControlPanel:Edit#forceSlugAction')
+			->setRequirement('pageID', '\d+')
+			->setMethod('GET')
+			->enableCsrf('csrfHash');
+
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.attributes', '/edit/{pageID}/attributes', '::Controller:ControlPanel:Edit#attributes')
 			->setRequirement('pageID', '\d+');
 
