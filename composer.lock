@@ -129,7 +129,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog.git",
-                "reference": "87e49032c000ecd4a1829a0e33211c2f3e1415e4"
+                "reference": "24def9be4c5e5611860dfe52f9886e6db846c752"
             },
             "require": {
                 "ext-curl": "*",
@@ -195,7 +195,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog/issues"
             },
-            "time": "2013-06-26 15:15:27"
+            "time": "2013-07-01 09:59:02"
         },
         {
             "name": "message/cog-mothership-cp",
@@ -203,7 +203,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-mothership-cp.git",
-                "reference": "aa172207db1b81e4d498e64941d3c6605dbb4f54"
+                "reference": "b81845796fc34a424aeeb87ad4ce4a7392eaa596"
             },
             "require": {
                 "message/cog": "dev-master",
@@ -236,7 +236,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog-mothership-cp/issues"
             },
-            "time": "2013-06-25 16:08:04"
+            "time": "2013-07-01 09:06:51"
         },
         {
             "name": "message/cog-mothership-file-manager",
@@ -244,7 +244,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-mothership-file-manager.git",
-                "reference": "2455f8398366f6268cc5cb3347b316761c06c720"
+                "reference": "27e17d299d3a664e0035b56fb4c6a7b5f043d03f"
             },
             "require": {
                 "message/cog-mothership-cp": "dev-master",
@@ -281,7 +281,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog-mothership-file-manager/issues"
             },
-            "time": "2013-06-25 16:06:35"
+            "time": "2013-07-01 08:00:49"
         },
         {
             "name": "message/cog-user",

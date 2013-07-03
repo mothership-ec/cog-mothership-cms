@@ -1,7 +1,7 @@
 {% extends '::edit' %}
 {% block form %}
 
-
+{{ form_start(form) }}
 {{ form_row(form.slug) }}
 
 {{ form_row(form.visibility_search) }}
@@ -10,8 +10,6 @@
 
 {{ form_row(form.access) }}
 {{ form_row(form.access_groups) }}
-
-{{ form_row(form.tags) }}
 
 <h2>Authorship information</h2>
 
@@ -25,7 +23,6 @@
 </dl>
 
 <button type="submit" class="button small save" id="save-content">Save changes</button>
-
 {{ form_end(form) }}
 
 {% endblock %}
