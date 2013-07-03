@@ -282,6 +282,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 			// If the slug has changed then update the slug
 			if ($update && $page->slug->getLastSegment() != $newSlug) {
+				$this->get('cms.page.edit')->removeHistoricalSlug($slug);
 				$page = $this->get('cms.page.edit')->updateSlug($page, $newSlug);
 			}
 
