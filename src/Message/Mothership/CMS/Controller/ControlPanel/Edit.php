@@ -287,6 +287,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		))
 			->val()
 			->optional();
+		$form->add('test', 'ms-file');
 
 		return $form;
 
