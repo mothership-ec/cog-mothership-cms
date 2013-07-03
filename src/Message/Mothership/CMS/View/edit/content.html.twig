@@ -46,6 +46,8 @@
 					<a href="#" data-group-remove>Remove this group</a>
 				</section>
 			{% endfor %}
+			{% else %}
+			{% do form[name].setRendered %}
 			{% endif %}
 			<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}" data-group-index="{{ part.count }}">
 				{{ 'ms.cms.repeatable_group.add'|transchoice(part.count, {'%name%': 'page.' ~ page.type.getName ~ '.' ~ name ~ '.name'|trans}) }}
