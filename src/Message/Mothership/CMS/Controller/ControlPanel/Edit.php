@@ -265,9 +265,9 @@ class Edit extends \Message\Cog\Controller\Controller
 				if ($historicalSlug && $historicalSlug->id != $page->id) {
 					// If it's been deleted then offer a differnt message that a non deleted one
 					if (!is_null($historicalSlug->authorship->deletedAt())) {
-						$this->addFlash('error', 'The url <code>'.$historicalSlug->slug->getFull().'</code> is saved against a page which has been deleted. Would you like to use this url anyway? <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)).'">Yes please Mothership you clever thing!</a>');
+						$this->addFlash('error', 'The url <code>'.$slug.'</code> is saved against a page which has been deleted. Would you like to use this url anyway? <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)).'">Yes please Mothership you clever thing!</a>');
 					} else {
-						$this->addFlash('error', 'The url <code>'.$historicalSlug->slug->getFull().'</code> has been used in the past and is being redirected to <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $historicalSlug->id)).'">'.$historicalSlug->title.'</a>. Would you like to use this url anyway? <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)).'">Yes please!</a>');
+						$this->addFlash('error', 'The url <code>'.$slug.'</code> has been used in the past and is being redirected to <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $historicalSlug->id)).'">'.$historicalSlug->title.'</a>. Would you like to use this url anyway? <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)).'">Yes please!</a>');
 					}
 					// We shouldn't update the slug as we need action
 					$update = false;
