@@ -20,12 +20,4 @@ abstract class Field extends BaseField
 
 		return $this;
 	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getValue()
-	{
-		return $this->_value;
-	}
 }

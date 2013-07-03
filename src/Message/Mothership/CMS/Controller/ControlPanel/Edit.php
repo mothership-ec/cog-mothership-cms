@@ -2,12 +2,11 @@
 
 namespace Message\Mothership\CMS\Controller\ControlPanel;
 
+use Message\Mothership\CMS\Field;
+
 use Message\Mothership\CMS\Page\Authorisation;
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Content;
-use Message\Mothership\CMS\Field\Form;
-use Message\Mothership\CMS\Field\Factory;
-use Message\Mothership\CMS\Field\RepeatableContainer;
 
 class Edit extends \Message\Cog\Controller\Controller
 {
@@ -80,7 +79,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		// Build array of repeatable groups & their fields for use in the view
 		$repeatables = array();
 		foreach ($content as $name => $contentPart) {
-			if ($contentPart instanceof RepeatableContainer) {
+			if ($contentPart instanceof Field\RepeatableContainer) {
 				$repeatables[$name] = array();
 				foreach ($contentPart->getFields() as $field) {
 					$repeatables[$name][] = $field->getName();
@@ -98,17 +97,25 @@ class Edit extends \Message\Cog\Controller\Controller
 
 	public function contentAction($pageID)
 	{
-		$page = $this->get('cms.page.loader')->getByID($pageID);
-		$form = $this->_getContentForm($page);
+		$page    = $this->get('cms.page.loader')->getByID($pageID);
+		$content = $this->get('cms.page.content_loader')->load($page);
+		$form    = $this->_getContentForm($page, $content);
 
 		// Redirect user back to the form if there are any errors
 		if (!$form->isValid()) {
 			return $this->redirectToReferer();
 		}
 
-		$data = $form->getFilteredData();
+		$content = $this->get('cms.page.content_edit')->updateContent($form->getFilteredData(), $content);
 
-		var_dump($form);exit;
+		if ($this->get('cms.page.content_edit')->save($page, $content)) {
+			$this->addFlash('success', 'Content updated successfully');
+		}
+		else {
+			$this->addFlash('error', 'An error occured while updating content');
+		}
+
+		return $this->redirectToReferer();
 	}
 
 	/**
