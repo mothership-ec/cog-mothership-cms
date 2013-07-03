@@ -11,12 +11,6 @@
 {{ form_row(form.access) }}
 {{ form_row(form.access_groups) }}
 
-<!-- {{ form_row(form.tags) }}
- -->
-<button type="submit">Save changes</button>
-
-{{ form_end(form) }}
-
 <h2>Authorship information</h2>
 
 <dl class="authorship">
@@ -28,8 +22,7 @@
 	{% endif %}
 </dl>
 
-<!-- <button type="submit">Save changes</button>
- -->
+<button type="submit" class="button small save" id="save-content">Save changes</button>
 {{ form_end(form) }}
 
 {% endblock %}

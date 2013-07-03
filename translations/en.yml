@@ -4,7 +4,7 @@ ms.cms:
       attributes:
         success: 'Attributes were successfully updated'
   repeatable_group:
-    add: "{0} Add a %name%|]1,Inf] Add another %name%"
+    add: "{0} Add a %name%|[1,Inf] Add another %name%"
   attributes:
     slug:
       label: URL Segment

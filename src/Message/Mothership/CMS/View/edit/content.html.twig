@@ -1,10 +1,10 @@
 {% macro getRepeatablePrototype(form, groupName, fields) %}
 {% filter escape %}
-	<section>
+	<section class="group">
 		{% for field in fields %}
 		{{ form_row(form[groupName][field].vars.prototype) }}
 		{% endfor %}
-		<a href="#">Remove this group</a>
+		<a href="#" data-group-add>Remove this group</a>
 	</section>
 {% endfilter %}
 {% endmacro %}
@@ -22,7 +22,7 @@
 		<section class="group">
 			<h2>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.name'|trans }}</h2>
 			<p>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.description'|trans }}</p>
-			<section>
+			<section class="group">
 				{% for field in part.getFields %}
 				{{ form_row(form[name][field.getName]) }}
 				{% endfor %}
@@ -39,22 +39,24 @@
 			<p>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.description'|trans }}</p>
 			{% if part.count > 0 %}
 			{% for i in range(0, part.count - 1) %}
-				<section>
+				<section class="group">
 					{% for field in repeatables[name] %}
 					{{ form_row(form[name][field][i]) }}
 					{% endfor %}
-					<a href="#">Remove this group</a>
+					<a href="#" data-group-remove>Remove this group</a>
 				</section>
 			{% endfor %}
+			{% else %}
+			{% do form[name].setRendered %}
 			{% endif %}
-			<a href="#" data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}">
+			<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}" data-group-index="{{ part.count }}">
 				{{ 'ms.cms.repeatable_group.add'|transchoice(part.count, {'%name%': 'page.' ~ page.type.getName ~ '.' ~ name ~ '.name'|trans}) }}
 			</a>
 		</section>
 	{% endif %}
 {% endfor %}
 
-<button type="submit">Save changes</button>
+<button type="submit" class="button small save" id="save-content">Save changes</button>
 
 {{ form_end(form)}}
 
