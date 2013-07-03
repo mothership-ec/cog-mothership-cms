@@ -153,7 +153,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				'visibility_aggregator' => $page->visibilityAggregator,
 				'access'                => $page->access,
 				'access_groups'         => array_keys($page->accessGroups),
-				'tags'                  => implode(', ', $page->tags),
+				//'tags'                  => implode(', ', $page->tags),
 			));
 
 		$form->add('slug', 'text', $this->trans('ms.cms.attributes.slug.label'))
@@ -175,8 +175,8 @@ class Edit extends \Message\Cog\Controller\Controller
 			'multiple' => true,
 		))->val()->optional();
 
-		$form->add('tags', 'textarea', $this->trans('ms.cms.attributes.tags.label'))
-			->val()->optional();
+		//$form->add('tags', 'textarea', $this->trans('ms.cms.attributes.tags.label'))
+		//	->val()->optional();
 
 		return $form;
 	}
