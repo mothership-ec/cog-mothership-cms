@@ -24,6 +24,19 @@ abstract class MultipleValueField extends BaseField
 	}
 
 	/**
+	 * Print the class directly. This returns all of the field values
+	 * concatenated with a colon character.
+	 *
+	 * {@inheritdoc}
+	 *
+	 * @return string The field values as a string
+	 */
+	public function __toString()
+	{
+		return implode(':', $this->_value);
+	}
+
+	/**
 	 * Get a field property.
 	 *
 	 * @param  string $name Property name
@@ -68,15 +81,25 @@ abstract class MultipleValueField extends BaseField
 	/**
 	 * Add a value to this field.
 	 *
-	 * @param string $key   The field key
-	 * @param mixed  $value The field value
+	 * If an array is passed as the first argument, the array is assumed to be
+	 * an array of values, where the key is the value key. In this case, the
+	 * array is proxied to `setValues()`.
+	 *
+	 * @see   setValues
+	 *
+	 * @param array|string $key   The field key, or an array of keys & values
+	 * @param mixed|null   $value The field value
 	 *
 	 * @throws \InvalidArgumentException If the value key is falsey
 	 * @throws \InvalidArgumentException If the value key is not valid (does not
 	 *                                   exist in self::getValueKeys())
 	 */
-	public function setValue($key, $value)
+	public function setValue($key, $value = null)
 	{
+		if (is_array($key)) {
+			return $this->setValues($key);
+		}
+
 		if (!$key) {
 			throw new \InvalidArgumentException('Field value must have a key');
 		}
@@ -90,19 +113,6 @@ abstract class MultipleValueField extends BaseField
 		}
 
 		$this->_value[$key] = $value;
-	}
-
-	/**
-	 * Print the class directly. This returns all of the field values
-	 * concatenated with a colon character.
-	 *
-	 * {@inheritdoc}
-	 *
-	 * @return string The field values as a string
-	 */
-	public function getValue()
-	{
-		return implode(':', $this->_value);
 	}
 
 	/**
