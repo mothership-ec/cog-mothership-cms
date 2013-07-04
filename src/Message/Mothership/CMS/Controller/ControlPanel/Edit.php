@@ -157,7 +157,6 @@ class Edit extends \Message\Cog\Controller\Controller
 				'tags'                  => implode(', ', $page->tags),
 				'parent'                => $parent ? $parent->id : 0,
 				'siblings'              => '',
-				//'tags'                => implode(', ', $page->tags),
 			));
 
 		$form->add('slug', 'text', $this->trans('ms.cms.attributes.slug.label'))
@@ -177,8 +176,10 @@ class Edit extends \Message\Cog\Controller\Controller
 		$siblings = $this->get('cms.page.loader')->getSiblings($page);
 		$siblingChoices = array();
 		$siblingChoices[0] = 'Move to top';
-		foreach ($siblings as $s) {
-			$siblingChoices[$s->id] = $s->title;
+		if ($siblings) {
+			foreach ($siblings as $s) {
+				$siblingChoices[$s->id] = $s->title;
+			}
 		}
 		$form->add('siblings', 'choice','Move to top or after:', array('choices' => $siblingChoices))
 		->val()->optional();
@@ -187,17 +188,27 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		$choices = array();
 		foreach ($parents as $p) {
-			$spaces = str_repeat("-", $p->depth);
+			// don't display the option to move it to a page which doesn't allow children
+			$spaces = str_repeat("--", $p->depth);
+
+			if (!$p->type->allowChildren()) {
+				continue;
+			}
+
+			if ($p->left > $page->left && $p->right < $page->right) {
+				continue;
+			}
+
 			$choices[$p->id] = $spaces.$p->title;
 		}
-		$form->add('parent', 'choice', 'Parent', array('choices' => $choices))->val()->optional();
+		$form->add('parent', 'choice', 'Parent', array('choices' => $choices))
+			->val()
+			->optional();
+
 		$form->add('access_groups', 'choice', $this->trans('ms.cms.attributes.access_groups.label'), array(
 			'choices'  => $this->get('user.groups')->flatten(),
 			'multiple' => true,
 		))->val()->optional();
-
-		//$form->add('tags', 'textarea', $this->trans('ms.cms.attributes.tags.label'))
-		//	->val()->optional();
 
 		return $form;
 	}
