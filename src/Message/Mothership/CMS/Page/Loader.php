@@ -153,6 +153,28 @@ class Loader
 		return false;
 	}
 
+	public function getParentID(Page $page)
+	{
+		$result = $this->_query->run('
+			SELECT
+				page_id
+			FROM
+				page
+			WHERE
+				position_left < ?i
+			AND
+				position_right > ?i
+			AND
+				position_depth = ?i -1',
+		array(
+			$page->left,
+			$page->left,
+			$page->depth,
+		));
+
+		return count($result) ? $this->getByID($result->value()) : false;
+	}
+
 
 	/**
 	 * Find a page by an ancestral slug
@@ -196,6 +218,18 @@ class Loader
 
 		return count($result) ? $this->getById($result->flatten()) : false;
 
+	}
+
+	public function getAllParents()
+	{
+		$result = $this->_query->run('
+			SELECT
+				page_id
+			FROM
+				page
+			WHERE
+				position_right != position_left +1 ');
+		return count($result) ? $this->getById($result->flatten()) : false;
 	}
 
 	/**

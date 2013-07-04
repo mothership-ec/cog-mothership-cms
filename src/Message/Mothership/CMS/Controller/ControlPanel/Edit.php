@@ -126,7 +126,7 @@ class Edit extends \Message\Cog\Controller\Controller
 	public function attributes($pageID)
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
-
+		$parent = $this->get('cms.page.loader')->getParentID($page);
 		$form = $this->get('form')
 			->setName('attributes')
 			->setMethod('POST')
@@ -141,6 +141,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				'access'                => $page->access,
 				'access_groups'         => $page->accessGroups,
 				'tags'                  => implode(', ', $page->tags),
+				'parent'				=> $parent ? $parent->id : 0,
 			));
 
 		$form->add('slug', 'text', $this->trans('ms.cms.attributes.slug.label'))
@@ -157,6 +158,13 @@ class Edit extends \Message\Cog\Controller\Controller
 			Authorisation::ACCESS_USER_GROUP => $this->trans('ms.cms.attributes.access.options.group'),
 		)));
 
+		$parents = $this->get('cms.page.loader')->getAllParents();
+		$choices = array();
+		foreach ($parents as $p) {
+			$choices[$p->id] = $p->title;
+		}
+
+		$form->add('parent', 'choice', 'Parent', array('choices' => $choices));
 		$form->add('access_groups', 'choice', $this->trans('ms.cms.attributes.access_groups.label'), array(
 			'choices'  => $this->get('user.groups')->flatten(),
 			'multiple' => true,
@@ -188,6 +196,31 @@ class Edit extends \Message\Cog\Controller\Controller
 			'page' => $page,
 			'form' => $form,
 		));
+	}
+
+	/**
+	 * Change the order of the children within a nested set. This would also move
+	 * the children nodes of any entry that is affected by the move.
+	 *
+	 * @param  int 		$pageID 		The id of the page we are going to move
+	 * @param  int  	$newIndexInSet	The index of the position itn the subtree
+	 */
+	public function changeOrder()
+	{
+		$ns = $this->get('cms.page.nested_set_helper');
+		$trans = $ns->move(46,9);
+		var_dump($trans->commit()); exit;
+	}
+
+	/**
+	 * This will move a node to a different parent of the tree.
+	 *
+	 * @param int 	$pageID 		The ID of the page we are going to move
+	 * @param int   $newParentID 	The ID of the new parent we are moving to
+	 */
+	public function changeParent($pageID, $newParentID)
+	{
+
 	}
 
 	/**

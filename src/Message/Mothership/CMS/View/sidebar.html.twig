@@ -5,18 +5,18 @@
 
 <a href="{{ url('ms.cp.cms.create')}}" class="create">Add a new page</a>
 
-<ol class="main-menu">
+<ul class="main-menu">
     {{ _self.menu_links(tree) }}
-</ol>
+</ul>
 
 {% macro menu_links(links) %}
     {% for link in links %}
         <li>
-            <a href="{{ url('ms.cp.cms.edit', {pageID: link.id}) }}">{{ link.title }}</a>
+            <a href="{{ url('ms.cp.cms.edit', {pageID: link.id}) }}"><strong>{{ link.left }}</strong> {{ link.title }} ({{ link.id }}) <strong>{{ link.right }}</strong></a>
             {% if link.children %}
-                <ol>
+                <ul>
                     {{ _self.menu_links(link.children) }}
-                </ol>
+                </ul>
             {% endif %}
         </li>
     {% endfor %}
