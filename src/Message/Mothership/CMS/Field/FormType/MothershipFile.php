@@ -9,11 +9,6 @@ use Symfony\Component\Form\FormInterface;
 
 class MothershipFile extends AbstractType
 {
-//	public function buildForm(FormBuilderInterface $builder, array $options)
-//	{
-//		$builder->add('file', 'hidden');
-//	}
-
 	public function getParent()
 	{
 		return 'hidden';
@@ -21,7 +16,7 @@ class MothershipFile extends AbstractType
 
 	public function getName()
 	{
-		return 'ms-file';
+		return 'ms_file';
 	}
 
 }

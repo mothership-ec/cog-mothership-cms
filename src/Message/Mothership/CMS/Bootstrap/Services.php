@@ -84,5 +84,14 @@ class Services implements ServicesInterface
 		$serviceContainer['cms.field.form'] = function($c) {
 			return new CMS\Field\Form($c);
 		};
+
+		$serviceContainer['form.factory'] = $serviceContainer->share(
+			$serviceContainer->extend('form.factory', function($factory, $c) {
+				$factory->addExtensions(array(
+					new \Message\Mothership\CMS\Field\FormType\CmsExtension,
+				));
+
+				return $factory;
+			}));
 	}
 }

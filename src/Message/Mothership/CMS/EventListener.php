@@ -22,7 +22,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 		return array(
 			'modules.load.success' => array(
 				array('registerGroups'),
-				array('addCmsExtension'),
 			),
 			BuildMenuEvent::BUILD_MAIN_MENU => array(
 				array('registerMainMenuItems')
@@ -49,26 +48,4 @@ class EventListener extends BaseListener implements SubscriberInterface
 			->add(new UserGroup\ContentManager);
 	}
 
-	public function addCmsExtension()
-	{
-		$loader = $this->_services['templating.engine.php']->getLoader();
-
-		$loader->addTemplatePathPatterns(
-			array(
-				__DIR__ . '/path/to/form/twig/views',
-				__DIR__ . '/path/to/form/php/views',
-			)
-		);
-
-		$this->_services['templating.engine.php']->setLoader($loader);
-
-		$this->_services['form.factory']->addExtensions(
-			array(
-				new \Message\Mothership\CMS\Field\FormType\CmsExtension
-			)
-		);
-
-		var_dump($this->_services['form.factory']); die();
-
-	}
 }
