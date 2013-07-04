@@ -15,12 +15,11 @@ use Message\Cog\Service\ContainerAwareInterface;
  */
 class RichText extends Field implements ContainerAwareInterface
 {
-
+	protected $_services;
+	protected $_engine  = 'markdown';
 	protected $_engines = array(
 		'markdown',
 	);
-
-	public $_engine = 'markdown';
 
 	public function __toString()
 	{
