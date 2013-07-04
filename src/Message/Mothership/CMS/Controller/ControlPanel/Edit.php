@@ -155,8 +155,9 @@ class Edit extends \Message\Cog\Controller\Controller
 				'access'                => $page->access,
 				'access_groups'         => $page->accessGroups,
 				'tags'                  => implode(', ', $page->tags),
-				'parent'				=> $parent ? $parent->id : 0,
-				//'tags'                  => implode(', ', $page->tags),
+				'parent'                => $parent ? $parent->id : 0,
+				'siblings'              => '',
+				//'tags'                => implode(', ', $page->tags),
 			));
 
 		$form->add('slug', 'text', $this->trans('ms.cms.attributes.slug.label'))
@@ -173,12 +174,23 @@ class Edit extends \Message\Cog\Controller\Controller
 			Authorisation::ACCESS_USER_GROUP => $this->trans('ms.cms.attributes.access.options.group'),
 		)));
 
-		$parents = $this->get('cms.page.loader')->getAllParents();
+		$siblings = $this->get('cms.page.loader')->getSiblings($page);
+		$siblingChoices = array();
+		$siblingChoices[0] = 'Move to top';
+		foreach ($siblings as $s) {
+			$siblingChoices[$s->id] = $s->title;
+		}
+		$form->add('siblings', 'choice','Move to top or after:', array('choices' => $siblingChoices))
+		->val()->optional();
+
+		$parents = $this->get('cms.page.loader')->getAll();
+
 		$choices = array();
 		foreach ($parents as $p) {
-			$choices[$p->id] = $p->title;
+			$spaces = str_repeat("-", $p->depth);
+			$choices[$p->id] = $spaces.$p->title;
 		}
-		$form->add('parent', 'choice', 'Parent', array('choices' => $choices));
+		$form->add('parent', 'choice', 'Parent', array('choices' => $choices))->val()->optional();
 		$form->add('access_groups', 'choice', $this->trans('ms.cms.attributes.access_groups.label'), array(
 			'choices'  => $this->get('user.groups')->flatten(),
 			'multiple' => true,
@@ -228,6 +240,16 @@ class Edit extends \Message\Cog\Controller\Controller
 		$form = $this->_getAttibuteForm($page);
 
 		if ($form->isValid() && $data = $form->getFilteredData()) {
+			$parent = $this->get('cms.page.loader')->getParentID($page);
+			$data['parent'] = isset($data['parent']) ? $data['parent'] : 0;
+
+			if ($parent->id != $data['parent']) {
+				$this->changeParent($pageID, $data['parent']);
+			}
+
+			if (!is_null($data['siblings']) && $data['siblings'] >= 0) {
+				$this->changeOrder($page, $data['siblings']);
+			}
 
 			$page = $this->_updateSlug($page, $data['slug']);
 
@@ -268,14 +290,30 @@ class Edit extends \Message\Cog\Controller\Controller
 	 * Change the order of the children within a nested set. This would also move
 	 * the children nodes of any entry that is affected by the move.
 	 *
-	 * @param  int 		$pageID 		The id of the page we are going to move
-	 * @param  int  	$newIndexInSet	The index of the position itn the subtree
+	 * @param  Page 	$page 			The Page object of the page we are going to move
+	 * @param  int  	$nearestSibling	The index of the position itn the subtree
 	 */
-	public function changeOrder()
+	public function changeOrder(Page $page, $nearestSibling)
 	{
+		$addAfter = false;
+		if ($nearestSibling == 0) {
+			// Load the siblings and get the one which is at the top
+			$siblings = $this->get('cms.page.loader')->getSiblings($page);
+			$nearestSibling = array_shift($siblings);
+			$addAfter = true;
+		} else {
+			// Otherwise just load the given sibling to move the page after
+			$nearestSibling = $this->get('cms.page.loader')->getByID($nearestSibling);
+		}
+
 		$ns = $this->get('cms.page.nested_set_helper');
-		$trans = $ns->move(46,9);
-		var_dump($trans->commit()); exit;
+		$trans = $ns->move($page->id,$nearestSibling->id, false, $addAfter);
+		if ($trans) {
+			$trans->commit();
+			$this->addFlash('success', 'Page order successully changed');
+		} else {
+			$this->addFlash('error', 'The page could not be moved to a new position');
+		}
 	}
 
 	/**
@@ -286,7 +324,14 @@ class Edit extends \Message\Cog\Controller\Controller
 	 */
 	public function changeParent($pageID, $newParentID)
 	{
-
+		$ns = $this->get('cms.page.nested_set_helper');
+		$trans = $ns->move($pageID, $newParentID, true);
+		if ($trans) {
+			$trans->commit();
+			$this->addFlash('success', 'Parent successully changed');
+		} else {
+			$this->addFlash('error', 'The page could not be moved to a new position');
+		}
 	}
 
 	/**

@@ -163,7 +163,7 @@ class Loader
 			WHERE
 				position_left < ?i
 			AND
-				position_right > ?i
+				position_right >= ?i
 			AND
 				position_depth = ?i -1',
 		array(
