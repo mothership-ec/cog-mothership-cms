@@ -9,6 +9,7 @@ use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\DB\NestedSetHelper;
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\DateTimeImmutable;
+use Message\Cog\ValueObject\Slug;
 use Message\User\UserInterface;
 use Message\User\User;
 
@@ -71,9 +72,6 @@ class Edit {
 				page.visibility_aggregator = :visibilityAggregator?i,
 				page.password = :password?s,
 				page.access = :access?s,
-				/*
-				page_access_group.group_id = :accessGroups?i,
-				*/
 				page.comment_enabled = :commentsEnabled?i,
 				page.comment_access = :commentsAccess?i,
 				page.comment_access = :commentsAccessGroups?i,
@@ -108,10 +106,13 @@ class Edit {
 				'commentsAccessGroups' => $page->commentsAccessGroups,
 				'commentsApproval'     => $page->commentsApproval,
 				'commentsExpiry'       => $page->commentsExpiry,
-			));
+			)
+		);
+
+		// Update the user groups for this page in the DB
+		$this->_updateAccessGroups($page);
 
 		$event = new Event($page);
-
 		// Dispatch the edit event
 		$this->_eventDispatcher->dispatch(
 			Event::EDIT,
@@ -119,6 +120,76 @@ class Edit {
 		);
 
 		return $event->getpage();
+	}
+
+	/**
+	 * Update the slug and insert the old slug into the historical slug table
+	 *
+	 * @param  Page   $page    	Page object to udpate
+	 * @param  string $newSlug  The new slug to update
+	 *
+	 * @return Page          	Return the updated Page object
+	 */
+	public function updateSlug(Page $page, $newSlug)
+	{
+		// Get all the segements
+		$segements = $page->slug->getSegments();
+		$date = new DateTimeImmutable;
+		$result = $this->_query->run('
+			REPLACE INTO
+				page_slug_history
+			SET
+				page_id = ?i,
+				slug 	= ?s,
+				created_at = ?d,
+				created_by = ?i',
+			array(
+				$page->id,
+				$page->slug->getFull(),
+				$date,
+				$this->_currentUser->id,
+			)
+		);
+
+		$update = $this->_query->run('
+			UPDATE
+				page
+			SET
+				slug = ?s
+			WHERE
+				page_id = ?i',
+			array(
+				$newSlug,
+				$page->id,
+			)
+		);
+		// Remove the last one
+		$last = array_pop($segements);
+		// Set the new one to the end of the array
+		$segments[] = $newSlug;
+		// Create a new slug object
+		$slug = new Slug($segments);
+		// Add it to the page object
+		$page->slug = $slug;
+
+		return $page;
+	}
+
+	/**
+	 * Remove a given slug from the page_slug_history table
+	 *
+	 * @param  string 	$slug 	The slug to remove
+	 */
+	public function removeHistoricalSlug($slug)
+	{
+		$delete = $this->_query->run('
+			DELETE FROM
+				page_slug_history
+			WHERE
+				slug = ?s
+		', array(
+			$slug
+		));
 	}
 
 	/**
@@ -200,6 +271,47 @@ class Edit {
 		);
 
 		return $result->affected() ? $page : false;
+
+	}
+
+	/**
+	 * Update the database with the user groups for this page.
+	 *
+	 * @param  Page   $page Page object to update
+	 */
+	protected function _updateAccessGroups(Page $page)
+	{
+		// Remove any existing access groups as groups may havge been unselected
+		$result = $this->_query->run(
+			'DELETE FROM
+				page_access_group
+			WHERE
+				page_id = ?i',
+			array(
+				$page->id
+			)
+		);
+
+		// Build the insert query and parameters
+		$inserts = array();
+		$values = array();
+		foreach ($page->accessGroups as $groupName) {
+			$inserts[] = '(?i, ?s)';
+			$values[] = $page->id;
+			$values[] = $groupName;
+		}
+
+		// If there is changes to be made then run the built query
+		if ($values) {
+			$result = $this->_query->run(
+				'INSERT INTO
+					page_access_group
+					(page_id, group_name)
+				VALUES
+					'.implode(',',$inserts).'
+				', $values
+			);
+		}
 
 	}
 }

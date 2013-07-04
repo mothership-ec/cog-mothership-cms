@@ -449,7 +449,6 @@ class Loader
 	protected function _loadPage(Result $results)
 	{
 		$pages = $results->bindTo('Message\\Mothership\\CMS\\Page\\Page');
-
 		foreach ($results as $key => $data) {
 			// Skip deleted pages
 			if ($data->deletedAt && !$this->_loadDeleted) {
@@ -496,7 +495,6 @@ class Loader
 				}
 			}
 		}
-
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
 	}
 }
