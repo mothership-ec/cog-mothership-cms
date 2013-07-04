@@ -2,15 +2,29 @@
 
 namespace Message\Mothership\CMS\Field\FormType;
 
+use Message\Cog\Service\ContainerAwareInterface;
+use Message\Cog\Service\ContainerInterface;
 use Symfony\Component\Form\AbstractExtension;
 
-class CmsExtension extends AbstractExtension
+class CmsExtension extends AbstractExtension implements ContainerAwareInterface
 {
+	protected $_container;
+
+	public function setContainer(ContainerInterface $container)
+	{
+		$this->_container = $container;
+
+		return $this;
+	}
+
 	protected function loadTypes()
 	{
+		$mothershipFile = new MothershipFile;
+		$mothershipFile->setContainer($this->_container);
+
 		return array(
 			new Link,
-			new MothershipFile,
+			$mothershipFile
 		);
 	}
 }
