@@ -130,7 +130,6 @@ class Edit extends \Message\Cog\Controller\Controller
 	public function attributes($pageID)
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
-		$parent = $this->get('cms.page.loader')->getParentID($page);
 		$form = $this->_getAttibuteForm($page);
 
 		return $this->render('::edit/attributes', array(
@@ -141,6 +140,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 	protected function _getAttibuteForm(Page $page)
 	{
+		$parent = $this->get('cms.page.loader')->getParentID($page);
 		$form = $this->get('form')
 			->setName('attributes')
 			->setMethod('POST')
@@ -178,7 +178,6 @@ class Edit extends \Message\Cog\Controller\Controller
 		foreach ($parents as $p) {
 			$choices[$p->id] = $p->title;
 		}
-
 		$form->add('parent', 'choice', 'Parent', array('choices' => $choices));
 		$form->add('access_groups', 'choice', $this->trans('ms.cms.attributes.access_groups.label'), array(
 			'choices'  => $this->get('user.groups')->flatten(),
