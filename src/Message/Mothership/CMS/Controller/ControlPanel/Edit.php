@@ -188,13 +188,12 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		$choices = array();
 		foreach ($parents as $p) {
-			// don't display the option to move it to a page which doesn't allow children
 			$spaces = str_repeat("--", $p->depth);
-
+			// don't display the option to move it to a page which doesn't allow children
 			if (!$p->type->allowChildren()) {
 				continue;
 			}
-
+			// Ignore any children pages of itself - we cannot go inside itself
 			if ($p->left > $page->left && $p->right < $page->right) {
 				continue;
 			}
@@ -306,23 +305,23 @@ class Edit extends \Message\Cog\Controller\Controller
 	 */
 	public function changeOrder(Page $page, $nearestSibling)
 	{
-		$addAfter = false;
-		if ($nearestSibling == 0) {
-			// Load the siblings and get the one which is at the top
-			$siblings = $this->get('cms.page.loader')->getSiblings($page);
-			$nearestSibling = array_shift($siblings);
-			$addAfter = true;
-		} else {
-			// Otherwise just load the given sibling to move the page after
-			$nearestSibling = $this->get('cms.page.loader')->getByID($nearestSibling);
-		}
+		try {
+			$addAfter = false;
+			if ($nearestSibling == 0) {
+				// Load the siblings and get the one which is at the top
+				$siblings = $this->get('cms.page.loader')->getSiblings($page);
+				$nearestSibling = array_shift($siblings);
+				$addAfter = true;
+			} else {
+				// Otherwise just load the given sibling to move the page after
+				$nearestSibling = $this->get('cms.page.loader')->getByID($nearestSibling);
+			}
 
-		$ns = $this->get('cms.page.nested_set_helper');
-		$trans = $ns->move($page->id,$nearestSibling->id, false, $addAfter);
-		if ($trans) {
+			$ns = $this->get('cms.page.nested_set_helper');
+			$trans = $ns->move($page->id,$nearestSibling->id, false, $addAfter);
 			$trans->commit();
 			$this->addFlash('success', 'Page order successully changed');
-		} else {
+		} catch (Expcetion $e) {
 			$this->addFlash('error', 'The page could not be moved to a new position');
 		}
 	}
@@ -335,12 +334,11 @@ class Edit extends \Message\Cog\Controller\Controller
 	 */
 	public function changeParent($pageID, $newParentID)
 	{
-		$ns = $this->get('cms.page.nested_set_helper');
-		$trans = $ns->move($pageID, $newParentID, true);
-		if ($trans) {
+		try {
+			$trans = $this->get('cms.page.nested_set_helper')->move($pageID, $newParentID, true);
 			$trans->commit();
 			$this->addFlash('success', 'Parent successully changed');
-		} else {
+		} catch (Exception $e) {
 			$this->addFlash('error', 'The page could not be moved to a new position');
 		}
 	}
