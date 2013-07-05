@@ -14,7 +14,7 @@ use Message\Cog\Validation\Validator;
  */
 class Content implements \IteratorAggregate
 {
-	protected $_fields;
+	protected $_fields = array();
 	protected $_validator;
 
 	/**
