@@ -153,7 +153,7 @@ class Loader
 		return false;
 	}
 
-	public function getParentID(Page $page)
+	public function getParent(Page $page)
 	{
 		$result = $this->_query->run('
 			SELECT
@@ -218,18 +218,6 @@ class Loader
 
 		return count($result) ? $this->getById($result->flatten()) : false;
 
-	}
-
-	public function getAllParents()
-	{
-		$result = $this->_query->run('
-			SELECT
-				page_id
-			FROM
-				page
-			WHERE
-				position_right != position_left +1 ');
-		return count($result) ? $this->getById($result->flatten()) : false;
 	}
 
 	/**

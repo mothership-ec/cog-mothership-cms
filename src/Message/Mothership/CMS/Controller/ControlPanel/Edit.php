@@ -140,7 +140,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 	protected function _getAttibuteForm(Page $page)
 	{
-		$parent = $this->get('cms.page.loader')->getParentID($page);
+		$parent = $this->get('cms.page.loader')->getParent($page);
 		$form = $this->get('form')
 			->setName('attributes')
 			->setMethod('POST')
@@ -250,7 +250,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		$form = $this->_getAttibuteForm($page);
 
 		if ($form->isValid() && $data = $form->getFilteredData()) {
-			$parent = $this->get('cms.page.loader')->getParentID($page);
+			$parent = $this->get('cms.page.loader')->getParent($page);
 			$data['parent'] = isset($data['parent']) ? $data['parent'] : 0;
 
 			if ($parent->id != $data['parent']) {
