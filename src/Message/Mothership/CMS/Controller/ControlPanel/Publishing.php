@@ -25,7 +25,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 			return $this->redirectToReferer();
 		}
 
-		$page = $this->_services['cms.page.loader']->getByID($this->_pageID);
+		$page = $this->_services['cms.page.loader']->getByID($pageID);
 
 		$page->publishDateRange = new DateRange(
 			$data['publish-date'] ? new DateTimeImmutable($data['publish-date'] .' '. $data['publish-time']) : null,

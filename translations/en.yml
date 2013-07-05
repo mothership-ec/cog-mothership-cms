@@ -1,4 +1,8 @@
 ms.cms:
+  feedback:
+    edit:
+      attributes:
+        success: 'Attributes were successfully updated'
   repeatable_group:
     add: "{0} Add a %name%|[1,Inf] Add another %name%"
   attributes:
@@ -113,6 +117,6 @@ ms.cms:
         example:
     richtext:
       help:
-        short:
+        short: You can use <a href="http://daringfireball.net/projects/markdown/">Markdown formatting</a> in this field.
         long:
         example:
