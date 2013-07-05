@@ -38,11 +38,11 @@ abstract class BaseField implements FieldInterface
 	/**
 	 * Print the class directly. This returns the field value.
 	 *
-	 * @return string|null The field value
+	 * @return string The field value
 	 */
 	public function __toString()
 	{
-		return $this->getValue();
+		return (string) $this->getValue();
 	}
 
 	/**

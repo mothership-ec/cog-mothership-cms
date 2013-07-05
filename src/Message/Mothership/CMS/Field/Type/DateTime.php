@@ -12,6 +12,16 @@ use Message\Cog\Form\Handler;
  */
 class DateTime extends Field
 {
+	public function __toString()
+	{
+		return $this->_value;
+	}
+
+	public function getValue()
+	{
+		return new \DateTime(date('c', $this->_value));
+	}
+
 	public function getFormField(Handler $form)
 	{
 		$form->add($this->getName(), 'datetime', $this->getLabel(), array(
