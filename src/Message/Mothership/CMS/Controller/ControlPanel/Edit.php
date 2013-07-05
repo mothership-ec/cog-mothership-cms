@@ -300,8 +300,10 @@ class Edit extends \Message\Cog\Controller\Controller
 	 * Change the order of the children within a nested set. This would also move
 	 * the children nodes of any entry that is affected by the move.
 	 *
-	 * @param  Page 	$page 			The Page object of the page we are going to move
-	 * @param  int  	$nearestSibling	The index of the position itn the subtree
+	 * @param  Page 	$page 				The Page object of the page we are
+	 *                         				going to move
+	 * @param  int  	$nearestSibling		The the pageID of the node we are
+	 *                                		moving before or after
 	 */
 	public function changeOrder(Page $page, $nearestSibling)
 	{
