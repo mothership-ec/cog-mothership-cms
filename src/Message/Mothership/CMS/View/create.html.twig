@@ -12,7 +12,7 @@
 	<label for="create-type">Type</label>
 	<select name="create[type]" id="create-select">
 		{% for type in pageTypes %}
-			<option value="{{ type.getName }}">{{ type.getName }}</option>
+			<option value="{{ type.getName }}">{{ type.getDisplayName }}</option>
 		{% endfor %}
 	</select>
 	<button type="submit" name="create[submit]" id="create-submit" value="Create Page">Create Page</button>
