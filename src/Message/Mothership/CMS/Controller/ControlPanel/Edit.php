@@ -242,7 +242,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		}
 
 		$form = $this->get('form')
-			->setName('content')
+			->setName('content-edit-content')
 			->setMethod('POST')
 			->setAction($this->generateUrl('ms.cp.cms.edit.content.action', array(
 				'pageID' => $page->id,
@@ -275,7 +275,7 @@ class Edit extends \Message\Cog\Controller\Controller
 	protected function _getAttibuteForm(Page $page)
 	{
 		$form = $this->get('form')
-			->setName('attributes')
+			->setName('content-edit-attributes')
 			->setMethod('POST')
 			->setAction($this->generateUrl('ms.cp.cms.edit.attributes.action', array(
 				'pageID' => $page->id,
@@ -325,7 +325,7 @@ class Edit extends \Message\Cog\Controller\Controller
 	protected function _getMetadataForm(Page $page)
 	{
 		$form = $this->get('form')
-			->setName('metadata')
+			->setName('content-edit-metadata')
 			->setAction($this->generateUrl('ms.cp.cms.edit.metadata.action', array(
 				'pageID' => $page->id
 			)))

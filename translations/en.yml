@@ -11,6 +11,18 @@ ms.cms:
   repeatable_group:
     add: "{0} Add a %name%|[1,Inf] Add another %name%"
   attributes:
+    title:
+      label: Page title
+      help:
+        short:
+        long:
+        example: A Title for a Page
+    type:
+      label: Page type
+      help:
+        short: The page type defines what content fields are available.
+        long:
+        example: Blog
     slug:
       label: URL Segment
       help:
