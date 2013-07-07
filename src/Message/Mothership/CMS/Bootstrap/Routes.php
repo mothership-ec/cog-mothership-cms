@@ -14,7 +14,7 @@ class Routes implements RoutesInterface
 			->setRequirement('slug', '[a-z0-9\-\/]+');
 
 
-		$router['ms.cp.cms']->setPrefix('/cms')->setParent('ms.cp');
+		$router['ms.cp.cms']->setPrefix('/content')->setParent('ms.cp');
 
 		$router['ms.cp.cms']->add('ms.cp.cms.dashboard', '/', '::Controller:ControlPanel:Dashboard#index')
 			->setFormat('ANY');
