@@ -75,29 +75,13 @@ class Edit extends \Message\Cog\Controller\Controller
 	 *
 	 * @param int $pageID The page ID
 	 */
-	public function content($pageID)
+	public function content($pageID, $form = null)
 	{
 		$page    = $this->get('cms.page.loader')->getByID($pageID);
 		$content = $this->get('cms.page.content_loader')->load($page);
-		$form    = $this->_getContentForm($page, $content);
+		$form    = $form ?: $this->_getContentForm($page, $content);
 
-		// Build array of repeatable groups & their fields for use in the view
-		$repeatables = array();
-		foreach ($content as $name => $contentPart) {
-			if ($contentPart instanceof Field\RepeatableContainer) {
-				$repeatables[$name] = array();
-				foreach ($contentPart->getFields() as $field) {
-					$repeatables[$name][] = $field->getName();
-				}
-			}
-		}
-
-		return $this->render('::edit/content', array(
-			'page'        => $page,
-			'form'        => $form,
-			'content'     => $content,
-			'repeatables' => $repeatables,
-		));
+		return $this->_renderContentForm($page, $content, $form);
 	}
 
 	public function contentAction($pageID)
@@ -106,21 +90,21 @@ class Edit extends \Message\Cog\Controller\Controller
 		$content = $this->get('cms.page.content_loader')->load($page);
 		$form    = $this->_getContentForm($page, $content);
 
+		$this->_page = $page;
+
 		// Redirect user back to the form if there are any errors
-		if (!$form->isValid()) {
-			return $this->redirectToReferer();
+		if ($form->isValid()) {
+			$content = $this->get('cms.page.content_edit')->updateContent($form->getFilteredData(), $content);
+
+			if ($this->get('cms.page.content_edit')->save($page, $content)) {
+				$this->addFlash('success', $this->trans('ms.cms.feedback.edit.content.success'));
+			}
+			else {
+				$this->addFlash('error', $this->trans('ms.cms.feedback.edit.content.failure'));
+			}
 		}
 
-		$content = $this->get('cms.page.content_edit')->updateContent($form->getFilteredData(), $content);
-
-		if ($this->get('cms.page.content_edit')->save($page, $content)) {
-			$this->addFlash('success', 'Content updated successfully');
-		}
-		else {
-			$this->addFlash('error', 'An error occured while updating content');
-		}
-
-		return $this->redirectToReferer();
+		return $this->_renderContentForm($page, $content, $form);
 	}
 
 	/**
@@ -136,6 +120,155 @@ class Edit extends \Message\Cog\Controller\Controller
 		return $this->render('::edit/attributes', array(
 			'page' => $page,
 			'form' => $form,
+		));
+	}
+
+	/**
+	 * Action to remove the slug from the history and add that slug to a new page
+	 *
+	 * @param  int 		$pageID 	The pageID of the page
+	 * @param  string 	$slug   	The slug to remove from history and update
+	 *                          	the given page
+	 */
+	public function forceSlugAction($pageID, $slug)
+	{
+		$page = $this->get('cms.page.loader')->getByID($pageID);
+
+		$slugSegments = $page->slug->getSegments();
+		$last  = array_pop($slugSegments);
+		$slugSegments[] = $slug;
+		$fullSlug = '/'.implode('/',$slugSegments);
+
+		$this->get('cms.page.edit')->removeHistoricalSlug($fullSlug);
+		$page = $this->_updateSlug($page, $slug);
+		$this->addFlash('success', 'The url was successfully updated');
+
+		return $this->redirectToReferer();
+	}
+
+	/**
+	 * Validate the input and update the attributes
+	 *
+	 * @todo 	We need a way to check that the slug is still in the same position
+	 *        	As when we add moving of pages the slug might be different *or*
+	 *        	already exist in that new section.
+	 *
+	 * @param  	int 	$pageID 	id of the Page object to be loaded and updated
+	 */
+	public function attributesAction($pageID)
+	{
+		$page = $this->get('cms.page.loader')->getByID($pageID);
+		$form = $this->_getAttibuteForm($page);
+
+		if ($form->isValid() && $data = $form->getFilteredData()) {
+			$page = $this->_updateSlug($page, $data['slug']);
+
+			$page->visibilitySearch 	= isset($data['visibility_search']);
+			$page->visibilityMenu 		= isset($data['visibility_menu']);
+			$page->visibilityAggregator = isset($data['visibility_aggregator']);
+			$page->access 				= $data['access'] ?: 0;
+			$page->accessGroups 		= $data['access_groups'];
+
+			$page = $this->get('cms.page.edit')->save($page);
+		}
+
+		$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
+
+		return $this->render('::edit/attributes', array(
+			'page' => $page,
+			'form' => $form,
+		));
+	}
+
+	/**
+	 * Render metadata form
+	 *
+	 * @param int $pageID
+	 *
+	 * @return Response
+	 */
+	public function metadata($pageID)
+	{
+		$page = $this->get('cms.page.loader')->getByID($pageID);
+		$form = $this->_getMetadataForm($page);
+
+		return $this->render('::edit/metadata', array(
+			'page' => $page,
+			'form' => $form,
+		));
+	}
+
+	/**
+	 * Validate metadata and save to page
+	 *
+	 * @param int $pageID
+	 *
+	 * @return \Message\Cog\HTTP\RedirectResponse
+	 */
+	public function metadataAction($pageID)
+	{
+		$page = $this->get('cms.page.loader')->getByID($pageID);
+		$form = $this->_getMetadataForm($page);
+
+		if ($form->isValid() && ($data = $form->getFilteredData())) {
+			$page->metaTitle       = $data['metaTitle'];
+			$page->metaDescription = $data['metaDescription'];
+			$page->metaHtmlHead    = $data['metaHtmlHead'];
+			$page->metaHtmlFoot    = $data['metaHtmlFoot'];
+
+			$page = $this->get('cms.page.edit')->save($page);
+
+			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
+		}
+
+		return $this->render('::edit/metadata', array(
+			'page' => $page,
+			'form' => $form,
+		));
+	}
+
+	/**
+	 * Get content form
+	 *
+	 * @param Page $page
+	 * @param Content $content
+	 *
+	 * @return mixed
+	 */
+	protected function _getContentForm(Page $page, Content $content = null)
+	{
+		if (!$content) {
+			$content = $this->get('cms.page.content_loader')->load($page);
+		}
+
+		$form = $this->get('form')
+			->setName('content')
+			->setMethod('POST')
+			->setAction($this->generateUrl('ms.cp.cms.edit.content.action', array(
+				'pageID' => $page->id,
+			)));
+
+		return $this->get('cms.field.form')->generate($form, $content);
+	}
+
+	protected function _renderContentForm(Page $page, Content $content, $form)
+	{
+		// Build array of repeatable groups & their fields for use in the view
+		$repeatables = array();
+		foreach ($content as $name => $contentPart) {
+			if ($contentPart instanceof Field\RepeatableContainer) {
+				$repeatables[$name] = array();
+				foreach ($contentPart->getFields() as $field) {
+					$repeatables[$name][] = $field->getName();
+				}
+			}
+		}
+
+		return $this->render('::edit/content', array(
+			'page'        => $page,
+			'content'     => $content,
+			'form'        => $form,
+			'repeatables' => $repeatables,
 		));
 	}
 
@@ -183,127 +316,49 @@ class Edit extends \Message\Cog\Controller\Controller
 	}
 
 	/**
-	 * Action to remove the slug from the history and add that slug to a new page
-	 *
-	 * @param  int 		$pageID 	The pageID of the page
-	 * @param  string 	$slug   	The slug to remove from history and update
-	 *                          	the given page
-	 */
-	public function forceSlugAction($pageID, $slug)
-	{
-		$page = $this->get('cms.page.loader')->getByID($pageID);
-
-		$slugSegments = $page->slug->getSegments();
-		$last  = array_pop($slugSegments);
-		$slugSegments[] = $slug;
-		$fullSlug = '/'.implode('/',$slugSegments);
-
-		$this->get('cms.page.edit')->removeHistoricalSlug($fullSlug);
-		$page = $this->_updateSlug($page, $slug);
-		$this->addFlash('success', 'The url was successfully updated');
-
-		return $this->redirectToReferer();
-	}
-
-	/**
-	 * Validate the input and update the attributes
-	 *
-	 * @todo 	We need a way to check that the slug is still in the same position
-	 *        	As when we add moving of pages the slug might be different *or*
-	 *        	already exist in that new section.
-	 *
-	 * @param  	int 	$pageID 	id of the Page object to be loaded and updated
-	 */
-	public function attributesAction($pageID)
-	{
-		$page = $this->get('cms.page.loader')->getByID($pageID);
-		$form = $this->_getAttibuteForm($page);
-
-		if ($form->isValid() && $data = $form->getFilteredData()) {
-
-			$page = $this->_updateSlug($page, $data['slug']);
-
-			$page->visibilitySearch 	= isset($data['visibility_search']);
-			$page->visibilityMenu 		= isset($data['visibility_menu']);
-			$page->visibilityAggregator = isset($data['visibility_aggregator']);
-			$page->access 				= $data['access'] ?: 0;
-			$page->accessGroups 		= $data['access_groups'];
-			$page = $this->get('cms.page.edit')->save($page);
-
-		}
-		$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
-
-		return $this->redirectToRoute('ms.cp.cms.edit.attributes', array('pageID' => $page->id));
-
-	}
-
-	/**
-	 * Render metadata form
-	 *
-	 * @param int $pageID
-	 *
-	 * @return Response
-	 */
-	public function metadata($pageID)
-	{
-		$page = $this->get('cms.page.loader')->getByID($pageID);
-
-		$form = $this->_getMetadataForm($page);
-
-		return $this->render('::edit/metadata', array(
-			'page' => $page,
-			'form' => $form,
-		));
-	}
-
-	/**
-	 * Validate metadata and save to page
-	 *
-	 * @param int $pageID
-	 *
-	 * @return \Message\Cog\HTTP\RedirectResponse
-	 */
-	public function metadataAction($pageID)
-	{
-		$page   = $this->get('cms.page.loader')->getByID($pageID);
-		$form   = $this->_getMetadataForm($page);
-
-		if ($form->isValid() && ($data = $form->getFilteredData())) {
-
-			foreach ($data as $key => $value) {
-				$page->$key = (!empty($value)) ? $value : $page->$key;
-			}
-
-			$this->get('cms.page.edit')->save($page);
-
-			$this->addFlash('success', 'Metadata successfully saved');
-		}
-
-		return $this->redirectToReferer();
-
-	}
-
-	/**
-	 * Get content form
+	 * Get form for metadata section of edit page
 	 *
 	 * @param Page $page
-	 * @param Content $content
 	 *
-	 * @return mixed
+	 * @return \Message\Cog\Form\Handler
 	 */
-	protected function _getContentForm(Page $page, Content $content = null)
+	protected function _getMetadataForm(Page $page)
 	{
-		if (!$content) {
-			$content = $this->get('cms.page.content_loader')->load($page);
-		}
-
 		$form = $this->get('form')
-			->setMethod('POST')
-			->setAction($this->generateUrl('ms.cp.cms.edit.content.action', array(
-				'pageID' => $page->id,
-			)));
+			->setName('metadata')
+			->setAction($this->generateUrl('ms.cp.cms.edit.metadata.action', array(
+				'pageID' => $page->id
+			)))
+			->setMethod('post')
+			->setDefaultValues(array(
+				'metaTitle'       => $page->metaTitle,
+				'metaDescription' => $page->metaDescription,
+				'metaHtmlHead'    => $page->metaHtmlHead,
+				'metaHtmlFoot'    => $page->metaHtmlFoot,
+			));
 
-		return $this->get('cms.field.form')->generate($form, $content);
+		$form->add('metaTitle', 'text', $this->trans('ms.cms.metadata.title.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.metadata.title.help')
+		))->val()
+			->optional()
+			->maxLength(255);
+
+		$form->add('metaDescription', 'textarea', $this->trans('ms.cms.metadata.description.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.metadata.description.help')
+		))->val()
+			->optional();
+
+		$form->add('metaHtmlHead', 'textarea', $this->trans('ms.cms.metadata.htmlHead.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.metadata.htmlHead.help')
+		))->val()
+			->optional();
+
+		$form->add('metaHtmlFoot', 'textarea', $this->trans('ms.cms.metadata.htmlFoot.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.metadata.htmlFoot.help')
+		))->val()
+			->optional();
+
+		return $form;
 	}
 
 	/**
@@ -318,99 +373,51 @@ class Edit extends \Message\Cog\Controller\Controller
 	 */
 	protected function _updateSlug(Page $page, $newSlug)
 	{
-			// Flag as to whether to update the slug
-			$update = true;
+		// Flag as to whether to update the slug
+		$update = true;
 
-			$slugSegments = $page->slug->getSegments();
-			$last  = array_pop($slugSegments);
-			$slugSegments[] = $newSlug;
-			$slug = '/'.implode('/',$slugSegments);
-			$checkSlug = $this->get('cms.page.loader')->getBySlug($slug, false);
+		$slugSegments = $page->slug->getSegments();
+		$last  = array_pop($slugSegments);
+		$slugSegments[] = $newSlug;
+		$slug = '/'.implode('/',$slugSegments);
+		$checkSlug = $this->get('cms.page.loader')->getBySlug($slug, false);
 
-			// If not slug has been found, we need to check the history too
-			if (!$checkSlug) {
-				// Check for the slug historicaly and show deleted ones too
-				$historicalSlug = $this->get('cms.page.loader')
-										->includeDeleted(true)
-										->getBySlug($slug, true);
-				// If there is a page returned and it's not this page then offer
-				// a link to remove the slug from history and use it anyway
-				if ($historicalSlug && $historicalSlug->id != $page->id) {
-					// If it's been deleted then offer a differnt message that a non deleted one
-					if (!is_null($historicalSlug->authorship->deletedAt())) {
-						$this->addFlash('error', 'The url <code>'.$slug.'</code> is saved against a page which has been deleted. Would you like to use this url anyway? <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)).'">Yes please Mothership you clever thing!</a>');
-					} else {
-						$this->addFlash('error', 'The url <code>'.$slug.'</code> has been used in the past and is being redirected to <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $historicalSlug->id)).'">'.$historicalSlug->title.'</a>. Would you like to use this url anyway? <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)).'">Yes please!</a>');
-					}
-					// We shouldn't update the slug as we need action
-					$update = false;
+		// If not slug has been found, we need to check the history too
+		if (!$checkSlug) {
+			// Check for the slug historicaly and show deleted ones too
+			$historicalSlug = $this->get('cms.page.loader')
+				->includeDeleted(true)
+				->getBySlug($slug, true);
+
+			// If there is a page returned and it's not this page then offer
+			// a link to remove the slug from history and use it anyway
+			if ($historicalSlug && $historicalSlug->id != $page->id) {
+				// If it's been deleted then offer a differnt message that a non deleted one
+				if (!is_null($historicalSlug->authorship->deletedAt())) {
+					$this->addFlash('error', 'The url <code>'.$slug.'</code> is saved against a page which has been deleted. Would you like to use this url anyway? <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)).'">Yes please Mothership you clever thing!</a>');
 				}
-			}
+				else {
+					$this->addFlash('error', 'The url <code>'.$slug.'</code> has been used in the past and is being redirected to <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $historicalSlug->id)).'">'.$historicalSlug->title.'</a>. Would you like to use this url anyway? <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)).'">Yes please!</a>');
+				}
 
-			if ($checkSlug && $checkSlug->id != $page->id) {
-				$this->addFlash('error', 'The url <code>'.$checkSlug->slug->getFull().'</code> is already in use on the page <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $checkSlug->id)).'">'.$checkSlug->title.'</a>');
 				// We shouldn't update the slug as we need action
 				$update = false;
 			}
-
-			// If the slug has changed then update the slug
-			if ($update && $page->slug->getLastSegment() != $newSlug) {
-				$this->get('cms.page.edit')->removeHistoricalSlug($slug);
-				$page = $this->get('cms.page.edit')->updateSlug($page, $newSlug);
-			}
-
-			// return the updated or unchanged page
-			return $page;
-	}
-
-	/**
-	 * Get form for metadata section of edit page
-	 *
-	 * @param Page $page
-	 *
-	 * @return \Message\Cog\Form\Handler
-	 */
-	protected function _getMetadataForm(Page $page, Content $content = null)
-	{
-		$defaults = array(
-			'metaTitle' => $page->metaTitle,
-			'metaDescription' => $page->metaDescription,
-			'metaHtmlHead' => $page->metaHtmlHead,
-			'metaHtmlFoot' => $page->metaHtmlFoot,
-		);
-
-		if (!$content) {
-			$content = $this->get('cms.page.content_loader')->load($page);
 		}
 
-		$form = $this->get('form');
-		$form->setAction($this->generateUrl('ms.cp.cms.edit.metadata.action', array(
-			'pageID' => $page->id
-		)))
-			->setMethod('post')
-			->setDefaultValues($defaults);
-		$form->add('metaTitle', 'text', $this->trans('ms.cms.metadata.title.label'), array(
-			'attr' => array('data-help-key' => 'ms.cms.metadata.title.help')
-		))
-			->val()
-			->optional()
-			->maxLength(255);
-		$form->add('metaDescription', 'textarea', $this->trans('ms.cms.metadata.description.label'), array(
-			'attr' => array('data-help-key' => 'ms.cms.metadata.description.help')
-		))
-			->val()
-			->optional();
-		$form->add('metaHtmlHead', 'textarea', $this->trans('ms.cms.metadata.htmlHead.label'), array(
-			'attr' => array('data-help-key' => 'ms.cms.metadata.htmlHead.help')
-		))
-			->val()
-			->optional();
-		$form->add('metaHtmlFoot', 'textarea', $this->trans('ms.cms.metadata.htmlFoot.label'), array(
-			'attr' => array('data-help-key' => 'ms.cms.metadata.htmlFoot.help')
-		))
-			->val()
-			->optional();
+		if ($checkSlug && $checkSlug->id != $page->id) {
+			$this->addFlash('error', 'The url <code>'.$checkSlug->slug->getFull().'</code> is already in use on the page <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $checkSlug->id)).'">'.$checkSlug->title.'</a>');
+			// We shouldn't update the slug as we need action
+			$update = false;
+		}
 
-		return $form;
+		// If the slug has changed then update the slug
+		if ($update && $page->slug->getLastSegment() != $newSlug) {
+			$this->get('cms.page.edit')->removeHistoricalSlug($slug);
+			$page = $this->get('cms.page.edit')->updateSlug($page, $newSlug);
+		}
+
+		// return the updated or unchanged page
+		return $page;
 	}
 }

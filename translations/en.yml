@@ -1,8 +1,13 @@
 ms.cms:
   feedback:
     edit:
+      content:
+        success: Content updated successfully
+        failure: An error occured while updating the content
       attributes:
-        success: 'Attributes were successfully updated'
+        success: Attributes updated successfully
+      metadata:
+        success: Metadata updates successfully
   repeatable_group:
     add: "{0} Add a %name%|[1,Inf] Add another %name%"
   attributes:
@@ -51,10 +56,10 @@ ms.cms:
         example: products, shoes, 2013
   metadata:
     title:
-      label: Page title
+      label: Document title
       help:
-        short: The title that shows in the browser tab
-        long:
+        short: The title that shows in the browser tab when viewing this page.
+        long: Leave this blank to just use the page title
         example:
     description:
       label: Meta description
