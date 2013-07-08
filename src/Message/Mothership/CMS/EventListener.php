@@ -64,7 +64,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 	{
 		$exception = $event->getException();
 
-		if (($exception instanceof NotFoundHttpException) && ($exception->getStatusCode() == 404)) {
+		if (($exception->getStatusCode() == 404) && in_array('ms.cp', $event->getRequest()->get('_route_collections'))) {
 			$this->_services['http.session']->getFlashBag()->add('error', $exception->getMessage());
 			$event->setResponse(new RedirectResponse(
 				$this->_services['routing.generator']->generate('ms.cp.cms.dashboard')
