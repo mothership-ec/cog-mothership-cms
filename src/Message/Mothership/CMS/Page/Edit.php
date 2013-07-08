@@ -241,6 +241,54 @@ class Edit {
 	}
 
 	/**
+	 * Change the order of the children within a nested set. This would also move
+	 * the children nodes of any entry that is affected by the move.
+	 *
+	 * @param  Page 	$page 				The Page object of the page we are
+	 *                         				going to move
+	 * @param  int  	$nearestSibling		The the pageID of the node we are
+	 *                                		moving before or after
+	 */
+	public function changeOrder(Page $page, $nearestSibling)
+	{
+		try {
+			$addAfter = false;
+			if ($nearestSibling == 0) {
+				// Load the siblings and get the one which is at the top
+				$siblings = $this->_loader->getSiblings($page);
+				$nearestSibling = array_shift($siblings);
+				$addAfter = true;
+			} else {
+				// Otherwise just load the given sibling to move the page after
+				$nearestSibling = $this->_loader->getByID($nearestSibling);
+			}
+
+			$trans = $this->_nestedSetHelper->move($page->id,$nearestSibling->id, false, $addAfter);
+			$trans->commit();
+			return true;
+		} catch (Expcetion $e) {
+			return false;
+		}
+	}
+
+	/**
+	 * This will move a node to a different parent of the tree.
+	 *
+	 * @param int 	$pageID 		The ID of the page we are going to move
+	 * @param int   $newParentID 	The ID of the new parent we are moving to
+	 */
+	public function changeParent($pageID, $newParentID)
+	{
+		try {
+			$trans = $this->_nestedSetHelper->move($pageID, $newParentID, true);
+			$trans->commit();
+			return true;
+		} catch (Exception $e) {
+			return false;
+		}
+	}
+
+	/**
 	 * Save only the publish data in the DB
 	 *
 	 * @param  Page   	$page 	page object to be updated
