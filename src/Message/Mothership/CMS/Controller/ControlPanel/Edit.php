@@ -78,6 +78,11 @@ class Edit extends \Message\Cog\Controller\Controller
 	public function content($pageID, $form = null)
 	{
 		$page    = $this->get('cms.page.loader')->getByID($pageID);
+
+		if (!$page) {
+			throw $this->createNotFoundException('Page does not exist', null, 404);
+		}
+
 		$content = $this->get('cms.page.content_loader')->load($page);
 		$form    = $form ?: $this->_getContentForm($page, $content);
 
@@ -358,7 +363,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			'attr' => array('data-help-key' => 'ms.cms.metadata.htmlFoot.help')
 		))->val()
 			->optional();
-
+		
 		return $form;
 	}
 
