@@ -163,8 +163,9 @@ class Edit extends \Message\Cog\Controller\Controller
 		if ($form->isValid() && $data = $form->getFilteredData()) {
 			$parent = $this->get('cms.page.loader')->getParent($page);
 			$data['parent'] = isset($data['parent']) ? $data['parent'] : 0;
-
-			if ($parent && $parent->id != $data['parent']) {
+			// If the parentID != the submitted parent OR the parent is false
+			// (as it's root) and the submitted parent is not 0 (root)
+			if (($parent && $parent->id != $data['parent']) || (!$parent && $data['parent'] != 0)) {
 				if ($this->get('cms.page.edit')->changeParent($pageID, $data['parent'])) {
 					$this->addFlash('success', 'Parent successully changed');
 				} else {
