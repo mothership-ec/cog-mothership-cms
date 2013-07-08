@@ -95,6 +95,20 @@ class Loader
 		return $this->_load($pageIDs);
 	}
 
+	public function getHomepage()
+	{
+		$result = $this->_query->run('
+			SELECT
+				page_id
+			FROM
+				page
+			WHERE
+				position_left = 1
+		');
+
+		return count($result) ? $this->getByID($result->first()->page_id) : false;
+	}
+
 	/**
 	 * Get a page by its slug.
 	 *
@@ -105,6 +119,10 @@ class Loader
 	 */
 	public function getBySlug($slug, $checkHistory = true)
 	{
+		if ($slug == '/') {
+			$this->getHomepage();
+		}
+
 		// Clean up the slug
 		$path 	= trim($slug, '/');
 		// Turn it into an array and reverse it.
@@ -437,6 +455,11 @@ class Loader
 			// Get the page type
 			$pages[$key]->type = $this->_pageTypes->get($data->type);
 
+			// If the page is the most left page then it is the homepage so
+			// we need to override the slug to avoid unnecessary redirects
+			if ($data->left == 1) {
+				$data->slug = '//';
+			}
 			$pages[$key]->slug = new Slug($data->slug);
 			$pages[$key]->type = clone $this->_pageTypes->get($data->type);
 
