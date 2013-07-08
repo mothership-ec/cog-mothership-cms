@@ -15,7 +15,7 @@ class MothershipFile extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-			'data_class'    => 'Message\\Mothership\\FileManager\\File\\File',
+			//'data_class'    => 'Message\\Mothership\\FileManager\\File\\File',
 			'allowed_types' => false,
 		));
 	}
