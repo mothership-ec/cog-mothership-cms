@@ -106,17 +106,6 @@ class Services implements ServicesInterface
 			return $ext;
 		};
 
-		$serviceContainer['templating.filesystem.loader'] = $serviceContainer->share(
-			$serviceContainer->extend('templating.filesystem.loader', function($loader, $c) {
-				$loader->addTemplatePathPatterns(array(
-					'cog://Message:Mothership:CMS::View:Form:Php',
-					'cog://Message:Mothership:CMS::View:Form:Twig',
-				));
-
-				return $loader;
-			})
-		);
-
 		$serviceContainer['form.templates.twig'] = $serviceContainer->extend(
 			'form.templates.twig', function($templates, $c) {
 			$templates[] = 'Message:Mothership:CMS::Form:Twig:form_div_layout';
