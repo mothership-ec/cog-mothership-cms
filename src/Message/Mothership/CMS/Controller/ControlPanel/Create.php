@@ -20,6 +20,17 @@ class Create extends \Message\Cog\Controller\Controller
 		if ($form->isValid() && $data = $form->getFilteredData()) {
 			$type = $types->get($data['type']);
 			$page = $this->get('cms.page.create')->create($type, $data['title']);
+
+			// Check that a page was created and redirect to the Edit page in the CMS
+			if ($page) {
+				$this->addFlash('success', 'Page created successfully');
+
+				return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $page->id));
+			}
+
+			$this->addFlash('error', 'The page could not be created');
+
+			return $this->redirectToReferrer();
 		}
 
 		return $this->render('::create', array(
