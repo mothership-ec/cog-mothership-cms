@@ -19,6 +19,10 @@ class Datetime extends Field
 
 	public function getValue()
 	{
+		if ($this->_value instanceof \DateTime) {
+			return $this->_value;
+		}
+
 		return new \DateTime(date('c', $this->_value));
 	}
 
