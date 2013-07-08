@@ -4,7 +4,7 @@
 		{% for field in fields %}
 		{{ form_row(form[groupName][field].vars.prototype) }}
 		{% endfor %}
-		<a href="#" data-group-add>Remove this group</a>
+		<a href="#" data-group-remove>Remove this group</a>
 	</section>
 {% endfilter %}
 {% endmacro %}
@@ -35,8 +35,8 @@
 	{# If this content part is a repeatable group, output the title & description, then each group #}
 	{% else %}
 		<section class="repeatable group">
-			<h2>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.name'|trans }}</h2>
-			<p>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.description'|trans }}</p>
+			<h2>{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.name')|trans }}</h2>
+			<p>{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.description')|trans }}</p>
 			{% if part.count > 0 %}
 			{% for i in range(0, part.count - 1) %}
 				<section class="group">
@@ -50,7 +50,7 @@
 			{% do form[name].setRendered %}
 			{% endif %}
 			<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}" data-group-index="{{ part.count }}">
-				{{ 'ms.cms.repeatable_group.add'|transchoice(part.count, {'%name%': 'page.' ~ page.type.getName ~ '.' ~ name ~ '.name'|trans}) }}
+				{{ 'ms.cms.repeatable_group.add'|transchoice(part.count, {'%name%': ('page.' ~ page.type.getName ~ '.' ~ name ~ '.singularName')|trans|lower}) }}
 			</a>
 		</section>
 	{% endif %}

@@ -1,11 +1,28 @@
 ms.cms:
   feedback:
     edit:
+      content:
+        success: Content updated successfully
+        failure: An error occured while updating the content
       attributes:
-        success: 'Attributes were successfully updated'
+        success: Attributes updated successfully
+      metadata:
+        success: Metadata updates successfully
   repeatable_group:
     add: "{0} Add a %name%|[1,Inf] Add another %name%"
   attributes:
+    title:
+      label: Page title
+      help:
+        short:
+        long:
+        example: A Title for a Page
+    type:
+      label: Page type
+      help:
+        short: The page type defines what content fields are available.
+        long:
+        example: Blog
     slug:
       label: URL Segment
       help:
@@ -51,10 +68,10 @@ ms.cms:
         example: products, shoes, 2013
   metadata:
     title:
-      label: Page title
+      label: Document title
       help:
-        short: The title that shows in the browser tab
-        long:
+        short: The title that shows in the browser tab when viewing this page.
+        long: Leave this blank to just use the page title
         example:
     description:
       label: Meta description
@@ -117,6 +134,6 @@ ms.cms:
         example:
     richtext:
       help:
-        short:
+        short: You can use <a href="http://daringfireball.net/projects/markdown/">Markdown formatting</a> in this field.
         long:
         example:

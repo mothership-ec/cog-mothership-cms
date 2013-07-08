@@ -10,6 +10,10 @@ class Services implements ServicesInterface
 {
 	public function registerServices($serviceContainer)
 	{
+		$serviceContainer['markdown.parser'] = function() {
+			return new \dflydev\markdown\MarkdownParser;
+		};
+
 		$serviceContainer['cms.page.types'] = $serviceContainer->share(function($c) {
 			return new CMS\PageType\Collection;
 		});

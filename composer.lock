@@ -3,8 +3,67 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "d4daa8c7693393e8796266fb3ba47bc5",
+    "hash": "4d71d3d7812bde47990e1ff822d89ee5",
     "packages": [
+        {
+            "name": "dflydev/markdown",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dflydev/dflydev-markdown.git",
+                "reference": "11f8faa2d17f717a038b4d372abd22a6ac4a15dc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dflydev/dflydev-markdown/zipball/11f8faa2d17f717a038b4d372abd22a6ac4a15dc",
+                "reference": "11f8faa2d17f717a038b4d372abd22a6ac4a15dc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "dflydev\\markdown": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Dragonfly Development Inc.",
+                    "email": "info@dflydev.com",
+                    "homepage": "http://dflydev.com"
+                },
+                {
+                    "name": "Beau Simensen",
+                    "email": "beau@dflydev.com",
+                    "homepage": "http://beausimensen.com"
+                },
+                {
+                    "name": "Michel Fortin",
+                    "homepage": "http://michelf.com"
+                },
+                {
+                    "name": "John Gruber",
+                    "homepage": "http://daringfireball.net"
+                }
+            ],
+            "description": "PHP Markdown & Extra",
+            "homepage": "http://github.com/dflydev/dflydev-markdown",
+            "keywords": [
+                "markdown"
+            ],
+            "time": "2012-07-15 16:31:27"
+        },
         {
             "name": "imagine/imagine",
             "version": "v0.4.1",
@@ -129,7 +188,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog.git",
-                "reference": "24def9be4c5e5611860dfe52f9886e6db846c752"
+                "reference": "cb378a2e712396e8ada9ddac24bdd79850a9b8a9"
             },
             "require": {
                 "ext-curl": "*",
@@ -173,6 +232,11 @@
                 "bin/cog-console"
             ],
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Message\\Cog": "src",
@@ -195,7 +259,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog/issues"
             },
-            "time": "2013-07-01 09:59:02"
+            "time": "2013-07-04 14:18:55"
         },
         {
             "name": "message/cog-mothership-cp",
@@ -203,7 +267,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-mothership-cp.git",
-                "reference": "b81845796fc34a424aeeb87ad4ce4a7392eaa596"
+                "reference": "5ce67856a7c5c4013c44f36a55977213bf54f339"
             },
             "require": {
                 "message/cog": "dev-master",
@@ -211,6 +275,11 @@
                 "php": ">=5.3.0"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Message\\Mothership\\ControlPanel": "src",
@@ -236,7 +305,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog-mothership-cp/issues"
             },
-            "time": "2013-07-01 09:06:51"
+            "time": "2013-07-04 14:58:33"
         },
         {
             "name": "message/cog-mothership-file-manager",
@@ -244,13 +313,18 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-mothership-file-manager.git",
-                "reference": "27e17d299d3a664e0035b56fb4c6a7b5f043d03f"
+                "reference": "9666d23fc57bc7d787273ff20293e27e41fa7698"
             },
             "require": {
                 "message/cog-mothership-cp": "dev-master",
                 "php": ">=5.3.0"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Message\\Mothership\\FileManager": "src",
@@ -281,7 +355,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog-mothership-file-manager/issues"
             },
-            "time": "2013-07-01 08:00:49"
+            "time": "2013-07-04 14:59:42"
         },
         {
             "name": "message/cog-user",
@@ -289,13 +363,18 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-user.git",
-                "reference": "1ca93f3fec93b74a167d3374142d37b872febd6b"
+                "reference": "421de7b8ca5dd2c3dc2e970d7e9c6c68934da8b4"
             },
             "require": {
                 "message/cog": "dev-master",
                 "php": ">=5.3.0"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Message\\User": "src",
@@ -321,7 +400,7 @@
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog-user/issues"
             },
-            "time": "2013-06-27 14:24:43"
+            "time": "2013-07-04 14:58:49"
         },
         {
             "name": "mtdowling/cron-expression",
@@ -649,12 +728,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
-                "reference": "v2.2.3"
+                "reference": "e2e53adf642ea31e088860967e29b3f71700c39a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Finder/zipball/v2.2.3",
-                "reference": "v2.2.3",
+                "url": "https://api.github.com/repos/symfony/Finder/zipball/e2e53adf642ea31e088860967e29b3f71700c39a",
+                "reference": "e2e53adf642ea31e088860967e29b3f71700c39a",
                 "shasum": ""
             },
             "require": {
@@ -687,7 +766,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "http://symfony.com",
-            "time": "2013-06-10 18:35:46"
+            "time": "2013-07-01 12:15:46"
         },
         {
             "name": "symfony/form",
@@ -696,24 +775,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Form.git",
-                "reference": "7daa8c53c79d7302d6816090437d216172e49be9"
+                "reference": "8118158ee7becedbe1a60e22bdfb0df32e04d9fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Form/zipball/7daa8c53c79d7302d6816090437d216172e49be9",
-                "reference": "7daa8c53c79d7302d6816090437d216172e49be9",
+                "url": "https://api.github.com/repos/symfony/Form/zipball/8118158ee7becedbe1a60e22bdfb0df32e04d9fd",
+                "reference": "8118158ee7becedbe1a60e22bdfb0df32e04d9fd",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "symfony/event-dispatcher": ">=2.1,<3.0",
-                "symfony/intl": ">=2.3,<3.0",
-                "symfony/options-resolver": ">=2.1,<3.0",
-                "symfony/property-access": ">=2.2,<3.0"
+                "symfony/event-dispatcher": "~2.1",
+                "symfony/intl": "~2.3",
+                "symfony/options-resolver": "~2.1",
+                "symfony/property-access": "~2.2"
             },
             "require-dev": {
-                "symfony/http-foundation": ">=2.2,<3.0",
-                "symfony/validator": ">=2.2,<3.0"
+                "symfony/http-foundation": "~2.2",
+                "symfony/validator": "~2.2"
             },
             "suggest": {
                 "symfony/http-foundation": "",
@@ -746,7 +825,7 @@
             ],
             "description": "Symfony Form Component",
             "homepage": "http://symfony.com",
-            "time": "2013-06-23 08:16:02"
+            "time": "2013-07-01 12:24:43"
         },
         {
             "name": "symfony/http-foundation",
@@ -805,31 +884,31 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpKernel.git",
-                "reference": "98c849cd968571794d7cfc6edef21aa1363ce05c"
+                "reference": "c0b64cf85cf228a7107012c934b36aaa640d1a69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/98c849cd968571794d7cfc6edef21aa1363ce05c",
-                "reference": "98c849cd968571794d7cfc6edef21aa1363ce05c",
+                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/c0b64cf85cf228a7107012c934b36aaa640d1a69",
+                "reference": "c0b64cf85cf228a7107012c934b36aaa640d1a69",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "psr/log": ">=1.0,<2.0",
-                "symfony/debug": ">=2.3,<3.0",
-                "symfony/event-dispatcher": ">=2.1,<3.0",
-                "symfony/http-foundation": ">=2.2,<3.0"
+                "psr/log": "~1.0",
+                "symfony/debug": "~2.3",
+                "symfony/event-dispatcher": "~2.1",
+                "symfony/http-foundation": "~2.2"
             },
             "require-dev": {
                 "symfony/browser-kit": "2.2.*",
-                "symfony/class-loader": ">=2.1,<3.0",
-                "symfony/config": ">=2.0,<3.0",
+                "symfony/class-loader": "~2.1",
+                "symfony/config": "~2.0",
                 "symfony/console": "2.2.*",
-                "symfony/dependency-injection": ">=2.0,<3.0",
-                "symfony/finder": ">=2.0,<3.0",
-                "symfony/process": ">=2.0,<3.0",
-                "symfony/routing": ">=2.2,<3.0",
-                "symfony/stopwatch": ">=2.2,<3.0"
+                "symfony/dependency-injection": "~2.0",
+                "symfony/finder": "~2.0",
+                "symfony/process": "~2.0",
+                "symfony/routing": "~2.2",
+                "symfony/stopwatch": "~2.2"
             },
             "suggest": {
                 "symfony/browser-kit": "",
@@ -866,7 +945,7 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "http://symfony.com",
-            "time": "2013-06-11 13:34:17"
+            "time": "2013-07-01 12:24:43"
         },
         {
             "name": "symfony/icu",
@@ -886,7 +965,7 @@
             "require": {
                 "lib-icu": ">=4.4",
                 "php": ">=5.3.3",
-                "symfony/intl": ">=2.3,<3.0"
+                "symfony/intl": "~2.3"
             },
             "type": "library",
             "autoload": {
@@ -933,7 +1012,7 @@
             },
             "require": {
                 "php": ">=5.3.3",
-                "symfony/icu": ">=1.0-RC,<2.0"
+                "symfony/icu": "~1.0-RC"
             },
             "require-dev": {
                 "symfony/filesystem": ">=2.1"
@@ -1317,7 +1396,7 @@
             },
             "require": {
                 "php": ">=5.3.3",
-                "twig/twig": ">=1.11.0,<2.0"
+                "twig/twig": "~1.11"
             },
             "require-dev": {
                 "symfony/form": "2.2.*",
@@ -1383,8 +1462,8 @@
             },
             "require": {
                 "php": ">=5.3.3",
-                "symfony/http-kernel": ">=2.1,<3.0",
-                "symfony/twig-bridge": ">=2.2,<3.0"
+                "symfony/http-kernel": "~2.1",
+                "symfony/twig-bridge": "~2.2"
             },
             "require-dev": {
                 "symfony/config": ">=2.2,<3.0",
