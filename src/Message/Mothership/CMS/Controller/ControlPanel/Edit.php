@@ -345,6 +345,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		$siblings = $this->get('cms.page.loader')->getSiblings($page);
 		$siblingChoices = array();
+		$siblingChoices[0] = 'Move to top';
 		if ($siblings) {
 			foreach ($siblings as $s) {
 				$siblingChoices[$s->id] = $s->title;
