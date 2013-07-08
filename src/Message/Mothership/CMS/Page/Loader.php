@@ -95,6 +95,12 @@ class Loader
 		return $this->_load($pageIDs);
 	}
 
+	/**
+	 * retrive the homepage by getting the left most node in the tree that is
+	 * avaialble, not marked as deleted and in a published state
+	 *
+	 * @return Page|false 		Page object of homepage to use
+	 */
 	public function getHomepage()
 	{
 		$result = $this->_query->run('
@@ -103,7 +109,14 @@ class Loader
 			FROM
 				page
 			WHERE
-				position_left = 1
+				deleted_at IS NULL
+			AND
+				(publish_at <= UNIX_TIMESTAMP() OR publish_at IS NULL)
+			AND
+				(unpublish_at >= UNIX_TIMESTAMP() OR unpublish_at IS NULL)
+			ORDER BY
+				position_left ASC
+			LIMIT 1
 		');
 
 		return count($result) ? $this->getByID($result->first()->page_id) : false;

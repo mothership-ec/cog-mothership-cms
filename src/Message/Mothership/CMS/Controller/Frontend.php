@@ -36,12 +36,13 @@ class Frontend extends Controller
 	 * @throws NotFoundHttpException If the page is unpublished
 	 * @throws AccessDeniedHttpException If the user doesn't have access to see the page
 	 */
-	public function renderPage($slug = '')
+	public function renderPage($slug = null)
 	{
-		// Get the page
+		// Check that there is a slug, if not then show the homepage
 		if (!$slug) {
 			$page = $this->get('cms.page.loader')->getHomepage();
 		} else {
+			// Get the page
 			$page = $this->get('cms.page.loader')
 				->includeDeleted(false)
 				->getBySlug($slug, false);
