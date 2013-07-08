@@ -18,17 +18,20 @@ class Create extends \Message\Cog\Controller\Controller
 		$types = $this->get('cms.page.types');
 
 		if ($form->isValid() && $data = $form->getFilteredData()) {
-			$type = $types->get($data['type']);
+			$type   = $types->get($data['type']);
+			$parent = $data['parent'] ? $this->get('cms.page.loader')->getByID((int) $data['parent']) : null;
+			$page   = $this->get('cms.page.create')->create($type, $data['title'], $parent);
 
-			// Check if the parent has been, set otherwise pass in null and it will
-			// default to the route.
-			if (!is_null($data['parent'])) {
-				$parent = $this->get('cms.page.loader')->getByID($data['parent']);
-			} else {
-				$parent = null;
+			// Check that a page was created and redirect to the Edit page in the CMS
+			if ($page) {
+				$this->addFlash('success', 'Page created successfully');
+
+				return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $page->id));
 			}
 
-			$page = $this->get('cms.page.create')->create($type, $data['title'], $parent);
+			$this->addFlash('error', 'The page could not be created');
+
+			return $this->redirectToReferrer();
 		}
 
 		return $this->render('::create', array(

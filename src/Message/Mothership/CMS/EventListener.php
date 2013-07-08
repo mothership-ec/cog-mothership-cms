@@ -21,7 +21,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 	{
 		return array(
 			'modules.load.success' => array(
-				array('registerGroups')
+				array('registerGroups'),
 			),
 			BuildMenuEvent::BUILD_MAIN_MENU => array(
 				array('registerMainMenuItems')
@@ -47,4 +47,5 @@ class EventListener extends BaseListener implements SubscriberInterface
 		$this->_services['user.groups']
 			->add(new UserGroup\ContentManager);
 	}
+
 }
