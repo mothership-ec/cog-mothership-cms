@@ -19,7 +19,16 @@ class Create extends \Message\Cog\Controller\Controller
 
 		if ($form->isValid() && $data = $form->getFilteredData()) {
 			$type = $types->get($data['type']);
-			$page = $this->get('cms.page.create')->create($type, $data['title']);
+
+			// Check if the parent has been, set otherwise pass in null and it will
+			// default to the route.
+			if (!is_null($data['parent'])) {
+				$parent = $this->get('cms.page.loader')->getByID($data['parent']);
+			} else {
+				$parent = null;
+			}
+
+			$page = $this->get('cms.page.create')->create($type, $data['title'], $parent);
 		}
 
 		return $this->render('::create', array(
@@ -43,6 +52,22 @@ class Create extends \Message\Cog\Controller\Controller
 
 		$form->add('title', 'text', $this->trans('ms.cms.attributes.title.label'))
 			->val()->maxLength(255);
+		$parents = $this->get('cms.page.loader')->getAll();
+
+		$choices = array();
+		foreach ($parents as $p) {
+			$spaces = str_repeat("--", $p->depth);
+			// don't display the option to move it to a page which doesn't allow children
+			if (!$p->type->allowChildren()) {
+				continue;
+			}
+
+			$choices[$p->id] = $spaces.$p->title;
+		}
+
+		$form->add('parent', 'choice', 'Parent', array('choices' => $choices))
+			->val()
+			->optional();
 
 		$form->add('type', 'choice', $this->trans('ms.cms.attributes.type.label'), array(
 			'choices'     => $pageTypes,
