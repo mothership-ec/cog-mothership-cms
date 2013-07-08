@@ -319,6 +319,7 @@ class Edit extends \Message\Cog\Controller\Controller
 	 * Get form for metadata section of edit page
 	 *
 	 * @param Page $page
+	 * @param Content $content
 	 *
 	 * @return \Message\Cog\Form\Handler
 	 */
