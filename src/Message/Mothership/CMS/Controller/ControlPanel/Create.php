@@ -24,14 +24,12 @@ class Create extends \Message\Cog\Controller\Controller
 
 			// Check that a page was created and redirect to the Edit page in the CMS
 			if ($page) {
-				$this->addFlash('success', 'Page created successfully');
+				$this->addFlash('success', $this->trans('ms.cms.feedback.create.success'));
 
 				return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $page->id));
 			}
 
-			$this->addFlash('error', 'The page could not be created');
-
-			return $this->redirectToReferrer();
+			$this->addFlash('error', $this->trans('ms.cms.feedback.create.failure'));
 		}
 
 		return $this->render('::create', array(
@@ -59,17 +57,19 @@ class Create extends \Message\Cog\Controller\Controller
 
 		$choices = array();
 		foreach ($parents as $p) {
-			$spaces = str_repeat("--", $p->depth);
+			$spaces = str_repeat('--', $p->depth + 1);
 			// don't display the option to move it to a page which doesn't allow children
 			if (!$p->type->allowChildren()) {
 				continue;
 			}
 
-			$choices[$p->id] = $spaces.$p->title;
+			$choices[$p->id] = $spaces.' '.$p->title;
 		}
 
-		$form->add('parent', 'choice', 'Parent', array('choices' => $choices))
-			->val()
+		$form->add('parent', 'choice', $this->trans('ms.cms.attributes.parent.label'), array(
+			'choices'     => $choices,
+			'empty_value' => $this->trans('Top level'),
+		))->val()
 			->optional();
 
 		$form->add('type', 'choice', $this->trans('ms.cms.attributes.type.label'), array(

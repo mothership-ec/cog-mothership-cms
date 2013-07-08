@@ -123,80 +123,6 @@ class Edit extends \Message\Cog\Controller\Controller
 		));
 	}
 
-	protected function _getAttibuteForm(Page $page)
-	{
-		$parent = $this->get('cms.page.loader')->getParent($page);
-		$form = $this->get('form')
-			->setName('attributes')
-			->setMethod('POST')
-			->setAction($this->generateUrl('ms.cp.cms.edit.attributes.action', array(
-				'pageID' => $page->id,
-			)))
-			->setDefaultValues(array(
-				'slug'                  => $page->slug->getLastSegment(),
-				'visibility_menu'       => $page->visibilityMenu,
-				'visibility_search'     => $page->visibilitySearch,
-				'visibility_aggregator' => $page->visibilityAggregator,
-				'access'                => $page->access,
-				'access_groups'         => $page->accessGroups,
-				'tags'                  => implode(', ', $page->tags),
-				'parent'                => $parent ? $parent->id : 0,
-				'siblings'              => '',
-			));
-
-		$form->add('slug', 'text', $this->trans('ms.cms.attributes.slug.label'))
-			->val()->match('/^[a-z0-9\-]+$/');
-
-		$form->add('visibility_menu', 'checkbox', $this->trans('ms.cms.attributes.visibility.menu.label'));
-		$form->add('visibility_search', 'checkbox', $this->trans('ms.cms.attributes.visibility.search.label'));
-		$form->add('visibility_aggregator', 'checkbox', $this->trans('ms.cms.attributes.visibility.aggregator.label'));
-
-		$form->add('access', 'choice', $this->trans('ms.cms.attributes.access.label'), array('choices' => array(
-			Authorisation::ACCESS_ALL        => $this->trans('ms.cms.attributes.access.options.all'),
-			Authorisation::ACCESS_GUEST      => $this->trans('ms.cms.attributes.access.options.guest'),
-			Authorisation::ACCESS_USER       => $this->trans('ms.cms.attributes.access.options.user'),
-			Authorisation::ACCESS_USER_GROUP => $this->trans('ms.cms.attributes.access.options.group'),
-		)));
-
-		$siblings = $this->get('cms.page.loader')->getSiblings($page);
-		$siblingChoices = array();
-		$siblingChoices[0] = 'Move to top';
-		if ($siblings) {
-			foreach ($siblings as $s) {
-				$siblingChoices[$s->id] = $s->title;
-			}
-		}
-		$form->add('siblings', 'choice','Move to top or after:', array('choices' => $siblingChoices))
-		->val()->optional();
-
-		$parents = $this->get('cms.page.loader')->getAll();
-
-		$choices = array();
-		foreach ($parents as $p) {
-			$spaces = str_repeat("--", $p->depth);
-			// don't display the option to move it to a page which doesn't allow children
-			if (!$p->type->allowChildren()) {
-				continue;
-			}
-			// Ignore any children pages of itself - we cannot go inside itself
-			if ($p->left > $page->left && $p->right < $page->right) {
-				continue;
-			}
-
-			$choices[$p->id] = $spaces.$p->title;
-		}
-		$form->add('parent', 'choice', 'Parent', array('choices' => $choices))
-			->val()
-			->optional();
-
-		$form->add('access_groups', 'choice', $this->trans('ms.cms.attributes.access_groups.label'), array(
-			'choices'  => $this->get('user.groups')->flatten(),
-			'multiple' => true,
-		))->val()->optional();
-
-		return $form;
-	}
-
 	/**
 	 * Action to remove the slug from the history and add that slug to a new page
 	 *
@@ -238,7 +164,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			$parent = $this->get('cms.page.loader')->getParent($page);
 			$data['parent'] = isset($data['parent']) ? $data['parent'] : 0;
 
-			if ($parent->id != $data['parent']) {
+			if ($parent && $parent->id != $data['parent']) {
 				if ($this->get('cms.page.edit')->changeParent($pageID, $data['parent'])) {
 					$this->addFlash('success', 'Parent successully changed');
 				} else {
@@ -363,6 +289,94 @@ class Edit extends \Message\Cog\Controller\Controller
 			'form'        => $form,
 			'repeatables' => $repeatables,
 		));
+	}
+
+	protected function _getAttibuteForm(Page $page)
+	{
+		$parent = $this->get('cms.page.loader')->getParent($page);
+		$form = $this->get('form')
+			->setName('attributes')
+			->setMethod('POST')
+			->setAction($this->generateUrl('ms.cp.cms.edit.attributes.action', array(
+				'pageID' => $page->id,
+			)))
+			->setDefaultValues(array(
+				'slug'                  => $page->slug->getLastSegment(),
+				'visibility_menu'       => $page->visibilityMenu,
+				'visibility_search'     => $page->visibilitySearch,
+				'visibility_aggregator' => $page->visibilityAggregator,
+				'access'                => $page->access,
+				'access_groups'         => $page->accessGroups,
+				'tags'                  => implode(', ', $page->tags),
+				'parent'                => $parent ? $parent->id : 0,
+				'siblings'              => '',
+			));
+
+		$form->add('slug', 'text', $this->trans('ms.cms.attributes.slug.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.attributes.slug.help'),
+		))->val()->match('/^[a-z0-9\-]+$/');
+
+		$form->add('visibility_menu', 'checkbox', $this->trans('ms.cms.attributes.visibility.menu.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.attributes.visibility.menu.help'),
+		));
+		$form->add('visibility_search', 'checkbox', $this->trans('ms.cms.attributes.visibility.search.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.attributes.visibility.search.help'),
+		));
+		$form->add('visibility_aggregator', 'checkbox', $this->trans('ms.cms.attributes.visibility.aggregator.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.attributes.visibility.aggregator.help'),
+		));
+
+		$form->add('access', 'choice', $this->trans('ms.cms.attributes.access.label'), array(
+			'choices' => array(
+				Authorisation::ACCESS_ALL        => $this->trans('ms.cms.attributes.access.options.all'),
+				Authorisation::ACCESS_GUEST      => $this->trans('ms.cms.attributes.access.options.guest'),
+				Authorisation::ACCESS_USER       => $this->trans('ms.cms.attributes.access.options.user'),
+				Authorisation::ACCESS_USER_GROUP => $this->trans('ms.cms.attributes.access.options.group'),
+			),
+			'attr' => array('data-help-key' => 'ms.cms.attributes.access.help'),
+		));
+
+		$form->add('access_groups', 'choice', $this->trans('ms.cms.attributes.access_groups.label'), array(
+			'attr'     => array('data-help-key' => 'ms.cms.attributes.access_groups.help'),
+			'choices'  => $this->get('user.groups')->flatten(),
+			'multiple' => true,
+		))->val()->optional();
+
+		$siblings = $this->get('cms.page.loader')->getSiblings($page);
+		$siblingChoices = array();
+		if ($siblings) {
+			foreach ($siblings as $s) {
+				$siblingChoices[$s->id] = $s->title;
+			}
+		}
+		$form->add('siblings', 'choice', $this->trans('ms.cms.attributes.order.label'), array(
+			'attr'    => array('data-help-key' => 'ms.cms.attributes.order.search.help'),
+			'choices' => $siblingChoices,
+		))->val()->optional();
+
+		$parents = $this->get('cms.page.loader')->getAll();
+
+		$choices = array();
+		foreach ($parents as $p) {
+			$spaces = str_repeat("--", $p->depth + 1);
+			// don't display the option to move it to a page which doesn't allow children
+			if (!$p->type->allowChildren()) {
+				continue;
+			}
+			// Ignore any children pages of itself - we cannot go inside itself
+			if ($p->left > $page->left && $p->right < $page->right) {
+				continue;
+			}
+
+			$choices[$p->id] = $spaces.' '.$p->title;
+		}
+		$form->add('parent', 'choice', $this->trans('ms.cms.attributes.parent.label'), array(
+			'attr'        => array('data-help-key' => 'ms.cms.attributes.parent.help'),
+			'choices'     => $choices,
+			'empty_value' => 'Top level',
+		))->val()->optional();
+
+		return $form;
 	}
 
 	/**
