@@ -26,7 +26,7 @@ class Sidebar extends \Message\Cog\Controller\Controller
 	 */
 	public function buildTree(&$arr, &$prev_sub = null, $cur_depth = 0) {
 		$cur_sub = array();
-		while ($line = current($arr)) {
+		while (!empty($arr) && ($line = current($arr))) {
 			if ($line->depth < $cur_depth) {
 				return $cur_sub;
 			} elseif ($line->depth > $cur_depth) {
