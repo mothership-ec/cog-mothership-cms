@@ -80,7 +80,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		$page    = $this->get('cms.page.loader')->getByID($pageID);
 
 		if (!$page) {
-			throw $this->createNotFoundException('Page does not exist', null, 404);
+			throw $this->createNotFoundException('Page ' . $pageID . ' does not exist', null, 404);
 		}
 
 		$content = $this->get('cms.page.content_loader')->load($page);
@@ -120,6 +120,11 @@ class Edit extends \Message\Cog\Controller\Controller
 	public function attributes($pageID)
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
+
+		if (!$page) {
+			throw $this->createNotFoundException('Page ' . $pageID . ' does not exist', null, 404);
+		}
+
 		$form = $this->_getAttibuteForm($page);
 
 		return $this->render('::edit/attributes', array(
@@ -215,6 +220,11 @@ class Edit extends \Message\Cog\Controller\Controller
 	public function metadata($pageID)
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
+
+		if (!$page) {
+			throw $this->createNotFoundException('Page ' . $pageID . ' does not exist', null, 404);
+		}
+
 		$form = $this->_getMetadataForm($page);
 
 		return $this->render('::edit/metadata', array(
