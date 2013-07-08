@@ -11,6 +11,11 @@
 {{ form_row(form.access) }}
 {{ form_row(form.access_groups) }}
 
+{{ form_row(form.parent) }}
+{{ form_row(form.siblings) }}
+
+<button type="submit" class="button small save" id="save-content">Save changes</button>
+
 <h2>Authorship information</h2>
 
 <dl class="authorship">
@@ -22,7 +27,6 @@
 	{% endif %}
 </dl>
 
-<button type="submit" class="button small save" id="save-content">Save changes</button>
 {{ form_end(form) }}
 
 {% endblock %}
