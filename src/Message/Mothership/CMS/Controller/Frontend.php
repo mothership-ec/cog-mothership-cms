@@ -28,7 +28,7 @@ class Frontend extends Controller
 	 * If the page is good to be rendered, it is added to the service container
 	 * under the `cms.page.current` identifier.
 	 *
-	 * @param  string $slug The page slug
+	 * @param  string|null $slug The page slug
 	 *
 	 * @return Response
 	 *

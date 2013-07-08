@@ -181,6 +181,7 @@ class Loader
 		if ($checkHistory && $page = $this->checkSlugHistory($slug)) {
 			return $page;
 		}
+
 		return false;
 	}
 
