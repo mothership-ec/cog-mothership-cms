@@ -32,8 +32,8 @@ class File extends Field implements ContainerAwareInterface
 	 */
 	public function __toString()
 	{
-		if ($file = $this->getValue()) {
-			$cogFile = new Filesystem\File($this->getValue()->url);
+		if ($file = $this->_services['file_manager.file.loader']->getByID((int) $this->_value)) {
+			$cogFile = new Filesystem\File($file->url);
 
 			return $cogFile->getPublicUrl();
 		}
@@ -52,9 +52,9 @@ class File extends Field implements ContainerAwareInterface
 	public function getFormField(Handler $form)
 	{
 		$form->add($this->getName(), 'ms_file', $this->getLabel(), array(
-			'attr'       => array('data-help-key' => $this->_getHelpKeys()),
-		//	'data_class' => 'Message\\Mothership\\FileManager\\File\\File',
-			'choices'    => $this->_getChoices(),
+			'attr'          => array('data-help-key' => $this->_getHelpKeys()),
+			'choices'       => $this->_getChoices(),
+			'allowed_types' => $this->_allowedTypes ?: false,
 		));
 	}
 
@@ -69,10 +69,10 @@ class File extends Field implements ContainerAwareInterface
 		return $this;
 	}
 
-	// public function getValue()
-	// {
-	// 	return $this->_services['file_manager.file.loader']->getByID((int) $this->_value);
-	// }
+	public function getValue()
+	{
+		return $this->_services['file_manager.file.loader']->getByID((int) $this->_value);
+	}
 
 	protected function _getChoices()
 	{

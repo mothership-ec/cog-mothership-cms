@@ -1,4 +1,7 @@
 {% block ms_file_widget %}
-	{{ block('choice_widget') }}
-	<p>MS FILE TWIG</p>
+{% spaceless %}
+	<div data-modal="{{ url('ms.cp.file_manager.modal.index') }}" data-file-widget{% if allowed_types %} data-file-allowed-types="{{ allowed_types|join(',') }}"{% endif %}>
+		{{ block('choice_widget') }}
+	</div>
+{% endspaceless %}
 {% endblock ms_file_widget %}
