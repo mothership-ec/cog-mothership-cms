@@ -8,6 +8,7 @@
 	<hgroup class="title">
 		<h1>{{ page.title }}</h1>
 		<h2>{{ page.type.getDisplayName() }}</h2>
+		<a href="{{ url('ms.cms.frontend', {slug:page.slug.getFull|trim('/')}) }}">View Page</a>
 	</hgroup>
 
 	<form class="edit-title" action="{{ url('ms.cp.cms.edit.action',{pageID: page.id}) }}" method="post">
