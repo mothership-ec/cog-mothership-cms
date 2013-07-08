@@ -19,12 +19,9 @@ class CmsExtension extends AbstractExtension implements ContainerAwareInterface
 
 	protected function loadTypes()
 	{
-		$mothershipFile = new MothershipFile;
-		$mothershipFile->setContainer($this->_container);
-
 		return array(
 			new Link,
-			$mothershipFile
+			new MothershipFile
 		);
 	}
 }

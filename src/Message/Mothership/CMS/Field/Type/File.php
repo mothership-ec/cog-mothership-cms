@@ -51,9 +51,10 @@ class File extends Field implements ContainerAwareInterface
 
 	public function getFormField(Handler $form)
 	{
-		$form->add($this->getName(), 'file', $this->getLabel(), array(
+		$form->add($this->getName(), 'ms_file', $this->getLabel(), array(
 			'attr'       => array('data-help-key' => $this->_getHelpKeys()),
-			'data_class' => 'Message\\Mothership\\FileManager\\File\\File',
+		//	'data_class' => 'Message\\Mothership\\FileManager\\File\\File',
+			'choices'    => $this->_getChoices(),
 		));
 	}
 
@@ -68,8 +69,26 @@ class File extends Field implements ContainerAwareInterface
 		return $this;
 	}
 
-	public function getValue()
+	// public function getValue()
+	// {
+	// 	return $this->_services['file_manager.file.loader']->getByID((int) $this->_value);
+	// }
+
+	protected function _getChoices()
 	{
-		return $this->_services['file_manager.file.loader']->getByID((int) $this->_value);
+		$files   = (array) $this->_services['file_manager.file.loader']->getAll();
+		$choices = array();
+
+		foreach ($files as $file) {
+			if ($this->_allowedTypes) {
+				if (!in_array($file->typeID, $this->_allowedTypes)) {
+					continue;
+				}
+			}
+
+			$choices[$file->id] = $file->name;
+		}
+
+		return $choices;
 	}
 }
