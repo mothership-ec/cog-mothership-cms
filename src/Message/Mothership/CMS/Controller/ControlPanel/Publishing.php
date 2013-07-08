@@ -39,7 +39,12 @@ class Publishing extends \Message\Cog\Controller\Controller
 
 	public function publish($pageID)
 	{
-		$this->get('cms.page.edit')->publish($this->get('cms.page.loader')->getByID($pageID));
+		if ($this->_hasContent($pageID)) {
+			$this->get('cms.page.edit')->publish($this->get('cms.page.loader')->getByID($pageID));
+		}
+		else {
+			$this->addFlash('error', $this->trans('ms.cms.feedback.edit.publish.failure'));
+		}
 
 		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
 	}
@@ -49,5 +54,26 @@ class Publishing extends \Message\Cog\Controller\Controller
 		$this->get('cms.page.edit')->unpublish($this->get('cms.page.loader')->getByID($pageID));
 
 		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
+	}
+
+	/**
+	 * Check that a page has content other than merely a date
+	 *
+	 * @param int $pageID
+	 * @return bool
+	 */
+	protected function _hasContent($pageID)
+	{
+		$content = false;
+
+		$fields = $this->get('cms.page.content_loader')
+			->load($this->get('cms.page.loader')->getByID($pageID))
+			->getIterator();
+
+		foreach($fields as $field) {
+			$content = ($field->getValue() && (!$field->getValue() instanceof \DateTime)) ? true : $content;
+		}
+
+		return $content;
 	}
 }
