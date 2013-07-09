@@ -87,6 +87,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 		$form = $this->get('form');
  		$form->setAction($this->generateUrl('ms.cp.cms.edit.publish_scheduling', array('pageID' => $page->id)))
 			->setMethod('post')
+			->addOptions(array('attr' => array('id' => 'publish')))
 			->setName('schedule')
 			->setDefaultValues(array(
 				'publish_date' => $page->publishDateRange->getStart(),
