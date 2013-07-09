@@ -9,19 +9,15 @@
 	</span>
 </div>
 
-<form action="{{ url('ms.cp.cms.edit.publish_scheduling',{pageID:page.id}) }}" method="post" id="publish">
+{{ form_start(form) }}
 	<div class="wrap">
 		<div class="date-time">
-			<label>Publish this page at</label>
-			<input type="time" name="publish[publish-time]" class="text-input" value="{{ page.publishDateRange.getStart is empty ? '' : page.publishDateRange.getStart|date("H:i") }}" />
-			<label>on</label>
-			<input type="date" name="publish[publish-date]" class="text-input" value="{{ page.publishDateRange.getStart is empty ? '' :page.publishDateRange.getStart|date("Y-m-d") }}" />
+			{{ form_row(form.publish_date, {label: 'Publish at'}) }}
 		</div>
 		<div class="date-time">
-			<label>Unpublish at</label><input type="time" name="publish[unpublish-time]" class="text-input" value="{{ page.publishDateRange.getEnd is empty ? '' : page.publishDateRange.getEnd|date("H:i") }}" />
-			<label>on</label>
-			<input type="date" name="publish[unpublish-date]" class="text-input" value="{{ page.publishDateRange.getEnd is empty ? '' : page.publishDateRange.getEnd|date("Y-m-d") }}" />
+
+			{{ form_row(form.unpublish_date, {label: 'Unpublish at'}) }}
 		</div>
+		<button name="schedule[save]" type="submit" value="Save">Save Range</button>
 	</div>
-	<button name="publish[save]" type="submit" value="Save" class="button small save">Save Range</button>
-</form>
+{{ form_end(form) }}

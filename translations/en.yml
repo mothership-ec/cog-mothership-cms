@@ -1,43 +1,11 @@
 ms.cms:
   feedback:
-    edit:
-      content:
-        success: Content updated successfully
-        failure: An error occured while updating the content
-      attributes:
-        success: Attributes updated successfully
-      metadata:
-        success: Metadata updates successfully
-    create:
-      success: Page created successfully
-      failure: An error occured while creating the page
+    publish:
+      schedule:
+        warning: "This page is already scheduled to %task% at a future date. Are you sure you would like to %taskLink% this now?"
   repeatable_group:
-    add: "{0} Add a %name%|[1,Inf] Add another %name%"
+    add: "{0} Add a %name%|]1,Inf] Add another %name%"
   attributes:
-    title:
-      label: Page title
-      help:
-        short:
-        long:
-        example: A Title for a Page
-    type:
-      label: Page type
-      help:
-        short: The page type defines what content fields are available.
-        long:
-        example: Blog
-    parent:
-      label: Where does this page live?
-      help:
-        short: This defines where the page lives in the site's Information Architecture.
-        long: Pro tip: Not all page types allow pages to be created within them.
-        example:
-    order:
-      label: Move this page to the top of its level, or after...
-      help:
-        short:
-        long:
-        example:
     slug:
       label: URL Segment
       help:
@@ -83,10 +51,10 @@ ms.cms:
         example: products, shoes, 2013
   metadata:
     title:
-      label: Document title
+      label: Page title
       help:
-        short: The title that shows in the browser tab when viewing this page.
-        long: Leave this blank to just use the page title
+        short: The title that shows in the browser tab
+        long:
         example:
     description:
       label: Meta description
@@ -149,6 +117,6 @@ ms.cms:
         example:
     richtext:
       help:
-        short: You can use <a href="http://daringfireball.net/projects/markdown/">Markdown formatting</a> in this field.
+        short:
         long:
         example:
