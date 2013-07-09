@@ -96,8 +96,8 @@ class Loader
 	}
 
 	/**
-	 * retrive the homepage by getting the left most node in the tree that is
-	 * avaialble, not marked as deleted and in a published state
+	 * retrive the homepage by getting the left most and top level node in the
+	 * tree that is avaialble and not marked as deleted
 	 *
 	 * @return Page|false 		Page object of homepage to use
 	 */
@@ -111,9 +111,7 @@ class Loader
 			WHERE
 				deleted_at IS NULL
 			AND
-				(publish_at <= UNIX_TIMESTAMP() OR publish_at IS NULL)
-			AND
-				(unpublish_at >= UNIX_TIMESTAMP() OR unpublish_at IS NULL)
+				position_depth = 0
 			ORDER BY
 				position_left ASC
 			LIMIT 1
@@ -133,7 +131,7 @@ class Loader
 	public function getBySlug($slug, $checkHistory = true)
 	{
 		if ($slug == '/') {
-			$this->getHomepage();
+			return $this->getHomepage();
 		}
 
 		// Clean up the slug
