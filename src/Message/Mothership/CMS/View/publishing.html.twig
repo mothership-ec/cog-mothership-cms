@@ -1,36 +1,23 @@
-{% if isPublished %}
-<a href="{{ url('ms.cp.cms.edit.unpublish', {pageID: page.id}) }}">Unpublish</a>
-{% else %}
-<a href="{{ url('ms.cp.cms.edit.publish', {pageID: page.id}) }}">Publish</a>
-{% endif %}
+<div class="button group">
+	{% if isPublished %}
+	<a href="{{ url('ms.cp.cms.edit.unpublish', {pageID: page.id}) }}">Unpublish</a>
+	{% else %}
+	<a href="{{ url('ms.cp.cms.edit.publish', {pageID: page.id}) }}">Publish</a>
+	{% endif %}
+	<span class="dropdown">
+		<i class="icon-time"></i>
+	</span>
+</div>
 
 {{ form_start(form) }}
-	{{ form_row(form.publish_date, {label: 'Publish at'}) }}
-	{{ form_row(form.unpublish_date, {label: 'Unpublish at'}) }}
+	<div class="wrap">
+		<div class="date-time">
+			{{ form_row(form.publish_date, {label: 'Publish at'}) }}
+		</div>
+		<div class="date-time">
 
-	<button name="schedule[save]" type="submit" value="Save">Save Range</button>
-
+			{{ form_row(form.unpublish_date, {label: 'Unpublish at'}) }}
+		</div>
+		<button name="schedule[save]" type="submit" value="Save">Save Range</button>
+	</div>
 {{ form_end(form) }}
-
-<!-- <form action="{{ url('ms.cp.cms.edit.publish_scheduling',{pageID:page.id}) }}" method="post">
-	<label>Publish At
-		<input type="time" name="publish[publish-time]" class="text-input"
-			value="{{ page.publishDateRange.getStart is empty ? '' : page.publishDateRange.getStart|date("H:i") }}" />
-	</label>
-	<label>on
-		<input type="date" name="publish[publish-date]" class="text-input"
-		value="{{ page.publishDateRange.getStart is empty ? '' :page.publishDateRange.getStart|date("Y-m-d") }}" />
-	</label>
-
-	<label>Unpublish at
-		<input type="time" name="publish[unpublish-time]" class="text-input"
-			value="{{ page.publishDateRange.getEnd is empty ? '' : page.publishDateRange.getEnd|date("H:i") }}" />
-	</label>
-
-	<label>on
-		<input type="date" name="publish[unpublish-date]" class="text-input"
-			value="{{ page.publishDateRange.getEnd is empty ? '' : page.publishDateRange.getEnd|date("Y-m-d") }}" />
-	</label>
-
-	<button name="publish[save]" type="submit" value="Save">Save Range</button>
-</form> -->

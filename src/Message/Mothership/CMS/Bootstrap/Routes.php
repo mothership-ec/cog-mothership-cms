@@ -13,8 +13,7 @@ class Routes implements RoutesInterface
 		$router['ms.cms']->add('ms.cms.frontend', '/{slug}', '::Controller:Frontend#renderPage')
 			->setRequirement('slug', '[a-z0-9\-\/]+');
 
-
-		$router['ms.cp.cms']->setPrefix('/cms')->setParent('ms.cp');
+		$router['ms.cp.cms']->setPrefix('/content')->setParent('ms.cp');
 
 		$router['ms.cp.cms']->add('ms.cp.cms.dashboard', '/', '::Controller:ControlPanel:Dashboard#index')
 			->setFormat('ANY');
@@ -26,6 +25,10 @@ class Routes implements RoutesInterface
 			->setFormat('ANY');
 
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.action', '/edit/{pageID}', '::Controller:ControlPanel:Edit#updateTitle')
+			->setRequirement('pageID', '\d+')
+			->setMethod('POST');
+
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.metadata.action', '/edit/{pageID}/metadata', '::Controller:ControlPanel:Edit#metadataAction')
 			->setRequirement('pageID', '\d+')
 			->setMethod('POST');
 
@@ -59,12 +62,17 @@ class Routes implements RoutesInterface
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.content', '/edit/{pageID}/content', '::Controller:ControlPanel:Edit#content')
 			->setRequirement('pageID', '\d+');
 
-		$router['ms.cp.cms']->add('ms.cp.cms.edit.attributes', '/edit/{pageID}/attributes', '::Controller:ControlPanel:Edit#attributes')
-			->setRequirement('pageID', '\d+');
-
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.attributes.action', '/edit/{pageID}/attributes', '::Controller:ControlPanel:Edit#attributesAction')
 			->setRequirement('pageID', '\d+')
 			->setMethod('POST');
+
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.attributes.slug.force', '/edit/{pageID}/attributes/slug/{slug}/{csrfHash}', '::Controller:ControlPanel:Edit#forceSlugAction')
+			->setRequirement('pageID', '\d+')
+			->setMethod('GET')
+			->enableCsrf('csrfHash');
+
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.attributes', '/edit/{pageID}/attributes', '::Controller:ControlPanel:Edit#attributes')
+			->setRequirement('pageID', '\d+');
 
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.metadata', '/edit/{pageID}/metadata', '::Controller:ControlPanel:Edit#metadata')
 			->setRequirement('pageID', '\d+');
@@ -75,5 +83,9 @@ class Routes implements RoutesInterface
 		$router['ms.cp.cms']->add('ms.cp.cms.restore', '/restore/{pageID}/{csrfHash}', '::Controller:ControlPanel:Delete#restore')
 			->setRequirement('pageID', '\d+')
 			->enableCsrf('csrfHash');
+
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.metadata', '/edit/{pageID}/metadata', '::Controller:ControlPanel:Edit#metadata')
+			->setRequirement('pageID', '\d+');
+
 	}
 }

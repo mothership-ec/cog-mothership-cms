@@ -10,6 +10,10 @@ class Services implements ServicesInterface
 {
 	public function registerServices($serviceContainer)
 	{
+		$serviceContainer['markdown.parser'] = function() {
+			return new \dflydev\markdown\MarkdownParser;
+		};
+
 		$serviceContainer['cms.page.types'] = $serviceContainer->share(function($c) {
 			return new CMS\PageType\Collection;
 		});
@@ -24,18 +28,22 @@ class Services implements ServicesInterface
 			return $helper->setTable('page', 'page_id', 'position_left', 'position_right', 'position_depth');
 		};
 
-		$serviceContainer['cms.page.loader'] = $serviceContainer->share(function($c) {
+		$serviceContainer['cms.page.loader'] = function($c) {
 			return new CMS\Page\Loader(
 				'Locale class',
 				$c['db.query'],
 				$c['cms.page.types'],
 				$c['user.groups']
 			);
-		});
+		};
 
-		$serviceContainer['cms.page.content_loader'] = $serviceContainer->share(function($c) {
+		$serviceContainer['cms.page.content_loader'] = function($c) {
 			return new CMS\Page\ContentLoader($c['db.query'], $c['cms.field.factory']);
-		});
+		};
+
+		$serviceContainer['cms.page.content_edit'] = function($c) {
+			return new CMS\Page\ContentEdit($c['db.transaction'], $c['event.dispatcher'], $c['user.current']);
+		};
 
 		$serviceContainer['cms.page.authorisation'] = function($c) {
 			return new CMS\Page\Authorisation($c['user.group.loader'], $c['user.current']);
@@ -80,5 +88,37 @@ class Services implements ServicesInterface
 		$serviceContainer['cms.field.form'] = function($c) {
 			return new CMS\Field\Form($c);
 		};
+
+		$serviceContainer['form.factory'] = $serviceContainer->share(
+			$serviceContainer->extend('form.factory', function($factory, $c) {
+				$factory->addExtensions(array(
+					$c['form.cms_extension']
+				));
+
+				return $factory;
+			})
+		);
+
+		$serviceContainer['form.cms_extension'] = function($c) {
+			$ext = new \Message\Mothership\CMS\Field\FormType\CmsExtension;
+			$ext->setContainer($c);
+
+			return $ext;
+		};
+
+		$serviceContainer['form.templates.twig'] = $serviceContainer->extend(
+			'form.templates.twig', function($templates, $c) {
+			$templates[] = 'Message:Mothership:CMS::Form:Twig:form_div_layout';
+
+			return $templates;
+		});
+
+		$serviceContainer['form.templates.php'] = $serviceContainer->extend(
+			'form.templates.php', function($templates, $c) {
+				$templates[] = 'Message:Mothership:CMS::Form:Php';
+
+				return $templates;
+			}
+		);
 	}
 }

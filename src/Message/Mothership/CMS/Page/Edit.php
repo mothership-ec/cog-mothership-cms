@@ -9,6 +9,7 @@ use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\DB\NestedSetHelper;
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\DateTimeImmutable;
+use Message\Cog\ValueObject\Slug;
 use Message\User\UserInterface;
 use Message\User\User;
 
@@ -59,9 +60,6 @@ class Edit {
 				page.unpublish_at = :unpublishAt?dn,
 				page.updated_at = :updatedAt?dn,
 				page.created_by = :updatedBy?i,
-				page.position_left = :left?i,
-				page.position_right = :right?i,
-				page.position_depth = :depth?i,
 				page.meta_title = :metaTitle?s,
 				page.meta_description = :metaDescription?s,
 				page.meta_html_head = :metaHtmlHead?s,
@@ -71,9 +69,6 @@ class Edit {
 				page.visibility_aggregator = :visibilityAggregator?i,
 				page.password = :password?s,
 				page.access = :access?s,
-				/*
-				page_access_group.group_id = :accessGroups?i,
-				*/
 				page.comment_enabled = :commentsEnabled?i,
 				page.comment_access = :commentsAccess?i,
 				page.comment_access = :commentsAccessGroups?i,
@@ -90,9 +85,6 @@ class Edit {
 				'updatedAt'            => $page->authorship->updatedAt(),
 				'updatedBy'            => $page->authorship->updatedBy(),
 				'slug'                 => $page->slug->getLastSegment(),
-				'left'                 => $page->left,
-				'right'                => $page->right,
-				'depth'                => $page->depth,
 				'metaTitle'            => $page->metaTitle,
 				'metaDescription'      => $page->metaDescription,
 				'metaHtmlHead'         => $page->metaHtmlHead,
@@ -108,10 +100,13 @@ class Edit {
 				'commentsAccessGroups' => $page->commentsAccessGroups,
 				'commentsApproval'     => $page->commentsApproval,
 				'commentsExpiry'       => $page->commentsExpiry,
-			));
+			)
+		);
+
+		// Update the user groups for this page in the DB
+		$this->_updateAccessGroups($page);
 
 		$event = new Event($page);
-
 		// Dispatch the edit event
 		$this->_eventDispatcher->dispatch(
 			Event::EDIT,
@@ -119,6 +114,76 @@ class Edit {
 		);
 
 		return $event->getpage();
+	}
+
+	/**
+	 * Update the slug and insert the old slug into the historical slug table
+	 *
+	 * @param  Page   $page    	Page object to udpate
+	 * @param  string $newSlug  The new slug to update
+	 *
+	 * @return Page          	Return the updated Page object
+	 */
+	public function updateSlug(Page $page, $newSlug)
+	{
+		// Get all the segements
+		$segements = $page->slug->getSegments();
+		$date = new DateTimeImmutable;
+		$result = $this->_query->run('
+			REPLACE INTO
+				page_slug_history
+			SET
+				page_id = ?i,
+				slug 	= ?s,
+				created_at = ?d,
+				created_by = ?i',
+			array(
+				$page->id,
+				$page->slug->getFull(),
+				$date,
+				$this->_currentUser->id,
+			)
+		);
+
+		$update = $this->_query->run('
+			UPDATE
+				page
+			SET
+				slug = ?s
+			WHERE
+				page_id = ?i',
+			array(
+				$newSlug,
+				$page->id,
+			)
+		);
+		// Remove the last one
+		$last = array_pop($segements);
+		// Set the new one to the end of the array
+		$segments[] = $newSlug;
+		// Create a new slug object
+		$slug = new Slug($segments);
+		// Add it to the page object
+		$page->slug = $slug;
+
+		return $page;
+	}
+
+	/**
+	 * Remove a given slug from the page_slug_history table
+	 *
+	 * @param  string 	$slug 	The slug to remove
+	 */
+	public function removeHistoricalSlug($slug)
+	{
+		$delete = $this->_query->run('
+			DELETE FROM
+				page_slug_history
+			WHERE
+				slug = ?s
+		', array(
+			$slug
+		));
 	}
 
 	/**
@@ -176,6 +241,54 @@ class Edit {
 	}
 
 	/**
+	 * Change the order of the children within a nested set. This would also move
+	 * the children nodes of any entry that is affected by the move.
+	 *
+	 * @param  Page 	$page 				The Page object of the page we are
+	 *                         				going to move
+	 * @param  int  	$nearestSibling		The the pageID of the node we are
+	 *                                		moving before or after
+	 */
+	public function changeOrder(Page $page, $nearestSibling)
+	{
+		try {
+			$addAfter = false;
+			if ($nearestSibling == 0) {
+				// Load the siblings and get the one which is at the top
+				$siblings = $this->_loader->getSiblings($page);
+				$nearestSibling = array_shift($siblings);
+				$addAfter = true;
+			} else {
+				// Otherwise just load the given sibling to move the page after
+				$nearestSibling = $this->_loader->getByID($nearestSibling);
+			}
+
+			$trans = $this->_nestedSetHelper->move($page->id,$nearestSibling->id, false, $addAfter);
+			$trans->commit();
+			return true;
+		} catch (Expcetion $e) {
+			return false;
+		}
+	}
+
+	/**
+	 * This will move a node to a different parent of the tree.
+	 *
+	 * @param int 	$pageID 		The ID of the page we are going to move
+	 * @param int   $newParentID 	The ID of the new parent we are moving to
+	 */
+	public function changeParent($pageID, $newParentID)
+	{
+		try {
+			$trans = $this->_nestedSetHelper->move($pageID, $newParentID, true);
+			$trans->commit();
+			return true;
+		} catch (Exception $e) {
+			return false;
+		}
+	}
+
+	/**
 	 * Save only the publish data in the DB
 	 *
 	 * @param  Page   	$page 	page object to be updated
@@ -200,6 +313,47 @@ class Edit {
 		);
 
 		return $result->affected() ? $page : false;
+
+	}
+
+	/**
+	 * Update the database with the user groups for this page.
+	 *
+	 * @param  Page   $page Page object to update
+	 */
+	protected function _updateAccessGroups(Page $page)
+	{
+		// Remove any existing access groups as groups may havge been unselected
+		$result = $this->_query->run(
+			'DELETE FROM
+				page_access_group
+			WHERE
+				page_id = ?i',
+			array(
+				$page->id
+			)
+		);
+
+		// Build the insert query and parameters
+		$inserts = array();
+		$values = array();
+		foreach ($page->accessGroups as $groupName) {
+			$inserts[] = '(?i, ?s)';
+			$values[] = $page->id;
+			$values[] = $groupName;
+		}
+
+		// If there is changes to be made then run the built query
+		if ($values) {
+			$result = $this->_query->run(
+				'INSERT INTO
+					page_access_group
+					(page_id, group_name)
+				VALUES
+					'.implode(',',$inserts).'
+				', $values
+			);
+		}
 
 	}
 }

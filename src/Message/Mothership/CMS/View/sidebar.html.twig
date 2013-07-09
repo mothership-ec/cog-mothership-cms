@@ -1,4 +1,11 @@
-<a href="{{ url('ms.cp.cms.create')}}">Create</a>
+{%  if hasPages == true %}
+	<form action="" class="search">
+	    <input type="search" placeholder="Search content...">
+	    <button>Search</button>
+	</form>
+{% endif %}
+
+<a href="{{ url('ms.cp.cms.create')}}" class="create" data-live>Add a new page</a>
 
 <ol class="main-menu">
     {{ _self.menu_links(tree) }}
@@ -7,7 +14,7 @@
 {% macro menu_links(links) %}
     {% for link in links %}
         <li>
-            <a href="{{ url('ms.cp.cms.edit', {pageID: link.id}) }}">{{ link.title }}</a>
+            <a href="{{ url('ms.cp.cms.edit', {pageID: link.id}) }}" data-live>{{ link.title }}</a>
             {% if link.children %}
                 <ol>
                     {{ _self.menu_links(link.children) }}

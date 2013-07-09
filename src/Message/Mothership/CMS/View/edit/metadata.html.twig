@@ -1,4 +1,11 @@
 {% extends '::edit' %}
+
 {% block form %}
-metadata here
+	{{ form_start(form) }}
+		{{ form_row(form.metaTitle) }}
+		{{ form_row(form.metaDescription) }}
+		{{ form_row(form.metaHtmlHead) }}
+		{{ form_row(form.metaHtmlFoot) }}
+		<button type="submit" class="button small save" id="save-content">Save changes</button>
+	{{ form_end(form) }}
 {% endblock %}

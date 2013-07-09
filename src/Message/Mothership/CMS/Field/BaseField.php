@@ -38,11 +38,11 @@ abstract class BaseField implements FieldInterface
 	/**
 	 * Print the class directly. This returns the field value.
 	 *
-	 * @return string|null The field value
+	 * @return string The field value
 	 */
 	public function __toString()
 	{
-		return $this->getValue();
+		return (string) $this->getValue();
 	}
 
 	/**
@@ -59,6 +59,14 @@ abstract class BaseField implements FieldInterface
 	public function getLabel()
 	{
 		return $this->_label;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getValue()
+	{
+		return $this->_value;
 	}
 
 	/**
@@ -121,13 +129,6 @@ abstract class BaseField implements FieldInterface
 
 		return 'ms.cms.field_types.' . $className . '.help:' . $this->_translationKey . '.help';
 	}
-
-	/**
-	 * Get the value for this field.
-	 *
-	 * @return mixed
-	 */
-	abstract public function getValue();
 
 	/**
 	 * Add the form field for this field to a form handler instance.

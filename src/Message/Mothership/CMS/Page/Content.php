@@ -14,7 +14,7 @@ use Message\Cog\Validation\Validator;
  */
 class Content implements \IteratorAggregate
 {
-	protected $_fields;
+	protected $_fields = array();
 	protected $_validator;
 
 	/**
@@ -22,6 +22,8 @@ class Content implements \IteratorAggregate
 	 *
 	 * @param string                             $var   Content part name
 	 * @param FieldInterface|RepeatableContainer $value The content part
+	 *
+	 * @throws \InvalidArgumentException If the content part was not a valid instance
 	 */
 	public function __set($var, $value)
 	{

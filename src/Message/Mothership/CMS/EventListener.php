@@ -6,6 +6,10 @@ use Message\Mothership\ControlPanel\Event\BuildMenuEvent;
 
 use Message\Cog\Event\EventListener as BaseListener;
 use Message\Cog\Event\SubscriberInterface;
+use Message\Cog\HTTP\RedirectResponse;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Event listener for the Mothership CMS.
@@ -21,10 +25,13 @@ class EventListener extends BaseListener implements SubscriberInterface
 	{
 		return array(
 			'modules.load.success' => array(
-				array('registerGroups')
+				array('registerGroups'),
 			),
 			BuildMenuEvent::BUILD_MAIN_MENU => array(
-				array('registerMainMenuItems')
+				array('registerMainMenuItems'),
+			),
+			KernelEvents::EXCEPTION => array(
+				array('pageNotFound'),
 			),
 		);
 	}
@@ -47,4 +54,22 @@ class EventListener extends BaseListener implements SubscriberInterface
 		$this->_services['user.groups']
 			->add(new UserGroup\ContentManager);
 	}
+
+	/**
+	 * Redirect user to dashboard with error message if they get a NotFoundHttpException
+	 *
+	 * @param GetResponseForExceptionEvent $event
+	 */
+	public function pageNotFound(GetResponseForExceptionEvent $event)
+	{
+		$exception = $event->getException();
+
+		if (($exception->getStatusCode() == 404) && in_array('ms.cp', $event->getRequest()->get('_route_collections'))) {
+			$this->_services['http.session']->getFlashBag()->add('error', $exception->getMessage());
+			$event->setResponse(new RedirectResponse(
+				$this->_services['routing.generator']->generate('ms.cp.cms.dashboard')
+			));
+		};
+	}
+
 }

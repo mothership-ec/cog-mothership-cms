@@ -1,7 +1,7 @@
 {% extends '::edit' %}
 {% block form %}
 
-
+{{ form_start(form) }}
 {{ form_row(form.slug) }}
 
 {{ form_row(form.visibility_search) }}
@@ -11,7 +11,10 @@
 {{ form_row(form.access) }}
 {{ form_row(form.access_groups) }}
 
-{{ form_row(form.tags) }}
+{{ form_row(form.parent) }}
+{{ form_row(form.siblings) }}
+
+<button type="submit" class="button small save" id="save-content">Save changes</button>
 
 <h2>Authorship information</h2>
 
@@ -23,8 +26,6 @@
 		<dd>at {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }} by {{ page.authorship.updatedBy }}</dd>
 	{% endif %}
 </dl>
-
-<button type="submit">Save changes</button>
 
 {{ form_end(form) }}
 
