@@ -10,7 +10,7 @@ use Message\Cog\Form\Handler;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class DateTime extends Field
+class Datetime extends Field
 {
 	public function __toString()
 	{
@@ -19,6 +19,10 @@ class DateTime extends Field
 
 	public function getValue()
 	{
+		if ($this->_value instanceof \DateTime) {
+			return $this->_value;
+		}
+
 		return new \DateTime(date('c', $this->_value));
 	}
 

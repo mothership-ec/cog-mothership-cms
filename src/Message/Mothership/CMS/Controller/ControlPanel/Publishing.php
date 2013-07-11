@@ -4,6 +4,7 @@ namespace Message\Mothership\CMS\Controller\ControlPanel;
 
 use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\DateRange;
+use Message\Mothership\CMS\Page\Page;
 
 class Publishing extends \Message\Cog\Controller\Controller
 {
@@ -12,48 +13,115 @@ class Publishing extends \Message\Cog\Controller\Controller
 		$page        = $this->get('cms.page.loader')->getByID($pageID);
 		$isPublished = $this->get('cms.page.authorisation')->isPublished($page);
 
+		$form = $this->_getForm($page);
+
 		return $this->render('Message:Mothership:CMS::publishing', array(
 			'page'        => $page,
 			'isPublished' => $isPublished,
+			'form'		  => $form,
 		));
 	}
 
 	public function schedule($pageID)
 	{
-		// Send the user back if we don't have the form data we expect
-		if (!$data = $this->get('request')->request->get('publish')) {
-			return $this->redirectToReferer();
-		}
-
 		$page = $this->_services['cms.page.loader']->getByID($pageID);
 
-		$page->publishDateRange = new DateRange(
-			$data['publish-date'] ? new DateTimeImmutable($data['publish-date'] .' '. $data['publish-time']) : null,
-			$data['unpublish-date'] ? new DateTimeImmutable($data['unpublish-date'] .' '. $data['unpublish-time']) : null
-		);
-
-		$this->get('cms.page.edit')->save($page);
+		$form = $this->_getForm($page);
+		if ($form->isValid() && $data = $form->getFilteredData()) {
+			$page->publishDateRange = new DateRange(
+				$data['publish_date'] ? new DateTimeImmutable($data['publish_date']->format('c')) : null,
+				$data['unpublish_date'] ? new DateTimeImmutable($data['unpublish_date']->format('c')) : null
+			);
+			$this->get('cms.page.edit')->save($page);
+		}
 
 		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
 	}
 
-	public function publish($pageID)
+	public function publish($pageID, $force = false)
 	{
 		if ($this->_hasContent($pageID)) {
 			$this->get('cms.page.edit')->publish($this->get('cms.page.loader')->getByID($pageID));
+
+			$page = $this->get('cms.page.loader')->getByID($pageID);
+			$hasFuture = $page->publishDateRange->getStart() ? $page->publishDateRange->getStart()->getTimestamp() > time(): false;
+
+			de($page->publishDateRange, $hasFuture);
+			$this->_checkForce($pageID, $force, $hasFuture);
 		}
 		else {
-			$this->addFlash('error', $this->trans('ms.cms.feedback.edit.publish.no_content'));
+			$this->addFlash('error', $this->trans('ms.cms.feedback.publish.content.error'));
 		}
 
-		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
+		return $this->redirectToReferer();
 	}
 
-	public function unpublish($pageID)
+	public function unpublish($pageID, $force = false)
 	{
-		$this->get('cms.page.edit')->unpublish($this->get('cms.page.loader')->getByID($pageID));
+		$page = $this->get('cms.page.loader')->getByID($pageID);
+		$hasFuture = $page->publishDateRange->getEnd() ? $page->publishDateRange->getEnd()->getTimestamp() > time(): false;
+		$this->_checkForce($pageID, $force, $hasFuture, 'unpublish');
 
-		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
+		return $this->redirectToReferer();
+	}
+
+	/**
+	 * Simplify publishing/unpublishing validation process
+	 *
+	 * @param int $pageID                   Page id
+	 * @param bool $force                   Has the user decided to override the publish/unpublish times?
+	 * @param bool $hasFuture               Is the page due to be published in the future?
+	 * @param string $action                Publish or unpublish
+	 * @throws \InvalidArgumentException    Throws exception if $action is not publish or unpublish
+	 *
+	 * @return Publishing           Returns $this for chainability
+	 */
+	protected function _checkForce($pageID, $force, $hasFuture, $action = 'publish')
+	{
+		if (($action != 'publish') && ($action != 'unpublish')) {
+			throw new \InvalidArgumentException('$action must be either \'publish\' or \'unpublish\', \'' . $action . '\' given');
+		}
+
+		if (!$force && $hasFuture) {
+			$this->addFlash('warning', $this->trans('ms.cms.feedback.publish.schedule.warning',
+				array(
+					'%task%' 		=> $action,
+					'%taskLink%'	=> '<a href="'.$this->generateUrl('ms.cp.cms.edit.' . $action . '.force',array(
+						'pageID' => $pageID,
+						'force'	 => 1,
+					)).'">' . $action . '</a>'
+				)
+			));
+
+		}
+		else {
+			$this->get('cms.page.edit')->$action($this->get('cms.page.loader')->getByID($pageID));
+		}
+
+		return $this;
+	}
+
+	protected function _getForm(Page $page)
+	{
+		$form = $this->get('form');
+ 		$form->setAction($this->generateUrl('ms.cp.cms.edit.publish_scheduling', array('pageID' => $page->id)))
+			->setMethod('post')
+			->addOptions(array('attr' => array('id' => 'publish')))
+			->setName('schedule')
+			->setDefaultValues(array(
+				'publish_date' => $page->publishDateRange->getStart(),
+				'unpublish_date' => $page->publishDateRange->getEnd(),
+			));;
+
+		$form->add('publish_date', 'datetime', 'on')
+			->val()
+			->optional();
+
+		$form->add('unpublish_date', 'datetime', 'on')
+			->val()
+			->optional();
+
+		return $form;
 	}
 
 	/**

@@ -1,7 +1,9 @@
-<form action="" class="search">
-    <input type="search" placeholder="Search content...">
-    <button>Search</button>
-</form>
+{%  if hasPages == true %}
+	<form action="" class="search">
+	    <input type="search" placeholder="Search content...">
+	    <button>Search</button>
+	</form>
+{% endif %}
 
 <a href="{{ url('ms.cp.cms.create')}}" class="create" data-live>Add a new page</a>
 

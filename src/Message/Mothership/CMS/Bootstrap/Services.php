@@ -88,5 +88,37 @@ class Services implements ServicesInterface
 		$serviceContainer['cms.field.form'] = function($c) {
 			return new CMS\Field\Form($c);
 		};
+
+		$serviceContainer['form.factory'] = $serviceContainer->share(
+			$serviceContainer->extend('form.factory', function($factory, $c) {
+				$factory->addExtensions(array(
+					$c['form.cms_extension']
+				));
+
+				return $factory;
+			})
+		);
+
+		$serviceContainer['form.cms_extension'] = function($c) {
+			$ext = new \Message\Mothership\CMS\Field\FormType\CmsExtension;
+			$ext->setContainer($c);
+
+			return $ext;
+		};
+
+		$serviceContainer['form.templates.twig'] = $serviceContainer->extend(
+			'form.templates.twig', function($templates, $c) {
+			$templates[] = 'Message:Mothership:CMS::Form:Twig:form_div_layout';
+
+			return $templates;
+		});
+
+		$serviceContainer['form.templates.php'] = $serviceContainer->extend(
+			'form.templates.php', function($templates, $c) {
+				$templates[] = 'Message:Mothership:CMS::Form:Php';
+
+				return $templates;
+			}
+		);
 	}
 }
