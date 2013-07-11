@@ -33,7 +33,8 @@ class Services implements ServicesInterface
 				'Locale class',
 				$c['db.query'],
 				$c['cms.page.types'],
-				$c['user.groups']
+				$c['user.groups'],
+				$c['cms.page.authorisation']
 			);
 		};
 

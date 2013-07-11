@@ -51,6 +51,7 @@ class Loader
 	protected $_locale;
 	protected $_query;
 	protected $_pageTypes;
+	protected $_authorisation;
 
 	/**
 	 * var to toggle the loading of deleted pages
@@ -71,18 +72,20 @@ class Loader
 	/**
 	 * Constructor
 	 *
-	 * @param \Locale             $locale    The current locale
-	 * @param Query               $query     Database query instance to use
-	 * @param PageTypeCollection  $pageTypes Page types available to the system
-	 * @param UserGroupCollection $groups    User groups available to the system
+	 * @param \Locale             $locale    		The current locale
+	 * @param Query               $query     		Database query instance to use
+	 * @param PageTypeCollection  $pageTypes 		Page types available to the system
+	 * @param UserGroupCollection $groups    		User groups available to the system
+	 * @param Authorisation  	  $authorisation 	Authorisation instance to use
 	 */
 	public function __construct(/* \Locale */ $locale, Query $query,
-		PageTypeCollection $pageTypes, UserGroupCollection $groups)
+		PageTypeCollection $pageTypes, UserGroupCollection $groups, Authorisation $authorisation)
 	{
-		$this->_locale     = $locale;
-		$this->_query      = $query;
-		$this->_pageTypes  = $pageTypes;
-		$this->_userGroups = $groups;
+		$this->_locale        = $locale;
+		$this->_query         = $query;
+		$this->_pageTypes     = $pageTypes;
+		$this->_userGroups    = $groups;
+		$this->_authorisation = $authorisation;
 	}
 
 	/**
@@ -476,7 +479,9 @@ class Loader
 				$data->unpublishAt ? new DateTimeImmutable(date('c', $data->unpublishAt)) : null
 			);
 
-			if (!$this->_loadUnpublished && !$pages[$key]->publishDateRange->isInRange()) {
+			// Remove the page if we are asking to not show unpublished pages and
+			// the page is in fact unpublished
+			if (!$this->_loadUnpublished && !$this->_authorisation->isPublished($pages[$key])) {
 				unset($pages[$key]);
 				continue;
 			}
