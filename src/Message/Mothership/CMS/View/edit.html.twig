@@ -8,7 +8,6 @@
 	<hgroup class="title">
 		<h1>{{ page.title }}</h1>
 		<h2>{{ page.type.getDisplayName() }}</h2>
-		<a href="{{ url('ms.cms.frontend', {slug:page.slug.getFull|trim('/')}) }}">View Page</a>
 	</hgroup>
 
 	<form class="edit-title" action="{{ url('ms.cp.cms.edit.action',{pageID: page.id}) }}" method="post">
@@ -23,12 +22,15 @@
 		{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Edit#tabs'))}}
 
 		<div class="controls">
-			<form action="{{ url('ms.cp.cms.delete',{pageID: page.id}) }}" method="post" data-confirm="Are you sure you want to delete this page?">
+			<form action="{{ url('ms.cp.cms.delete',{pageID: page.id}) }}" method="post" data-confirm="Are you sure you want to delete this page?" id="delete-page">
 				<input type="hidden" name="method" value="DELETE">
 				<button type="submit" id="edit-submit" value="Delete page" class="delete-page">Delete page</button>
 			</form>
 			<div class="publish">
 				{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Publishing#renderForm', {pageID: page.id})) }}
+			</div>
+			<div class="preview">
+				<a href="{{ url('ms.cms.frontend', {slug:page.slug.getFull|trim('/')}) }}" class="button small">Preview</a>
 			</div>
 		</div>
 	</div>
