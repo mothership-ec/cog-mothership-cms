@@ -8,12 +8,12 @@
 <a href="{{ url('ms.cp.cms.create')}}" class="create" data-live>Add a new page</a>
 
 <ol class="main-menu">
-    {{ _self.menu_links(tree) }}
+    {{ _self.menu_links(tree, currentPageID) }}
 </ol>
 
-{% macro menu_links(links) %}
+{% macro menu_links(links, currentPageID) %}
     {% for link in links %}
-        <li>
+        <li {% if link.id == currentPageID %} class="active" {% endif %} >
             <a href="{{ url('ms.cp.cms.edit', {pageID: link.id}) }}" data-live>{{ link.title }}</a>
             {% if link.children %}
                 <ol>
