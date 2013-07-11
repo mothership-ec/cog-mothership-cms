@@ -9,7 +9,8 @@
 {% block slug_widget %}
 	{% spaceless %}
 		<div class="slug">
-			{{ block('form_widget_simple') }}
+			<label>Yo wassup</label>
+			<input type="text" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
 		</div>
 	{% endspaceless %}
 {% endblock slug_widget %}

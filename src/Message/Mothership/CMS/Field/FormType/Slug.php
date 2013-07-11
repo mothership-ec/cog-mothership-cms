@@ -32,6 +32,16 @@ class Slug extends AbstractType
 	 */
 	public function buildView(FormView $view, FormInterface $form, array $options)
 	{
+		if (isset($options['data_slug']) && (!$options['data_slug'] instanceof SlugObject)) {
+			throw new \InvalidArgumentException('\'data_slug\' option must be an instance of \\Message\\Cog\\ValueObject\\Slug');
+		}
+		elseif (isset($options['data_slug'])) {
+			$segments = $options['data_slug']->getSegments();
+			array_pop($segments);
+			$preSlug = implode('/', $segments);
+			$value = $options['data_slug']->getLastSegment();
+		}
+
 		$view->vars = array_replace($view->vars, array(
 			'data_slug' => $options['data_slug'],
 		));
