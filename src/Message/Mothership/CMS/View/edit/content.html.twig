@@ -21,12 +21,14 @@
 		{% if part.getFields is not null %}
 		<section class="group">
 			<h2>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.name'|trans }}</h2>
-			<p>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.description'|trans }}</p>
 			<section class="group">
 				{% for field in part.getFields %}
 				{{ form_row(form[name][field.getName]) }}
 				{% endfor %}
 			</section>
+			<div class="help">
+				<p>{{ 'page.' ~ page.type.getName ~ '.' ~ name ~ '.description'|trans }}</p>
+			</div>
 		</section>
 		{# If this part is a normal field, just output it #}
 		{% else %}
@@ -36,7 +38,6 @@
 	{% else %}
 		<section class="repeatable group">
 			<h2>{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.name')|trans }}</h2>
-			<p>{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.description')|trans }}</p>
 			{% if part.count > 0 %}
 			{% for i in range(0, part.count - 1) %}
 				<section class="group">
@@ -52,6 +53,9 @@
 			<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}" data-group-index="{{ part.count }}">
 				{{ 'ms.cms.repeatable_group.add'|transchoice(part.count, {'%name%': ('page.' ~ page.type.getName ~ '.' ~ name ~ '.singularName')|trans|lower}) }}
 			</a>
+			<div class="help">
+				<p>{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.description')|trans }}</p>
+			</div>
 		</section>
 	{% endif %}
 {% endfor %}
