@@ -36,23 +36,25 @@
 		{% endif %}
 	{# If this content part is a repeatable group, output the title & description, then each group #}
 	{% else %}
-		<section class="repeatable group">
+		<section class="repeatable-group">
 			<h2>{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.name')|trans }}</h2>
-			{% if part.count > 0 %}
-			{% for i in range(0, part.count - 1) %}
-				<section class="group">
-					{% for field in repeatables[name] %}
-					{{ form_row(form[name][field][i]) }}
-					{% endfor %}
-					<a href="#" data-group-remove>Remove this group</a>
-				</section>
-			{% endfor %}
-			{% else %}
-			{% do form[name].setRendered %}
-			{% endif %}
-			<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}" data-group-index="{{ part.count }}">
-				{{ 'ms.cms.repeatable_group.add'|transchoice(part.count, {'%name%': ('page.' ~ page.type.getName ~ '.' ~ name ~ '.singularName')|trans|lower}) }}
-			</a>
+			<div class="container">
+				{% if part.count > 0 %}
+				{% for i in range(0, part.count - 1) %}
+					<section class="group">
+						{% for field in repeatables[name] %}
+						{{ form_row(form[name][field][i]) }}
+						{% endfor %}
+						<a href="#" data-group-remove>Remove this group</a>
+					</section>
+				{% endfor %}
+				{% else %}
+				{% do form[name].setRendered %}
+				{% endif %}
+				<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}" data-group-index="{{ part.count }}" class="button small submit">
+					{{ 'ms.cms.repeatable_group.add'|transchoice(part.count, {'%name%': ('page.' ~ page.type.getName ~ '.' ~ name ~ '.singularName')|trans|lower}) }}
+				</a>
+			</div>
 			<div class="help">
 				<p>{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.description')|trans }}</p>
 			</div>
