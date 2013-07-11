@@ -13,6 +13,8 @@ ms.cms:
         warning: "This page is already scheduled to %task% at a future date. Are you sure you would like to %taskLink% this now?"
       content:
         error: You must add some content before publishing a page
+    create:
+      success: Page created successfully
   repeatable_group:
     add: "{0} Add a %name%|[1,Inf] Add another %name%"
   attributes:
