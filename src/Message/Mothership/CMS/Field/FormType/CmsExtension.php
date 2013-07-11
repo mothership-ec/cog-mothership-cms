@@ -21,7 +21,8 @@ class CmsExtension extends AbstractExtension implements ContainerAwareInterface
 	{
 		return array(
 			new Link,
-			new MothershipFile
+			new MothershipFile,
+			new Slug
 		);
 	}
 }
