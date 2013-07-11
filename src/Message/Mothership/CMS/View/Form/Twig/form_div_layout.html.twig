@@ -9,7 +9,7 @@
 {% block slug_widget %}
 	{% spaceless %}
 		<div class="slug">
-			<label>Yo wassup</label>
+			<p>{{ pre_slug }}</p>
 			<input type="text" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
 		</div>
 	{% endspaceless %}

@@ -10,17 +10,8 @@ use Message\Cog\ValueObject\Slug as SlugObject;
 
 class Slug extends AbstractType
 {
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
-	{
-		$resolver->setDefaults(array(
-			'data_slug' => new SlugObject(array())
-		));
-	}
-
-	public function getParent()
-	{
-		return 'text';
-	}
+	protected $_preSlug = '/';
+	protected $_value = '';
 
 	public function getName()
 	{
@@ -38,12 +29,13 @@ class Slug extends AbstractType
 		elseif (isset($options['data_slug'])) {
 			$segments = $options['data_slug']->getSegments();
 			array_pop($segments);
-			$preSlug = implode('/', $segments);
+			$preSlug = implode('/', $segments) . '/';
 			$value = $options['data_slug']->getLastSegment();
 		}
 
 		$view->vars = array_replace($view->vars, array(
-			'data_slug' => $options['data_slug'],
+			'pre_slug'  => isset($preSlug) ? $preSlug : $this->_preSlug,
+			'value'     => isset($value) ? $value : $this->_value,
 		));
 	}
 }
