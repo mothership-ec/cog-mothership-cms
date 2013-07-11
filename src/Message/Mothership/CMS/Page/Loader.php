@@ -6,6 +6,7 @@ use Message\Mothership\CMS\PageType\PageTypeInterface;
 use Message\Mothership\CMS\PageType\Collection as PageTypeCollection;
 
 use Message\User\Group\Collection as UserGroupCollection;
+use Message\User\UserInterface;
 
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
@@ -68,6 +69,7 @@ class Loader
 	 * @var boolean
 	 */
 	protected $_loadUnpublished = true;
+	protected $_loadUnviewable = true;
 
 	/**
 	 * Constructor
@@ -78,14 +80,20 @@ class Loader
 	 * @param UserGroupCollection $groups    		User groups available to the system
 	 * @param Authorisation  	  $authorisation 	Authorisation instance to use
 	 */
-	public function __construct(/* \Locale */ $locale, Query $query,
-		PageTypeCollection $pageTypes, UserGroupCollection $groups, Authorisation $authorisation)
+	public function __construct(/* \Locale */ $locale,
+		Query $query,
+		PageTypeCollection $pageTypes,
+		UserGroupCollection $groups,
+		Authorisation $authorisation,
+		UserInterface $user
+	)
 	{
 		$this->_locale        = $locale;
 		$this->_query         = $query;
 		$this->_pageTypes     = $pageTypes;
 		$this->_userGroups    = $groups;
 		$this->_authorisation = $authorisation;
+		$this->_user 		  = $user;
 	}
 
 	/**
@@ -512,6 +520,12 @@ class Loader
 					$pages[$key]->accessGroups[$group->getName()] = $group;
 				}
 			}
+
+			if (!$this->_loadUnviewable && $this->_authorisation->isViewable($pages[$key], $this->_user)) {
+				unset($pages[$key]);
+				continue;
+			}
+
 		}
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
 	}

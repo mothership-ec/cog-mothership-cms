@@ -34,7 +34,8 @@ class Services implements ServicesInterface
 				$c['db.query'],
 				$c['cms.page.types'],
 				$c['user.groups'],
-				$c['cms.page.authorisation']
+				$c['cms.page.authorisation'],
+				$c['user.current']
 			);
 		};
 
