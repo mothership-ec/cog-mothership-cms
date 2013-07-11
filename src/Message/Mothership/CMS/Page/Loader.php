@@ -59,7 +59,14 @@ class Loader
 	 *
 	 * @var bool
 	 */
-	protected $_loadDeleted = false;
+	protected $_loadDeleted     = false;
+
+	/**
+	 * var to toggle the loading of unpublished pages
+	 *
+	 * @var boolean
+	 */
+	protected $_loadUnpublished = true;
 
 	/**
 	 * Constructor
@@ -347,6 +354,19 @@ class Loader
 		return $this;
 	}
 
+	/**
+	 * Toggle whether or not to load pages which are unpublshied
+	 *
+	 * @param  bool $bool true / false as to whether to load unpublished pages
+	 *
+	 * @return $this       Loader object in order to chain methods
+	 */
+	public function includeUnpublished($bool)
+	{
+		$this->_loadUnpublished = $bool;
+		return $this;
+	}
+
 
 	/**
 	 * Load all the given pages and pass the results onto the _loadPage method
@@ -455,6 +475,11 @@ class Loader
 				$data->publishAt   ? new DateTimeImmutable(date('c', $data->publishAt))   : null,
 				$data->unpublishAt ? new DateTimeImmutable(date('c', $data->unpublishAt)) : null
 			);
+
+			if (!$this->_loadUnpublished && !$pages[$key]->publishDateRange->isInRange()) {
+				unset($pages[$key]);
+				continue;
+			}
 
 			// Get the page type
 			$pages[$key]->type = $this->_pageTypes->get($data->type);
