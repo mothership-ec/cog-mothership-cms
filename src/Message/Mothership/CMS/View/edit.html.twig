@@ -30,12 +30,12 @@
 				{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Publishing#renderForm', {pageID: page.id})) }}
 			</div>
 			<div class="preview">
-				<a href="{{ url('ms.cms.frontend', {slug:page.slug.getFull|trim('/')}) }}" class="button small">Preview</a>
+				<a href="{{ url('ms.cms.frontend', {slug:page.slug.getFull|trim('/')}) }}" class="button small">View page</a>
 			</div>
 		</div>
 	</div>
 
-	<section>
+	<section class="container-content">
 		{% block form %}{% endblock %}
 	</section>
 {% endblock %}
