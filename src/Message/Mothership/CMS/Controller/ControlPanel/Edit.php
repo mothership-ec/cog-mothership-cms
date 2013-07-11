@@ -246,6 +246,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		$form = $this->_getMetadataForm($page);
 
 		if ($form->isValid() && ($data = $form->getFilteredData())) {
+			de($data);
 			$page->metaTitle       = $data['metaTitle'];
 			$page->metaDescription = $data['metaDescription'];
 			$page->metaHtmlHead    = $data['metaHtmlHead'];
@@ -417,6 +418,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				'metaDescription' => $page->metaDescription,
 				'metaHtmlHead'    => $page->metaHtmlHead,
 				'metaHtmlFoot'    => $page->metaHtmlFoot,
+				'test' => new \Message\Cog\ValueObject\Slug(array('hello', 'there', 'howsit'))
 			));
 
 		$form->add('metaTitle', 'text', $this->trans('ms.cms.metadata.title.label'), array(

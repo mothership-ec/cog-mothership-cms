@@ -13,6 +13,14 @@ class Slug extends AbstractType
 	protected $_preSlug = '/';
 	protected $_value = '';
 
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	{
+		$resolver->setDefaults(array(
+			'data_class'    => 'Message\\Cog\\ValueObject\\Slug',
+			'value'         => new SlugObject(array()),
+		));
+	}
+
 	public function getName()
 	{
 		return 'slug';
@@ -23,14 +31,16 @@ class Slug extends AbstractType
 	 */
 	public function buildView(FormView $view, FormInterface $form, array $options)
 	{
-		if (isset($options['data_slug']) && (!$options['data_slug'] instanceof SlugObject)) {
-			throw new \InvalidArgumentException('\'data_slug\' option must be an instance of \\Message\\Cog\\ValueObject\\Slug');
+		$slug = $view->vars['value'];
+
+		if ($slug && (!$slug instanceof SlugObject)) {
+			throw new \InvalidArgumentException('The \'data_slug\' option must be an instance of \\Message\\Cog\\ValueObject\\Slug');
 		}
-		elseif (isset($options['data_slug'])) {
-			$segments = $options['data_slug']->getSegments();
+		elseif ($slug) {
+			$segments = $slug->getSegments();
 			array_pop($segments);
-			$preSlug = implode('/', $segments) . '/';
-			$value = $options['data_slug']->getLastSegment();
+			$preSlug = '/' . trim(implode('/', $segments), '/') . '/';
+			$value = $slug->getLastSegment();
 		}
 
 		$view->vars = array_replace($view->vars, array(
