@@ -42,19 +42,23 @@
 				{% if part.count > 0 %}
 				{% for i in range(0, part.count - 1) %}
 					<section class="group">
+						<h1 class="title">Needs a title</h1>
 						{% for field in repeatables[name] %}
 						{{ form_row(form[name][field][i]) }}
 						{% endfor %}
-						<a href="#" data-group-remove>Remove this group</a>
+						<a href="#" data-group-remove class="button small remove">Remove this group</a>
 					</section>
 				{% endfor %}
 				{% else %}
 				{% do form[name].setRendered %}
 				{% endif %}
-				<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}" data-group-index="{{ part.count }}" class="button small submit">
-					{{ 'ms.cms.repeatable_group.add'|transchoice(part.count, {'%name%': ('page.' ~ page.type.getName ~ '.' ~ name ~ '.singularName')|trans|lower}) }}
-				</a>
 			</div>
+			<div class="add-group">
+				<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}" data-group-index="{{ part.count }}" class="button small submit">
+						{{ 'ms.cms.repeatable_group.add'|transchoice(part.count, {'%name%': ('page.' ~ page.type.getName ~ '.' ~ name ~ '.singularName')|trans|lower}) }}
+				</a>				
+			</div>
+
 			<div class="help">
 				<p>{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.description')|trans }}</p>
 			</div>
