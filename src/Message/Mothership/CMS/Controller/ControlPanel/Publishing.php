@@ -41,12 +41,9 @@ class Publishing extends \Message\Cog\Controller\Controller
 	public function publish($pageID, $force = false)
 	{
 		if ($this->_hasContent($pageID)) {
-			$this->get('cms.page.edit')->publish($this->get('cms.page.loader')->getByID($pageID));
-
 			$page = $this->get('cms.page.loader')->getByID($pageID);
 			$hasFuture = $page->publishDateRange->getStart() ? $page->publishDateRange->getStart()->getTimestamp() > time(): false;
 
-			de($page->publishDateRange, $hasFuture);
 			$this->_checkForce($pageID, $force, $hasFuture);
 		}
 		else {
@@ -79,7 +76,8 @@ class Publishing extends \Message\Cog\Controller\Controller
 	protected function _checkForce($pageID, $force, $hasFuture, $action = 'publish')
 	{
 		if (($action != 'publish') && ($action != 'unpublish')) {
-			throw new \InvalidArgumentException('$action must be either \'publish\' or \'unpublish\', \'' . $action . '\' given');
+			$action = is_string($action) ? "'" . $action . "'" : gettype($action);
+			throw new \InvalidArgumentException('$action must be either \'publish\' or \'unpublish\', ' . $action . ' given');
 		}
 
 		if (!$force && $hasFuture) {
