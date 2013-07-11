@@ -43,7 +43,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 			$this->get('cms.page.edit')->publish($this->get('cms.page.loader')->getByID($pageID));
 		}
 		else {
-			$this->addFlash('error', $this->trans('ms.cms.feedback.edit.publish.failure'));
+			$this->addFlash('error', $this->trans('ms.cms.feedback.edit.publish.no_content'));
 		}
 
 		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $pageID));
@@ -71,7 +71,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 			->getIterator();
 
 		foreach($fields as $field) {
-			$content = ($field->getValue() && (!$field->getValue() instanceof \DateTime)) ? true : $content;
+			$content = $field->getValue() && (!$field->getValue() instanceof \DateTime) ? true : $content;
 		}
 
 		return $content;

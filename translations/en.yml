@@ -9,7 +9,7 @@ ms.cms:
       metadata:
         success: Metadata updates successfully
       publish:
-        failure: Could not publish page
+        no_content: You must add some content before publishing a page
   repeatable_group:
     add: "{0} Add a %name%|[1,Inf] Add another %name%"
   attributes:
