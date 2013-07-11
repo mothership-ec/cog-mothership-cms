@@ -439,6 +439,8 @@ class Edit extends \Message\Cog\Controller\Controller
 			'attr' => array('data-help-key' => 'ms.cms.metadata.htmlFoot.help')
 		))->val()
 			->optional();
+
+		$form->add('test', 'slug');
 		
 		return $form;
 	}
