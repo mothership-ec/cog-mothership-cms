@@ -4,7 +4,7 @@
 		{% for field in fields %}
 		{{ form_row(form[groupName][field].vars.prototype) }}
 		{% endfor %}
-		<a href="#" data-group-remove>Remove this group</a>
+		<a href="#" data-group-remove class="button small remove">Remove this group</a>
 	</section>
 {% endfilter %}
 {% endmacro %}
