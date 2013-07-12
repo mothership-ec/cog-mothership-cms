@@ -245,8 +245,8 @@ class Edit extends \Message\Cog\Controller\Controller
 		$page = $this->get('cms.page.loader')->getByID($pageID);
 		$form = $this->_getMetadataForm($page);
 
-		if ($form->isValid() && ($data = $form->getFilteredData())) {
-			de($data);
+		if (/*$form->isValid() && */($data = $form->getFilteredData())) {
+			de($data, $form->isValid(), $form->getMessages());
 			$page->metaTitle       = $data['metaTitle'];
 			$page->metaDescription = $data['metaDescription'];
 			$page->metaHtmlHead    = $data['metaHtmlHead'];
@@ -418,7 +418,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				'metaDescription' => $page->metaDescription,
 				'metaHtmlHead'    => $page->metaHtmlHead,
 				'metaHtmlFoot'    => $page->metaHtmlFoot,
-				'test' => new \Message\Cog\ValueObject\Slug(array('hello', 'there', 'howsit'))
+//				'test' => new \Message\Cog\ValueObject\Slug(array('hello', 'there', 'howsit')),
 			));
 
 		$form->add('metaTitle', 'text', $this->trans('ms.cms.metadata.title.label'), array(
@@ -441,8 +441,10 @@ class Edit extends \Message\Cog\Controller\Controller
 			'attr' => array('data-help-key' => 'ms.cms.metadata.htmlFoot.help')
 		))->val()
 			->optional();
-
-		$form->add('test', 'slug');
+//
+//		$form->add('test', 'slug', 'Slug test', array(
+//			'data_slug' => new \Message\Cog\ValueObject\Slug(array('hello', 'there', 'howsit')),
+//		));
 		
 		return $form;
 	}

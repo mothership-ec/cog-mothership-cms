@@ -9,8 +9,11 @@
 {% block slug_widget %}
 	{% spaceless %}
 		<div class="slug">
-			<p>{{ pre_slug }}</p>
-			<input type="text" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+			{% if pre_slug_string is not empty %}<p>{{ pre_slug_string }}</p>{%  endif %}
+			{%  for key, slug_val in pre_slug_value %}
+				<input name="{{ full_name }}[]" type="hidden" value="{{ slug_val }}" />
+			{% endfor %}
+			<input name="{{ full_name }}[]" type="text" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
 		</div>
 	{% endspaceless %}
 {% endblock slug_widget %}

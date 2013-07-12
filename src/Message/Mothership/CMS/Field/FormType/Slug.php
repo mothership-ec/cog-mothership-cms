@@ -16,9 +16,15 @@ class Slug extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-			'data_class'    => 'Message\\Cog\\ValueObject\\Slug',
-			'value'         => new SlugObject(array()),
+//			'data_class'    => 'Message\\Cog\\ValueObject\\Slug',
+//			'value'         => new SlugObject(array()),
+			'data_slug'     => new SlugObject(array())
 		));
+	}
+
+	public function getParent()
+	{
+		return 'choice';
 	}
 
 	public function getName()
@@ -31,7 +37,7 @@ class Slug extends AbstractType
 	 */
 	public function buildView(FormView $view, FormInterface $form, array $options)
 	{
-		$slug = $view->vars['value'];
+		$slug = $options['data_slug'];
 
 		if ($slug && (!$slug instanceof SlugObject)) {
 			throw new \InvalidArgumentException('The \'data_slug\' option must be an instance of \\Message\\Cog\\ValueObject\\Slug');
@@ -44,7 +50,8 @@ class Slug extends AbstractType
 		}
 
 		$view->vars = array_replace($view->vars, array(
-			'pre_slug'  => isset($preSlug) ? $preSlug : $this->_preSlug,
+			'pre_slug_string'  => isset($preSlug) ? $preSlug : $this->_preSlug,
+			'pre_slug_value'   => isset($segments) ? $segments : array(),
 			'value'     => isset($value) ? $value : $this->_value,
 		));
 	}
