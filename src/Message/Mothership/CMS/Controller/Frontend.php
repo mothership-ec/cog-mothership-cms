@@ -28,7 +28,7 @@ class Frontend extends Controller
 	 * If the page is good to be rendered, it is added to the service container
 	 * under the `cms.page.current` identifier.
 	 *
-	 * @param  string $slug The page slug
+	 * @param  string|null $slug The page slug
 	 *
 	 * @return Response
 	 *
@@ -36,13 +36,17 @@ class Frontend extends Controller
 	 * @throws NotFoundHttpException If the page is unpublished
 	 * @throws AccessDeniedHttpException If the user doesn't have access to see the page
 	 */
-	public function renderPage($slug)
+	public function renderPage($slug = null)
 	{
-		// Get the page
-		$page = $this->get('cms.page.loader')
-			->includeDeleted(false)
-			->getBySlug($slug, false);
-
+		// Check that there is a slug, if not then show the homepage
+		if (!$slug) {
+			$page = $this->get('cms.page.loader')->getHomepage();
+		} else {
+			// Get the page
+			$page = $this->get('cms.page.loader')
+				->includeDeleted(false)
+				->getBySlug($slug, false);
+		}
 		// If the page was not found
 		if (!$page) {
 			// Check for this slug in the history, and redirect if we find a result
