@@ -244,9 +244,9 @@ class Edit extends \Message\Cog\Controller\Controller
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
 		$form = $this->_getMetadataForm($page);
+		$form->submitForm();
 
-		if (/*$form->isValid() && */($data = $form->getFilteredData())) {
-			de($data, $form->isValid(), $form->getMessages());
+		if ($form->isValid() && ($data = $form->getFilteredData())) {
 			$page->metaTitle       = $data['metaTitle'];
 			$page->metaDescription = $data['metaDescription'];
 			$page->metaHtmlHead    = $data['metaHtmlHead'];
@@ -318,7 +318,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				'pageID' => $page->id,
 			)))
 			->setDefaultValues(array(
-				'slug'                  => $page->slug->getLastSegment(),
+				'slug'                  => $page->slug,
 				'visibility_menu'       => $page->visibilityMenu,
 				'visibility_search'     => $page->visibilitySearch,
 				'visibility_aggregator' => $page->visibilityAggregator,
@@ -329,9 +329,9 @@ class Edit extends \Message\Cog\Controller\Controller
 				'siblings'              => '',
 			));
 
-		$form->add('slug', 'text', $this->trans('ms.cms.attributes.slug.label'), array(
+		$form->add('slug', 'ms_slug', $this->trans('ms.cms.attributes.slug.label'), array(
 			'attr' => array('data-help-key' => 'ms.cms.attributes.slug.help'),
-		))->val()->match('/^[a-z0-9\-]+$/');
+		));
 
 		$form->add('visibility_menu', 'checkbox', $this->trans('ms.cms.attributes.visibility.menu.label'), array(
 			'attr' => array('data-help-key' => 'ms.cms.attributes.visibility.menu.help'),
@@ -418,7 +418,6 @@ class Edit extends \Message\Cog\Controller\Controller
 				'metaDescription' => $page->metaDescription,
 				'metaHtmlHead'    => $page->metaHtmlHead,
 				'metaHtmlFoot'    => $page->metaHtmlFoot,
-//				'test' => new \Message\Cog\ValueObject\Slug(array('hello', 'there', 'howsit')),
 			));
 
 		$form->add('metaTitle', 'text', $this->trans('ms.cms.metadata.title.label'), array(
@@ -441,10 +440,6 @@ class Edit extends \Message\Cog\Controller\Controller
 			'attr' => array('data-help-key' => 'ms.cms.metadata.htmlFoot.help')
 		))->val()
 			->optional();
-//
-//		$form->add('test', 'slug', 'Slug test', array(
-//			'data_slug' => new \Message\Cog\ValueObject\Slug(array('hello', 'there', 'howsit')),
-//		));
 		
 		return $form;
 	}
@@ -455,12 +450,14 @@ class Edit extends \Message\Cog\Controller\Controller
 	 * to replace the old slug.
 	 *
 	 * @param  Page   	$page
-	 * @param  string 	$newSlug [description]
+	 * @param  Slug 	$slug [description]
 	 *
 	 * @return Page 	$page
 	 */
-	protected function _updateSlug(Page $page, $newSlug)
+	protected function _updateSlug(Page $page, Slug $slug)
 	{
+		$newSlug = $slug->getLastSegment();
+
 		// Flag as to whether to update the slug
 		$update = true;
 
