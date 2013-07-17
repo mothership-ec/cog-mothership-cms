@@ -9,7 +9,7 @@ use Message\Cog\Validation\Validator;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class Group implements FieldInterface
+class Group implements FieldInterface, FieldContentInterface
 {
 	protected $_name;
 	protected $_label;
@@ -209,6 +209,34 @@ class Group implements FieldInterface
 	public function getFields()
 	{
 		return $this->_fields;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @throws \InvalidArgumentException        Throws exception if field does not extend
+	 *                                          FieldContentInterface
+	 */
+	public function hasContent()
+	{
+		$hasContent = false;
+		foreach ($this->getFields() as $field) {
+			if ($field instanceof FieldContentInterface) {
+				$hasContent = ($field->hasContent()) ? true : $hasContent;
+			}
+			else {
+				throw new \InvalidArgumentException('Field must implement FieldContentInterface');
+			}
+		}
+
+		return $hasContent;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getType()
+	{
+		return __CLASS__;
 	}
 
 	/**

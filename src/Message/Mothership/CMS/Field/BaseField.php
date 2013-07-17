@@ -15,7 +15,7 @@ use Message\Cog\Form\Handler;
  * @author Joe Holdcroft <joe@message.co.uk>
  * @author James Moss <james@message.co.uk>
  */
-abstract class BaseField implements FieldInterface
+abstract class BaseField implements FieldInterface, FieldContentInterface
 {
 	protected $_name;
 	protected $_label;
@@ -67,6 +67,22 @@ abstract class BaseField implements FieldInterface
 	public function getValue()
 	{
 		return $this->_value;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function hasContent()
+	{
+		return !empty($this->_value);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getType()
+	{
+		return gettype($this->_value);
 	}
 
 	/**
