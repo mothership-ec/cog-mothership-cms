@@ -40,22 +40,15 @@ class Publishing extends \Message\Cog\Controller\Controller
 
 	public function publish($pageID, $force = false)
 	{
-		$page = $this->get('cms.page.loader')->getByID($pageID);
-		$hasFuture = $page->publishDateRange->getStart() ? $page->publishDateRange->getStart()->getTimestamp() > time(): false;
-		if (!$force && $hasFuture) {
-			$this->addFlash('warning', $this->trans('ms.cms.feedback.publish.schedule.warning',
-				array(
-					'%task%' 		=> 'publish',
-					'%taskLink%'	=> '<a href="'.$this->generateUrl('ms.cp.cms.edit.publish.force',array(
-						'pageID' => $pageID,
-						'force'	 => 1,
-					)).'">publish</a>'
-				)
-			));
+		if ($this->_hasContent($pageID)) {
+			$page = $this->get('cms.page.loader')->getByID($pageID);
+			$hasFuture = $page->publishDateRange->getStart() ? $page->publishDateRange->getStart()->getTimestamp() > time(): false;
 
-			return $this->redirectToReferer();
+			$this->_checkForce($pageID, $force, $hasFuture);
 		}
-		$this->get('cms.page.edit')->publish($page);
+		else {
+			$this->addFlash('error', $this->trans('ms.cms.feedback.publish.content.error'));
+		}
 
 		return $this->redirectToReferer();
 	}
@@ -64,22 +57,46 @@ class Publishing extends \Message\Cog\Controller\Controller
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
 		$hasFuture = $page->publishDateRange->getEnd() ? $page->publishDateRange->getEnd()->getTimestamp() > time(): false;
+		$this->_checkForce($pageID, $force, $hasFuture, 'unpublish');
+
+		return $this->redirectToReferer();
+	}
+
+	/**
+	 * Simplify publishing/unpublishing validation process
+	 *
+	 * @param int $pageID                   Page id
+	 * @param bool $force                   Has the user decided to override the publish/unpublish times?
+	 * @param bool $hasFuture               Is the page due to be published in the future?
+	 * @param string $action                Publish or unpublish
+	 * @throws \InvalidArgumentException    Throws exception if $action is not publish or unpublish
+	 *
+	 * @return Publishing           Returns $this for chainability
+	 */
+	protected function _checkForce($pageID, $force, $hasFuture, $action = 'publish')
+	{
+		if (($action != 'publish') && ($action != 'unpublish')) {
+			$action = is_string($action) ? "'" . $action . "'" : gettype($action);
+			throw new \InvalidArgumentException('$action must be either \'publish\' or \'unpublish\', ' . $action . ' given');
+		}
+
 		if (!$force && $hasFuture) {
 			$this->addFlash('warning', $this->trans('ms.cms.feedback.publish.schedule.warning',
 				array(
-					'%task%' 		=> 'unpublish',
-					'%taskLink%'	=> '<a href="'.$this->generateUrl('ms.cp.cms.edit.unpublish.force',array(
+					'%task%' 		=> $action,
+					'%taskLink%'	=> '<a href="'.$this->generateUrl('ms.cp.cms.edit.' . $action . '.force',array(
 						'pageID' => $pageID,
 						'force'	 => 1,
-					)).'">unpublish</a>'
+					)).'">' . $action . '</a>'
 				)
 			));
 
-			return $this->redirectToReferer();
 		}
-		$this->get('cms.page.edit')->unpublish($page);
+		else {
+			$this->get('cms.page.edit')->$action($this->get('cms.page.loader')->getByID($pageID));
+		}
 
-		return $this->redirectToReferer();
+		return $this;
 	}
 
 	protected function _getForm(Page $page)
@@ -103,5 +120,26 @@ class Publishing extends \Message\Cog\Controller\Controller
 			->optional();
 
 		return $form;
+	}
+
+	/**
+	 * Check that a page has content other than merely a date
+	 *
+	 * @param int $pageID
+	 * @return bool
+	 */
+	protected function _hasContent($pageID)
+	{
+		$fields = $this->get('cms.page.content_loader')
+			->load($this->get('cms.page.loader')->getByID($pageID))
+			->getIterator();
+
+		$content = count($fields) == 0;
+
+		foreach($fields as $field) {
+			$content = $field->hasContent() && (!$field->getType() != '\\DateTime') ? true : $content;
+		}
+
+		return $content;
 	}
 }

@@ -53,4 +53,5 @@ class Page
 	{
 		return $this->type;
 	}
+
 }
