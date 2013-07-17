@@ -4,16 +4,16 @@ namespace Message\Mothership\CMS\Controller\ControlPanel;
 
 class Sidebar extends \Message\Cog\Controller\Controller
 {
-	public function index()
+	public function index($currentPageID = null)
 	{
 		$loader = $this->_services['cms.page.loader'];
 		$pages  = $loader->getAll();
 		$hasPages = !empty($pages);
 		$values = $this->buildTree($pages);
-
 		return $this->render('Message:Mothership:CMS::sidebar', array(
-			'tree' => $values,
-			'hasPages' => $hasPages,
+			'tree'          => $values,
+			'hasPages'      => $hasPages,
+			'currentPageID' => $currentPageID,
 		));
 	}
 

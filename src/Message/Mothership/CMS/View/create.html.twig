@@ -5,26 +5,30 @@
 {% endblock %}
 
 {% block main %}
-<h1>Create a new page</h1>
+<hgroup class="title">
+	<h1>Create a new page</h1>
+</hgroup>
 
-{{ form_start(form) }}
+<div class="container-content create-page">
+	{{ form_start(form) }}
 
-{{ form_row(form.title) }}
+	{{ form_row(form.title) }}
 
-{{ form_label(form.type) }}
-{% for type in form.type %}
-<section class="option_block">
-	{{ form_widget(type) }}
-	{{ form_label(type) }}
-	<p>{{ types.get(type.vars.value).getDescription }}</p>
-</section>
-{% endfor %}
+	{{ form_label(form.type) }}
+	{% for type in form.type %}
+	<section class="option-block">
+		{{ form_widget(type) }}
+		{{ form_label(type) }}
+		<p>{{ types.get(type.vars.value).getDescription }}</p>
+	</section>
+	{% endfor %}
 
-{{ form_row(form.type) }}
+	{{ form_row(form.type) }}
 
-{{ form_row(form.parent) }}
+	{{ form_row(form.parent) }}
 
-<button type="submit">Create page</button>
+	<button type="submit" class="button small save">Create page</button>
 
-{{ form_end(form) }}
+	{{ form_end(form) }}
+</div>
 {% endblock %}

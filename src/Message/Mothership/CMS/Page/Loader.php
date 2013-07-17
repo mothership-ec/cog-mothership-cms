@@ -6,6 +6,7 @@ use Message\Mothership\CMS\PageType\PageTypeInterface;
 use Message\Mothership\CMS\PageType\Collection as PageTypeCollection;
 
 use Message\User\Group\Collection as UserGroupCollection;
+use Message\User\UserInterface;
 
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
@@ -51,6 +52,7 @@ class Loader
 	protected $_locale;
 	protected $_query;
 	protected $_pageTypes;
+	protected $_authorisation;
 
 	/**
 	 * var to toggle the loading of deleted pages
@@ -59,23 +61,39 @@ class Loader
 	 *
 	 * @var bool
 	 */
-	protected $_loadDeleted = false;
+	protected $_loadDeleted     = false;
+
+	/**
+	 * var to toggle the loading of unpublished pages
+	 *
+	 * @var boolean
+	 */
+	protected $_loadUnpublished = true;
+	protected $_loadUnviewable = true;
 
 	/**
 	 * Constructor
 	 *
-	 * @param \Locale             $locale    The current locale
-	 * @param Query               $query     Database query instance to use
-	 * @param PageTypeCollection  $pageTypes Page types available to the system
-	 * @param UserGroupCollection $groups    User groups available to the system
+	 * @param \Locale             $locale    		The current locale
+	 * @param Query               $query     		Database query instance to use
+	 * @param PageTypeCollection  $pageTypes 		Page types available to the system
+	 * @param UserGroupCollection $groups    		User groups available to the system
+	 * @param Authorisation  	  $authorisation 	Authorisation instance to use
 	 */
-	public function __construct(/* \Locale */ $locale, Query $query,
-		PageTypeCollection $pageTypes, UserGroupCollection $groups)
+	public function __construct(/* \Locale */ $locale,
+		Query $query,
+		PageTypeCollection $pageTypes,
+		UserGroupCollection $groups,
+		Authorisation $authorisation,
+		UserInterface $user
+	)
 	{
-		$this->_locale     = $locale;
-		$this->_query      = $query;
-		$this->_pageTypes  = $pageTypes;
-		$this->_userGroups = $groups;
+		$this->_locale        = $locale;
+		$this->_query         = $query;
+		$this->_pageTypes     = $pageTypes;
+		$this->_userGroups    = $groups;
+		$this->_authorisation = $authorisation;
+		$this->_user 		  = $user;
 	}
 
 	/**
@@ -96,6 +114,31 @@ class Loader
 	}
 
 	/**
+	 * retrive the homepage by getting the left most and top level node in the
+	 * tree that is avaialble and not marked as deleted
+	 *
+	 * @return Page|false 		Page object of homepage to use
+	 */
+	public function getHomepage()
+	{
+		$result = $this->_query->run('
+			SELECT
+				page_id
+			FROM
+				page
+			WHERE
+				deleted_at IS NULL
+			AND
+				position_depth = 0
+			ORDER BY
+				position_left ASC
+			LIMIT 1
+		');
+
+		return count($result) ? $this->getByID($result->first()->page_id) : false;
+	}
+
+	/**
 	 * Get a page by its slug.
 	 *
 	 * @param string  $slug		 	The slug to check for
@@ -105,6 +148,10 @@ class Loader
 	 */
 	public function getBySlug($slug, $checkHistory = true)
 	{
+		if ($slug == '/') {
+			return $this->getHomepage();
+		}
+
 		// Clean up the slug
 		$path 	= trim($slug, '/');
 		// Turn it into an array and reverse it.
@@ -150,6 +197,7 @@ class Loader
 		if ($checkHistory && $page = $this->checkSlugHistory($slug)) {
 			return $page;
 		}
+
 		return false;
 	}
 
@@ -347,6 +395,19 @@ class Loader
 		return $this;
 	}
 
+	/**
+	 * Toggle whether or not to load pages which are unpublshied
+	 *
+	 * @param  bool $bool true / false as to whether to load unpublished pages
+	 *
+	 * @return $this       Loader object in order to chain methods
+	 */
+	public function includeUnpublished($bool)
+	{
+		$this->_loadUnpublished = $bool;
+		return $this;
+	}
+
 
 	/**
 	 * Load all the given pages and pass the results onto the _loadPage method
@@ -456,9 +517,21 @@ class Loader
 				$data->unpublishAt ? new DateTimeImmutable(date('c', $data->unpublishAt)) : null
 			);
 
+			// Remove the page if we are asking to not show unpublished pages and
+			// the page is in fact unpublished
+			if (!$this->_loadUnpublished && !$this->_authorisation->isPublished($pages[$key])) {
+				unset($pages[$key]);
+				continue;
+			}
+
 			// Get the page type
 			$pages[$key]->type = $this->_pageTypes->get($data->type);
 
+			// If the page is the most left page then it is the homepage so
+			// we need to override the slug to avoid unnecessary redirects
+			if ($data->left == 1) {
+				$data->slug = '//';
+			}
 			$pages[$key]->slug = new Slug($data->slug);
 			$pages[$key]->type = clone $this->_pageTypes->get($data->type);
 
@@ -482,6 +555,12 @@ class Loader
 					$pages[$key]->accessGroups[$group->getName()] = $group;
 				}
 			}
+
+			if (!$this->_loadUnviewable && $this->_authorisation->isViewable($pages[$key], $this->_user)) {
+				unset($pages[$key]);
+				continue;
+			}
+
 		}
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
 	}

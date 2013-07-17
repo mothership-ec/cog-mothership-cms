@@ -200,9 +200,9 @@ class Edit extends \Message\Cog\Controller\Controller
 			$page->accessGroups 		= $data['access_groups'];
 
 			$page = $this->get('cms.page.edit')->save($page);
+			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
 		}
 
-		$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
 
 		return $this->render('::edit/attributes', array(
 			'page' => $page,
