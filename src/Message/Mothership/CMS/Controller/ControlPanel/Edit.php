@@ -334,13 +334,13 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		$form->add('visibility_menu', 'checkbox', $this->trans('ms.cms.attributes.visibility.menu.label'), array(
 			'attr' => array('data-help-key' => 'ms.cms.attributes.visibility.menu.help'),
-		));
+		))->val()->optional();
 		$form->add('visibility_search', 'checkbox', $this->trans('ms.cms.attributes.visibility.search.label'), array(
 			'attr' => array('data-help-key' => 'ms.cms.attributes.visibility.search.help'),
-		));
+		))->val()->optional();
 		$form->add('visibility_aggregator', 'checkbox', $this->trans('ms.cms.attributes.visibility.aggregator.label'), array(
 			'attr' => array('data-help-key' => 'ms.cms.attributes.visibility.aggregator.help'),
-		));
+		))->val()->optional();
 
 		$form->add('access', 'choice', $this->trans('ms.cms.attributes.access.label'), array(
 			'choices' => array(
