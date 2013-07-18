@@ -244,7 +244,6 @@ class Edit extends \Message\Cog\Controller\Controller
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
 		$form = $this->_getMetadataForm($page);
-		$form->submitForm();
 
 		if ($form->isValid() && ($data = $form->getFilteredData())) {
 			$page->metaTitle       = $data['metaTitle'];
