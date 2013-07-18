@@ -7,7 +7,7 @@ namespace Message\Mothership\CMS\Field;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class RepeatableContainer implements \IteratorAggregate, \Countable
+class RepeatableContainer implements \IteratorAggregate, \Countable, FieldContentInterface
 {
 	protected $_group;
 	protected $_groups = array();
@@ -91,5 +91,32 @@ class RepeatableContainer implements \IteratorAggregate, \Countable
 	public function getIterator()
 	{
 		return new \ArrayIterator($this->_groups);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @throws \InvalidArgumentException        Throws exception if a group does not implment
+	 *                                          FieldContentInterface
+	 */
+	public function hasContent()
+	{
+		$hasContent = false;
+
+		foreach ($this->_groups as $group) {
+			if (!$group instanceof FieldContentInterface) {
+				throw new \InvalidArgumentException('Group must implement FieldContentInterface');
+			}
+			$hasContent = ($group->hasContent()) ? true : $hasContent;
+		}
+
+		return $hasContent;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getType()
+	{
+		return __CLASS__;
 	}
 }

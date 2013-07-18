@@ -1,11 +1,35 @@
 ms.cms:
   feedback:
+    edit:
+      content:
+        success: Content updated successfully
+        failure: An error occured while updating the content
+      attributes:
+        success: Attributes updated successfully
+      metadata:
+        success: Metadata updates successfully
     publish:
       schedule:
         warning: "This page is already scheduled to %task% at a future date. Are you sure you would like to %taskLink% this now?"
+      content:
+        error: You must add some content before publishing a page
+    create:
+      success: Page created successfully
   repeatable_group:
     add: "{0} Add a %name%|[1,Inf] Add another %name%"
   attributes:
+    title:
+      label: Page title
+      help:
+        short:
+        long:
+        example: A Title for a Page
+    type:
+      label: Page type
+      help:
+        short: The page type defines what content fields are available.
+        long:
+        example: Blog
     slug:
       label: URL Segment
       help:
