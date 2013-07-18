@@ -130,14 +130,14 @@ class Publishing extends \Message\Cog\Controller\Controller
 	 */
 	protected function _hasContent($pageID)
 	{
-		$content = false;
-
 		$fields = $this->get('cms.page.content_loader')
 			->load($this->get('cms.page.loader')->getByID($pageID))
 			->getIterator();
 
+		$content = count($fields) == 0;
+
 		foreach($fields as $field) {
-			$content = $field->getValue() && (!$field->getValue() instanceof \DateTime) ? true : $content;
+			$content = $field->hasContent() && (!$field->getType() != '\\DateTime') ? true : $content;
 		}
 
 		return $content;
