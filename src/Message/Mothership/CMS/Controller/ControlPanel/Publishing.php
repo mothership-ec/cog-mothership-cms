@@ -13,12 +13,10 @@ class Publishing extends \Message\Cog\Controller\Controller
 		$page        = $this->get('cms.page.loader')->getByID($pageID);
 		$isPublished = $this->get('cms.page.authorisation')->isPublished($page);
 
-		$form = $this->_getForm($page);
-
 		return $this->render('Message:Mothership:CMS::publishing', array(
 			'page'        => $page,
 			'isPublished' => $isPublished,
-			'form'		  => $form,
+			'form'		  => $this->_getForm($page),
 		));
 	}
 
