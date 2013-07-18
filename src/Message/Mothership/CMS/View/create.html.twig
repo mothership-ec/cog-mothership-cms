@@ -16,11 +16,11 @@
 
 	{{ form_label(form.type) }}
 	{% for type in form.type %}
-	<section class="option-block">
+	<label class="option-block">
 		{{ form_widget(type) }}
-		{{ form_label(type) }}
+		<p><strong>{{ type.vars.label }}</strong></p>
 		<p>{{ types.get(type.vars.value).getDescription }}</p>
-	</section>
+	</label>
 	{% endfor %}
 
 	{{ form_row(form.type) }}
