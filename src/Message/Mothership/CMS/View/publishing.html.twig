@@ -1,22 +1,25 @@
-<div class="button button-group">
+<div class="button button-group dropdown">
 	{% if isPublished %}
 	<a href="{{ url('ms.cp.cms.edit.unpublish', {pageID: page.id}) }}">Unpublish</a>
 	{% else %}
 	<a href="{{ url('ms.cp.cms.edit.publish', {pageID: page.id}) }}">Publish</a>
 	{% endif %}
-	<span class="dropdown">
+	<span class="dropdown-toggle" data-toggle="dropdown">
 		<i class="icon-time"></i>
 	</span>
+
+	<div class="dropdown-menu">
+		{{ form_start(form) }}
+			<div class="wrap">
+				<div class="date-time">
+					{{ form_row(form.publish_date, {label: 'Publish at'}) }}
+				</div>
+				<div class="date-time">
+					{{ form_row(form.unpublish_date, {label: 'Unpublish at'}) }}
+				</div>
+				<button name="schedule[save]" type="submit" value="Save">Save Range</button>
+			</div>
+		{{ form_end(form) }}
+	</div>
 </div>
 
-{{ form_start(form) }}
-	<div class="wrap">
-		<div class="date-time">
-			{{ form_row(form.publish_date, {label: 'Publish at'}) }}
-		</div>
-		<div class="date-time">
-			{{ form_row(form.unpublish_date, {label: 'Unpublish at'}) }}
-		</div>
-		<button name="schedule[save]" type="submit" value="Save">Save Range</button>
-	</div>
-{{ form_end(form) }}
