@@ -6,11 +6,11 @@
 
 {% block main %}
 	<hgroup class="title">
-		<h1>{{ page.title }}</h1>
+		<h1 data-title>{{ page.title }}</h1>
 		<h2>{{ page.type.getDisplayName() }}</h2>
 	</hgroup>
 
-	<form class="edit-title" action="{{ url('ms.cp.cms.edit.action',{pageID: page.id}) }}" method="post">
+	<form class="edit-title" data-title-edit action="{{ url('ms.cp.cms.edit.action',{pageID: page.id}) }}" method="post">
 
 		<label for="edit-title">Title</label>
 		<input type="text" name="edit[title]" id="edit-title" value="{{ page.title }}" />
