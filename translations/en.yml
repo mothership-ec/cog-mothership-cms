@@ -73,6 +73,11 @@ ms.cms:
         short: -
         long:
         example: products, shoes, 2013
+    parent:
+      label: Parent page type
+      help:
+        short: -
+        long: 
   metadata:
     title:
       label: Page title

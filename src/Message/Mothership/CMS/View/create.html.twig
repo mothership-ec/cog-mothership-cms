@@ -18,7 +18,7 @@
 	{% for type in form.type %}
 	<label class="option-block">
 		{{ form_widget(type) }}
-		<p><strong>{{ type.vars.label }}</strong></p>
+		<p class="type"><strong>{{ type.vars.label }}</strong></p>
 		<p>{{ types.get(type.vars.value).getDescription }}</p>
 	</label>
 	{% endfor %}
