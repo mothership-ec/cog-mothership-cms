@@ -16,16 +16,18 @@
 
 <button type="submit" class="button small save" id="save-content">Save changes</button>
 
-<h2>Authorship information</h2>
+<div class="authorship">
+	<h2>Authorship information</h2>
 
-<dl class="authorship">
-	<dt>Created</dt>
-		<dd>at {{ page.authorship.createdAt|date('h:ia \\o\\n d/m/y') }} by {{ page.authorship.createdBy }}</dd>
-	{% if page.authorship.updatedAt is not null %}
-	<dt>Updated</dt>
-		<dd>at {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }} by {{ page.authorship.updatedBy }}</dd>
-	{% endif %}
-</dl>
+	<dl>
+		<dt>Created</dt>
+			<dd>at {{ page.authorship.createdAt|date('h:ia \\o\\n d/m/y') }} by {{ page.authorship.createdBy }}</dd>
+		{% if page.authorship.updatedAt is not null %}
+		<dt>Updated</dt>
+			<dd>at {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }} by {{ page.authorship.updatedBy }}</dd>
+		{% endif %}
+	</dl>
+</div>
 
 {{ form_end(form) }}
 
