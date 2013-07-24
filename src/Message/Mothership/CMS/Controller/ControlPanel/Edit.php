@@ -317,7 +317,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				'pageID' => $page->id,
 			)))
 			->setDefaultValues(array(
-				'slug'                  => $page->slug->getLastSegment(),
+				'slug'                  => $page->slug,
 				'visibility_menu'       => $page->visibilityMenu,
 				'visibility_search'     => $page->visibilitySearch,
 				'visibility_aggregator' => $page->visibilityAggregator,
@@ -328,9 +328,9 @@ class Edit extends \Message\Cog\Controller\Controller
 				'siblings'              => '',
 			));
 
-		$form->add('slug', 'text', $this->trans('ms.cms.attributes.slug.label'), array(
+		$form->add('slug', 'ms_slug', $this->trans('ms.cms.attributes.slug.label'), array(
 			'attr' => array('data-help-key' => 'ms.cms.attributes.slug.help'),
-		))->val()->match('/^[a-z0-9\-]+$/');
+		));
 
 		$form->add('visibility_menu', 'checkbox', $this->trans('ms.cms.attributes.visibility.menu.label'), array(
 			'attr' => array('data-help-key' => 'ms.cms.attributes.visibility.menu.help'),
@@ -449,12 +449,14 @@ class Edit extends \Message\Cog\Controller\Controller
 	 * to replace the old slug.
 	 *
 	 * @param  Page   	$page
-	 * @param  string 	$newSlug [description]
+	 * @param  Slug 	$slug [description]
 	 *
 	 * @return Page 	$page
 	 */
-	protected function _updateSlug(Page $page, $newSlug)
+	protected function _updateSlug(Page $page, Slug $slug)
 	{
+		$newSlug = $slug->getLastSegment();
+
 		// Flag as to whether to update the slug
 		$update = true;
 
