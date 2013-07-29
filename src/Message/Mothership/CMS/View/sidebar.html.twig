@@ -5,9 +5,9 @@
 	</form>
 {% endif %}
 
-<a href="{{ url('ms.cp.cms.create')}}" class="create" data-live>Add a new page</a>
+<a href="{{ url('ms.cp.cms.create')}}" class="button small create" data-live>Add a new page</a>
 
-<ol class="main-menu">
+<ol class="menu">
     {{ _self.menu_links(tree, currentPageID) }}
 </ol>
 
