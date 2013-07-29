@@ -51,7 +51,11 @@ class Create extends \Message\Cog\Controller\Controller
 			->setAction($this->generateUrl('ms.cp.cms.create.action'))
 			->setMethod('post');
 
-		$form->add('title', 'text', $this->trans('ms.cms.attributes.title.label'))
+		$form->add('title', 'text', $this->trans('ms.cms.attributes.title.label'), array(
+			'attr' => array(
+				'placeholder' => $this->trans('ms.cms.attributes.title.placeholder'),
+			),
+		))
 			->val()->maxLength(255);
 		$parents = $this->get('cms.page.loader')->getAll();
 

@@ -20,6 +20,7 @@ ms.cms:
   attributes:
     title:
       label: Page title
+      placeholder: Enter a title for your page here…
       help:
         short:
         long:
@@ -77,7 +78,7 @@ ms.cms:
       label: Parent page type
       help:
         short: -
-        long: 
+        long:
   metadata:
     title:
       label: Page title
