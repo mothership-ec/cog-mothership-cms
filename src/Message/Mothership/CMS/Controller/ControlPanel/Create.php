@@ -58,16 +58,17 @@ class Create extends \Message\Cog\Controller\Controller
 		))
 			->val()->maxLength(255);
 		$parents = $this->get('cms.page.loader')->getAll();
-
 		$choices = array();
-		foreach ($parents as $p) {
-			$spaces = str_repeat('--', $p->depth + 1);
-			// don't display the option to move it to a page which doesn't allow children
-			if (!$p->type->allowChildren()) {
-				continue;
-			}
+		if($parents) {
+			foreach ($parents as $p) {
+				$spaces = str_repeat('--', $p->depth + 1);
+				// don't display the option to move it to a page which doesn't allow children
+				if (!$p->type->allowChildren()) {
+					continue;
+				}
 
-			$choices[$p->id] = $spaces.' '.$p->title;
+				$choices[$p->id] = $spaces.' '.$p->title;
+			}
 		}
 
 		$form->add('parent', 'choice', $this->trans('ms.cms.attributes.parent.label'), array(

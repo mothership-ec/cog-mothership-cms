@@ -173,6 +173,11 @@ class Factory implements \IteratorAggregate, \Countable
 		return $field;
 	}
 
+	public function getServices($service = '')
+	{
+		return $this->_services[$service];
+	}
+
 	/**
 	 * Get a new instance of a group field.
 	 *
