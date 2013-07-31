@@ -349,6 +349,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				Authorisation::ACCESS_USER       => $this->trans('ms.cms.attributes.access.options.user'),
 				Authorisation::ACCESS_USER_GROUP => $this->trans('ms.cms.attributes.access.options.group'),
 			),
+			'empty_value' => false,
 			'attr' => array('data-help-key' => 'ms.cms.attributes.access.help'),
 		));
 
@@ -369,6 +370,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		$form->add('siblings', 'choice', $this->trans('ms.cms.attributes.order.label'), array(
 			'attr'    => array('data-help-key' => 'ms.cms.attributes.order.search.help'),
 			'choices' => $siblingChoices,
+			'empty_value' => 'Don\'t move',
 		))->val()->optional();
 
 		$parents = $this->get('cms.page.loader')->getAll();
@@ -439,7 +441,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			'attr' => array('data-help-key' => 'ms.cms.metadata.htmlFoot.help')
 		))->val()
 			->optional();
-		
+
 		return $form;
 	}
 
