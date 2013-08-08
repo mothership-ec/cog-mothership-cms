@@ -17,7 +17,7 @@
             <a href="{{ url('ms.cp.cms.edit', {pageID: link.id}) }}" data-live>{{ link.title }}</a>
             {% if link.children %}
                 <ol>
-                    {{ _self.menu_links(link.children) }}
+                    {{ _self.menu_links(link.children, currentPageID) }}
                 </ol>
             {% endif %}
         </li>
