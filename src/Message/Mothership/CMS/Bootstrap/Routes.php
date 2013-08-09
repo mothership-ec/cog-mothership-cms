@@ -8,7 +8,7 @@ class Routes implements RoutesInterface
 {
 	public function registerRoutes($router)
 	{
-		$router['ms.cms']->setPrefix('/');
+		$router['ms.cms']->setPrefix('/')->setPriority(-500);
 
 		$router['ms.cms']->add('ms.cms.frontend.homepage', '', '::Controller:Frontend#renderPage');
 
