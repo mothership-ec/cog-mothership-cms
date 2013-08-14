@@ -529,9 +529,10 @@ class Loader
 
 			// If the page is the most left page then it is the homepage so
 			// we need to override the slug to avoid unnecessary redirects
-			if ($data->left == 1) {
-				$data->slug = '//';
+			if (1 == $data->left) {
+				$data->slug = new Slug('/');
 			}
+
 			$pages[$key]->slug = new Slug($data->slug);
 			$pages[$key]->type = clone $this->_pageTypes->get($data->type);
 

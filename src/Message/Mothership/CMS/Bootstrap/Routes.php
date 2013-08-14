@@ -10,10 +10,9 @@ class Routes implements RoutesInterface
 	{
 		$router['ms.cms']->setPrefix('/')->setPriority(-500);
 
-		$router['ms.cms']->add('ms.cms.frontend.homepage', '', '::Controller:Frontend#renderPage');
-
-		$router['ms.cms']->add('ms.cms.frontend', '/{slug}', '::Controller:Frontend#renderPage')
-			->setRequirement('slug', '[a-z0-9\-\/]+');
+		$router['ms.cms']->add('ms.cms.frontend', '{slug}', '::Controller:Frontend#renderPage')
+			->setRequirement('slug', '[a-z0-9\-\/]+')
+			->setDefault('slug', '/');
 
 		$router['ms.cp.cms']->setPrefix('/content')->setParent('ms.cp');
 
