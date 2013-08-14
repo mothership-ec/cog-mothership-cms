@@ -14,7 +14,7 @@ use Message\Cog\Service\ContainerAwareInterface;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class Factory implements \IteratorAggregate, \Countable
+class Factory implements \IteratorAggregate, \Countable, ContainerAwareInterface
 {
 	protected $_validator;
 	protected $_services;
@@ -25,13 +25,21 @@ class Factory implements \IteratorAggregate, \Countable
 	/**
 	 * Constructor.
 	 *
-	 * @param Validator          $validator The validator to use for fields
-	 * @param ContainerInterface $container The service container
+	 * @param Validator  $validator The validator to use for fields
+	 * @param Collection
 	 */
-	public function __construct(Validator $validator, ContainerInterface $services)
+	public function __construct(Validator $validator, $collection)
 	{
-		$this->_validator = $validator;
-		$this->_services  = $services;
+		$this->_validator  = $validator;
+		$this->_collection = $collection;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setContainer(ContainerInterface $container)
+	{
+		$this->_services = $container;
 	}
 
 	/**
@@ -152,19 +160,13 @@ class Factory implements \IteratorAggregate, \Countable
 	 */
 	public function getField($type, $name, $label = null)
 	{
-		$className = __NAMESPACE__ . '\\Type\\' . ucfirst($type);
+		$field = $this->_collection->get($type);
 
-		// Check if a class exists for this field type
-		if (!class_exists($className)) {
-			throw new \InvalidArgumentException(sprintf(
-				'Field type `%s` does not exist (class `%s` not found)',
-				$type,
-				$className
-			));
-		}
-
-		$field = new $className($this->_validator, $name, $label);
-		$field->setTranslationKey($this->_baseTransKey);
+		$field
+			->setValidator($this->_validator)
+			->setTranslationKey($this->_baseTransKey)
+			->setName($name)
+			->setLabel($label);
 
 		if ($field instanceof ContainerAwareInterface) {
 			$field->setContainer($this->_services);
@@ -173,9 +175,9 @@ class Factory implements \IteratorAggregate, \Countable
 		return $field;
 	}
 
-	public function getServices($service = '')
+	public function getServices($serviceName)
 	{
-		return $this->_services[$service];
+		return $this->_services[$serviceName];
 	}
 
 	/**
