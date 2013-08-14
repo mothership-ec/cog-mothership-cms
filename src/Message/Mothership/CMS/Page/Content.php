@@ -12,7 +12,7 @@ use Message\Cog\Validation\Validator;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class Content implements \IteratorAggregate
+class Content implements \IteratorAggregate, \Countable
 {
 	protected $_fields = array();
 	protected $_validator;
@@ -79,6 +79,16 @@ class Content implements \IteratorAggregate
 	public function setValidator(Validator $validator)
 	{
 		$this->_validator = $validator;
+	}
+
+	/**
+	 * Get the number of base fields & groups defined on this page content.
+	 *
+	 * @return int
+	 */
+	public function count()
+	{
+		return count($this->_fields);
 	}
 
 	/**

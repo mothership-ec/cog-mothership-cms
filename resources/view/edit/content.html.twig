@@ -11,6 +11,9 @@
 {% extends '::edit' %}
 {% block form %}
 
+{% if content.count == 0 %}
+<p>The &lsquo;{{ page.type.displayName }}&rsquo; page type does not have any content areas.</p>
+{% else %}
 {{ form_start(form) }}
 
 {# Loop through content parts #}
@@ -56,7 +59,7 @@
 			<div class="add-group">
 				<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}" data-group-index="{{ part.count }}" class="button small add">
 						{{ 'ms.cms.repeatable_group.add'|transchoice(part.count, {'%name%': ('page.' ~ page.type.getName ~ '.' ~ name ~ '.singularName')|trans|lower}) }}
-				</a>				
+				</a>
 			</div>
 
 			<div class="help">
@@ -69,5 +72,7 @@
 <button type="submit" class="button small save" id="save-content">Save changes</button>
 
 {{ form_end(form)}}
+
+{% endif %}
 
 {% endblock %}
