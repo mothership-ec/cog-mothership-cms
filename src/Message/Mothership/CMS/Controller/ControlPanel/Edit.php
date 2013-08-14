@@ -65,6 +65,10 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		$page = $this->get('cms.page.edit')->save($page);
 
+		$this->addFlash('success', $this->trans('ms.cms.feedback.edit.title.success', array(
+			'%title%' => $page->title,
+		)));
+
 		return $this->redirectToRoute('ms.cp.cms.edit', array(
 			'pageID' => $page->id,
 		));

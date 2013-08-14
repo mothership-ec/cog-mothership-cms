@@ -7,7 +7,9 @@ ms.cms:
       attributes:
         success: Attributes updated successfully
       metadata:
-        success: Metadata updates successfully
+        success: Metadata updated successfully
+      title:
+        success: Page title updated to '%title%' successfully
     publish:
       schedule:
         warning: "This page is already scheduled to %task% at a future date. Are you sure you would like to %taskLink% this now?"

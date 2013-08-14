@@ -39,9 +39,6 @@ class Edit {
 	/**
 	 * Pass through the updated Page object and save it in the DB
 	 *
-	 * @todo Need o do something with the nested set helper when moving a page
-	 *       and things
-	 *
 	 * @param  Page   		$page 	Page object to be update
 	 *
 	 * @return Page|false   		Updated Page object
@@ -113,7 +110,7 @@ class Edit {
 			$event
 		);
 
-		return $event->getpage();
+		return $event->getPage();
 	}
 
 	/**
