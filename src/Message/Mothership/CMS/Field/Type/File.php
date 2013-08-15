@@ -55,6 +55,7 @@ class File extends Field implements ContainerAwareInterface
 			'attr'          => array('data-help-key' => $this->_getHelpKeys()),
 			'choices'       => $this->_getChoices(),
 			'allowed_types' => $this->_allowedTypes ?: false,
+			'empty_value'   => $this->_services['translator']->trans('ms.file_manager.select.default'),
 		));
 	}
 
