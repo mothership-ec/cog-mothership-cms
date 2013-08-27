@@ -39,6 +39,7 @@ ms.cms:
         short:
         long:
         example: /my-page
+      homepage: You can not change the url segment for the homepage.
     access:
       label: Who can access this page?
       options:
