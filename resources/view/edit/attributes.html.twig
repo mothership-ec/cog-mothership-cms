@@ -1,6 +1,7 @@
 {% extends '::edit' %}
-{% block form %}
 
+{% block form %}
+<div class="container-details">
 {{ form_start(form) }}
 {{ form_row(form.slug) }}
 
@@ -17,7 +18,7 @@
 <button type="submit" class="button small save" id="save-content">Save changes</button>
 
 {{ form_end(form) }}
-
+</div>
 {% endblock %}
 
 {% block widgets %}
