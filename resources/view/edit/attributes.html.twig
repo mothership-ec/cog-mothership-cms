@@ -16,7 +16,12 @@
 
 <button type="submit" class="button small save" id="save-content">Save changes</button>
 
-<div class="authorship">
+{{ form_end(form) }}
+
+{% endblock %}
+
+{% block widgets %}
+<div class="widget">
 	<h2>Authorship information</h2>
 
 	<dl>
@@ -26,9 +31,6 @@
 		<dt>Updated</dt>
 			<dd>at {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }} by {{ page.authorship.updatedBy }}</dd>
 		{% endif %}
-	</dl>
+	</dl>	
 </div>
-
-{{ form_end(form) }}
-
 {% endblock %}
