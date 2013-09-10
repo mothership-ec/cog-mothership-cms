@@ -4,8 +4,18 @@ namespace Message\Mothership\CMS\Controller;
 
 use Message\Cog\Controller\Controller;
 
+/**
+ * Search controller for pages.
+ *
+ * @author Laurence Roberts <laurence@message.co.uk>
+ */
 class Search extends Controller {
 
+	/**
+	 * View the search results based against a set of terms.
+	 * 
+	 * @return Response
+	 */
 	public function view()
 	{
 		// $form = $this->_form();
@@ -52,6 +62,11 @@ class Search extends Controller {
 		));
 	}
 
+	/**
+	 * Get the search form.
+	 * 
+	 * @return [type] [description]
+	 */
 	public function _form()
 	{
 		$form = $this->get('form')

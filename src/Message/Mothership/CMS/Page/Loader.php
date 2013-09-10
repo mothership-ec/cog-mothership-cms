@@ -268,10 +268,20 @@ class Loader
 
 	}
 
+	/**
+	 * Get pages that match a set of terms, ordered by score.
+	 * 
+	 * @param  array  $terms   Terms to search
+	 * @param  array  $options Various options
+	 * 
+	 * @return array[Page]
+	 */
 	public function getBySearchTerms($terms, $options = array())
 	{
 		$query = "";
 		$searchParams = array();
+		
+		$terms = (array) $terms;
 
 		// Extend the default options.
 		$options += array(
