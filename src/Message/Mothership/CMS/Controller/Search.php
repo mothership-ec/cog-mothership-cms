@@ -27,27 +27,21 @@ class Search extends Controller {
 		$terms = preg_split("/[\s,]+/", $termsString);
 
 		// Ignore terms less than this length.
-		$minTermLength = 3;
+		$minTermLength = $this->get('cfg')->search->minTermLength;
 
 		// Fields to in which to search for the terms.
-		$searchFields = array(
-			'page.title',
-			'page_content.value_string',
-		);
+		$searchFields = $this->get('cfg')->search->searchFields;
 
 		// Modifier for result score for fields.
-		$fieldModifiers = array(
-			'title' => 5,
-			'value_string' => 1,
-		);
+		// Reformat the array due to issues with yaml formatting array keys.
+		$tmp = $this->get('cfg')->search->fieldModifiers;
+		$fieldModifiers = array();
+		foreach ($tmp as $v) {
+			$fieldModifiers[$v[0]] = $v[1];
+		}
 
 		// Modifier for the type of page.
-		$pageTypeModifiers = array(
-			'product' => 10,
-			'product_listing' => 10,
-			'blog' => 1,
-			'home' => 1,
-		);
+		$pageTypeModifiers = $this->get('cfg')->search->pageTypeModifiers;
 
 		$pages = $this->get('cms.page.loader')->getBySearchTerms($terms, array(
 			'minTermLength'     => $minTermLength,

@@ -1,0 +1,12 @@
+min-term-length: 3
+search-fields:
+  - page.title
+  - page_content.value_string
+field-modifiers:
+  - [title, 5]
+  - [value_string, 1]
+page-type-modifiers:
+  product: 10
+  product_listing: 10
+  blog: 1
+  home: 1
