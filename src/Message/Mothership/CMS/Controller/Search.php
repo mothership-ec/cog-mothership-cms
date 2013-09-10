@@ -44,7 +44,12 @@ class Search extends Controller {
 		}
 
 		// Modifier for the type of page.
-		$pageTypeModifiers = $this->get('cfg')->search->pageTypeModifiers;
+		// Reformat the array due to issues with yaml formatting array keys.
+		$tmp = $this->get('cfg')->search->pageTypeModifiers;
+		$pageTypeModifiers = array();
+		foreach ($tmp as $v) {
+			$pageTypeModifiers[$v[0]] = $v[1];
+		}
 
 		// Results per page.
 		$perPage = $this->get('cfg')->search->perPage;

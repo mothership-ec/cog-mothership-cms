@@ -6,8 +6,8 @@ field-modifiers:
   - [title, 5]
   - [value_string, 1]
 page-type-modifiers:
-  product: 10
-  product_listing: 10
-  blog: 1
-  home: 1
-per-page: 10
+  - [product, 10]
+  - [product_listing, 10]
+  - [blog, 1]
+  - [home, 1]
+per-page: 3
