@@ -268,6 +268,102 @@ class Loader
 
 	}
 
+	public function getBySearchTerms($terms, $options = array())
+	{
+		$query = "";
+		$searchParams = array();
+
+		// Extend the default options.
+		$options += array(
+			'minTermLength' => 3,
+			'searchFields'  => array(
+				'page.title',
+				'page_content.value_string',
+			),
+			'fieldModifiers' => array(
+				'title'        => 1,
+				'value_string' => 1,
+			),
+			'pageTypeModifiers' => array(
+
+			)
+		);
+
+		// Get the variables out of the options array.
+		extract($options);
+
+		// Loop terms and build query against each one.
+		// Terms are lowered to ensure they are case-insensitive.
+		foreach ($terms as $i => $term) {
+			if (strlen($term) > $minTermLength) {
+				$terms[$i] = $term = strtolower($term);
+
+				foreach ($searchFields as $j => $field) {
+					$query .= 'LOWER(' . $field . ') LIKE :term' . $i . ' OR ';
+				}
+
+				$searchParams['term' . $i] = '%' . $term . '%';
+			}
+		}
+
+		// Remove the trailing ' OR '.
+		$query = substr($query, 0, -4);
+
+		$results = $this->_query->run('
+			SELECT
+				page.page_id,
+				page.type,
+				' . implode(', ', $searchFields) . '
+			FROM
+				page
+			LEFT JOIN
+				page_content ON page_content.page_id = page.page_id
+			WHERE
+				' . $query . '
+			GROUP BY
+				page.page_id
+		', $searchParams);
+
+		$count = count($results);
+
+		if ($count == 0) {
+			return array();
+		}
+
+		$scores = array();
+
+		foreach ($results as $i => $result) {
+			$score = 0;
+
+			// Apply field modifiers.
+			foreach ($fieldModifiers as $field => $modifier) {
+				foreach ($terms as $term) {
+					$score += substr_count(strtolower($result->$field), $term) * $modifier;
+				}
+			}
+
+			// Apply page type modifiers.
+			foreach ($pageTypeModifiers as $type => $modifier) {
+				if ($result->type == $type) {
+					$score *= $modifier;
+				}
+			}
+
+			$scores[$result->page_id] = $score;
+		}
+
+		// Retrieve the pages by the id.
+		$pages = $this->getById($results->flatten());
+
+		// Sort the pages by the scor, and save the score against the page.
+		uasort($pages, function($a, $b) use ($scores) {
+			$a->score = $scores[$a->id];
+			return $scores[$b->id] - $scores[$a->id];
+		});
+
+		return $pages;
+	}
+
 	/**
 	 * Return all files in an array
 	 * @return Array|File|false - 	returns either an array of File objects, a
