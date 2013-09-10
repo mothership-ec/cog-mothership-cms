@@ -16,8 +16,6 @@ class Search extends Controller {
 		// Split terms into an array on spaces & commas.
 		$terms = preg_split("/[\s,]+/", $termsString);
 
-		$query = "";
-
 		// Ignore terms less than this length.
 		$minTermLength = 3;
 
