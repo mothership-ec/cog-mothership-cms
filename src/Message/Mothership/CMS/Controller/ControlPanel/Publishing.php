@@ -43,8 +43,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 			$hasFuture = $page->publishDateRange->getStart() ? $page->publishDateRange->getStart()->getTimestamp() > time(): false;
 
 			$this->_checkForce($pageID, $force, $hasFuture);
-		}
-		else {
+		} else {
 			$this->addFlash('error', $this->trans('ms.cms.feedback.publish.content.error'));
 		}
 
@@ -89,8 +88,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 				)
 			));
 
-		}
-		else {
+		} else {
 			$this->get('cms.page.edit')->$action($this->get('cms.page.loader')->getByID($pageID));
 		}
 
@@ -138,7 +136,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 
 		$content = count($fields) == 0;
 
-		foreach($fields as $field) {
+		foreach ($fields as $field) {
 			$content = $field->hasContent() && (!$field->getType() != '\\DateTime') ? true : $content;
 		}
 

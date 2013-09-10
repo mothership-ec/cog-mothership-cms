@@ -107,8 +107,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 			if ($this->get('cms.page.content_edit')->save($page, $content)) {
 				$this->addFlash('success', $this->trans('ms.cms.feedback.edit.content.success'));
-			}
-			else {
+			} else {
 				$this->addFlash('error', $this->trans('ms.cms.feedback.edit.content.failure'));
 			}
 		}
@@ -501,8 +500,7 @@ class Edit extends \Message\Cog\Controller\Controller
 							)
 						)
 					);
-				}
-				else {
+				} else {
 					$this->addFlash(
 						'error',
 						$this->trans(

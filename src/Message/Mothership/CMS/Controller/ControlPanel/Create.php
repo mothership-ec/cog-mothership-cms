@@ -61,7 +61,7 @@ class Create extends \Message\Cog\Controller\Controller
 
 		$parents = $this->get('cms.page.loader')->getAll();
 		$choices = array();
-		if($parents) {
+		if ($parents) {
 			foreach ($parents as $p) {
 				$spaces = str_repeat('--', $p->depth + 1);
 				// don't display the option to move it to a page which doesn't allow children
