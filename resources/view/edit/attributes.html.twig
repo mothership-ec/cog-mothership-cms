@@ -1,28 +1,23 @@
 {% extends '::edit' %}
 
 {% block form %}
-<div class="container-details">
-	{{ form_start(form) }}
-	{{ form_row(form.slug) }}
+{{ form_start(form) }}
+{{ form_row(form.slug) }}
 
-	{{ form_row(form.visibility_search) }}
-	{{ form_row(form.visibility_menu) }}
-	{{ form_row(form.visibility_aggregator) }}
+{{ form_row(form.visibility_search) }}
+{{ form_row(form.visibility_menu) }}
+{{ form_row(form.visibility_aggregator) }}
 
-	{{ form_row(form.access) }}
-	{{ form_row(form.access_groups) }}
+{{ form_row(form.access) }}
+{{ form_row(form.access_groups) }}
 
-	{{ form_row(form.parent) }}
-	{{ form_row(form.siblings) }}
+{{ form_row(form.parent) }}
+{{ form_row(form.siblings) }}
 
-	<button type="submit" class="button small save" id="save-content">{{ 'ms.cms.attributes.button.save'|trans }}</button>
+<button type="submit" class="button small save" id="save-content">{{ 'ms.cms.attributes.button.save'|trans }}</button>
 
-	{{ form_end(form) }}
-</div>
-{% endblock %}
 
-{% block widgets %}
-<div class="widget">
+<div class="authorship">
 	<h2>{{ 'ms.cms.attributes.authorship.heading'|trans }}</h2>
 
 	<dl>
@@ -32,6 +27,9 @@
 		<dt>{{ 'Updated'|trans }}</dt>
 			<dd>{{ 'at'|trans }} {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }} {{ 'by'|trans }} {{ page.authorship.updatedBy }}</dd>
 		{% endif %}
-	</dl>	
+	</dl>
 </div>
+
+{{ form_end(form) }}
+
 {% endblock %}
