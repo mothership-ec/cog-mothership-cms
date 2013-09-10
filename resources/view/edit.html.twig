@@ -12,24 +12,26 @@
 
 	<form class="edit-title" data-title-edit action="{{ url('ms.cp.cms.edit.action',{pageID: page.id}) }}" method="post">
 
-		<label for="edit-title">Title</label>
+		<label for="edit-title">{{ 'ms.cms.edit.title.label'|trans }}</label>
 		<input type="text" name="edit[title]" id="edit-title" value="{{ page.title }}" />
 
-		<button type="submit" id="edit-submit" value="Update Title" class="button update small">Update Title</button>
+		<button type="submit" id="edit-submit" value="{{ 'ms.cms.edit.button.title'|trans }}" class="button update">{{ 'ms.cms.edit.button.title'|trans }}</button>
 	</form>
 
 	<div class="topbar">
 		{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Edit#tabs'))}}
 
 		<div class="controls">
-			<form action="{{ url('ms.cp.cms.delete',{pageID: page.id}) }}" method="post" data-confirm="Are you sure you want to delete this page?" id="delete-page">
+			<form action="{{ url('ms.cp.cms.delete',{pageID: page.id}) }}" method="post" data-confirm="{{ 'ms.cms.edit.delete.confirm'|trans }}" id="delete-page">
 				<input type="hidden" name="method" value="DELETE">
-				<button type="submit" id="edit-submit" value="Delete page" class="button small delete">Delete page</button>
+				<button type="submit" id="edit-submit" value="{{ 'ms.cms.edit.button.delete'|trans }}" class="button small delete">
+					{{ 'ms.cms.edit.button.delete'|trans }}
+				</button>
 			</form>
 			<div class="publish">
 				{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Publishing#renderForm', {pageID: page.id})) }}
 			</div>
-			<a href="{{ url('ms.cms.frontend', {slug:page.slug.getFull}) }}" class="button small preview">View page</a>
+			<a href="{{ url('ms.cms.frontend', {slug:page.slug.getFull}) }}" class="button small preview">{{ 'ms.cms.edit.button.view'|trans }}</a>
 		</div>
 	</div>
 

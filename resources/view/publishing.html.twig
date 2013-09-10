@@ -15,7 +15,9 @@
 				<div class="date-time">
 					{{ form_row(form.unpublish_date) }}
 				</div>
-				<button name="schedule[save]" type="submit" value="Save">{{ 'ms.cms.publish.button.save'|trans }}</button>
+				<button name="schedule[save]" type="submit" value="{{ 'ms.cms.publish.button.save'|trans }}">
+					{{ 'ms.cms.publish.button.save'|trans }}
+				</button>
 			</div>
 		{{ form_end(form) }}
 	</div>
