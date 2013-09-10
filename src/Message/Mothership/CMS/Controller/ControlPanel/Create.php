@@ -54,9 +54,11 @@ class Create extends \Message\Cog\Controller\Controller
 		$form->add('title', 'text', $this->trans('ms.cms.attributes.title.label'), array(
 			'attr' => array(
 				'placeholder' => $this->trans('ms.cms.attributes.title.placeholder'),
+				'data-help-key' => 'ms.cms.attributes.title.help'
 			),
 		))
 			->val()->maxLength(255);
+
 		$parents = $this->get('cms.page.loader')->getAll();
 		$choices = array();
 		if($parents) {
@@ -74,6 +76,7 @@ class Create extends \Message\Cog\Controller\Controller
 		$form->add('parent', 'choice', $this->trans('ms.cms.attributes.parent.label'), array(
 			'choices'     => $choices,
 			'empty_value' => $this->trans('Top level'),
+			'attr' 		  => array('data-help-key' => 'ms.cms.attributes.parent.help'),
 		))->val()
 			->optional();
 
@@ -81,6 +84,7 @@ class Create extends \Message\Cog\Controller\Controller
 			'choices'     => $pageTypes,
 			'expanded'    => true,
 			'empty_value' => false,
+			'attr' 		  => array('data-help-key' => 'ms.cms.attributes.type.help'),
 		));
 
 		return $form;

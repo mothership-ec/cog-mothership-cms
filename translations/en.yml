@@ -1,5 +1,8 @@
 ms.cms:
   feedback:
+    general:
+      failure:
+        non-existing-page: Page pageID does not exist
     edit:
       content:
         success: Content updated successfully
@@ -9,22 +12,70 @@ ms.cms:
       metadata:
         success: Metadata updated successfully
       title:
-        success: Page title updated to '%title%' successfully
+        success: Page title updated to `%title%` successfully
     publish:
       schedule:
-        warning: "This page is already scheduled to %task% at a future date. Are you sure you would like to %taskLink% this now?"
+        warning: This page is already scheduled to %task% at a future date. Are you sure you would like to %taskLink% this now?
       content:
         error: You must add some content before publishing a page
     create:
       success: Page created successfully
+    delete:
+      success: Page `%pageTitle%` has been deleted. <a href="%restoreUrl%">Restore</a>
+    restore:
+      success: Page `%pageTitle%` has been restored successfully
+    force-slug:
+      failure:
+        deleted: The url <code>%slug%</code> is saved against a page which has been deleted. Would you like to use this url anyway? <a href="%forceUrl%">Yes please Mothership you clever thing!</a>
+        redirected: The url <code>%slug%</code> has been used in the past and is being redirected to <a href="%redirectedUrl%">%redirectedTitle%</a>. Would you like to use this url anyway? <a href="%forceUrl%">Yes please!</a>
+        already-used: The url <code>%slugUrl%</code> is already in use on the page <a href="%usingUrl%">%usingTitle%</a>
+      success: The Url was successfully updated
   repeatable_group:
     add: "{0} Add a %name%|[1,Inf] Add another %name%"
+  dashboard:
+    page-title: Dashboard
+  edit:
+    title:
+      label: Title
+      help:
+        short:
+        long:
+        example:
+    delete:
+      confirm: Are you sure you want to delete this page?
+    button:
+      title: Update title
+      delete: Delete page
+      view: View page
+  create:
+    page-title: Create new page
+    button:
+      save: Create page
+      menu: Add a new page
+  publish:
+    action:
+      publish: Publish
+      unpublish: Unpublish
+    publish-date:
+      label: Publish at
+      help:
+        short: -
+        long:
+    unpublish-date:
+      label: Unpublish at
+      help:
+        short: -
+        long:
+    button:
+      save: Save Range
   attributes:
+    button:
+      save: Save changes
     title:
       label: Page title
       placeholder: Enter a title for your page here…
       help:
-        short:
+        short: -
         long:
         example: A Title for a Page
     type:
@@ -36,7 +87,7 @@ ms.cms:
     slug:
       label: URL Segment
       help:
-        short:
+        short: -
         long:
         example: /my-page
     access:
@@ -52,7 +103,13 @@ ms.cms:
     access_groups:
       label: Which user groups can access this page?
       help:
-        short:
+        short: -
+        long:
+    siblings:
+      label: Siblings
+      placeholder: Select
+      help:
+        short: -
         long:
     visibility:
       menu:
@@ -81,6 +138,8 @@ ms.cms:
       help:
         short: -
         long:
+    authorship:
+      heading: Authorship information
   metadata:
     title:
       label: Page title
@@ -91,21 +150,27 @@ ms.cms:
     description:
       label: Meta description
       help:
-        short:
+        short: -
         long:
         example:
     htmlHead:
       label: HTML in the head
       help:
-        short:
+        short: -
         long:
         example:
     htmlFoot:
       label: HTML in the foot
       help:
-        short:
+        short: -
         long:
         example:
+    button:
+      save: Save changes
+  sidebar:
+    search:
+      label: Search
+      placeholder: Search content...
   field_types:
     text:
       help:

@@ -81,11 +81,11 @@ class Publishing extends \Message\Cog\Controller\Controller
 		if (!$force && $hasFuture) {
 			$this->addFlash('warning', $this->trans('ms.cms.feedback.publish.schedule.warning',
 				array(
-					'%task%' 		=> $action,
+					'%task%' 		=> $this->trans('ms.cms.publish.action.'.$action),
 					'%taskLink%'	=> '<a href="'.$this->generateUrl('ms.cp.cms.edit.' . $action . '.force',array(
 						'pageID' => $pageID,
 						'force'	 => 1,
-					)).'">' . $action . '</a>'
+					)).'">' . $this->trans('ms.cms.publish.action.'.$action) . '</a>'
 				)
 			));
 
@@ -109,11 +109,15 @@ class Publishing extends \Message\Cog\Controller\Controller
 				'unpublish_date' => $page->publishDateRange->getEnd(),
 			));;
 
-		$form->add('publish_date', 'datetime', 'on')
+		$form->add('publish_date', 'datetime',  $this->trans('ms.cms.publish.publish-date.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.publish.publish-date.help'),
+		))
 			->val()
 			->optional();
 
-		$form->add('unpublish_date', 'datetime', 'on')
+		$form->add('unpublish_date', 'datetime',  $this->trans('ms.cms.publish.unpublish-date.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.publish.unpublish-date.help'),
+		))
 			->val()
 			->optional();
 
