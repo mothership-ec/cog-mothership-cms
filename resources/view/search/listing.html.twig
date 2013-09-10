@@ -7,3 +7,9 @@
 		<dd>{{ page.score }}</dd>
 	</dl>
 {% endfor %}
+
+<nav>
+	{% for i in 1..pagination.numPages %}
+		<a href="#">{{ i }}</a>
+	{% endfor %}
+</nav>

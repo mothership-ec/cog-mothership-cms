@@ -10,3 +10,4 @@ page-type-modifiers:
   product_listing: 10
   blog: 1
   home: 1
+per-page: 10

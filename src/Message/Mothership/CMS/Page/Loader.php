@@ -272,15 +272,16 @@ class Loader
 	 * Get pages that match a set of terms, ordered by score.
 	 * 
 	 * @param  array  $terms   Terms to search
+	 * @param  int    $page    Current page
 	 * @param  array  $options Various options
 	 * 
 	 * @return array[Page]
 	 */
-	public function getBySearchTerms($terms, $options = array())
+	public function getBySearchTerms($terms, $page = 1, $options = array())
 	{
 		$query = "";
 		$searchParams = array();
-		
+
 		$terms = (array) $terms;
 
 		// Extend the default options.
@@ -296,7 +297,8 @@ class Loader
 			),
 			'pageTypeModifiers' => array(
 
-			)
+			),
+			'perPage' => 10,
 		);
 
 		// Get the variables out of the options array.
@@ -363,15 +365,20 @@ class Loader
 		}
 
 		// Retrieve the pages by the id.
-		$pages = $this->getById($results->flatten());
+		$results = $this->getById($results->flatten());
 
-		// Sort the pages by the scor, and save the score against the page.
-		uasort($pages, function($a, $b) use ($scores) {
+		// Sort the pages by the score, and save the score against the page.
+		uasort($results, function($a, $b) use ($scores) {
 			$a->score = $scores[$a->id];
 			return $scores[$b->id] - $scores[$a->id];
 		});
 
-		return $pages;
+		$totalCount = count($results);
+
+		// Slice the results to get the current page.
+		$results = array_slice($results, ($page - 1) * $perPage, $perPage);
+
+		return array($totalCount, $results);
 	}
 
 	/**

@@ -26,6 +26,9 @@ class Search extends Controller {
 		// Split terms into an array on spaces & commas.
 		$terms = preg_split("/[\s,]+/", $termsString);
 
+		// Get the current page, default to first.
+		$page = isset($_GET['page']) ? $_GET['page'] : 1;
+
 		// Ignore terms less than this length.
 		$minTermLength = $this->get('cfg')->search->minTermLength;
 
@@ -43,16 +46,25 @@ class Search extends Controller {
 		// Modifier for the type of page.
 		$pageTypeModifiers = $this->get('cfg')->search->pageTypeModifiers;
 
-		$pages = $this->get('cms.page.loader')->getBySearchTerms($terms, array(
+		// Results per page.
+		$perPage = $this->get('cfg')->search->perPage;
+
+		list($totalCount, $pages) = $this->get('cms.page.loader')->getBySearchTerms($terms, $page, array(
 			'minTermLength'     => $minTermLength,
 			'searchFields'      => $searchFields,
 			'fieldModifiers'    => $fieldModifiers,
 			'pageTypeModifiers' => $pageTypeModifiers,
+			'perPage'           => $perPage,
 		));
 
 		return $this->render('::search:listing', array(
 			'termsString' => $termsString,
-			'pages' => $pages
+			'pages' => $pages,
+			'pagination' => array(
+				'page' => $page,
+				'perPage' => $perPage,
+				'numPages' => floor($totalCount / $perPage)
+			)
 		));
 	}
 
