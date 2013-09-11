@@ -270,11 +270,11 @@ class Loader
 
 	/**
 	 * Get pages that match a set of terms, ordered by score.
-	 * 
+	 *
 	 * @param  array  $terms   Terms to search
 	 * @param  int    $page    Current page
 	 * @param  array  $options Various options
-	 * 
+	 *
 	 * @return array[Page]
 	 */
 	public function getBySearchTerms($terms, $page = 1, $options = array())
@@ -321,6 +321,9 @@ class Loader
 		// Remove the trailing ' OR '.
 		$query = substr($query, 0, -4);
 
+		// Get the search results using a full outer join, built as a union of
+		// a left and a right join. This allows every `page_content` row for
+		// every `page` to be selected and iterated to add to the page's score.
 		$results = $this->_query->run('
 			SELECT
 				page.page_id,
@@ -332,8 +335,17 @@ class Loader
 				page_content ON page_content.page_id = page.page_id
 			WHERE
 				' . $query . '
-			GROUP BY
-				page.page_id
+			UNION
+				SELECT
+					page.page_id,
+					page.type,
+					' . implode(', ', $searchFields) . '
+				FROM
+					page
+				RIGHT JOIN
+					page_content ON page_content.page_id = page.page_id
+				WHERE
+					' . $query . '
 		', $searchParams);
 
 		$count = count($results);
@@ -361,11 +373,14 @@ class Loader
 				}
 			}
 
-			$scores[$result->page_id] = $score;
+			if (! isset($scores[$result->page_id])) {
+				$scores[$result->page_id] = 0;
+			}
+			$scores[$result->page_id] += $score;
 		}
 
 		// Retrieve the pages by the id.
-		$results = $this->getById($results->flatten());
+		$results = $this->getById(array_unique($results->flatten()));
 
 		// Sort the pages by the score, and save the score against the page.
 		uasort($results, function($a, $b) use ($scores) {
