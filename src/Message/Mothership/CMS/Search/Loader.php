@@ -5,6 +5,11 @@ namespace Message\Mothership\CMS\Search;
 use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\ValueObject\DateTimeImmutable;
 
+/**
+ * Loader decorator for search logs.
+ *
+ * @author Laurence Roberts <laurence@message.co.uk>
+ */
 class Loader {
 
 	protected $_query;

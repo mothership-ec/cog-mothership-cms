@@ -7,6 +7,11 @@ use Message\User\UserInterface;
 use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\ValueObject\DateTimeImmutable;
 
+/**
+ * Create decorator for search logs.
+ *
+ * @author Laurence Roberts <laurence@message.co.uk>
+ */
 class Create {
 
 	protected $_loader;
