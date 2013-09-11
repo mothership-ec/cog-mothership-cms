@@ -80,11 +80,8 @@ class Publishing extends \Message\Cog\Controller\Controller
 		if (!$force && $hasFuture) {
 			$this->addFlash('warning', $this->trans('ms.cms.feedback.publish.schedule.warning',
 				array(
-					'%task%' 		=> $this->trans('ms.cms.publish.action.'.$action),
-					'%taskLink%'	=> '<a href="'.$this->generateUrl('ms.cp.cms.edit.' . $action . '.force',array(
-						'pageID' => $pageID,
-						'force'	 => 1,
-					)).'">' . $this->trans('ms.cms.publish.action.'.$action) . '</a>'
+					'%task%' 	  => $this->trans('ms.cms.publish.action.'.$action),
+					'%taskUrl%'   => $this->generateUrl('ms.cp.cms.edit.' . $action . '.force',array('pageID' => $pageID,'force' => 1)),
 				)
 			));
 

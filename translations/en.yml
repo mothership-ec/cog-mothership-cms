@@ -2,7 +2,7 @@ ms.cms:
   feedback:
     general:
       failure:
-        non-existing-page: Page pageID does not exist
+        non-existing-page: Page %pageID% does not exist
     edit:
       content:
         success: Content updated successfully
@@ -15,7 +15,7 @@ ms.cms:
         success: Page title updated to `%title%` successfully
     publish:
       schedule:
-        warning: This page is already scheduled to %task% at a future date. Are you sure you would like to %taskLink% this now?
+        warning: This page is already scheduled to %task% at a future date. Are you sure you would like to <a href="%taskUrl%">%task%</a> this now?
       content:
         error: You must add some content before publishing a page
     create:
@@ -37,10 +37,7 @@ ms.cms:
   edit:
     title:
       label: Title
-      help:
-        short:
-        long:
-        example:
+      help: -
     delete:
       confirm: Are you sure you want to delete this page?
     button:
@@ -58,14 +55,10 @@ ms.cms:
       unpublish: Unpublish
     publish-date:
       label: Publish at
-      help:
-        short: -
-        long:
+      help: -
     unpublish-date:
       label: Unpublish at
-      help:
-        short: -
-        long:
+      help: -
     button:
       save: Save Range
   attributes:
@@ -74,22 +67,13 @@ ms.cms:
     title:
       label: Page title
       placeholder: Enter a title for your page here…
-      help:
-        short: -
-        long:
-        example: A Title for a Page
+      help: A title for a page
     type:
       label: Page type
-      help:
-        short: The page type defines what content fields are available.
-        long:
-        example: Blog
+      help: The page type defines what content fields are available. E.g. Blog
     slug:
       label: URL Segment
-      help:
-        short: -
-        long:
-        example: /my-page
+      help: E.g. /my-page
     access:
       label: Who can access this page?
       options:
@@ -97,74 +81,45 @@ ms.cms:
         guest: Only visitors that aren't logged in
         user:  Only logged in users
         group: Only specific user groups
-      help:
-        short: Select the type of visitor that can access this page
-        long:  By default, anybody can access a page. You can set a page to only be accessible to guests; or any logged in user; or only logged in users that belong to a specific group. If the visitor tries to access a page that they do not have access to see, the system will return an "access denied" error.
+      help: Select the type of visitor that can access this page. By default, anybody can access a page. You can set a page to only be accessible to guests; or any logged in user; or only logged in users that belong to a specific group. If the visitor tries to access a page that they do not have access to see, the system will return an "access denied" error.
     access_groups:
       label: Which user groups can access this page?
-      help:
-        short: -
-        long:
+      help: -
     siblings:
       label: Siblings
       placeholder: Select
-      help:
-        short: -
-        long:
+      help: -
     visibility:
       menu:
         label: Should this page show in menus?
-        help:
-          short: -
-          long:
+        help: -
       search:
         label: Should this page show in search results?
-        help:
-          short: -
-          long:
+        help: -
       aggregator:
         label: Should this page show on aggregator pages?
-        help:
-          short: -
-          long:
+        help: -
     tags:
       label: Tags
-      help:
-        short: -
-        long:
-        example: products, shoes, 2013
+      help: E.g.: products, shoes, 2013
     parent:
       label: Parent page type
-      help:
-        short: -
-        long:
+      help: -
     authorship:
       heading: Authorship information
   metadata:
     title:
       label: Page title
-      help:
-        short: The title that shows in the browser tab
-        long:
-        example:
+      help: The title that shows in the browser tab
     description:
       label: Meta description
-      help:
-        short: -
-        long:
-        example:
+      help: -
     htmlHead:
       label: HTML in the head
-      help:
-        short: -
-        long:
-        example:
+      help: -
     htmlFoot:
       label: HTML in the foot
-      help:
-        short: -
-        long:
-        example:
+      help: -
     button:
       save: Save changes
   sidebar:
@@ -173,47 +128,20 @@ ms.cms:
       placeholder: Search content...
   field_types:
     text:
-      help:
-        short:
-        long: Just a regular text field. Formatting is not allowed here.
-        example: I am some text
+      help: Just a regular text field. Formatting is not allowed here.
     boolean:
-      help:
-        short:
-        long:
-        example:
+      help: -
     choice:
-      help:
-        short:
-        long:
-        example:
+      help: -
     date:
-      help:
-        short:
-        long:
-        example:
+      help: -
     file:
-      help:
-        short:
-        long:
-        example:
+      help: -
     html:
-      help:
-        short:
-        long:
-        example:
+      help: -
     integer:
-      help:
-        short:
-        long:
-        example:
+      help: -
     link:
-      help:
-        short:
-        long:
-        example:
+      help: -
     richtext:
-      help:
-        short:
-        long:
-        example:
+      help: -

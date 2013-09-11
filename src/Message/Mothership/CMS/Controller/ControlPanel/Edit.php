@@ -81,7 +81,7 @@ class Edit extends \Message\Cog\Controller\Controller
 	 */
 	public function content($pageID, $form = null)
 	{
-		$page    = $this->get('cms.page.loader')->getByID($pageID);
+		$page = $this->get('cms.page.loader')->getByID($pageID);
 
 		if (!$page) {
 			throw $this->createNotFoundException('Page ' . $pageID . ' does not exist', null, 404);
@@ -126,7 +126,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		if (!$page) {
 			throw $this->createNotFoundException(
-				$this->trans('ms.cms.feedback.general.failure.non-existing-page', array('pageID' => $page->id)),
+				$this->trans('ms.cms.feedback.general.failure.non-existing-page', array('%pageID%' => $page->id)),
 				null,
 				404
 			);
@@ -230,7 +230,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		if (!$page) {
 			throw $this->createNotFoundException(
-				$this->trans('ms.cms.feedback.general.failure.non-existing-page', array('pageID' => $page->id)),
+				$this->trans('ms.cms.feedback.general.failure.non-existing-page', array('%pageID%' => $page->id)),
 				null,
 				404
 			);
