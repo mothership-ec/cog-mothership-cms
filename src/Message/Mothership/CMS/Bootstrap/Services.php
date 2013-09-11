@@ -81,6 +81,20 @@ class Services implements ServicesInterface
 			);
 		};
 
+		$serviceContainer['cms.search.loader'] = function($c) {
+			return new CMS\Search\Loader(
+				$c['db.query']
+			);
+		};
+
+		$serviceContainer['cms.search.create'] = function($c) {
+			return new CMS\Search\Create(
+				$c['cms.search.loader'],
+				$c['db.query'],
+				$c['user.current']
+			);
+		};
+
 		$serviceContainer['cms.field.factory'] = function($c) {
 			$factory = new CMS\Field\Factory($c['validator'], $c);
 

@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Controller;
 
 use Message\Cog\Controller\Controller;
+use Message\Mothership\CMS\Search\SearchLog;
 
 /**
  * Search controller for pages.
@@ -13,7 +14,7 @@ class Search extends Controller {
 
 	/**
 	 * View the search results based against a set of terms.
-	 * 
+	 *
 	 * @return Response
 	 */
 	public function view()
@@ -62,6 +63,13 @@ class Search extends Controller {
 			'perPage'           => $perPage,
 		));
 
+		// Log search request.
+		$searchLog            = new SearchLog;
+		$searchLog->term      = $termsString;
+		$searchLog->referrer  = $this->get('request')->server->get('REFERER');
+		$searchLog->ipAddress = $this->get('request')->getClientIp();
+		$this->get('cms.search.create')->create($searchLog);
+
 		return $this->render('::search:listing', array(
 			'termsString' => $termsString,
 			'pages' => $pages,
@@ -75,7 +83,7 @@ class Search extends Controller {
 
 	/**
 	 * Get the search form.
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function _form()
