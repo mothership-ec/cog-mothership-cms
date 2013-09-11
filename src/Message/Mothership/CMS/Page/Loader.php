@@ -318,6 +318,10 @@ class Loader
 			}
 		}
 
+		if (count($searchParams) == 0) {
+			return array(0, array());
+		}
+
 		// Remove the trailing ' OR '.
 		$query = substr($query, 0, -4);
 
@@ -351,7 +355,7 @@ class Loader
 		$count = count($results);
 
 		if ($count == 0) {
-			return array();
+			return array(0, array());
 		}
 
 		$scores = array();
@@ -384,7 +388,11 @@ class Loader
 
 		// Sort the pages by the score, and save the score against the page.
 		uasort($results, function($a, $b) use ($scores) {
+			// Save a and b to ensure no page is missed.
 			$a->score = $scores[$a->id];
+			$b->score = $scores[$b->id];
+
+			// Return comparison.
 			return $scores[$b->id] - $scores[$a->id];
 		});
 
