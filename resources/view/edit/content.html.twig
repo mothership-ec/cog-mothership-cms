@@ -42,20 +42,19 @@
 		<section class="repeatable-group">
 			<h2>{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.name')|trans }}</h2>
 			<div class="container">
-				{% if part.count > 0 %}
-				{% for i in range(0, part.count - 1) %}
-					<section class="group" data-colapse>
-						<h1 class="title">Needs a title</h1>
-						<div class="content">{% for field in repeatables[name] %}
-						{{ form_row(form[name][field][i]) }}
-						{% endfor %}
-						<a href="#" data-group-remove class="button small remove">Remove this group</a>
+				{% for i,group in part %}
+					<section class="group" data-colapse data-identifier-field="{{ group.getIdentifierField().getName() }}">
+						<h1 class="title">{{ group.getIdentifierField() }}</h1>
+						<div class="content">
+							{% for field in repeatables[name] %}
+								{{ form_row(form[name][field][i]) }}
+							{% endfor %}
+							<a href="#" data-group-remove class="button small remove">Remove this group</a>
 						</div>
-					</section>
-				{% endfor %}
+					</secton>
 				{% else %}
-				{% do form[name].setRendered %}
-				{% endif %}
+					{% do form[name].setRendered %}
+				{% endfor %}
 			</div>
 			<div class="add-group">
 				<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}" data-group-index="{{ part.count }}" class="button small add">
