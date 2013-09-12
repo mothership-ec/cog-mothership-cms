@@ -20,10 +20,7 @@ class Search extends Controller {
 	 */
 	public function view()
 	{
-		// $form = $this->_form();
-		// $data = $form->getFilteredData();
-		// $termsString = $data['terms'];
-		$termsString = $_GET['terms'];
+		$termsString = $this->get('request')->get('terms');
 
 		if (! $termsString or empty($termsString)) {
 			// this should be a 404
@@ -34,7 +31,7 @@ class Search extends Controller {
 		$terms = preg_split("/[\s,]+/", $termsString);
 
 		// Get the current page, default to first.
-		$page = isset($_GET['page']) ? $_GET['page'] : 1;
+		$page = ($this->get('request')->get('page')) ?: 1;
 
 		$pages = $this->get('cms.page.loader')->getBySearchTerms($terms);
 
