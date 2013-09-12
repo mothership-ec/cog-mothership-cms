@@ -291,6 +291,13 @@ class Loader
 
 		$results = $this->getById($ids);
 
+		// Check authorisation restrictions on pages.
+		foreach ($results as $i => $page) {
+			if (false === $this->_authorisation->isViewable($page, $this->_user)) {
+				unset($results[$i]);
+			}
+		}
+
 		return $this->_searcher->getSorted($results);
 	}
 
