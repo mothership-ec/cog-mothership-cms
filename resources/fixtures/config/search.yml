@@ -1,13 +1,22 @@
+# Ignore terms less than this length.
 min-term-length: 3
+
+#  Fields to in which to search for the terms.
 search-fields:
   - page.title
   - page_content.value_string
+
+# Multiplier for score on each field, a higher number indicates a higher importance.
 field-modifiers:
   - [title, 5]
   - [value_string, 1]
+
+# Multiplier for score by page type, a higher number indicates a higher importance.
 page-type-modifiers:
   - [product, 10]
   - [product_listing, 10]
   - [blog, 1]
   - [home, 1]
-per-page: 3
+
+# Number of results to show per page
+per-page: 10
