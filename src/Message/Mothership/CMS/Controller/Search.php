@@ -23,8 +23,7 @@ class Search extends Controller {
 		$termsString = $this->get('request')->get('terms');
 
 		if (! $termsString or empty($termsString)) {
-			// this should be a 404
-			throw new InvalidArgumentException('nope');
+			throw $this->getNotFoundException('You must enter a term for which to search.');
 		}
 
 		// Split terms into an array on spaces & commas.
