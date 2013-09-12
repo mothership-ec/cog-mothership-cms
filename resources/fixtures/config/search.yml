@@ -20,3 +20,6 @@ page-type-modifiers:
 
 # Number of results to show per page
 per-page: 10
+
+# The field to show an excerpt from
+excerpt-field: value_string
