@@ -35,9 +35,42 @@ class Services implements ServicesInterface
 				$c['cms.page.types'],
 				$c['user.groups'],
 				$c['cms.page.authorisation'],
-				$c['user.current']
+				$c['user.current'],
+				$c['cms.page.searcher']
 			);
 		};
+
+		$serviceContainer['cms.page.searcher'] = $serviceContainer->share(function($c) {
+			$searcher =  new CMS\Page\Searcher($c['db.query']);
+
+			// Ignore terms less than this length.
+			$searcher->setMinTermLength($c['cfg']->search->minTermLength);
+
+			// Fields to in which to search for the terms.
+			$searcher->setSearchFields($c['cfg']->search->searchFields);
+
+			// Modifier for result score for fields.
+			// Reformat the array due to issues with yaml formatting array keys.
+			$tmp = $c['cfg']->search->fieldModifiers;
+			$fieldModifiers = array();
+			foreach ($tmp as $v) {
+				$fieldModifiers[$v[0]] = $v[1];
+			}
+			$searcher->setFieldModifiers($fieldModifiers);
+
+			// Modifier for the type of page.
+			// Reformat the array due to issues with yaml formatting array keys.
+			$tmp = $c['cfg']->search->pageTypeModifiers;
+			$pageTypeModifiers = array();
+			foreach ($tmp as $v) {
+				$pageTypeModifiers[$v[0]] = $v[1];
+			}
+			$searcher->setPageTypeModifiers($pageTypeModifiers);
+
+			$searcher->setExcerptField($c['cfg']->search->excerptField);
+
+			return $searcher;
+		});
 
 		$serviceContainer['cms.page.content_loader'] = function($c) {
 			return new CMS\Page\ContentLoader($c['db.query'], $c['cms.field.factory']);

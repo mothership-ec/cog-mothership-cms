@@ -85,7 +85,8 @@ class Loader
 		PageTypeCollection $pageTypes,
 		UserGroupCollection $groups,
 		Authorisation $authorisation,
-		UserInterface $user
+		UserInterface $user,
+		Searcher $searcher
 	)
 	{
 		$this->_locale        = $locale;
@@ -94,6 +95,7 @@ class Loader
 		$this->_userGroups    = $groups;
 		$this->_authorisation = $authorisation;
 		$this->_user 		  = $user;
+		$this->_searcher      = $searcher;
 	}
 
 	/**
@@ -275,133 +277,17 @@ class Loader
 	 * @param  int    $page    Current page
 	 * @param  array  $options Various options
 	 *
-	 * @return array[Page]
+	 * @return array[TotalCount, array[Page]]
 	 */
 	public function getBySearchTerms($terms, $page = 1, $options = array())
 	{
-		$query = "";
-		$searchParams = array();
+		$this->_searcher->setTerms($terms);
 
-		$terms = (array) $terms;
+		$ids = $this->_searcher->getIds();
 
-		// Extend the default options.
-		$options += array(
-			'minTermLength' => 3,
-			'searchFields'  => array(
-				'page.title',
-				'page_content.value_string',
-			),
-			'fieldModifiers' => array(
-				'title'        => 1,
-				'value_string' => 1,
-			),
-			'pageTypeModifiers' => array(
+		$results = $this->getById($ids);
 
-			),
-			'perPage' => 10,
-		);
-
-		// Get the variables out of the options array.
-		extract($options);
-
-		// Loop terms and build query against each one.
-		// Terms are lowered to ensure they are case-insensitive.
-		foreach ($terms as $i => $term) {
-			if (strlen($term) > $minTermLength) {
-				$terms[$i] = $term = strtolower($term);
-
-				foreach ($searchFields as $j => $field) {
-					$query .= 'LOWER(' . $field . ') LIKE :term' . $i . ' OR ';
-				}
-
-				$searchParams['term' . $i] = '%' . $term . '%';
-			}
-		}
-
-		if (count($searchParams) == 0) {
-			return array(0, array());
-		}
-
-		// Remove the trailing ' OR '.
-		$query = substr($query, 0, -4);
-
-		// Get the search results using a full outer join, built as a union of
-		// a left and a right join. This allows every `page_content` row for
-		// every `page` to be selected and iterated to add to the page's score.
-		$results = $this->_query->run('
-			SELECT
-				page.page_id,
-				page.type,
-				' . implode(', ', $searchFields) . '
-			FROM
-				page
-			LEFT JOIN
-				page_content ON page_content.page_id = page.page_id
-			WHERE
-				' . $query . '
-			UNION
-				SELECT
-					page.page_id,
-					page.type,
-					' . implode(', ', $searchFields) . '
-				FROM
-					page
-				RIGHT JOIN
-					page_content ON page_content.page_id = page.page_id
-				WHERE
-					' . $query . '
-		', $searchParams);
-
-		$count = count($results);
-
-		if ($count == 0) {
-			return array(0, array());
-		}
-
-		$scores = array();
-
-		foreach ($results as $i => $result) {
-			$score = 0;
-
-			// Apply field modifiers.
-			foreach ($fieldModifiers as $field => $modifier) {
-				foreach ($terms as $term) {
-					$score += substr_count(strtolower($result->$field), $term) * $modifier;
-				}
-			}
-
-			// Apply page type modifiers.
-			foreach ($pageTypeModifiers as $type => $modifier) {
-				if ($result->type == $type) {
-					$score *= $modifier;
-				}
-			}
-
-			if (! isset($scores[$result->page_id])) {
-				$scores[$result->page_id] = 0;
-			}
-			$scores[$result->page_id] += $score;
-		}
-
-		// Retrieve the pages by the id.
-		$results = $this->getById(array_unique($results->flatten()));
-
-		// Sort the pages by the score, and save the score against the page.
-		uasort($results, function($a, $b) use ($scores) {
-			// Save a and b to ensure no page is missed.
-			$a->score = $scores[$a->id];
-			$b->score = $scores[$b->id];
-
-			// Return comparison.
-			return $scores[$b->id] - $scores[$a->id];
-		});
-
-		$totalCount = count($results);
-
-		// Slice the results to get the current page.
-		$results = array_slice($results, ($page - 1) * $perPage, $perPage);
-
-		return array($totalCount, $results);
+		return $this->_searcher->getSorted($results);
 	}
 
 	/**

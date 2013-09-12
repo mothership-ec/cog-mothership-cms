@@ -30,38 +30,10 @@ class Search extends Controller {
 		// Get the current page, default to first.
 		$page = isset($_GET['page']) ? $_GET['page'] : 1;
 
-		// Ignore terms less than this length.
-		$minTermLength = $this->get('cfg')->search->minTermLength;
+		list($totalCount, $pages) = $this->get('cms.page.loader')->getBySearchTerms($terms);
 
-		// Fields to in which to search for the terms.
-		$searchFields = $this->get('cfg')->search->searchFields;
-
-		// Modifier for result score for fields.
-		// Reformat the array due to issues with yaml formatting array keys.
-		$tmp = $this->get('cfg')->search->fieldModifiers;
-		$fieldModifiers = array();
-		foreach ($tmp as $v) {
-			$fieldModifiers[$v[0]] = $v[1];
-		}
-
-		// Modifier for the type of page.
-		// Reformat the array due to issues with yaml formatting array keys.
-		$tmp = $this->get('cfg')->search->pageTypeModifiers;
-		$pageTypeModifiers = array();
-		foreach ($tmp as $v) {
-			$pageTypeModifiers[$v[0]] = $v[1];
-		}
-
-		// Results per page.
-		$perPage = $this->get('cfg')->search->perPage;
-
-		list($totalCount, $pages) = $this->get('cms.page.loader')->getBySearchTerms($terms, $page, array(
-			'minTermLength'     => $minTermLength,
-			'searchFields'      => $searchFields,
-			'fieldModifiers'    => $fieldModifiers,
-			'pageTypeModifiers' => $pageTypeModifiers,
-			'perPage'           => $perPage,
-		));
+		// Slice the results to get the current page.
+		// $pages = array_slice($pages, ($page - 1) * $perPage, $perPage);
 
 		// Log search request.
 		$searchLog            = new SearchLog;
@@ -73,11 +45,7 @@ class Search extends Controller {
 		return $this->render('::search:listing', array(
 			'termsString' => $termsString,
 			'pages' => $pages,
-			'pagination' => array(
-				'page' => $page,
-				'perPage' => $perPage,
-				'numPages' => floor($totalCount / $perPage)
-			)
+			'pagination' => null
 		));
 	}
 
