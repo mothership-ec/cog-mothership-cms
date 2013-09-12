@@ -4,7 +4,7 @@ namespace Message\Mothership\CMS\Controller;
 
 use InvalidArgumentException;
 use Message\Cog\Controller\Controller;
-use Message\Mothership\CMS\Search\SearchLog;
+use Message\Mothership\CMS\SearchLog\SearchLog;
 
 /**
  * Search controller for pages.

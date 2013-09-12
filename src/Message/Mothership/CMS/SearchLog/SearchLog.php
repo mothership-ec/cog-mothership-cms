@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\CMS\Search;
+namespace Message\Mothership\CMS\SearchLog;
 
 use Message\Cog\ValueObject\Authorship;
 

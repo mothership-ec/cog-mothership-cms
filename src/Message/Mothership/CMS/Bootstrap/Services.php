@@ -115,13 +115,13 @@ class Services implements ServicesInterface
 		};
 
 		$serviceContainer['cms.search.loader'] = function($c) {
-			return new CMS\Search\Loader(
+			return new CMS\SearchLog\Loader(
 				$c['db.query']
 			);
 		};
 
 		$serviceContainer['cms.search.create'] = function($c) {
-			return new CMS\Search\Create(
+			return new CMS\SearchLog\Create(
 				$c['cms.search.loader'],
 				$c['db.query'],
 				$c['user.current']
