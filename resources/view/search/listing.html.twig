@@ -2,10 +2,6 @@
 
 {% for page in pages %}
 	<h2><a href="{{ url('ms.cms.frontend', {slug: page.slug}) }}">{{ page.title }}</a></h2>
-	<dl>
-		<dt>Score</dt>
-		<dd>{{ page.score }}</dd>
-	</dl>
 {% else %}
 	<p>No pages found.</p>
 {% endfor %}
