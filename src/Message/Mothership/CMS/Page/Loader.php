@@ -293,7 +293,9 @@ class Loader
 
 		// Check authorisation restrictions on pages.
 		foreach ($results as $i => $page) {
-			if (false === $this->_authorisation->isViewable($page, $this->_user)) {
+			if (false === $this->_authorisation->isViewable($page, $this->_user) or
+				false === $this->_authorisation->isPublished($page)
+			) {
 				unset($results[$i]);
 			}
 		}
