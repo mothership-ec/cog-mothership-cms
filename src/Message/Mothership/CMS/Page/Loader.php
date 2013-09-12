@@ -277,13 +277,17 @@ class Loader
 	 * @param  int    $page    Current page
 	 * @param  array  $options Various options
 	 *
-	 * @return array[TotalCount, array[Page]]
+	 * @return array[Page]
 	 */
 	public function getBySearchTerms($terms, $page = 1, $options = array())
 	{
 		$this->_searcher->setTerms($terms);
 
 		$ids = $this->_searcher->getIds();
+
+		if (empty($ids)) {
+			return false;
+		}
 
 		$results = $this->getById($ids);
 

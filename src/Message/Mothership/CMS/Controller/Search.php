@@ -2,6 +2,7 @@
 
 namespace Message\Mothership\CMS\Controller;
 
+use InvalidArgumentException;
 use Message\Cog\Controller\Controller;
 use Message\Mothership\CMS\Search\SearchLog;
 
@@ -24,13 +25,18 @@ class Search extends Controller {
 		// $termsString = $data['terms'];
 		$termsString = $_GET['terms'];
 
+		if (! $termsString or empty($termsString)) {
+			// this should be a 404
+			throw new InvalidArgumentException('nope');
+		}
+
 		// Split terms into an array on spaces & commas.
 		$terms = preg_split("/[\s,]+/", $termsString);
 
 		// Get the current page, default to first.
 		$page = isset($_GET['page']) ? $_GET['page'] : 1;
 
-		list($totalCount, $pages) = $this->get('cms.page.loader')->getBySearchTerms($terms);
+		$pages = $this->get('cms.page.loader')->getBySearchTerms($terms);
 
 		// Slice the results to get the current page.
 		// $pages = array_slice($pages, ($page - 1) * $perPage, $perPage);

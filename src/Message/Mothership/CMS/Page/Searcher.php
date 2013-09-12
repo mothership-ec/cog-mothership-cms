@@ -127,7 +127,7 @@ class Searcher {
 	 *
 	 * @param  array $results
 	 *
-	 * @return array[totalCount, results]
+	 * @return array
 	 */
 	public function getSorted($results)
 	{
@@ -146,9 +146,7 @@ class Searcher {
 			return $b->score - $a->score;
 		});
 
-		$totalCount = count($results);
-
-		return array($totalCount, $results);
+		return $results;
 	}
 
 	/**
