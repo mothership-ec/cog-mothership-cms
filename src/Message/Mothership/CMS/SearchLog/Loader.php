@@ -21,7 +21,7 @@ class Loader {
 
 	public function getByID($ids)
 	{
-		return $this->_load($ids, false);
+		return $this->_load($ids, is_array($ids));
 	}
 
 	protected function _load($ids, $alwaysReturnArray = false)
