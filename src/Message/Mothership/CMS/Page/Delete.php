@@ -5,10 +5,12 @@ namespace Message\Mothership\CMS\Page;
 use Message\Mothership\CMS\Exception;
 
 use Message\User\UserInterface;
+use Message\User\User;
 
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\ValueObject\DateTimeImmutable;
+use Message\Cog\ValueObject\Authorship;
 
 /**
  * Decorator for deleting & restoring pages.
@@ -19,8 +21,8 @@ class Delete
 {
 	protected $_query;
 	protected $_eventDispatcher;
-	protected $_loader;
 	protected $_currentUser;
+	protected $_loader;
 
 	/**
 	 * Constructor.
@@ -30,6 +32,7 @@ class Delete
 	 * @param Loader              $loader          The page loader
 	 * @param UserInterface       $currentUser     The currently logged in user
 	 */
+
 	public function __construct(DBQuery $query, DispatcherInterface $eventDispatcher,
 		Loader $loader, UserInterface $user)
 	{
@@ -91,7 +94,7 @@ class Delete
 	 */
 	public function restore(Page $page)
 	{
-		$page->authorship->restore();
+		$page->authorship->delete(new DateTimeImmutable, $this->_currentUser ? $this->_currentUser->id : null);
 
 		$result = $this->_query->run('
 			UPDATE
