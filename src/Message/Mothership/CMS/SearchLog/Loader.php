@@ -47,7 +47,7 @@ class Loader {
 			return $alwaysReturnArray ? array() : false;
 		}
 
-		$entities = $result->bindTo('Message\\Mothership\\CMS\\Search\\SearchLog');
+		$entities = $result->bindTo('Message\\Mothership\\CMS\\SearchLog\\SearchLog');
 		$return = array();
 
 		foreach ($entities as $key => $entity) {
