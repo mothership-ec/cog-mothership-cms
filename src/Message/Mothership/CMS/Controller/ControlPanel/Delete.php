@@ -15,7 +15,7 @@ class Delete extends \Message\Cog\Controller\Controller
 
 			$this->addFlash('success', $this->trans('ms.cms.feedback.delete.success', array(
 				'%pageTitle%'  => $page->title,
-				'%restoreUrl' => $this->generateUrl('ms.cp.cms.restore', array('pageID' => $page->id)),
+				'%restoreUrl%' => $this->generateUrl('ms.cp.cms.restore', array('pageID' => $page->id)),
 			)));
 		}
 		catch (Exception\Exception $e) {
