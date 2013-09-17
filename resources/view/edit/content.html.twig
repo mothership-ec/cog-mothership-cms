@@ -43,7 +43,7 @@
 			<h2>{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.name')|trans }}</h2>
 			<div class="container">
 				{% for i,group in part %}
-					<section class="group" data-colapse data-identifier-field="{{ group.getIdentifierField().getName() }}">
+					<section class="group" data-collapse data-identifier-field="{{ group.getIdentifierField().getName() }}">
 						<h1 class="title">{{ group.getIdentifierField() }}</h1>
 						<div class="content">
 							{% for field in repeatables[name] %}
