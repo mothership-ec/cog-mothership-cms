@@ -264,7 +264,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 			$page = $this->get('cms.page.edit')->save($page);
 
-			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
+			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.metadata.success'));
 		}
 
 		return $this->render('::edit/metadata', array(
