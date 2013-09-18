@@ -60,7 +60,7 @@ ms.cms:
       label: Unpublish at
       help: -
     button:
-      save: Save Range
+      save: Save range
   attributes:
     button:
       save: Save changes
