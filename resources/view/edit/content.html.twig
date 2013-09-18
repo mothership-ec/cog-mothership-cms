@@ -22,7 +22,7 @@
 	{% if repeatables[name] is null %}
 		{# If this part is a group, output the title & description, then each field in it #}
 		{% if part.getFields is not null %}
-		<section class="display-group container-cms">
+		<section class="display-group">
 			<h2 class="title">{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.name')|trans }}</h2>
 			<div class="content-wrap">
 				<p class="group-desc">{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.description')|trans }}</p>
