@@ -164,7 +164,7 @@ class Searcher {
 			throw new InvalidArgumentException("Could not build search query, searchFields must be set");
 		}
 
-		$query = "";
+		$query = "(";
 		$searchParams = array();
 
 		// Loop terms and build query against each one.
@@ -189,6 +189,8 @@ class Searcher {
 		// Remove the trailing ' OR '.
 		$query = substr($query, 0, -4);
 
+		$query .= ")";
+
 		// Get the search results using a full outer join, built as a union of
 		// a left and a right join. This allows every `page_content` row for
 		// every `page` to be selected and iterated to add to the page's score.
@@ -202,6 +204,7 @@ class Searcher {
 			LEFT JOIN
 				page_content ON page_content.page_id = page.page_id
 			WHERE
+				visibility_search = 1 AND
 				' . $query . '
 			UNION
 				SELECT
@@ -213,6 +216,7 @@ class Searcher {
 				RIGHT JOIN
 					page_content ON page_content.page_id = page.page_id
 				WHERE
+					visibility_search = 1 AND
 					' . $query . '
 		';
 
