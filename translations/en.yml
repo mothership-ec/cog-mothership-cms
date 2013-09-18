@@ -15,7 +15,7 @@ ms.cms:
         success: Page title updated to `%title%` successfully
     publish:
       schedule:
-        warning: This page is already scheduled to %task% at a future date. Are you sure you would like to <a href="%taskUrl%">%task%</a> this now?
+        warning: This page is already scheduled to %task% at a future date. Are you sure you would like to <a href="%taskUrl%">%task% this now</a>?
       content:
         error: You must add some content before publishing a page
     create:
