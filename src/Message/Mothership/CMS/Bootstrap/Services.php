@@ -169,5 +169,11 @@ class Services implements ServicesInterface
 				return $templates;
 			}
 		);
+
+		$serviceContainer['user.groups'] = $serviceContainer->share($serviceContainer->extend('user.groups', function($groups) {
+			$groups->add(new CMS\UserGroup\ContentManager);
+
+			return $groups;
+		}));
 	}
 }

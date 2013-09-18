@@ -24,9 +24,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			'modules.load.success' => array(
-				array('registerGroups'),
-			),
 			BuildMenuEvent::BUILD_MAIN_MENU => array(
 				array('registerMainMenuItems'),
 			),
@@ -47,15 +44,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 	}
 
 	/**
-	 * Register user groups.
-	 */
-	public function registerGroups()
-	{
-		$this->_services['user.groups']
-			->add(new UserGroup\ContentManager);
-	}
-
-	/**
 	 * Redirect user to dashboard with error message if they get a NotFoundHttpException
 	 *
 	 * @param GetResponseForExceptionEvent $event
@@ -71,5 +59,4 @@ class EventListener extends BaseListener implements SubscriberInterface
 		// 	));
 		// };
 	}
-
 }

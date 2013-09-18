@@ -43,8 +43,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 			$hasFuture = $page->publishDateRange->getStart() ? $page->publishDateRange->getStart()->getTimestamp() > time(): false;
 
 			$this->_checkForce($pageID, $force, $hasFuture);
-		}
-		else {
+		} else {
 			$this->addFlash('error', $this->trans('ms.cms.feedback.publish.content.error'));
 		}
 
@@ -81,16 +80,12 @@ class Publishing extends \Message\Cog\Controller\Controller
 		if (!$force && $hasFuture) {
 			$this->addFlash('warning', $this->trans('ms.cms.feedback.publish.schedule.warning',
 				array(
-					'%task%' 		=> $action,
-					'%taskLink%'	=> '<a href="'.$this->generateUrl('ms.cp.cms.edit.' . $action . '.force',array(
-						'pageID' => $pageID,
-						'force'	 => 1,
-					)).'">' . $action . '</a>'
+					'%task%' 	  => $this->trans('ms.cms.publish.action.'.$action),
+					'%taskUrl%'   => $this->generateUrl('ms.cp.cms.edit.' . $action . '.force',array('pageID' => $pageID,'force' => 1)),
 				)
 			));
 
-		}
-		else {
+		} else {
 			$this->get('cms.page.edit')->$action($this->get('cms.page.loader')->getByID($pageID));
 		}
 
@@ -109,11 +104,15 @@ class Publishing extends \Message\Cog\Controller\Controller
 				'unpublish_date' => $page->publishDateRange->getEnd(),
 			));;
 
-		$form->add('publish_date', 'datetime', 'on')
+		$form->add('publish_date', 'datetime',  $this->trans('ms.cms.publish.publish-date.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.publish.publish-date.help'),
+		))
 			->val()
 			->optional();
 
-		$form->add('unpublish_date', 'datetime', 'on')
+		$form->add('unpublish_date', 'datetime',  $this->trans('ms.cms.publish.unpublish-date.label'), array(
+			'attr' => array('data-help-key' => 'ms.cms.publish.unpublish-date.help'),
+		))
 			->val()
 			->optional();
 
@@ -134,7 +133,7 @@ class Publishing extends \Message\Cog\Controller\Controller
 
 		$content = count($fields) == 0;
 
-		foreach($fields as $field) {
+		foreach ($fields as $field) {
 			$content = $field->hasContent() && (!$field->getType() != '\\DateTime') ? true : $content;
 		}
 

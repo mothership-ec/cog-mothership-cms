@@ -46,7 +46,7 @@ class Content implements \IteratorAggregate, \Countable
 	 */
 	public function __get($var)
 	{
-		return $this->_fields[$var];
+		return array_key_exists($var, $this->_fields) ? $this->_fields[$var] : null;
 	}
 
 	/**

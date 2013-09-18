@@ -6,7 +6,7 @@
 
 {% block main %}
 <hgroup class="title">
-	<h1>Create a new page</h1>
+	<h1>{{ 'ms.cms.create.page-title'|trans }}</h1>
 </hgroup>
 
 <div class="container-content create-page extended">
@@ -27,7 +27,7 @@
 
 	{{ form_row(form.parent) }}
 
-	<button type="submit" class="button small save">Create page</button>
+	<button type="submit" class="button small save">{{ 'ms.cms.create.button.save'|trans }}</button>
 
 	{{ form_end(form) }}
 </div>

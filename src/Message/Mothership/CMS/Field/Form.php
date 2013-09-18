@@ -53,7 +53,7 @@ class Form
 		foreach ($content as $fieldName => $field) {
 			if ($field instanceof Group) {
 				$this->_addGroup($field);
-			} else if ($field instanceof Field) {
+			} else if ($field instanceof BaseField) {
 				$this->_addField($field);
 			} else if ($field instanceof RepeatableContainer) {
 				$this->_addRepeatableGroup($fieldName, $field);
@@ -66,9 +66,9 @@ class Form
 	/**
 	 * Add a single field to the form.
 	 *
-	 * @param Field $field
+	 * @param BaseField $field
 	 */
-	protected function _addField(Field $field)
+	protected function _addField(BaseField $field)
 	{
 		$field->getFormField($this->_form);
 	}

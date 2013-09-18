@@ -10,6 +10,7 @@ class Sidebar extends \Message\Cog\Controller\Controller
 		$pages  = $loader->getAll();
 		$hasPages = !empty($pages);
 		$values = $this->buildTree($pages);
+		
 		return $this->render('Message:Mothership:CMS::sidebar', array(
 			'tree'          => $values,
 			'hasPages'      => $hasPages,
