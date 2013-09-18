@@ -143,7 +143,7 @@ abstract class BaseField implements FieldInterface, FieldContentInterface
 		$className = strtolower(get_class($this));
 		$className = trim(strrchr($className, '\\'), '\\');
 
-		return 'ms.cms.field_types.' . $className . '.help:' . $this->_translationKey . '.help';
+		return $this->_translationKey . '.help';
 	}
 
 	/**
