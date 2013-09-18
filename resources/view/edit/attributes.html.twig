@@ -1,6 +1,6 @@
 {% extends '::edit' %}
-{% block form %}
 
+{% block form %}
 {{ form_start(form) }}
 {{ form_row(form.slug) }}
 
@@ -14,17 +14,18 @@
 {{ form_row(form.parent) }}
 {{ form_row(form.siblings) }}
 
-<button type="submit" class="button small save" id="save-content">Save changes</button>
+<button type="submit" class="button small save" id="save-content">{{ 'ms.cms.attributes.button.save'|trans }}</button>
+
 
 <div class="authorship">
-	<h2>Authorship information</h2>
+	<h2>{{ 'ms.cms.attributes.authorship.heading'|trans }}</h2>
 
 	<dl>
-		<dt>Created</dt>
-			<dd>at {{ page.authorship.createdAt|date('h:ia \\o\\n d/m/y') }} by {{ page.authorship.createdBy }}</dd>
+		<dt>{{ 'Created'|trans }}</dt>
+			<dd>{{ 'at'|trans }} {{ page.authorship.createdAt|date('h:ia \\o\\n d/m/y') }} {{ 'by'|trans }} {{ page.authorship.createdBy }}</dd>
 		{% if page.authorship.updatedAt is not null %}
-		<dt>Updated</dt>
-			<dd>at {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }} by {{ page.authorship.updatedBy }}</dd>
+		<dt>{{ 'Updated'|trans }}</dt>
+			<dd>{{ 'at'|trans }} {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }} {{ 'by'|trans }} {{ page.authorship.updatedBy }}</dd>
 		{% endif %}
 	</dl>
 </div>

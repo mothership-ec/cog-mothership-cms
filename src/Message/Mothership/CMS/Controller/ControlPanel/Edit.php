@@ -81,7 +81,7 @@ class Edit extends \Message\Cog\Controller\Controller
 	 */
 	public function content($pageID, $form = null)
 	{
-		$page    = $this->get('cms.page.loader')->getByID($pageID);
+		$page = $this->get('cms.page.loader')->getByID($pageID);
 
 		if (!$page) {
 			throw $this->createNotFoundException('Page ' . $pageID . ' does not exist', null, 404);
@@ -107,8 +107,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 			if ($this->get('cms.page.content_edit')->save($page, $content)) {
 				$this->addFlash('success', $this->trans('ms.cms.feedback.edit.content.success'));
-			}
-			else {
+			} else {
 				$this->addFlash('error', $this->trans('ms.cms.feedback.edit.content.failure'));
 			}
 		}
@@ -126,7 +125,11 @@ class Edit extends \Message\Cog\Controller\Controller
 		$page = $this->get('cms.page.loader')->getByID($pageID);
 
 		if (!$page) {
-			throw $this->createNotFoundException('Page ' . $pageID . ' does not exist', null, 404);
+			throw $this->createNotFoundException(
+				$this->trans('ms.cms.feedback.general.failure.non-existing-page', array('%pageID%' => $page->id)),
+				null,
+				404
+			);
 		}
 
 		$form = $this->_getAttibuteForm($page);
@@ -155,7 +158,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		$this->get('cms.page.edit')->removeHistoricalSlug($fullSlug);
 		$page = $this->_updateSlug($page, $slug);
-		$this->addFlash('success', 'The url was successfully updated');
+		$this->addFlash('success', $this->trans('ms.cms.feedback.force-slug.success'));
 
 		return $this->redirectToReferer();
 	}
@@ -226,7 +229,11 @@ class Edit extends \Message\Cog\Controller\Controller
 		$page = $this->get('cms.page.loader')->getByID($pageID);
 
 		if (!$page) {
-			throw $this->createNotFoundException('Page ' . $pageID . ' does not exist', null, 404);
+			throw $this->createNotFoundException(
+				$this->trans('ms.cms.feedback.general.failure.non-existing-page', array('%pageID%' => $page->id)),
+				null,
+				404
+			);
 		}
 
 		$form = $this->_getMetadataForm($page);
@@ -252,12 +259,12 @@ class Edit extends \Message\Cog\Controller\Controller
 		if ($form->isValid() && ($data = $form->getFilteredData())) {
 			$page->metaTitle       = $data['metaTitle'];
 			$page->metaDescription = $data['metaDescription'];
-			$page->metaHtmlHead    = $data['metaHtmlHead'];
-			$page->metaHtmlFoot    = $data['metaHtmlFoot'];
+			// $page->metaHtmlHead    = $data['metaHtmlHead'];
+			// $page->metaHtmlFoot    = $data['metaHtmlFoot'];
 
 			$page = $this->get('cms.page.edit')->save($page);
 
-			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
+			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.metadata.success'));
 		}
 
 		return $this->render('::edit/metadata', array(
@@ -373,16 +380,15 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		$siblings = $this->get('cms.page.loader')->getSiblings($page);
 		$siblingChoices = array();
-		$siblingChoices[0] = 'Move to top';
 		if ($siblings) {
 			foreach ($siblings as $s) {
 				$siblingChoices[$s->id] = $s->title;
 			}
 		}
-		$form->add('siblings', 'choice', $this->trans('ms.cms.attributes.order.label'), array(
-			'attr'    => array('data-help-key' => 'ms.cms.attributes.order.search.help'),
+		$form->add('siblings', 'choice', $this->trans('ms.cms.attributes.siblings.label'), array(
+			'attr'    => array('data-help-key' => 'ms.cms.attributes.siblings.help'),
 			'choices' => $siblingChoices,
-			'empty_value' => 'Don\'t move',
+			'empty_value' => $this->trans('ms.cms.attributes.siblings.placeholder'),
 		))->val()->optional();
 
 		$parents = $this->get('cms.page.loader')->getAll();
@@ -429,8 +435,8 @@ class Edit extends \Message\Cog\Controller\Controller
 			->setDefaultValues(array(
 				'metaTitle'       => $page->metaTitle,
 				'metaDescription' => $page->metaDescription,
-				'metaHtmlHead'    => $page->metaHtmlHead,
-				'metaHtmlFoot'    => $page->metaHtmlFoot,
+				// 'metaHtmlHead'    => $page->metaHtmlHead,
+				// 'metaHtmlFoot'    => $page->metaHtmlFoot,
 			));
 
 		$form->add('metaTitle', 'text', $this->trans('ms.cms.metadata.title.label'), array(
@@ -444,15 +450,15 @@ class Edit extends \Message\Cog\Controller\Controller
 		))->val()
 			->optional();
 
-		$form->add('metaHtmlHead', 'textarea', $this->trans('ms.cms.metadata.htmlHead.label'), array(
-			'attr' => array('data-help-key' => 'ms.cms.metadata.htmlHead.help')
-		))->val()
-			->optional();
+		// $form->add('metaHtmlHead', 'textarea', $this->trans('ms.cms.metadata.htmlHead.label'), array(
+		// 	'attr' => array('data-help-key' => 'ms.cms.metadata.htmlHead.help')
+		// ))->val()
+		// 	->optional();
 
-		$form->add('metaHtmlFoot', 'textarea', $this->trans('ms.cms.metadata.htmlFoot.label'), array(
-			'attr' => array('data-help-key' => 'ms.cms.metadata.htmlFoot.help')
-		))->val()
-			->optional();
+		// $form->add('metaHtmlFoot', 'textarea', $this->trans('ms.cms.metadata.htmlFoot.label'), array(
+		// 	'attr' => array('data-help-key' => 'ms.cms.metadata.htmlFoot.help')
+		// ))->val()
+		// 	->optional();
 
 		return $form;
 	}
@@ -492,10 +498,29 @@ class Edit extends \Message\Cog\Controller\Controller
 			if ($historicalSlug && $historicalSlug->id != $page->id) {
 				// If it's been deleted then offer a differnt message that a non deleted one
 				if (!is_null($historicalSlug->authorship->deletedAt())) {
-					$this->addFlash('error', 'The url <code>'.$slug.'</code> is saved against a page which has been deleted. Would you like to use this url anyway? <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)).'">Yes please Mothership you clever thing!</a>');
-				}
-				else {
-					$this->addFlash('error', 'The url <code>'.$slug.'</code> has been used in the past and is being redirected to <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $historicalSlug->id)).'">'.$historicalSlug->title.'</a>. Would you like to use this url anyway? <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)).'">Yes please!</a>');
+					$this->addFlash(
+						'error',
+						$this->trans(
+							'ms.cms.feedback.force-slug.failure.deleted',
+							array(
+								'%slug%' => $slug,
+								'%foreceUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug))
+							)
+						)
+					);
+				} else {
+					$this->addFlash(
+						'error',
+						$this->trans(
+							'ms.cms.feedback.force-slug.failure.redirected',
+							array(
+								'%slug%' => $slug,
+								'%redirectedUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $historicalSlug->id)),
+								'%redirectedTitle%' => $historicalSlug->title,
+								'%forceUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)),
+							)
+						)
+					);
 				}
 
 				// We shouldn't update the slug as we need action
@@ -504,7 +529,17 @@ class Edit extends \Message\Cog\Controller\Controller
 		}
 
 		if ($checkSlug && $checkSlug->id != $page->id) {
-			$this->addFlash('error', 'The url <code>'.$checkSlug->slug->getFull().'</code> is already in use on the page <a href="'.$this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $checkSlug->id)).'">'.$checkSlug->title.'</a>');
+			$this->addFlash(
+				'error',
+				$this->trans(
+					'ms.cms.feedback.force-slug.failure.already-used',
+					array(
+						'%slugUrl%' => $checkSlug->slug->getFull(),
+						'%usingUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $checkSlug->id)),
+						'%usingTitle%' => $checkSlug->title,
+					)
+				)
+			);
 			// We shouldn't update the slug as we need action
 			$update = false;
 		}

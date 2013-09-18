@@ -1,11 +1,11 @@
 {%  if hasPages == true %}
 	<form action="" class="search">
-	    <input type="search" placeholder="Search content...">
-	    <button>Search</button>
+	    <input type="search" placeholder="{{ 'ms.cms.sidebar.search.placeholder'|trans }}">
+	    <button>{{ 'ms.cms.sidebar.search.label'|trans }}</button>
 	</form>
 {% endif %}
 
-<a href="{{ url('ms.cp.cms.create')}}" class="button small create" data-live>Add a new page</a>
+<a href="{{ url('ms.cp.cms.create')}}" class="button small create" data-live>{{ 'ms.cms.create.button.menu'|trans }}</a>
 
 <ol class="menu">
     {{ _self.menu_links(tree, currentPageID) }}

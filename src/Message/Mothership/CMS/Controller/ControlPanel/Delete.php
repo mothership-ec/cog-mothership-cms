@@ -13,11 +13,10 @@ class Delete extends \Message\Cog\Controller\Controller
 		try {
 			$this->get('cms.page.delete')->delete($page);
 
-			$this->addFlash('success', sprintf(
-				'Page `%s` has been deleted. <a href="%s">Restore</a>',
-				$page->title,
-				$this->generateUrl('ms.cp.cms.restore', array('pageID' => $page->id))
-			));
+			$this->addFlash('success', $this->trans('ms.cms.feedback.delete.success', array(
+				'%pageTitle%'  => $page->title,
+				'%restoreUrl%' => $this->generateUrl('ms.cp.cms.restore', array('pageID' => $page->id)),
+			)));
 		}
 		catch (Exception\Exception $e) {
 			$this->addFlash('error', $e->getMessage());
@@ -34,10 +33,9 @@ class Delete extends \Message\Cog\Controller\Controller
 
 		$this->get('cms.page.delete')->restore($page);
 
-		$this->addFlash('success', sprintf(
-			'Page `%s` has been restored.',
-			$page->title
-		));
+		$this->addFlash('success', $this->trans('ms.cms.feedback.restore.success', array(
+			'%pageTitle%'  => $page->title,
+		)));
 
 		return $this->redirectToRoute('ms.cp.cms.edit', array('pageID' => $page->id));
 	}
