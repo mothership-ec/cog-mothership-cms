@@ -5,7 +5,7 @@ namespace Message\Mothership\CMS\Field;
 use Message\Mothership\CMS\PageType\PageTypeInterface;
 
 use Message\Cog\Form\Handler;
-use Message\Cog\Validation\Validator;
+use Message\Cog\Validation;
 use Message\Cog\Service\ContainerInterface;
 use Message\Cog\Service\ContainerAwareInterface;
 
@@ -28,7 +28,7 @@ class Factory implements \IteratorAggregate, \Countable
 	 * @param Validator          $validator The validator to use for fields
 	 * @param ContainerInterface $container The service container
 	 */
-	public function __construct(Validator $validator, ContainerInterface $services)
+	public function __construct(Validation\Validator $validator, ContainerInterface $services)
 	{
 		$this->_validator = $validator;
 		$this->_services  = $services;
@@ -192,7 +192,7 @@ class Factory implements \IteratorAggregate, \Countable
 		$groupValidator = clone $this->_validator;
 		$groupValidator->clear();
 
-		$this->_validator->field($name, $label)->validateAgainst($groupValidator);
+		$this->_validator->addField(new Validation\Field($name, $label))->validateAgainst($groupValidator);
 
 		$group = new Group($groupValidator, $name, $label);
 		$group->setTranslationKey($this->_baseTransKey);
