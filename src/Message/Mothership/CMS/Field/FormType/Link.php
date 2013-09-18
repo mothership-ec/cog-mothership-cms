@@ -10,7 +10,7 @@ class Link extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('scope', 'hidden');
-        $builder->add('target');
+        $builder->add('target', 'url', array('label' => false));
     }
 
     public function getName()
