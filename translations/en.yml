@@ -6,13 +6,13 @@ ms.cms:
     edit:
       content:
         success: Content updated successfully
-        failure: An error occured while updating the content
+        failure: Sorry, an error occurred while updating the content
       attributes:
         success: Attributes updated successfully
       metadata:
         success: Metadata updated successfully
       title:
-        success: Page title updated to `%title%` successfully
+        success: Page title has been updated to `%title%`
     publish:
       schedule:
         warning: This page is already scheduled to %task% at a future date. Are you sure you would like to <a href="%taskUrl%">%task% this now</a>?
@@ -70,50 +70,50 @@ ms.cms:
       help: A title for a page
     type:
       label: Page type
-      help: The page type defines what content fields are available. E.g. Blog
+      help: The page type defines which content fields are available. Please choose the one which most closely meets the requirements for the page you're creating.
     slug:
       label: URL Segment
-      help: E.g. /my-page
+      help: This is the part of the URL that appears in the browser's address bar after the domain name, e.g. mydomain.com/my-page. It may also appear after another 'segment' e.g. mydomain.com/my-section/my-page
     access:
       label: Who can access this page?
       options:
         all:   Everybody
-        guest: Only visitors that aren't logged in
-        user:  Only logged in users
-        group: Only specific user groups
-      help: Select the type of visitor that can access this page. By default, anybody can access a page. You can set a page to only be accessible to guests; or any logged in user; or only logged in users that belong to a specific group. If the visitor tries to access a page that they do not have access to see, the system will return an "access denied" error.
+        guest: Only people who aren't logged in
+        user:  Only people who are logged
+        group: Only specific groups of people
+      help: Select the type of visitor who can access this page. By default, anybody can access a page. You can set a page to only be accessible to guests; or any logged in user; or only logged in users that belong to a specific group. If the visitor tries to access a page that they do not have access to see, the system will return an "access denied" error.
     access_groups:
       label: Which user groups can access this page?
-      help: -
+      help: Restrict access to a specific group of site users. These will be visitors with accounts and specific access privileges (e.g. administrators, members etc.).
     siblings:
       label: Siblings
       placeholder: Select
       help: -
     visibility:
       menu:
-        label: Should this page show in menus?
-        help: -
+        label: A link to this page should appear in menus
+        help: If your site uses sub-menus for navigation you can choose whether or not this page is included in them. Un-check this box if you want to hide this page from sub-menus.
       search:
-        label: Should this page show in search results?
-        help: -
+        label: This page should appear in search results
+        help: If you don't want this page to appear in search results on this site, un-check this box. Note; your page might still apear in third party search engines sich as Google.
       aggregator:
-        label: Should this page show on aggregator pages?
-        help: -
+        label: Show links to this page on listings pages
+        help: An index page will automatically list all pages within a certain section. This page will appear in such listings unless you un-check this box.
     tags:
       label: Tags
       help: E.g.: products, shoes, 2013
     parent:
-      label: Parent page type
-      help: -
+      label: Parent page
+      help: This drop-downt lists all the sections on your website. Use it to select where you want this page to live within the site.
     authorship:
       heading: Authorship information
   metadata:
     title:
       label: Page title
-      help: The title that shows in the browser tab
+      help: This is the title that will appear in the tab at the top of the users' browser. It will also appear in third party (e.g. Google) search results.
     description:
       label: Meta description
-      help: -
+      help: This text doean't appear on the page, but instead provides information <em>about</em> the page. It is used by Google in its search results, to describe the page to the user.
     htmlHead:
       label: HTML in the head
       help: -
