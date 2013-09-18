@@ -132,7 +132,7 @@ class Group implements FieldInterface, FieldContentInterface
 	 */
 	public function add(FieldInterface $field)
 	{
-		$field->setTranslationKey($this->_translationKey);
+		$field->setTranslationKey($this->_translationKey . '.fields');
 		$this->_fields[$field->getName()] = $field;
 
 		// If no identifier field is set yet and this field is a good candidate, set it
