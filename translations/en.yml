@@ -91,13 +91,13 @@ ms.cms:
       help: -
     visibility:
       menu:
-        label: A link to this page should appear in menus
+        label: Show link to this page in navigation menus
         help: If your site uses sub-menus for navigation you can choose whether or not this page is included in them. Un-check this box if you want to hide this page from sub-menus.
       search:
-        label: This page should appear in search results
-        help: If you don't want this page to appear in search results on this site, un-check this box. Note; your page might still apear in third party search engines sich as Google.
+        label: Include this page in search results
+        help: If you don't want this page to appear in search results on this site, un-check this box. Note: your page might still apear in third party search engines such as Google.
       aggregator:
-        label: Show links to this page on listings pages
+        label: Include this page on 'index' or listing pages
         help: An index page will automatically list all pages within a certain section. This page will appear in such listings unless you un-check this box.
     tags:
       label: Tags
