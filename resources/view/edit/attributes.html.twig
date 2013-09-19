@@ -17,18 +17,19 @@
 <button type="submit" class="button small save" id="save-content">{{ 'ms.cms.attributes.button.save'|trans }}</button>
 
 
-<div class="authorship">
-	<h2>{{ 'ms.cms.attributes.authorship.heading'|trans }}</h2>
-
+<section class="display-group authorship">
+	<h2 class="title">{{ 'ms.cms.attributes.authorship.heading'|trans }}</h2>
+	<div class="content-wrap">
 	<dl>
 		<dt>{{ 'Created'|trans }}</dt>
-			<dd>{{ 'at'|trans }} {{ page.authorship.createdAt|date('h:ia \\o\\n d/m/y') }} {{ 'by'|trans }} {{ page.authorship.createdBy }}</dd>
+			<dd>{{ page.authorship.createdAt|date('h:ia \\o\\n d/m/y') }} {{ 'by'|trans }} {{ page.authorship.createdBy }}</dd>
 		{% if page.authorship.updatedAt is not null %}
 		<dt>{{ 'Updated'|trans }}</dt>
 			<dd>{{ 'at'|trans }} {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }} {{ 'by'|trans }} {{ page.authorship.updatedBy }}</dd>
 		{% endif %}
 	</dl>
-</div>
+	</div>
+</section>
 
 {{ form_end(form) }}
 
