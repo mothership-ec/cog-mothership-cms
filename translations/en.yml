@@ -79,7 +79,7 @@ ms.cms:
       options:
         all:   Everybody
         guest: Only people who aren't logged in
-        user:  Only people who are logged
+        user:  Only people who are logged in
         group: Only specific groups of people
       help: Select the type of visitor who can access this page. By default, anybody can access a page. You can set a page to only be accessible to guests; or any logged in user; or only logged in users that belong to a specific group. If the visitor tries to access a page that they do not have access to see, the system will return an "access denied" error.
     access_groups:
