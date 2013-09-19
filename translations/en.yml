@@ -32,6 +32,7 @@ ms.cms:
       success: The Url was successfully updated
   repeatable_group:
     add: "{0} Add a %name%|[1,Inf] Add another %name%"
+    remove: Remove this group
   dashboard:
     page-title: Dashboard
   edit:
@@ -61,6 +62,9 @@ ms.cms:
       help: -
     button:
       save: Save range
+  content:
+    button:
+      save: Save changes
   attributes:
     button:
       save: Save changes
