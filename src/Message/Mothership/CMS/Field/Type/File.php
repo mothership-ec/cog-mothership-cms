@@ -70,6 +70,11 @@ class File extends Field implements ContainerAwareInterface
 		return $this;
 	}
 
+	public function getFile()
+	{
+		return $this->_services['file_manager.file.loader']->getByID((int) $this->_value);
+	}
+
 	// public function getValue()
 	// {
 	// 	return $this->_services['file_manager.file.loader']->getByID((int) $this->_value);
