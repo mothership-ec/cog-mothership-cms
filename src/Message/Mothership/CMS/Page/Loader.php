@@ -85,7 +85,8 @@ class Loader
 		PageTypeCollection $pageTypes,
 		UserGroupCollection $groups,
 		Authorisation $authorisation,
-		UserInterface $user
+		UserInterface $user,
+		Searcher $searcher
 	)
 	{
 		$this->_locale        = $locale;
@@ -94,6 +95,7 @@ class Loader
 		$this->_userGroups    = $groups;
 		$this->_authorisation = $authorisation;
 		$this->_user 		  = $user;
+		$this->_searcher      = $searcher;
 	}
 
 	/**
@@ -299,6 +301,39 @@ class Loader
 
 		return count($result) ? $this->getById($result->flatten()) : false;
 
+	}
+
+	/**
+	 * Get pages that match a set of terms, ordered by score.
+	 *
+	 * @param  array  $terms   Terms to search
+	 * @param  int    $page    Current page
+	 * @param  array  $options Various options
+	 *
+	 * @return array[Page]
+	 */
+	public function getBySearchTerms($terms, $page = 1, $options = array())
+	{
+		$this->_searcher->setTerms($terms);
+
+		$ids = $this->_searcher->getIds();
+
+		if (empty($ids)) {
+			return false;
+		}
+
+		$results = $this->getById($ids);
+
+		// Check authorisation restrictions on pages.
+		foreach ($results as $i => $page) {
+			if (false === $this->_authorisation->isViewable($page, $this->_user) or
+				false === $this->_authorisation->isPublished($page)
+			) {
+				unset($results[$i]);
+			}
+		}
+
+		return $this->_searcher->getSorted($results);
 	}
 
 	/**

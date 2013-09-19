@@ -1,0 +1,27 @@
+<h1>Search results for '{{ termsString }}'</h1>
+
+{% for page in pages %}
+	<h2><a href="{{ url('ms.cms.frontend', {slug: page.slug}) }}">{{ page.title }}</a></h2>
+	<p><a href="{{ url('ms.cms.frontend', {slug: page.slug}) }}">{{ url('ms.cms.frontend', {slug: page.slug}) }}</a></p>
+	<p>{{ page.excerpt }}</p>
+{% else %}
+	<p>No pages found.</p>
+{% endfor %}
+
+{#
+<nav>
+	{% if pagination.numPages > 1 %}
+		{% if pagination.page > 1 %}
+			<a href="{{ url('ms.cms.search', {terms: termsString, page: pagination.page-1}) }}">Prev</a>
+		{% endif %}
+
+		{% for i in 1..pagination.numPages %}
+			<a href="{{ url('ms.cms.search', {terms: termsString, page: i}) }}">{{ i }}</a>
+		{% endfor %}
+
+		{% if pagination.page < pagination.numPages %}
+			<a href="{{ url('ms.cms.search', {terms: termsString, page: pagination.page+1}) }}">Next</a>
+		{% endif %}
+	{% endif %}
+</nav>
+#}
