@@ -19,9 +19,10 @@ class Search extends Controller
 	public function search()
 	{
 		$form = $this->get('form')
-			->setName('search')
-			->setMethod('POST')
-			->setAction($this->generateUrl('ms.cms.search'));
+			->setName(null)
+			->setMethod('GET')
+			->setAction($this->generateUrl('ms.cms.search'))
+			->addOptions(array('csrf_protection' => false));
 
 		$form->add('terms', 'search', $this->trans('ms.cms.search.label'));
 

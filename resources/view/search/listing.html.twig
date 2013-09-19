@@ -1,8 +1,9 @@
 <h1>Search results for '{{ termsString }}'</h1>
 
 {% for page in pages %}
-	<h2><a href="{{ url('ms.cms.frontend', {slug: page.slug}) }}">{{ page.title }}</a></h2>
-	<p><a href="{{ url('ms.cms.frontend', {slug: page.slug}) }}">{{ url('ms.cms.frontend', {slug: page.slug}) }}</a></p>
+	{% set url = url('ms.cms.frontend', {slug: page.slug|trim('/')}) %}
+	<h2><a href="{{ url }}">{{ page.title }}</a></h2>
+	<p><a href="{{ url }}">{{ url }}</a></p>
 	<p>{{ page.excerpt }}</p>
 {% else %}
 	<p>No pages found.</p>

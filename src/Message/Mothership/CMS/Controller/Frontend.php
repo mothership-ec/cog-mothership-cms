@@ -121,8 +121,8 @@ class Frontend extends Controller
 
 		return $this->render('::search:listing', array(
 			'termsString' => $termsString,
-			'pages' => $pages,
-			'pagination' => null
+			'pages'       => $pages,
+			'pagination'  => null,
 		));
 	}
 }
