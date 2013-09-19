@@ -6,6 +6,17 @@ use Message\Mothership\CMS\Exception;
 
 class Delete extends \Message\Cog\Controller\Controller
 {
+	public function renderForm($pageID)
+	{
+		$page        = $this->get('cms.page.loader')->getByID($pageID);
+		$isDeletable = !!! $this->get('cms.page.loader')->getChildren($page);
+
+		return $this->render('Message:Mothership:CMS::deleting', array(
+			'page'        => $page,
+			'isDeletable' => $isDeletable,
+		));
+	}
+
 	public function delete($pageID)
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);

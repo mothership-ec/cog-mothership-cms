@@ -44,6 +44,7 @@ ms.cms:
       title: Update title
       delete: Delete page
       view: View page
+      delete-disabled: You can not delete this page
   create:
     page-title: Create new page
     button:
