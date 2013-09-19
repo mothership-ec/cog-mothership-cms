@@ -10,7 +10,7 @@ class Routes implements RoutesInterface
 	{
 		$router['ms.cms']->setPrefix('/')->setPriority(-500);
 
-		$router['ms.cms']->add('ms.cms.search', '/search', '::Controller:Search#view');
+		$router['ms.cms']->add('ms.cms.search', '/search', '::Controller:Frontend#searchResults');
 
 		$router['ms.cms']->add('ms.cms.frontend', '{slug}', '::Controller:Frontend#renderPage')
 			->setRequirement('slug', '[a-z0-9\-\/]+')

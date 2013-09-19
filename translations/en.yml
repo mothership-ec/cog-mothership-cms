@@ -145,3 +145,5 @@ ms.cms:
       help: -
     richtext:
       help: -
+  search:
+    label: Search terms

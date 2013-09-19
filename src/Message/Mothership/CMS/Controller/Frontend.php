@@ -2,6 +2,8 @@
 
 namespace Message\Mothership\CMS\Controller;
 
+use Message\Mothership\CMS\SearchLog\SearchLog;
+
 use Message\Cog\Controller\Controller;
 
 /**
@@ -30,7 +32,7 @@ class Frontend extends Controller
 	 *
 	 * @param  string|null $slug The page slug
 	 *
-	 * @return Response
+	 * @return \Message\Cog\HTTP\Response
 	 *
 	 * @throws NotFoundHttpException If the page could not be found or is deleted
 	 * @throws NotFoundHttpException If the page is unpublished
@@ -82,6 +84,45 @@ class Frontend extends Controller
 		return $this->render($page->type->getViewReference(), array(
 			'page'    => $page,
 			'content' => $this->get('cms.page.content_loader')->load($page),
+		));
+	}
+
+	/**
+	 * View the search results based against a set of terms defined in the
+	 * "terms" query parameter.
+	 *
+	 * @return \Message\Cog\HTTP\Response
+	 */
+	public function searchResults()
+	{
+		$termsString = $this->get('request')->get('terms');
+
+		if (!$termsString or empty($termsString)) {
+			throw $this->createNotFoundException('You must enter a term for which to search.');
+		}
+
+		// Split terms into an array on spaces & commas.
+		$terms = preg_split("/[\s,]+/", $termsString);
+
+		// Get the current page, default to first.
+		$page = ($this->get('request')->get('page')) ?: 1;
+
+		$pages = $this->get('cms.page.loader')->getBySearchTerms($terms);
+
+		// Slice the results to get the current page.
+		// $pages = array_slice($pages, ($page - 1) * $perPage, $perPage);
+
+		// Log search request.
+		$searchLog            = new SearchLog;
+		$searchLog->term      = $termsString;
+		$searchLog->referrer  = $this->get('request')->server->get('REFERER');
+		$searchLog->ipAddress = $this->get('request')->getClientIp();
+		$this->get('cms.search.create')->create($searchLog);
+
+		return $this->render('::search:listing', array(
+			'termsString' => $termsString,
+			'pages' => $pages,
+			'pagination' => null
 		));
 	}
 }
