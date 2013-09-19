@@ -51,7 +51,7 @@
 							{% for field in repeatables[name] %}
 								{{ form_row(form[name][field][i]) }}
 							{% endfor %}
-							<a href="#" data-group-remove class="button small remove">Remove this group</a>
+							<a href="#" data-group-remove class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans }}</a>
 						</div>
 					</section>
 				{% else %}
@@ -69,7 +69,7 @@
 	{% endif %}
 {% endfor %}
 
-<button type="submit" class="button small save" id="save-content">Save changes</button>
+<button type="submit" class="button small save" id="save-content">{{ 'ms.cms.content.button.save'|trans }}</button>
 
 {{ form_end(form)}}
 
