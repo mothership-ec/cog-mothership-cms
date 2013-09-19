@@ -29,7 +29,7 @@ class Menu extends Controller
 		$page    = $pageID ? $loader->getByID($pageID) : $current;
 		$pages   = $loader->getSiblings($page);
 
-		return $this->render('::modules/menu', array(
+		return $this->render('Message:Mothership:CMS::modules/menu', array(
 			'pages'   => $pages,
 			'current' => $current,
 		));
@@ -40,9 +40,33 @@ class Menu extends Controller
 
 	}
 
-	public function topLevelMenu()
+	/**
+	 * Renders a menu for the top level of the page heirarchy.
+	 *
+	 * Pages are only listed if they are set to be visible in menus; are
+	 * currently published and are viewable by the current user.
+	 *
+	 * The current top-level (root) page is passed to the view as "current".
+	 *
+	 * @return \Message\Cog\HTTP\Response
+	 */
+	public function topLevel()
 	{
+		$loader  = $this->get('cms.page.loader')->includeDeleted(false);
+		$auth    = $this->get('cms.page.authorisation');
+		$current = $loader->getRoot($this->get('cms.page.current'));
+		$pages   = array();
 
+		foreach ($loader->getTopLevel() as $page) {
+			if ($page->visibilityMenu && $auth->isPublished($page) && $auth->isViewable($page)) {
+				$pages[] = $page;
+			}
+		}
+
+		return $this->render('Message:Mothership:CMS::modules/menu', array(
+			'pages'   => $pages,
+			'current' => $current,
+		));
 	}
 
 	public function tagMenu($tags)

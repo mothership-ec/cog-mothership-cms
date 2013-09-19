@@ -1,0 +1,5 @@
+<ol>
+	{% for page in pages %}
+	<li{{ page == current ? ' class="current"' }}><a href="{{ page.slug }}">{{ page.title }}</a></li>
+	{% endfor %}
+</ol>

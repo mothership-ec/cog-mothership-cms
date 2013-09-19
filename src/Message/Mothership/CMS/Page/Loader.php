@@ -210,14 +210,47 @@ class Loader
 				page
 			WHERE
 				position_left < ?i
-			AND
-				position_right >= ?i
-			AND
-				position_depth = ?i -1',
+			AND position_right >= ?i
+			AND position_depth = ?i -1',
 		array(
 			$page->left,
 			$page->left,
 			$page->depth,
+		));
+
+		return count($result) ? $this->getByID($result->value()) : false;
+	}
+
+	/**
+	 * Get the root page for a given page.
+	 *
+	 * If the given page has a depth of 0, it is the root page and is returned
+	 * immediately without any database loading.
+	 *
+	 * Otherwise, the top-level root page for this page is loaded and returned.
+	 *
+	 * @param  Page   $page The page to search up from
+	 *
+	 * @return Page|false   The top-level (root) page
+	 */
+	public function getRoot(Page $page)
+	{
+		if (0 == $page->depth) {
+			return $page;
+		}
+
+		$result = $this->_query->run('
+			SELECT
+				page_id
+			FROM
+				page
+			WHERE
+				position_left < :left?i
+			AND position_right >= :right?i
+			AND position_depth = 0
+		', array(
+			'left'  => $page->left,
+			'right' => $page->right,
 		));
 
 		return count($result) ? $this->getByID($result->value()) : false;
