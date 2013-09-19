@@ -2,7 +2,7 @@
 
 namespace Message\Mothership\CMS\Field;
 
-use Message\Cog\Validation\Validator;
+use Message\Cog\Validation;
 use Message\Cog\Form\Handler;
 
 /**
@@ -28,7 +28,7 @@ abstract class BaseField implements FieldInterface, FieldContentInterface
 	/**
 	 * {@inheritDoc}
 	 */
-	public function __construct(Validator $validator, $name, $label = null)
+	public function __construct(Validation\Validator $validator, $name, $label = null)
 	{
 		$this->_validator = $validator;
 		$this->_name      = $name;
@@ -92,7 +92,7 @@ abstract class BaseField implements FieldInterface, FieldContentInterface
 	 */
 	public function val()
 	{
-		return $this->_validator->field($this->getName(), $this->getLabel());
+		return $this->_validator->addField(new Validation\Field($this->getName(), $this->getLabel()));
 	}
 
 	/**
@@ -143,7 +143,7 @@ abstract class BaseField implements FieldInterface, FieldContentInterface
 		$className = strtolower(get_class($this));
 		$className = trim(strrchr($className, '\\'), '\\');
 
-		return 'ms.cms.field_types.' . $className . '.help:' . $this->_translationKey . '.help';
+		return $this->_translationKey . '.help';
 	}
 
 	/**

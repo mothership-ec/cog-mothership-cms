@@ -11,9 +11,12 @@ use Message\Cog\Service\ContainerAwareInterface;
 /**
  * A field for text written in a rich text markup language.
  *
+ * Note this class is named "Richtext" not "RichText", this is important because
+ * otherwise this field won't work properly on case-sensitive systems.
+ *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class RichText extends Field implements ContainerAwareInterface
+class Richtext extends Field implements ContainerAwareInterface
 {
 	protected $_services;
 	protected $_engine  = 'markdown';
