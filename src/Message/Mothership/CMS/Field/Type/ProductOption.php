@@ -28,9 +28,11 @@ class ProductOption extends Field\MultipleValueField implements ContainerAwareIn
 
 	public function getFormField(Handler $form)
 	{
-		$field = new Field\FormType\LinkedChoice(array(
-			'name'  => $this->_services['product.option.loader']->getAllOptionNames(),
-			'value' => $this->_services['product.option.loader']->getAllOptionValues(),
+		$names  = $this->_services['product.option.loader']->getAllOptionNames();
+		$values = $this->_services['product.option.loader']->getAllOptionValues();
+		$field  = new Field\FormType\LinkedChoice(array(
+			'name'  => array_combine($names, $names),
+			'value' => array_combine($values, $values),
 		));
 
 		$form->add($this->getName(), $field, $this->getLabel(), array(
