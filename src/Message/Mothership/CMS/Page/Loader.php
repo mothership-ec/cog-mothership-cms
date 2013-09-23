@@ -319,7 +319,7 @@ class Loader
 		$ids = $this->_searcher->getIds();
 
 		if (empty($ids)) {
-			return false;
+			return array();
 		}
 
 		$results = $this->getById($ids);
@@ -550,7 +550,7 @@ class Loader
 		);
 
 		if (0 === count($result)) {
-			return false;
+			return ($this->_returnAsArray) ? array() : false;
 		}
 
 		return $this->_loadPage($result);
