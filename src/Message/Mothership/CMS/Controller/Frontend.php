@@ -2,6 +2,7 @@
 
 namespace Message\Mothership\CMS\Controller;
 
+use Message\Mothership\CMS\Page;
 use Message\Mothership\CMS\SearchLog\SearchLog;
 
 use Message\Cog\Controller\Controller;
@@ -80,11 +81,26 @@ class Frontend extends Controller
 			return $page;
 		};
 
-		// Render the view for the page type
-		return $this->render($page->type->getViewReference(), array(
+		// Set service definition for the current page content
+		$content = $this->get('cms.page.content_loader')->load($page);
+
+		$this->_services['cms.page.current.content'] = function() use ($content) {
+			return $content;
+		};
+
+		// Fire page render event so listeners can add view parameters
+		$params = $this->get('event.dispatcher')->dispatch(
+			Page\Event\Event::RENDER,
+			new Page\Event\RenderEvent($page, $content)
+		)->getParameters();
+
+		$params = array_merge($params, array(
 			'page'    => $page,
-			'content' => $this->get('cms.page.content_loader')->load($page),
+			'content' => $content,
 		));
+
+		// Render the view for the page type
+		return $this->render($page->type->getViewReference(), $params);
 	}
 
 	/**

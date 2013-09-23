@@ -1,6 +1,8 @@
 <?php
 
-namespace Message\Mothership\CMS\Page;
+namespace Message\Mothership\CMS\Page\Event;
+
+use Message\Mothership\CMS\Page\Page;
 
 /**
  * Event class for events relating to CMS pages.
@@ -15,6 +17,7 @@ class Event extends \Message\Cog\Event\Event
 	const RESTORE   = 'cms.page.restore';
 	const PUBLISH   = 'cms.page.publish';
 	const UNPUBLISH = 'cms.page.unpublish';
+	const RENDER    = 'cms.page.frontend.render';
 
 	protected $_page;
 

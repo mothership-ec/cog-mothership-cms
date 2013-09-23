@@ -103,7 +103,7 @@ class Edit {
 		// Update the user groups for this page in the DB
 		$this->_updateAccessGroups($page);
 
-		$event = new Event($page);
+		$event = new Event\Event($page);
 		// Dispatch the edit event
 		$this->_eventDispatcher->dispatch(
 			Event::EDIT,
