@@ -22,12 +22,7 @@
 		{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Edit#tabs'))}}
 
 		<div class="controls">
-			<form action="{{ url('ms.cp.cms.delete',{pageID: page.id}) }}" method="post" data-confirm="{{ 'ms.cms.edit.delete.confirm'|trans }}" id="delete-page">
-				<input type="hidden" name="method" value="DELETE">
-				<button type="submit" id="edit-submit" value="{{ 'ms.cms.edit.button.delete'|trans }}" class="button small delete">
-					{{ 'ms.cms.edit.button.delete'|trans }}
-				</button>
-			</form>
+			{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Delete#renderForm', {pageID: page.id})) }}
 			<div class="publish">
 				{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Publishing#renderForm', {pageID: page.id})) }}
 			</div>
