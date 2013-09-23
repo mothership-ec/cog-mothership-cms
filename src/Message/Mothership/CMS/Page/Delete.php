@@ -71,7 +71,7 @@ class Delete
 			'id' => $page->id,
 		));
 
-		$event = new Event($page);
+		$event = new Event\Event($page);
 
 		$this->_eventDispatcher->dispatch(
 			$event::DELETE,
@@ -103,7 +103,7 @@ class Delete
 				page_id = ?i
 		', $page->id);
 
-		$event = new Event($page);
+		$event = new Event\Event($page);
 
 		$this->_eventDispatcher->dispatch(
 			$event::RESTORE,

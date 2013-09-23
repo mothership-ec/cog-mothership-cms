@@ -103,7 +103,7 @@ class Create
 		$this->_nestedSetHelper->insertChildAtEnd($pageID, $parent ? $parent->id : false, true)->commit();
 
 		$page  = $this->_loader->getByID($pageID);
-		$event = new Event($page);
+		$event = new Event\Event($page);
 
 		// Dispatch the page created event
 		$this->_eventDispatcher->dispatch(
