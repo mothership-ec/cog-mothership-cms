@@ -10,13 +10,14 @@ use Message\Cog\Form\Handler;
 use Message\Cog\Filesystem;
 use Message\Cog\Service\ContainerInterface;
 use Message\Cog\Service\ContainerAwareInterface;
+use Message\Cog\ImageResize\ResizableInterface;
 
 /**
  * A field for a file in the file manager database.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class File extends Field implements ContainerAwareInterface
+class File extends Field implements ContainerAwareInterface, ResizableInterface
 {
 	protected $_services;
 
@@ -39,6 +40,22 @@ class File extends Field implements ContainerAwareInterface
 		}
 
 		return '';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getUrl()
+	{
+		return $this->getFile()->getUrl();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getAltText()
+	{
+		return $this->getFile()->getAltText();
 	}
 
 	/**
