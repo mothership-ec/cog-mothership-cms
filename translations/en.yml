@@ -40,11 +40,11 @@ ms.cms:
       help: -
     delete:
       confirm: Are you sure you want to delete this page?
+      disabled: You can not delete this page
     button:
       title: Update title
       delete: Delete page
       view: View page
-      delete-disabled: You can not delete this page
   create:
     page-title: Create new page
     button:
