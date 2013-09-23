@@ -1,0 +1,13 @@
+<form action="{{ url('ms.cp.cms.delete',{pageID: page.id}) }}" method="post" data-confirm="{{ 'ms.cms.edit.delete.confirm'|trans }}" id="delete-page">
+	<input type="hidden" name="method" value="DELETE">
+
+	{% if isDeletable %}
+		<button type="submit" id="edit-submit" value="{{ 'ms.cms.edit.button.delete'|trans }}" class="button small delete">
+			{{ 'ms.cms.edit.button.delete'|trans }}
+		</button>
+	{% else %}
+		<button type="submit" id="edit-submit" value="{{ 'ms.cms.edit.button.delete'|trans }}" class="button small delete" disabled="disabled">
+			{{ 'ms.cms.edit.delete.disabled'|trans }}
+		</button>
+	{% endif %}
+</form>
