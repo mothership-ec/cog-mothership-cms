@@ -486,6 +486,14 @@ class Loader
 	 */
 	protected function _load($pageID)
 	{
+		if (!is_array($pageID)) {
+			$pageID = (array) $pageID;
+		}
+
+		if (!$pageID) {
+			return $this->_returnAsArray ? array() : false;
+		}
+
 		$result = $this->_query->run('
 			SELECT
 				/* locale, */
@@ -545,7 +553,7 @@ class Loader
 			ORDER BY
 				position_left ASC',
 			array(
-				(array) $pageID,
+				$pageID,
 			)
 		);
 

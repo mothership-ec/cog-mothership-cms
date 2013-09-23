@@ -106,7 +106,7 @@ class Edit {
 		$event = new Event\Event($page);
 		// Dispatch the edit event
 		$this->_eventDispatcher->dispatch(
-			Event::EDIT,
+			$event::EDIT,
 			$event
 		);
 
