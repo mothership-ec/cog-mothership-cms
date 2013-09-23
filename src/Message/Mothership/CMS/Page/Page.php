@@ -2,6 +2,8 @@
 
 namespace Message\Mothership\CMS\Page;
 
+use Message\Cog\Service\Container;
+
 /**
  * Represents the properties of a single page.
  *
@@ -49,9 +51,31 @@ class Page
 	public $commentsApproval;
 	public $commentsExpiry;
 
+	protected $_content;
+
 	public function getType()
 	{
 		return $this->type;
 	}
 
+	/**
+	 * Load & return the content for this page.
+	 *
+	 * This is not the preferred way of doing this, it is better to use the
+	 * `ContentLoader` directly within the controller. However, sometimes this
+	 * method makes view building for listings far less complex.
+	 *
+	 * @todo Figure out a way to not statically call the service container to
+	 *       adhere to our coding standards.
+	 *
+	 * @return Content
+	 */
+	public function getContent()
+	{
+		if (!$this->_content) {
+			$this->_content = Container::get('cms.page.content_loader')->load($this);
+		}
+
+		return $this->_content;
+	}
 }
