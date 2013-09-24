@@ -2,7 +2,7 @@
 
 namespace Message\Mothership\CMS\Page\Event;
 
-use Message\Cog\HTTP\Response;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Event class for overriding the `Response` when rendering a CMS page on the
