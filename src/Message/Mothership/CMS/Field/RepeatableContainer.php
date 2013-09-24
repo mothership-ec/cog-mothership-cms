@@ -59,6 +59,11 @@ class RepeatableContainer implements \IteratorAggregate, \Countable, FieldConten
 		$this->_groups = array();
 	}
 
+	public function all()
+	{
+		return $this->_groups;
+	}
+
 	/**
 	 * Get the number of groups in this repeatable set.
 	 *
