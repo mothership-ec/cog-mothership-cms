@@ -97,7 +97,7 @@ class Form
 			$field->getFormField($groupHandler);
 		}
 
-		$this->_form->add($groupHandler->getForm(), 'form', $group->getLabel());
+		$this->_form->add($groupHandler, 'form', $group->getLabel());
 	}
 
 	/**
@@ -123,7 +123,7 @@ class Form
 		}
 
 		// Add the form to the main form
-		$this->_form->add($groupHandler->getForm(), 'form', $group->getLabel());
+		$this->_form->add($groupHandler, 'form', $group->getLabel());
 	}
 
 	/**
