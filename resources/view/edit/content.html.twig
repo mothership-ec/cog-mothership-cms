@@ -4,7 +4,7 @@
 		{% for field in fields %}
 		{{ form_row(form[groupName][field].vars.prototype) }}
 		{% endfor %}
-		<a href="#" data-group-remove class="button small remove">Remove this group</a>
+		<a href="#" data-group-remove class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans }}</a>
 	</section>
 {% endfilter %}
 {% endmacro %}
@@ -12,7 +12,7 @@
 {% block form %}
 
 {% if content.count == 0 %}
-<p>The &lsquo;{{ page.type.displayName }}&rsquo; page type does not have any content areas.</p>
+<p>{{ 'ms.cms.content.type.noContentAreas'|trans('%pageType': page.type.displayName) }}
 {% else %}
 {{ form_start(form) }}
 
