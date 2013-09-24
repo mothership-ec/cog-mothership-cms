@@ -54,7 +54,7 @@ class Menu extends Controller
 	{
 		$loader  = $this->get('cms.page.loader')->includeDeleted(false);
 		$auth    = $this->get('cms.page.authorisation');
-		$current = $loader->getRoot($this->get('cms.page.current'));
+		$current = isset($this->_services['cms.page.current']) ? $loader->getRoot($this->get('cms.page.current')) : null;
 		$pages   = array();
 
 		foreach ($loader->getTopLevel() as $page) {
