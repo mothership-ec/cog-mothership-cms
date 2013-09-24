@@ -157,14 +157,14 @@ class Services implements ServicesInterface
 
 		$serviceContainer['form.templates.twig'] = $serviceContainer->extend(
 			'form.templates.twig', function($templates, $c) {
-			$templates[] = 'Message:Mothership:CMS::Form:Twig:form_div_layout';
+			$templates[] = 'Message:Mothership:CMS::form:twig:form_div_layout';
 
 			return $templates;
 		});
 
 		$serviceContainer['form.templates.php'] = $serviceContainer->extend(
 			'form.templates.php', function($templates, $c) {
-				$templates[] = 'Message:Mothership:CMS::Form:Php';
+				$templates[] = 'Message:Mothership:CMS::form:php';
 
 				return $templates;
 			}
