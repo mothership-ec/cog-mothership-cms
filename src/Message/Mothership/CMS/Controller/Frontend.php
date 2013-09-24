@@ -88,16 +88,28 @@ class Frontend extends Controller
 			return $content;
 		};
 
-		// Fire page render event so listeners can add view parameters
+		// Fire event to allow listeners to add additional view parameters
 		$params = $this->get('event.dispatcher')->dispatch(
-			Page\Event\Event::RENDER,
-			new Page\Event\RenderEvent($page, $content)
+			Page\Event\Event::RENDER_SET_PARAMS,
+			new Page\Event\SetParametersForRenderEvent($page, $content)
 		)->getParameters();
 
 		$params = array_merge($params, array(
 			'page'    => $page,
 			'content' => $content,
 		));
+
+		// Fire event to allow listeners to set a Response for this request,
+		// instead of rendering the page type view in the normal fashion
+		$response = $this->get('event.dispatcher')->dispatch(
+			Page\Event\Event::RENDER_SET_RESPONSE,
+			new Page\Event\SetResponseForRenderEvent($page, $content)
+		)->getResponse();
+
+		// If a listener set the Response, return it immediately
+		if ($response) {
+			return $response;
+		}
 
 		// Render the view for the page type
 		return $this->render($page->type->getViewReference(), $params);

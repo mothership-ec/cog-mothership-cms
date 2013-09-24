@@ -6,15 +6,13 @@ use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Content;
 
 /**
- * Event class for when a CMS page is rendered on the frontend, this allows
- * listeners to send additional parameters to the view.
+ * Abstract event class for use when CMS pages are rendered on the front-end.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class RenderEvent extends Event
+abstract class RenderEvent extends Event
 {
 	protected $_content;
-	protected $_params = array();
 
 	/**
 	 * {@inheritdoc}
@@ -39,26 +37,5 @@ class RenderEvent extends Event
 	public function getContent()
 	{
 		return $this->_content;
-	}
-
-	/**
-	 * Add a parameter to pass to the view for this page.
-	 *
-	 * @param string $name
-	 * @param string $value
-	 */
-	public function addParameter($name, $value)
-	{
-		$this->_params[$name] = $value;
-	}
-
-	/**
-	 * Get all parameters defined on this event
-	 *
-	 * @return array
-	 */
-	public function getParameters()
-	{
-		return $this->_params;
 	}
 }
