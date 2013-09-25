@@ -15,7 +15,12 @@
 	{% if content.count == 0 %}
 		<p>{{ 'ms.cms.content.type.noContentAreas'|trans({'%pageType': page.type.displayName}) }}
 	{% else %}
-		{{ form_start(form) }}
+
+		{% if page.slug == '/' %}
+			{{ form_start(form, {'attr': {'data-confirm': 'ms.cms.content.home.confirm'|trans}}) }}
+		{% else %}
+			{{ form_start(form) }}
+		{% endif %}
 
 			{# Loop through content parts #}
 			{% for name, part in content %}

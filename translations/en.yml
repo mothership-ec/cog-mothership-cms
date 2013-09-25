@@ -39,6 +39,8 @@ ms.cms:
     title:
       label: Title
       help: -
+    home:
+      confirm: Are you sure you wish to update the homepage?
     delete:
       confirm: Are you sure you want to delete this page?
     button:
