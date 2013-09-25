@@ -1,14 +1,14 @@
 <div class="button button-group small dropdown">
 	{% if isPublished %}
-		<a href="{{ url('ms.cp.cms.edit.unpublish', {pageID: page.id}) }}" {% if page.slug == '/' %}data-confirm="{{ 'ms.cms.content.home.confirm'|trans }}"{% endif %}>{{ 'ms.cms.publish.action.unpublish'|trans }}</a>
+		<a href="{{ url('ms.cp.cms.edit.unpublish', {pageID: page.id}) }}" {% if page.isHomepage %}data-confirm="{{ 'ms.cms.content.home.confirm'|trans }}"{% endif %}>{{ 'ms.cms.publish.action.unpublish'|trans }}</a>
 	{% else %}
-		<a href="{{ url('ms.cp.cms.edit.publish', {pageID: page.id}) }}" {% if page.slug == '/' %}data-confirm="{{ 'ms.cms.content.home.confirm'|trans }}"{% endif %}>{{ 'ms.cms.publish.action.publish'|trans }}</a>
+		<a href="{{ url('ms.cp.cms.edit.publish', {pageID: page.id}) }}" {% if page.isHomepage %}data-confirm="{{ 'ms.cms.content.home.confirm'|trans }}"{% endif %}>{{ 'ms.cms.publish.action.publish'|trans }}</a>
 	{% endif %}
 
 	<span class="dropdown-toggle" data-toggle="dropdown"></span>
 
 	<div class="dropdown-menu">
-		{% if page.slug == '/' %}
+		{% if page.isHomepage %}
 			{{ form_start(form, {'attr': {'data-confirm': 'ms.cms.content.home.confirm'|trans}}) }}
 		{% else %}
 			{{ form_start(form) }}

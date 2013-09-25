@@ -16,7 +16,7 @@
 		<p>{{ 'ms.cms.content.type.noContentAreas'|trans({'%pageType': page.type.displayName}) }}
 	{% else %}
 
-		{% if page.slug == '/' %}
+		{% if page.isHomepage %}
 			{{ form_start(form, {'attr': {'data-confirm': 'ms.cms.content.home.confirm'|trans}}) }}
 		{% else %}
 			{{ form_start(form) }}
