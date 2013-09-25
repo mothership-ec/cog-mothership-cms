@@ -1,5 +1,9 @@
-<h1>Search results for '{{ termsString }}'</h1>
+{% extends '::search:layout' %}
 
+{% block heading %}Search results for '{{ termsString }}'{% endblock %}
+
+{% block content %}
+{{ parent() }} {# Allows installation to add stuff to top of content by overriding layout file #}
 {% for page in pages %}
 	{% set url = url('ms.cms.frontend', {slug: page.slug|trim('/')}) %}
 	<h2><a href="{{ url }}">{{ page.title }}</a></h2>
@@ -8,6 +12,7 @@
 {% else %}
 	<p>No pages found.</p>
 {% endfor %}
+{% endblock %}
 
 {#
 <nav>

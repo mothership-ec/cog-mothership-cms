@@ -339,9 +339,17 @@ class Edit extends \Message\Cog\Controller\Controller
 				'siblings'              => '',
 			));
 
-		$form->add('slug', 'ms_slug', $this->trans('ms.cms.attributes.slug.label'), array(
-			'attr' => array('data-help-key' => 'ms.cms.attributes.slug.help'),
-		));
+		if ($page->slug != '/') {
+			$form->add('slug', 'ms_slug', $this->trans('ms.cms.attributes.slug.label'), array(
+				'attr' => array('data-help-key' => 'ms.cms.attributes.slug.help'),
+			));
+		}
+		else {
+			$form->add('slug', 'text', $this->trans('ms.cms.attributes.slug.label'), array(
+				'read_only' => true,
+				'data' => $this->trans('ms.cms.attributes.slug.homepage')
+			));
+		}
 
 		$form->add('visibility_menu', 'checkbox', $this->trans('ms.cms.attributes.visibility.menu.label'), array(
 			'attr' => array('data-help-key' => 'ms.cms.attributes.visibility.menu.help'),
