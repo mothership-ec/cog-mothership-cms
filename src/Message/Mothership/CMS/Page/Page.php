@@ -86,6 +86,6 @@ class Page
 	 */
 	public function isHomepage()
 	{
-		return '/' === $this->slug;
+		return '/' === (string) $this->slug;
 	}
 }
