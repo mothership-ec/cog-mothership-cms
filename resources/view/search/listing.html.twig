@@ -4,14 +4,23 @@
 
 {% block content %}
 {{ parent() }} {# Allows installation to add stuff to top of content by overriding layout file #}
+
+<ul class="search-results">
 {% for page in pages %}
-	{% set url = url('ms.cms.frontend', {slug: page.slug|trim('/')}) %}
-	<h2><a href="{{ url }}">{{ page.title }}</a></h2>
-	<p><a href="{{ url }}">{{ url }}</a></p>
-	<p>{{ page.excerpt }}</p>
+	<li>
+		{% set url = url('ms.cms.frontend', {slug: page.slug|trim('/')}) %}
+		<a href="{{ url }}">
+			<h2>{{ page.title }}</h2>
+			<span class="url">{{ url }}</span>
+			<p>{{ page.excerpt }}</p>
+		</a>		
+	</li>
 {% else %}
-	<p>No pages found.</p>
+	<li class="no-result">
+		<p>No pages found.</p>
+	</li>
 {% endfor %}
+</ul>
 {% endblock %}
 
 {#

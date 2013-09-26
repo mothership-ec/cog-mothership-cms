@@ -88,4 +88,17 @@ class Page
 	{
 		return '/' === (string) $this->slug;
 	}
+
+	/**
+	 * Check if this page has any child pages.
+	 *
+	 * This is simply done by checking the difference between the left and right
+	 * nested set values is 1.
+	 *
+	 * @return boolean
+	 */
+	public function hasChildren()
+	{
+		return ($this->right === ($this->left + 1));
+	}
 }

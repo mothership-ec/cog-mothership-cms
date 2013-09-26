@@ -5,16 +5,21 @@
 {% endblock %}
 
 {% block main %}
-	<div class="dashboard">
-		<h1>Search Results</h1>
-		<ul>
+	<hgroup class="title"><h1>Search Results</h1></hgroup>
+	<div class="container-content">
+		{% if pages|length %}
+		<ul class="search-results">
 		{% for page in pages %}
 			<li>
 				<a href="{{ url('ms.cp.cms.edit', {pageID: page.id}) }}">
-					<h2>{{ page.title }}</h2>
+					{{ page.title }}
 				</a>
+<!-- 				<p>{{ page.excerpt|raw }}</p> -->
 			</li>
 		{% endfor %}
 		</ul>
+		{% else %}
+		<p>{{ 'Sorry we couldn\'t find any results'|trans }}</p>
+		{% endif %}
 	</div>
 {% endblock %}

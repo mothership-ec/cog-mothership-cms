@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\User\UserInterface;
+use Message\User\User;
 use Message\User\AnonymousUser;
 use Message\User\Group\Loader as GroupLoader;
 
@@ -15,6 +16,7 @@ use Message\User\Group\Loader as GroupLoader;
  */
 class Authorisation
 {
+	const ACCESS_INHERITED  = -100;
 	const ACCESS_ALL        = 0;
 	const ACCESS_GUEST      = 100;
 	const ACCESS_USER       = 200;
@@ -79,10 +81,14 @@ class Authorisation
 				break;
 			// If this page is accessible to logged in users, check the user is logged in
 			case self::ACCESS_USER:
-				return ($user instanceof AnonymousUser);
+				return ($user instanceof User);
 				break;
 			// If this page is accessible to users in specific groups, check the user's groups
 			case self::ACCESS_USER_GROUP:
+				if ($user instanceof AnonymousUser) {
+					return false;
+				}
+
 				$userGroups = $this->_groupLoader->getByUser($user);
 				foreach ($page->accessGroups as $pageGroup) {
 					foreach ($userGroups as $userGroup) {

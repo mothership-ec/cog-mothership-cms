@@ -22,11 +22,7 @@ class Search extends \Message\Cog\Controller\Controller
 			return $this->redirectToReferer();
 		}
 
-		$search = $this->get('cms.page.searcher');
-		$search->setTerms($data['terms']);
-
-		$results = $search->getIDs();
-		$pages = $this->get('cms.page.loader')->getByID($results);
+		$pages = $this->get('cms.page.loader')->getBySearchTerms($data['terms']);
 
 		return $this->render('Message:Mothership:CMS::search-results', array(
 			'pages' => $pages,
