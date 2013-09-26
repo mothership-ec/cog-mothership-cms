@@ -374,7 +374,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			Authorisation::ACCESS_USER_GROUP => $this->trans('ms.cms.attributes.access.options.group'),
 		);
 
-		if ($page->position_depth > 0) {
+		if ($page->depth > 0) {
 			$accessChoices = array(
 				Authorisation::ACCESS_INHERITED => $this->trans('ms.cms.attributes.access.options.inherited')
 			) + $accessChoices;
