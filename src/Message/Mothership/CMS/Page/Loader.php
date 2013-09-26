@@ -624,24 +624,19 @@ class Loader
 				$pages[$key]->authorship->delete(new DateTimeImmutable(date('c',$data->deletedAt)), $data->deletedBy);
 			}
 
-			// Load access groups
-			$groups = array_filter(explode(',', $data->accessGroups));
-			$pages[$key]->accessGroups = array();
-			foreach ($groups as $groupName) {
-				if ($group = $this->_userGroups->get(trim($groupName))) {
-					$pages[$key]->accessGroups[$group->getName()] = $group;
-				}
-			}
-
 			// If the page is set to inherit it's access then loop through each
 			// parent to find the inherited access level.
+			$pages[$key]->accessInherited = false;
 			$check = $pages[$key];
 			while ($pages[$key]->access < 0) {
 				$check = $this->_query->run('
 					SELECT
-						page_id
+						access,
+						GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups
 					FROM
 						page
+					LEFT JOIN
+						page_access_group ON (page_access_group.page_id = page.page_id)
 					WHERE
 						position_left < ?i
 					AND position_right >= ?i
@@ -655,10 +650,22 @@ class Loader
 				$check = $check[0];
 
 				$pages[$key]->access = $check->access;
-			};
+				$data->accessGroups = $check->accessGroups;
+
+				$pages[$key]->accessInherited = true;
+			}
 
 			// Ensure the page access is at least 0
 			$pages[$key]->access = max(0, $pages[$key]->access);
+
+			// Load access groups
+			$groups = array_filter(explode(',', $data->accessGroups));
+			$pages[$key]->accessGroups = array();
+			foreach ($groups as $groupName) {
+				if ($group = $this->_userGroups->get(trim($groupName))) {
+					$pages[$key]->accessGroups[$group->getName()] = $group;
+				}
+			}
 
 			if (!$this->_loadUnviewable && $this->_authorisation->isViewable($pages[$key], $this->_user)) {
 				unset($pages[$key]);
