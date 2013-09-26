@@ -320,6 +320,12 @@ class Edit extends \Message\Cog\Controller\Controller
 
 	protected function _getAttibuteForm(Page $page)
 	{
+		$accessGroups = array();
+
+		foreach ($page->accessGroups as $group) {
+			$accessGroups[] = $group->getName();
+		}
+
 		$parent = $this->get('cms.page.loader')->getParent($page);
 		$form = $this->get('form')
 			->setName('attributes')
@@ -333,7 +339,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				'visibility_search'     => $page->visibilitySearch,
 				'visibility_aggregator' => $page->visibilityAggregator,
 				'access'                => $page->access,
-				'access_groups'         => $page->accessGroups,
+				'access_groups'         => $accessGroups,
 				'tags'                  => implode(', ', $page->tags),
 				'parent'                => $parent ? $parent->id : 0,
 				'siblings'              => '',
