@@ -15,22 +15,28 @@ class Search extends \Message\Cog\Controller\Controller
 
 	public function process()
 	{
-		$terms = $this->get('request')->query->get('terms');
+		$form = $this->getForm();
+
+		if (!$form->isValid() || !$data = $form->getFilteredData()) {
+			// Add error
+			return $this->redirectToReferer();
+		}
 
 		$search = $this->get('cms.page.searcher');
-		$search->setSearchFields(array('title'));
-		$search->setMinTermLength(1);
-		$search->setExcerptField('title');
-		$search->setTerms($terms);
-		$search->setFieldModifiers('title');
+		$search->setTerms($data['terms']);
 
-		de($search->getIDs());
+		$results = $search->getIDs();
+		$pages = $this->get('cms.page.loader')->getByID($results);
+
+		return $this->render('Message:Mothership:CMS::search-results', array(
+			'pages' => $pages,
+		));
 	}
 
 	public function getForm()
 	{
 		$form = $this->get('form')
-			->setName(null)
+			->setName('search')
 			->setMethod('GET')
 			->setAction($this->generateUrl('ms.cp.cms.search'))
 			->addOptions(
