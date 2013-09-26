@@ -78,4 +78,14 @@ class Page
 
 		return $this->_content;
 	}
+
+	/**
+	 * Check if the page is the homepage.
+	 *
+	 * @return boolean
+	 */
+	public function isHomepage()
+	{
+		return '/' === (string) $this->slug;
+	}
 }

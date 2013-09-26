@@ -90,5 +90,7 @@ class Routes implements RoutesInterface
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.metadata', '/edit/{pageID}/metadata', '::Controller:ControlPanel:Edit#metadata')
 			->setRequirement('pageID', '\d+');
 
+		$router['ms.cp.cms']->add('ms.cp.cms.search', '/search', '::Controller:ControlPanel:Search#process')
+			->setFormat('GET');
 	}
 }

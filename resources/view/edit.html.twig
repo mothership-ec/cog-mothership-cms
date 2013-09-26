@@ -10,7 +10,7 @@
 		<h2>{{ page.type.getDisplayName() }}</h2>
 	</hgroup>
 
-	<form class="edit-title" data-title-edit action="{{ url('ms.cp.cms.edit.action',{pageID: page.id}) }}" method="post">
+	<form class="edit-title" data-title-edit action="{{ url('ms.cp.cms.edit.action',{pageID: page.id}) }}" method="post" {% if page.isHomepage %}data-confirm="{{ 'ms.cms.content.home.confirm'|trans }}"{% endif %}>
 
 		<label for="edit-title">{{ 'ms.cms.edit.title.label'|trans }}</label>
 		<input type="text" name="edit[title]" id="edit-title" value="{{ page.title }}" />

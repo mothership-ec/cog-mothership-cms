@@ -1,0 +1,56 @@
+<?php
+
+namespace Message\Mothership\CMS\Controller\ControlPanel;
+
+class Search extends \Message\Cog\Controller\Controller
+{
+	public function index($currentPageID = null)
+	{
+		$form = $this->getForm();
+
+		return $this->render('Message:Mothership:CMS::modules/search', array(
+			'form' => $form,
+		));
+	}
+
+	public function process()
+	{
+		$form = $this->getForm();
+
+		if (!$form->isValid() || !$data = $form->getFilteredData()) {
+			// Add error
+			return $this->redirectToReferer();
+		}
+
+		$search = $this->get('cms.page.searcher');
+		$search->setTerms($data['terms']);
+
+		$results = $search->getIDs();
+		$pages = $this->get('cms.page.loader')->getByID($results);
+
+		return $this->render('Message:Mothership:CMS::search-results', array(
+			'pages' => $pages,
+		));
+	}
+
+	public function getForm()
+	{
+		$form = $this->get('form')
+			->setName('search')
+			->setMethod('GET')
+			->setAction($this->generateUrl('ms.cp.cms.search'))
+			->addOptions(
+				array(
+					'csrf_protection' => false,
+					'attr' => array(
+						'class'=>'search',
+						'placeholder' => 'Search Content...',
+					)
+			));
+
+		$form->add('terms', 'search', $this->trans('ms.cms.search.label'));
+
+		return $form;
+	}
+
+}
