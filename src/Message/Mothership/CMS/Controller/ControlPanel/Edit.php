@@ -338,7 +338,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				'visibility_menu'       => $page->visibilityMenu,
 				'visibility_search'     => $page->visibilitySearch,
 				'visibility_aggregator' => $page->visibilityAggregator,
-				'access'                => $page->access,
+				'access'                => ($page->accessInherited) ? Authorisation::ACCESS_INHERITED : $page->access,
 				'access_groups'         => $accessGroups,
 				'tags'                  => implode(', ', $page->tags),
 				'parent'                => $parent ? $parent->id : 0,
