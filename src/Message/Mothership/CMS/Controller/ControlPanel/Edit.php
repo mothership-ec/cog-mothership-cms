@@ -338,7 +338,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				'visibility_menu'       => $page->visibilityMenu,
 				'visibility_search'     => $page->visibilitySearch,
 				'visibility_aggregator' => $page->visibilityAggregator,
-				'access'                => $page->access,
+				'access'                => ($page->accessInherited) ? Authorisation::ACCESS_INHERITED : $page->access,
 				'access_groups'         => $accessGroups,
 				'tags'                  => implode(', ', $page->tags),
 				'parent'                => $parent ? $parent->id : 0,
@@ -367,13 +367,21 @@ class Edit extends \Message\Cog\Controller\Controller
 			'attr' => array('data-help-key' => 'ms.cms.attributes.visibility.aggregator.help'),
 		))->val()->optional();
 
+		$accessChoices = array(
+			Authorisation::ACCESS_ALL        => $this->trans('ms.cms.attributes.access.options.all'),
+			Authorisation::ACCESS_GUEST      => $this->trans('ms.cms.attributes.access.options.guest'),
+			Authorisation::ACCESS_USER       => $this->trans('ms.cms.attributes.access.options.user'),
+			Authorisation::ACCESS_USER_GROUP => $this->trans('ms.cms.attributes.access.options.group'),
+		);
+
+		if ($page->depth > 0) {
+			$accessChoices = array(
+				Authorisation::ACCESS_INHERITED => $this->trans('ms.cms.attributes.access.options.inherited')
+			) + $accessChoices;
+		}
+
 		$form->add('access', 'choice', $this->trans('ms.cms.attributes.access.label'), array(
-			'choices' => array(
-				Authorisation::ACCESS_ALL        => $this->trans('ms.cms.attributes.access.options.all'),
-				Authorisation::ACCESS_GUEST      => $this->trans('ms.cms.attributes.access.options.guest'),
-				Authorisation::ACCESS_USER       => $this->trans('ms.cms.attributes.access.options.user'),
-				Authorisation::ACCESS_USER_GROUP => $this->trans('ms.cms.attributes.access.options.group'),
-			),
+			'choices' => $accessChoices,
 			'empty_value' => false,
 			'attr' => array('data-help-key' => 'ms.cms.attributes.access.help'),
 		));
