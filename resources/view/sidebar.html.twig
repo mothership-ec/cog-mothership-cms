@@ -1,8 +1,7 @@
 {%  if hasPages == true %}
-	<form action="" class="search">
-	    <input type="search" placeholder="{{ 'ms.cms.sidebar.search.placeholder'|trans }}">
-	    <button>{{ 'ms.cms.sidebar.search.label'|trans }}</button>
-	</form>
+
+    {{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Search#index'))}}
+
 {% endif %}
 
 <a href="{{ url('ms.cp.cms.create')}}" class="button small create" data-live>{{ 'ms.cms.create.button.menu'|trans }}</a>
