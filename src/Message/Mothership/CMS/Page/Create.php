@@ -95,7 +95,7 @@ class Create
 			'title'     => $title,
 			'type'      => $pageType->getName(),
 			'slug'      => $slug->getLastSegment(),
-			'access'    => (null === $parent) ? Authorisation::ACCESS_ALL : Authorisation::ACCESS_INHERITANCE,
+			'access'    => (null === $parent) ? Authorisation::ACCESS_ALL : Authorisation::ACCESS_INHERITED,
 			'createdBy' => $this->_currentUser->id,
 		));
 
