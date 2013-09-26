@@ -47,7 +47,7 @@ class File extends Field implements ContainerAwareInterface, ResizableInterface
 	 */
 	public function getUrl()
 	{
-		return $this->getFile()->getUrl();
+		return $this->getFile() ? $this->getFile()->getUrl() : '';
 	}
 
 	/**
@@ -55,7 +55,7 @@ class File extends Field implements ContainerAwareInterface, ResizableInterface
 	 */
 	public function getAltText()
 	{
-		return $this->getFile()->getAltText();
+		return $this->getFile() ? $this->getFile()->getAltText() : '';
 	}
 
 	/**

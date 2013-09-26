@@ -16,6 +16,7 @@ use Message\User\Group\Loader as GroupLoader;
  */
 class Authorisation
 {
+	const ACCESS_INHERITED  = -100;
 	const ACCESS_ALL        = 0;
 	const ACCESS_GUEST      = 100;
 	const ACCESS_USER       = 200;

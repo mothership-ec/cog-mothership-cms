@@ -89,11 +89,13 @@ class Create
 				title         = :title?s,
 				type          = :type?s,
 				slug          = :slug?s,
+				access        = :access?i,
 				unpublish_at  = UNIX_TIMESTAMP()
 		', array(
 			'title'     => $title,
 			'type'      => $pageType->getName(),
 			'slug'      => $slug->getLastSegment(),
+			'access'    => (null === $parent) ? Authorisation::ACCESS_ALL : Authorisation::ACCESS_INHERITED,
 			'createdBy' => $this->_currentUser->id,
 		));
 
