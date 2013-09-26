@@ -43,7 +43,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		$current = ucfirst(trim(strrchr($this->get('http.request.master')->get('_controller'), '::'), ':'));
 
-		return $this->render('::edit/tabs', array(
+		return $this->render('Message:Mothership:CMS::edit/tabs', array(
 			'tabs'    => $tabs,
 			'current' => $current,
 		));
