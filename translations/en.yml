@@ -26,7 +26,7 @@ ms.cms:
       success: Page `%pageTitle%` has been restored successfully
     force-slug:
       failure:
-        deleted: The url <code>%slug%</code> is saved against a page which has been deleted. Would you like to use this url anyway? <a href="%forceUrl%">Yes please Mothership you clever thing!</a>
+        deleted: The url <code>%slug%</code> is saved against a page which has been deleted. Would you like to use this url anyway? <a href="%forceUrl%">Yes</a>
         redirected: The url <code>%slug%</code> has been used in the past and is being redirected to <a href="%redirectedUrl%">%redirectedTitle%</a>. Would you like to use this url anyway? <a href="%forceUrl%">Yes please!</a>
         already-used: The url <code>%slugUrl%</code> is already in use on the page <a href="%usingUrl%">%usingTitle%</a>
       success: The Url was successfully updated
