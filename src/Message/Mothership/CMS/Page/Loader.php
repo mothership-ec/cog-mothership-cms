@@ -633,6 +633,33 @@ class Loader
 				}
 			}
 
+			// If the page is set to inherit it's access then loop through each
+			// parent to find the inherited access level.
+			$check = $pages[$key];
+			while ($pages[$key]->access < 0) {
+				$check = $this->_query->run('
+					SELECT
+						page_id
+					FROM
+						page
+					WHERE
+						position_left < ?i
+					AND position_right >= ?i
+					AND position_depth = ?i -1',
+				array(
+					$check->left,
+					$check->left,
+					$check->depth,
+				));
+
+				$check = $check[0];
+
+				$pages[$key]->access = $check->access;
+			};
+
+			// Ensure the page access is at least 0
+			$pages[$key]->access = max(0, $pages[$key]->access);
+
 			if (!$this->_loadUnviewable && $this->_authorisation->isViewable($pages[$key], $this->_user)) {
 				unset($pages[$key]);
 				continue;
