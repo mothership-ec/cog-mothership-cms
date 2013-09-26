@@ -401,7 +401,7 @@ class Loader
 	 *
 	 * @return array[Page]	 An array of prepared `Page` instances
 	 */
-	public function getSiblings(Page $page)
+	public function getSiblings(Page $page, $includeRequestPage = false)
 	{
 		// We have to do a different query if the depth is zero, as this causes
 		// complications and have to change the query a fair bit. This way is simpler.
@@ -447,7 +447,19 @@ class Loader
 			));
 		}
 
-		return count($result) ? $this->getById($result->flatten()) : false;
+		if (0 === count($result)) {
+			return array();
+		}
+
+		$pages = $this->getById($result->flatten());
+
+		if ($includeRequestPage) {
+			$pages[$page->id] = $page;
+		}
+
+		uasort($pages, array($this, '_sortPages'));
+
+		return $pages;
 	}
 
 
@@ -640,5 +652,10 @@ class Loader
 
 		}
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
+	}
+
+	protected function _sortPages(Page $a, Page $b)
+	{
+		return ($a->left < $b->left) ? -1 : 1;
 	}
 }
