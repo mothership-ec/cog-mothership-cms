@@ -16,6 +16,9 @@ class Routes implements RoutesInterface
 			->setRequirement('slug', '[a-z0-9\-\/]+')
 			->setDefault('slug', '/');
 
+		$router['ms.cms']->add('ms.cms.broken_link.action', '/broken_link', '::Controller:Module:Form#brokenLinkAction')
+			->setMethod('POST');
+
 		$router['ms.cp.cms']->setPrefix('/content')->setParent('ms.cp');
 
 		$router['ms.cp.cms']->add('ms.cp.cms.dashboard', '/', '::Controller:ControlPanel:Dashboard#index')
