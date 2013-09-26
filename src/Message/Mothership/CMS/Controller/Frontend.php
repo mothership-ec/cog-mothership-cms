@@ -50,6 +50,7 @@ class Frontend extends Controller
 				->includeDeleted(false)
 				->getBySlug($slug, false);
 		}
+
 		// If the page was not found
 		if (!$page) {
 			// Check for this slug in the history, and redirect if we find a result
@@ -63,6 +64,11 @@ class Frontend extends Controller
 			throw $this->createNotFoundException('Page not found');
 		}
 
+		// Set the current page on the service container
+		$this->_services['cms.page.current'] = function() use ($page) {
+			return $page;
+		};
+
 		// Check permissions
 		$auth = $this->get('cms.page.authorisation');
 
@@ -75,11 +81,6 @@ class Frontend extends Controller
 		if (!$auth->isViewable($page)) {
 			throw $this->createAccessDeniedException();
 		}
-
-		// If all's well, set the current page on the service container
-		$this->_services['cms.page.current'] = function() use ($page) {
-			return $page;
-		};
 
 		// Set service definition for the current page content
 		$content = $this->get('cms.page.content_loader')->load($page);
