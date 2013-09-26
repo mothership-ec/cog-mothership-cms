@@ -35,6 +35,13 @@ class Search extends \Message\Cog\Controller\Controller
 
 	public function getForm()
 	{
+		$defaults = array();
+		$search = $this->get('http.request.master')->query->get('search');
+
+		if (isset($search['terms']) && $search['terms']) {
+			$defaults = array('terms' => $search['terms']);
+		}
+
 		$form = $this->get('form')
 			->setName('search')
 			->setMethod('GET')
@@ -44,11 +51,15 @@ class Search extends \Message\Cog\Controller\Controller
 					'csrf_protection' => false,
 					'attr' => array(
 						'class'=>'search',
-						'placeholder' => 'Search Content...',
 					)
-			));
+			))
+			->setDefaultValues($defaults);
 
-		$form->add('terms', 'search', $this->trans('ms.cms.search.label'));
+		$form->add('terms', 'search', $this->trans('ms.cms.search.label'), array(
+			'attr' => array(
+				'placeholder' => 'Search Content...'
+			)
+		));
 
 		return $form;
 	}
