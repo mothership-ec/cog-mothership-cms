@@ -55,7 +55,11 @@ class Search extends \Message\Cog\Controller\Controller
 			))
 			->setDefaultValues($defaults);
 
-		$form->add('terms', 'search', $this->trans('ms.cms.search.label'));
+		$form->add('terms', 'search', $this->trans('ms.cms.search.label'), array(
+			'attr' => array(
+				'placeholder' => 'Search Content...'
+			)
+		));
 
 		return $form;
 	}
