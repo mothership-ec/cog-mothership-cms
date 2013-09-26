@@ -157,7 +157,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		$fullSlug = '/'.implode('/',$slugSegments);
 
 		$this->get('cms.page.edit')->removeHistoricalSlug($fullSlug);
-		$page = $this->_updateSlug($page, $slug);
+		$page = $this->_updateSlug($page, new Slug($slug));
 		$this->addFlash('success', $this->trans('ms.cms.feedback.force-slug.success'));
 
 		return $this->redirectToReferer();
@@ -502,7 +502,7 @@ class Edit extends \Message\Cog\Controller\Controller
 							'ms.cms.feedback.force-slug.failure.deleted',
 							array(
 								'%slug%' => $slug,
-								'%foreceUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug))
+								'%forceUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug))
 							)
 						)
 					);
