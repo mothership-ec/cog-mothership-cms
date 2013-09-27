@@ -7,7 +7,7 @@ class _1379413937_SetUp extends Migration
 	public function up()
 	{
 		$this->run("
-			CREATE TABLE `page` (
+			CREATE TABLE IF NOT EXISTS `page` (
 			  `page_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
 			  `created_at` int(11) unsigned NOT NULL,
 			  `created_by` int(11) unsigned DEFAULT NULL,
@@ -56,7 +56,7 @@ class _1379413937_SetUp extends Migration
 		");
 
 		$this->run("
-			CREATE TABLE `page_access_group` (
+			CREATE TABLE IF NOT EXISTS `page_access_group` (
 			  `page_id` int(11) unsigned NOT NULL,
 			  `group_name` varchar(255) NOT NULL DEFAULT '',
 			  PRIMARY KEY (`page_id`,`group_name`),
@@ -66,7 +66,7 @@ class _1379413937_SetUp extends Migration
 		");
 
 		$this->run("
-			CREATE TABLE `page_comment` (
+			CREATE TABLE IF NOT EXISTS `page_comment` (
 			  `comment_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
 			  `created_at` int(11) unsigned NOT NULL,
 			  `created_by` int(11) unsigned DEFAULT NULL,
@@ -97,7 +97,7 @@ class _1379413937_SetUp extends Migration
 		");
 
 		$this->run("
-			CREATE TABLE `page_content` (
+			CREATE TABLE IF NOT EXISTS `page_content` (
 			  `page_id` int(11) unsigned NOT NULL,
 			  `locale` varchar(50) NOT NULL DEFAULT '',
 			  `field_name` varchar(255) NOT NULL DEFAULT '',
@@ -114,7 +114,7 @@ class _1379413937_SetUp extends Migration
 		");
 
 		$this->run("
-			CREATE TABLE `page_slug_history` (
+			CREATE TABLE IF NOT EXISTS `page_slug_history` (
 			  `page_id` int(11) unsigned NOT NULL,
 			  `slug` varchar(225) NOT NULL DEFAULT '',
 			  `created_at` int(11) unsigned NOT NULL,
@@ -126,7 +126,7 @@ class _1379413937_SetUp extends Migration
 		");
 
 		$this->run("
-			CREATE TABLE `page_tag` (
+			CREATE TABLE IF NOT EXISTS `page_tag` (
 			  `page_id` int(11) unsigned NOT NULL,
 			  `tag_name` varchar(255) NOT NULL DEFAULT '',
 			  PRIMARY KEY (`tag_name`,`page_id`),
@@ -136,7 +136,7 @@ class _1379413937_SetUp extends Migration
 		");
 
 		$this->run("
-			CREATE TABLE `page_translation` (
+			CREATE TABLE IF NOT EXISTS `page_translation` (
 			  `page_id` int(11) unsigned NOT NULL,
 			  `language_id` char(2) NOT NULL DEFAULT '',
 			  `country_id` char(2) DEFAULT '',
@@ -160,7 +160,7 @@ class _1379413937_SetUp extends Migration
 		");
 
 		$this->run("
-			CREATE TABLE `search_log` (
+			CREATE TABLE IF NOT EXISTS `search_log` (
 			  `log_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
 			  `created_at` int(11) unsigned NOT NULL,
 			  `created_by` int(11) unsigned DEFAULT NULL,
