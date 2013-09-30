@@ -8,7 +8,7 @@ class _1380199741_UpdatePageTable extends Migration
 	{
 		$this->run("
 			ALTER TABLE `page`
-			MODIFY `access` DEFAULT '-100'
+			MODIFY `access` int(3) NOT NULL DEFAULT '-100'
 		");
 	}
 
@@ -16,7 +16,7 @@ class _1380199741_UpdatePageTable extends Migration
 	{
 		$this->run("
 			ALTER TABLE `page`
-			MODIFY `access` DEFAULT '0'
+			MODIFY `access` int(3) NOT NULL DEFAULT '0'
 		");
 	}
 }
