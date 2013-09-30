@@ -454,7 +454,7 @@ class Loader
 		}
 
 		if (0 === count($result)) {
-			return array();
+			return ($includeRequestPage) ? array($page->id => $page) : array();
 		}
 
 		$pages = $this->getById($result->flatten());
