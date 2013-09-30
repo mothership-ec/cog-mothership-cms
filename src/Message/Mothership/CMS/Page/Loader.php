@@ -284,12 +284,18 @@ class Loader
 	/**
 	 * Get all pages of a specific type.
 	 *
-	 * @param PageTypeInterface $pageType The page type to get pages for
+	 * @param PageTypeInterface|string $pageType The page type or page type name
+	 *                                           to get pages for
 	 *
-	 * @return array[Page]					An array of prepared `Page` instances
+	 * @return array[Page]                       An array of prepared `Page`
+	 *                                           instances
 	 */
-	public function getByType(PageTypeInterface $pageType)
+	public function getByType($pageType)
 	{
+		if ($pageType instanceof PageTypeInterface) {
+			$pageType = $pageType->getName();
+		}
+
 		$result = $this->_query->run('
 			SELECT
 				page_id
@@ -297,7 +303,7 @@ class Loader
 				page
 			WHERE
 				type = ?s
-		', strtolower($pageType->getName()));
+		', strtolower($pageType));
 
 		return count($result) ? $this->getById($result->flatten()) : false;
 
