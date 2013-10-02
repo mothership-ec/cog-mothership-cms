@@ -399,7 +399,7 @@ class Loader
 			$page->depth+1,
 		));
 
-		return count($result) ? $this->getById($result->flatten()) : false;
+		return count($result) ? $this->getById($result->flatten()) : array();
 	}
 
 	/**
