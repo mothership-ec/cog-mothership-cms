@@ -170,7 +170,7 @@ class Searcher {
 		// Loop terms and build query against each one.
 		// Terms are lowered to ensure they are case-insensitive.
 		foreach ($this->_terms as $i => $term) {
-			if (strlen($term) > $this->_minTermLength) {
+			if (strlen($term) >= $this->_minTermLength) {
 				$this->_terms[$i] = $term = strtolower($term);
 
 				foreach ($this->_searchFields as $j => $field) {
