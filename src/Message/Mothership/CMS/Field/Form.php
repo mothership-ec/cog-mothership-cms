@@ -60,6 +60,7 @@ class Form
 			}
 		}
 
+
 		return $this->_form;
 	}
 
@@ -89,6 +90,7 @@ class Form
 		$groupHandler = $this->_services['form']
 			->setName($group->getName())
 			->setDefaultValues($values)
+			->setValidator($group->getValidator())
 			->addOptions(array(
 				'auto_initialize' => false,
 			));
@@ -112,6 +114,7 @@ class Form
 		$groupHandler = $this->_services['form']
 			->setName($name)
 			->setRepeatable()
+			->setValidator($group->getValidator())
 			->setDefaultValues($this->_getDefaultValuesForRepeatableGroup($group))
 			->addOptions(array(
 				'auto_initialize' => false,
