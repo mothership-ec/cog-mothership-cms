@@ -3,6 +3,8 @@
 namespace Message\Mothership\CMS\Field;
 
 use Message\Cog\Validation\Validator;
+use Message\Cog\Validation\Field as ValidatorField;
+
 
 /**
  * Represents a group of page content fields.
@@ -78,6 +80,16 @@ class Group implements FieldInterface, FieldContentInterface
 		}
 	}
 
+	public function val()
+	{
+		return $this->getValidator();
+	}
+
+	public function getValidator()
+	{
+		return $this->_validator;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -145,6 +157,8 @@ class Group implements FieldInterface, FieldContentInterface
 		))) {
 			$this->setIdentifierField($field->getName());
 		}
+
+		$this->_validator->addField(new ValidatorField($field->getName(), $field->getLabel()));
 
 		return $this;
 	}

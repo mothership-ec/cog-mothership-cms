@@ -173,6 +173,7 @@ class Loader
 		for ($i = 2; $i <= count($parts) +1; $i++) {
 			$joins.= " JOIN page level$i ON (level$i.position_left < level".($i-1).".position_left AND level$i.position_right > level".($i-1).".position_right)";
 			$where.= " AND level$i.slug = ?s";
+			$where.= " AND level$i.deleted_at IS NULL";
 			$params[] = $parts[$i-2];
 		}
 
@@ -186,6 +187,7 @@ class Loader
 			WHERE
 				level1.slug = ?s
 				AND level1.position_depth = ?i
+				AND level1.deleted_at IS NULL
 			'.$where.'',
 			$params
 		);
@@ -397,7 +399,7 @@ class Loader
 			$page->depth+1,
 		));
 
-		return count($result) ? $this->getById($result->flatten()) : false;
+		return count($result) ? $this->getById($result->flatten()) : array();
 	}
 
 	/**
