@@ -19,6 +19,7 @@ use Message\Cog\Service\ContainerAwareInterface;
 class Product extends Field implements ContainerAwareInterface
 {
 	protected $_services;
+	protected $_product;
 
 	/**
 	 * {@inheritdoc}
@@ -39,7 +40,11 @@ class Product extends Field implements ContainerAwareInterface
 
 	public function getProduct()
 	{
-		return $this->_services['product.loader']->getByID((int) $this->_value);
+		if (null === $this->_product) {
+			$this->_product = $this->_services['product.loader']->getByID((int) $this->_value);
+		}
+
+		return $this->_product;
 	}
 
 	// public function getValue()
