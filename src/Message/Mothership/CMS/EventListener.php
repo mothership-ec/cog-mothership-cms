@@ -2,7 +2,9 @@
 
 namespace Message\Mothership\CMS;
 
-use Message\Mothership\ControlPanel\Event\BuildMenuEvent;
+use Message\Mothership\CMS\Event\Frontend\BuildPageMenuEvent as FrontendBuildMenuEvent;
+
+use Message\Mothership\ControlPanel\Event\BuildMenuEvent as ControlPanelBuildMenuEvent;
 
 use Message\Cog\Event\EventListener as BaseListener;
 use Message\Cog\Event\SubscriberInterface;
@@ -24,21 +26,44 @@ class EventListener extends BaseListener implements SubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			BuildMenuEvent::BUILD_MAIN_MENU => array(
+			Events::FRONTEND_BUILD_MENU => array(
+				array('filterMenuItems', -9000),
+			),
+			ControlPanelBuildMenuEvent::BUILD_MAIN_MENU => array(
 				array('registerMainMenuItems'),
 			),
 			KernelEvents::EXCEPTION => array(
 				array('pageNotFound'),
 			),
+
 		);
+	}
+
+	/**
+	 * Filter out any `Page`s in an array that should not be shown in a menu.
+	 *
+	 * Pages are filtered out if they shouldn't be visible in menus; are not
+	 * published; or are not viewable by the current user.
+	 *
+	 * @param FrontendBuildMenuEvent  $events Build menu event
+	 */
+	public function filterMenuItems(FrontendBuildMenuEvent $event)
+	{
+		$auth = $this->get('cms.page.authorisation');
+
+		foreach ($event->getPages() as $page) {
+			if (!$page->visibilityMenu || !$auth->isPublished($page) || !$auth->isViewable($page)) {
+				$event->remove($page);
+			}
+		}
 	}
 
 	/**
 	 * Register items to the main menu of the control panel.
 	 *
-	 * @param BuildMenuEvent $event The event
+	 * @param ControlPanelBuildMenuEvent $event The event
 	 */
-	public function registerMainMenuItems(BuildMenuEvent $event)
+	public function registerMainMenuItems(ControlPanelBuildMenuEvent $event)
 	{
 		$event->addItem('ms.cp.cms.dashboard', 'Content', array('ms.cp.cms'));
 	}

@@ -2,6 +2,9 @@
 
 namespace Message\Mothership\CMS\Controller\Module;
 
+use Message\Mothership\CMS\Event\Frontend\BuildPageMenuEvent;
+use Message\Mothership\CMS\Events;
+
 use Message\Cog\Controller\Controller;
 
 /**
@@ -29,7 +32,14 @@ class Menu extends Controller
 		$current = $this->get('cms.page.current');
 		$page    = $pageID ? $loader->getByID($pageID) : $current;
 		$pages   = ($page->hasChildren()) ? $loader->getSiblings($page, true) : $loader->getChildren($page);
-		$pages   = $this->_filterPages($pages);
+
+		$event = new BuildPageMenuEvent('section');
+		$event->addPages($pages);
+
+		$pages = $this->get('event.dispatcher')->dispatch(
+			Events::FRONTEND_BUILD_MENU,
+			$event
+		)->getPages();
 
 		return $this->render('Message:Mothership:CMS::modules/menu', array(
 			'pages'   => $pages,
@@ -51,44 +61,18 @@ class Menu extends Controller
 	{
 		$loader  = $this->get('cms.page.loader')->includeDeleted(false);
 		$current = isset($this->_services['cms.page.current']) ? $loader->getRoot($this->get('cms.page.current')) : null;
-		$pages   = $this->_filterPages($loader->getTopLevel());
+
+		$event = new BuildPageMenuEvent('main');
+		$event->addPages($loader->getTopLevel());
+
+		$pages = $this->get('event.dispatcher')->dispatch(
+			Events::FRONTEND_BUILD_MENU,
+			$event
+		)->getPages();
 
 		return $this->render('Message:Mothership:CMS::modules/menu', array(
 			'pages'   => $pages,
 			'current' => $current,
 		));
-	}
-
-	public function tagMenu($tags)
-	{
-		$tags = (array) $tags;
-
-		if (empty($tags)) {
-			// throw exception
-		}
-	}
-
-	/**
-	 * Filter out any `Page`s in an array that should not be shown in a menu.
-	 *
-	 * Pages are filtered out if they shouldn't be visible in menus; are not
-	 * published; or are not viewable by the current user.
-	 *
-	 * @param  array[Page]  $pages Array of pages
-	 *
-	 * @return array[Page]         Filtered array of pages
-	 */
-	protected function _filterPages(array $pages)
-	{
-		$auth   = $this->get('cms.page.authorisation');
-		$return = array();
-
-		foreach ($pages as $page) {
-			if ($page->visibilityMenu && $auth->isPublished($page) && $auth->isViewable($page)) {
-				$return[] = $page;
-			}
-		}
-
-		return $return;
 	}
 }
