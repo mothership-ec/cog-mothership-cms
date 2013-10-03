@@ -8,7 +8,7 @@ namespace Message\Mothership\CMS\Page\Event;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class SetParametersForRenderEvent extends Event
+class SetParametersForRenderEvent extends RenderEvent
 {
 	protected $_params = array();
 

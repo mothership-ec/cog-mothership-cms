@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class SetResponseForRenderEvent extends Event
+class SetResponseForRenderEvent extends RenderEvent
 {
 	protected $_response;
 
