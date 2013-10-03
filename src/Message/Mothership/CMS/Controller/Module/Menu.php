@@ -31,7 +31,9 @@ class Menu extends Controller
 		$loader  = $this->get('cms.page.loader')->includeDeleted(false);
 		$current = $this->get('cms.page.current');
 		$page    = $pageID ? $loader->getByID($pageID) : $current;
-		$pages   = ($page->hasChildren()) ? $loader->getSiblings($page, true) : $loader->getChildren($page);
+		$pages   = ($page->hasChildren()) ? $loader->getChildren($page) : $loader->getSiblings($page, true);
+
+		de($page, $page->hasChildren(), $pages);
 
 		$event = new BuildPageMenuEvent('section');
 		$event->addPages($pages);

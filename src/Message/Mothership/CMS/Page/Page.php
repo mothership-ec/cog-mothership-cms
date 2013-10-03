@@ -99,6 +99,6 @@ class Page
 	 */
 	public function hasChildren()
 	{
-		return ($this->right === ($this->left + 1));
+		return ($this->right !== ($this->left + 1));
 	}
 }
