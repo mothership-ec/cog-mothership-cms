@@ -2,6 +2,7 @@
 
 namespace Message\Mothership\CMS\Controller\Module;
 
+use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Event\Frontend\BuildPageMenuEvent;
 use Message\Mothership\CMS\Events;
 
@@ -17,21 +18,34 @@ use Message\Cog\Controller\Controller;
 class Menu extends Controller
 {
 	/**
-	 * Build a menu for pages in the current section. If the current page has
-	 * children, then the children are listed. Otherwise, other pages at the
-	 * same level are listed.
+	 * Build a menu for pages in a given section.
 	 *
-	 * @param int|null $pageID The page ID to get a section menu for, if null
-	 *                         the current page is used.
+	 * If a page is passed as the first argument, the menu always lists children
+	 * of that page, even if there are none.
+	 *
+	 * If no page is passed, the current page is used and the menu lists
+	 * children of that page if there are any, otherwise pages at the same
+	 * level (siblings) are listed.
+	 *
+	 * @param int|Page|null $page The Page (or ID for a page) to get a section
+	 *                            menu for, if null the current page is used
 	 *
 	 * @return \Message\Cog\HTTP\Response
 	 */
-	public function sectionMenu($pageID = null)
+	public function sectionMenu($page = null)
 	{
 		$loader  = $this->get('cms.page.loader')->includeDeleted(false);
 		$current = $this->get('cms.page.current');
-		$page    = $pageID ? $loader->getByID($pageID) : $current;
-		$pages   = $loader->getChildren($page) ?: $loader->getSiblings($page, true);
+
+		if (!is_null($page)) {
+			if (!($page instanceof Page)) {
+				$page = $loader->getByID($page);
+			}
+
+			$pages = $loader->getChildren($page);
+		} else {
+			$pages = $loader->getChildren($current) ?: $loader->getSiblings($current, true);
+		}
 
 		$event = new BuildPageMenuEvent('section');
 		$event->addPages($pages);
