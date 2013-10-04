@@ -241,8 +241,8 @@ class Searcher {
 		// Clean out HTML
 		$excerpt = strip_tags($excerpt);
 
-		// Trim the excerpt to a maximum of 75 words
-		$maxWords = 75;
+		// Trim the excerpt to a maximum of 60 words
+		$maxWords = 60;
 		$words = explode(' ', $excerpt, $maxWords);
 
 		// If the last value contains a space, the word count was greater than
