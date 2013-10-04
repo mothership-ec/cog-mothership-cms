@@ -18,9 +18,10 @@ class Searcher {
 
 	protected $_scores;
 
-	public function __construct(DBQuery $query)
+	public function __construct(DBQuery $query, $markdown)
 	{
-		$this->_query = $query;
+		$this->_query    = $query;
+		$this->_markdown = $markdown;
 	}
 
 	public function setMinTermLength($length)
@@ -232,7 +233,34 @@ class Searcher {
 	 */
 	public function _getExcerpt($row)
 	{
-		return $row->{$this->_excerptField};
+		$excerpt = $row->{$this->_excerptField};
+
+		// Transform markdown to allow easier cleaning
+		$excerpt = $this->_markdown->transformMarkdown($excerpt);
+
+		// Clean out HTML
+		$excerpt = strip_tags($excerpt);
+
+		// Trim the excerpt to a maximum of 60 words
+		$maxWords = 60;
+		$words = explode(' ', $excerpt, $maxWords);
+
+		// If the last value contains a space, the word count was greater than
+		// the limit and should be trimed and an ellipsis appended.
+		if (false !== strpos($words[count($words)-1], ' ')) {
+			array_pop($words);
+			$words[] = '...';
+		}
+
+		// Recombine the excerpt
+		$excerpt = implode(' ', $words);
+
+		// Clean excerpt
+		$excerpt = str_replace("\n", " ", $excerpt);
+		$excerpt = preg_replace('/ +/', ' ', $excerpt);
+		$excerpt = trim($excerpt);
+
+		return $excerpt;
 	}
 
 }

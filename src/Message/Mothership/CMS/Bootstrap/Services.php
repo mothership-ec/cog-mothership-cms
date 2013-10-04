@@ -41,7 +41,7 @@ class Services implements ServicesInterface
 		};
 
 		$serviceContainer['cms.page.searcher'] = $serviceContainer->share(function($c) {
-			$searcher =  new CMS\Page\Searcher($c['db.query']);
+			$searcher =  new CMS\Page\Searcher($c['db.query'], $c['markdown.parser']);
 
 			// Ignore terms less than this length.
 			$searcher->setMinTermLength($c['cfg']->search->minTermLength);
