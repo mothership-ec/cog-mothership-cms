@@ -18,9 +18,10 @@ class Searcher {
 
 	protected $_scores;
 
-	public function __construct(DBQuery $query)
+	public function __construct(DBQuery $query, $markdown)
 	{
-		$this->_query = $query;
+		$this->_query    = $query;
+		$this->_markdown = $markdown;
 	}
 
 	public function setMinTermLength($length)
@@ -232,7 +233,15 @@ class Searcher {
 	 */
 	public function _getExcerpt($row)
 	{
-		return $row->{$this->_excerptField};
+		$excerpt = $row->{$this->_excerptField};
+
+		// Transform markdown to allow easier cleaning
+		$excerpt = $this->_markdown->transformMarkdown($excerpt);
+
+		// Clean out HTML
+		$excerpt = strip_tags($excerpt);
+
+		return $excerpt;
 	}
 
 }
