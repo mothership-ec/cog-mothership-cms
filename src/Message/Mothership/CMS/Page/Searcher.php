@@ -256,7 +256,7 @@ class Searcher {
 		$excerpt = implode(' ', $words);
 
 		// Clean excerpt
-		$excerpt = str_replace("\n", "", $excerpt);
+		$excerpt = str_replace("\n", " ", $excerpt);
 		$excerpt = preg_replace('/ +/', ' ', $excerpt);
 		$excerpt = trim($excerpt);
 
