@@ -67,7 +67,7 @@ ms.cms:
       save: Save range
   content:
     type:
-      no-content-areas: The "%pageType%" page type does not have any content areas.
+      no-content-areas: This page type has no content areas.
     button:
       save: Save changes
   attributes:
