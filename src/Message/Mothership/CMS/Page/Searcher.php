@@ -241,6 +241,25 @@ class Searcher {
 		// Clean out HTML
 		$excerpt = strip_tags($excerpt);
 
+		// Trim the excerpt to a maximum of 75 words
+		$maxWords = 75;
+		$words = explode(' ', $excerpt, $maxWords);
+
+		// If the last value contains a space, the word count was greater than
+		// the limit and should be trimed and an ellipsis appended.
+		if (false !== strpos($words[count($words)-1], ' ')) {
+			array_pop($words);
+			$words[] = '...';
+		}
+
+		// Recombine the excerpt
+		$excerpt = implode(' ', $words);
+
+		// Clean excerpt
+		$excerpt = str_replace("\n", "", $excerpt);
+		$excerpt = preg_replace('/ +/', ' ', $excerpt);
+		$excerpt = trim($excerpt);
+
 		return $excerpt;
 	}
 
