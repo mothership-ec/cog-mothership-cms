@@ -22,10 +22,8 @@
 		<p>{{ types.get(type.vars.value).getDescription }}</p>
 	</label>
 	{% endfor %}
-
-	{{ form_row(form.type) }}
-
 	{{ form_row(form.parent) }}
+	{{ form_row(form.type) }}
 
 	<button type="submit" class="button small save">{{ 'ms.cms.create.button.save'|trans }}</button>
 
