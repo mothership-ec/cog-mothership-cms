@@ -243,14 +243,21 @@ class Edit {
 	 *
 	 * @param  Page 	$page 				The Page object of the page we are
 	 *                         				going to move
-	 * @param  int  	$nearestSibling		The the pageID of the node we are
-	 *                                		moving before or after
+	 * @param  int  	$index				The position index to move to.
 	 */
-	public function changeOrder(Page $page, $nearestSibling)
+	public function changeOrder(Page $page, $index)
 	{
+		// This is important as we add 1 to the key
 		try {
+
+			$siblings = $this->_loader
+				->getSiblings($page);
+			// We minus one here as we have to add one in the controller so 0 is
+			// the move to top option.
+			$nearestSibling = isset($siblings[$index - 1]) ? $siblings[$index - 1]->id : false;
+
 			$addAfter = false;
-			if ($nearestSibling == 0) {
+			if ($index === 0) {
 				// Load the siblings and get the one which is at the top
 				$siblings = $this->_loader->getSiblings($page);
 				$nearestSibling = array_shift($siblings);

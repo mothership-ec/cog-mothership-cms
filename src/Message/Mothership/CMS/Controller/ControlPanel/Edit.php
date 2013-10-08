@@ -191,9 +191,8 @@ class Edit extends \Message\Cog\Controller\Controller
 			}
 
 			if (!is_null($data['siblings']) && $data['siblings'] >= 0) {
-				if ($this->get('cms.page.edit')->changeOrder($page, $data['siblings'])) {
-					$this->addFlash('success', 'Page order successully changed');
-				} else {
+				$index = $data['siblings'];
+				if (!$this->get('cms.page.edit')->changeOrder($page, $index)) {
 					$this->addFlash('error', 'The page could not be moved to a new position');
 				}
 			}
@@ -395,8 +394,10 @@ class Edit extends \Message\Cog\Controller\Controller
 		$siblings = $this->get('cms.page.loader')->getSiblings($page);
 		$siblingChoices = array();
 		if ($siblings) {
-			foreach ($siblings as $s) {
-				$siblingChoices[$s->id] = $s->title;
+			$siblingChoices[0] = 'Move to top';
+			foreach ($siblings as $k => $s) {
+				// We need to add one to allow for 0 to be the move to top option
+				$siblingChoices[$k+1] = $s->title;
 			}
 		}
 		$form->add('siblings', 'choice', $this->trans('ms.cms.attributes.siblings.label'), array(
