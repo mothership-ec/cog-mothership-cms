@@ -54,6 +54,8 @@ class Loader
 	protected $_pageTypes;
 	protected $_authorisation;
 
+	protected $_pagination;
+
 	/**
 	 * var to toggle the loading of deleted pages
 	 *
@@ -382,7 +384,7 @@ class Loader
 			$page->depth = -1;
 		}
 
-		$result = $this->_query->run('
+		$sql = "
 			SELECT
 				page_id
 			FROM
@@ -393,13 +395,32 @@ class Loader
 				position_right < ?i
 			AND
 				position_depth = ?i
-		', array(
+		";
+
+		$params =  array(
 			$page->left,
 			$page->right,
 			$page->depth+1,
-		));
+		);
+
+		if (null !== $this->_pagination) {
+			$this->_pagination->setQuery($sql, $params);
+			$this->_pagination->setCountColumn('page_id');
+			$result = $this->_pagination->getCurrentPageResults();
+			$this->_pagination = null;
+		}
+		else {
+			$result = $this->_query->run($sql, $params);
+		}
 
 		return count($result) ? $this->getById($result->flatten()) : array();
+	}
+
+	public function setPagination($pagination)
+	{
+		$this->_pagination = $pagination;
+
+		return $this;
 	}
 
 	/**
