@@ -54,7 +54,13 @@
 								<div class="container">
 									{% for i,group in part %}
 										<section class="group" data-collapse data-identifier-field="{{ group.getIdentifierField().getName() }}">
-											<h1 class="title">{{ group.getIdentifierField() }}</h1>
+											<h1 class="title">
+												{% if group.getIdentifierField() is sameas(false) %}
+													Group #{{ i+1 }}
+												{% else %}
+													{{ group.getIdentifierField() }}
+												{% endif %}
+											</h1>
 											<div class="content">
 												{% for field in repeatables[name] %}
 													{{ form_row(form[name][field][i]) }}
