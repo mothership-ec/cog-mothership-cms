@@ -1,7 +1,7 @@
 {% macro getRepeatablePrototype(form, groupName, fields) %}
 	{% filter escape %}
 		<section class="group" data-collapse>
-			<h1 class="title">Group #__name__</h1>
+			<h1 class="title">Group #__label__</h1>
 			<div class="content">
 				{% for field in fields %}
 				{{ form_row(form[groupName][field].vars.prototype) }}
@@ -59,7 +59,7 @@
 										<section class="group" data-collapse data-identifier-field="{{ group.getIdentifierField().getName() }}">
 											<h1 class="title">
 												{% if group.getIdentifierField() is sameas(false) %}
-													Group #{{ i }}
+													Group #{{ i+1 }}
 												{% else %}
 													{{ group.getIdentifierField() }}
 												{% endif %}
