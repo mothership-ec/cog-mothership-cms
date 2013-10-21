@@ -15,6 +15,7 @@ use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
 use Message\Cog\DB\Result;
+use Message\Cog\Pagination\Pagination;
 
 /**
  * Responsible for loading page data and returning prepared instances of `Page`.
@@ -416,7 +417,7 @@ class Loader
 		return count($result) ? $this->getById($result->flatten()) : array();
 	}
 
-	public function setPagination($pagination)
+	public function setPagination(Pagination $pagination)
 	{
 		$this->_pagination = $pagination;
 
