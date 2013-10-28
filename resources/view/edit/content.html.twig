@@ -1,7 +1,7 @@
-{% macro getRepeatablePrototype(form, groupName, fields) %}
+{% macro getRepeatablePrototype(form, groupName, fields, identifierField) %}
 	{% filter escape %}
-		<section class="group" data-collapse>
-			<h1 class="title">Group #__label__</h1>
+		<section class="group" data-collapse data-identifier-field="{{ identifierField }}">
+			<h1 class="title" data-group-label></h1>
 			<div class="content">
 				{% for field in fields %}
 				{{ form_row(form[groupName][field].vars.prototype) }}
@@ -55,9 +55,13 @@
 							<p class="group-desc">{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.description')|trans }}</p>
 							<section class="repeatable-group">
 								<div class="container">
+									{% set identifierField = "" %}
+
 									{% for i,group in part %}
-										<section class="group" data-collapse data-identifier-field="{{ group.getIdentifierField().getName() }}">
-											<h1 class="title">
+										{% set identifierField = group.getIdentifierField().getName() %}
+
+										<section class="group" data-collapse data-identifier-field="{{ identifierField }}">
+											<h1 class="title" data-group-label>
 												{% if group.getIdentifierField() is sameas(false) %}
 													Group #{{ i+1 }}
 												{% else %}
@@ -76,7 +80,14 @@
 									{% endfor %}
 
 								{# <div class="add-group"> #}
-									<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form, name, repeatables[name]) }}" data-group-index="{{ part.count }}" class="button small add">
+									<a href="#" data-group-add data-prototype="{{
+										_self.getRepeatablePrototype(
+											form,
+											name,
+											repeatables[name],
+											identifierField
+										) }}"
+										data-group-index="{{ part.count }}" class="button small add">
 											{{ 'ms.cms.repeatable_group.add'|transchoice(part.count, {'%name%': ('page.' ~ page.type.getName ~ '.' ~ name ~ '.singularName')|trans|lower}) }}
 									</a>
 								{# </div> #}
