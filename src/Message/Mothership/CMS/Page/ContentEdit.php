@@ -48,7 +48,13 @@ class ContentEdit
 		}
 
 		// Replace the content
-		foreach ($flattened as $row) {
+		foreach ($flattened as $key => $row) {
+
+			if ((array_key_exists('field', $row) && $row['field'] == 'option') &&
+				 array_key_exists('value', $row) && $row['value'] == 'none') {
+				continue;
+			}
+
 			$this->_transaction->add('
 				REPLACE INTO
 					page_content
