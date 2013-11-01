@@ -49,23 +49,27 @@ class ContentEdit
 
 		// Replace the content
 		foreach ($flattened as $row) {
-			if ($row['field'] == 'option' && $row['value'] == 'none') {
+			if ($row['value'] == 'none') {
 				$this->_transaction->add('
 					DELETE FROM
 						page_content
 					WHERE
 						page_id    		= :id?i
-					AND value_string	= :value?s
+					AND locale			= :locale?s
+					AND field_name		= :field?s
+					AND group_name		= :group?s
 					AND data_name		= :dataName?s
 				', array(
-					'id'    => $page->id,
-					'value' => 'none',
-					'dateName'  => $row['data_name']
+					'id'        => $page->id,
+					'locale'    => 'EN', // temporary
+					'field'     => $row['field'],
+					'group'     => $row['group'],
+					'dataName'  => $row['data_name']
 				));
 
 				continue;
 			}
-
+			
 			$this->_transaction->add('
 				REPLACE INTO
 					page_content
