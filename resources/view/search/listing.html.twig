@@ -13,7 +13,11 @@
 			<h2>{{ page.title }}</h2>
 			<span class="url">{{ url }}</span>
 			<p>{{ page.excerpt }}</p>
-		</a>		
+
+			{% if page.content.product %}
+				{{ getResizedImage(page.content.product.product.product.image, 135, 200) }}
+			{% endif %}
+		</a>
 	</li>
 {% else %}
 	<li class="no-result">
