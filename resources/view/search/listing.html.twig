@@ -10,10 +10,13 @@
 	<li>
 		{% set url = url('ms.cms.frontend', {slug: page.slug|trim('/')}) %}
 		<a href="{{ url }}">
+			{% if page.content.product %}
+				{{ getResizedImage(page.content.product.product.product.image, 109, 131) }}
+			{% endif %}
 			<h2>{{ page.title }}</h2>
 			<span class="url">{{ url }}</span>
 			<p>{{ page.excerpt }}</p>
-		</a>		
+		</a>
 	</li>
 {% else %}
 	<li class="no-result">
