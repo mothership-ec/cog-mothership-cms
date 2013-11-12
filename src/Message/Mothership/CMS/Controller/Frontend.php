@@ -84,6 +84,7 @@ class Frontend extends Controller
 
 		$preparedResponse = new \Message\Cog\HTTP\Response;
 
+		$preparedResponse->setSharedMaxAge(600); // 10 minutes
 		$preparedResponse->setPublic();
 		$preparedResponse->setLastModified($page->authorship->updatedAt());
 
