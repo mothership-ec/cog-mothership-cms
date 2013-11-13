@@ -32,7 +32,7 @@ class ContentEdit
 		$flattened = $this->flatten($content);
 
 		// Delete repeatable content, so any deleted groups are deleted
-		foreach ($content as $part) {
+		foreach ($content as $key => $part) {
 			if ($part instanceof Field\RepeatableContainer) {
 				$this->_transaction->add('
 					DELETE FROM
@@ -49,6 +49,27 @@ class ContentEdit
 
 		// Replace the content
 		foreach ($flattened as $row) {
+			if ($row['value'] == 'none') {
+				$this->_transaction->add('
+					DELETE FROM
+						page_content
+					WHERE
+						page_id    		= :id?i
+					AND locale			= :locale?s
+					AND field_name		= :field?s
+					AND group_name		= :group?s
+					AND data_name		= :dataName?s
+				', array(
+					'id'        => $page->id,
+					'locale'    => 'EN', // temporary
+					'field'     => $row['field'],
+					'group'     => $row['group'],
+					'dataName'  => $row['data_name']
+				));
+
+				continue;
+			}
+			
 			$this->_transaction->add('
 				REPLACE INTO
 					page_content

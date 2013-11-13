@@ -15,6 +15,7 @@ use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
 use Message\Cog\DB\Result;
+use Message\Cog\Pagination\Pagination;
 
 /**
  * Responsible for loading page data and returning prepared instances of `Page`.
@@ -53,6 +54,8 @@ class Loader
 	protected $_query;
 	protected $_pageTypes;
 	protected $_authorisation;
+
+	protected $_pagination;
 
 	/**
 	 * var to toggle the loading of deleted pages
@@ -382,7 +385,7 @@ class Loader
 			$page->depth = -1;
 		}
 
-		$result = $this->_query->run('
+		$result = $this->_query->run("
 			SELECT
 				page_id
 			FROM
@@ -393,13 +396,20 @@ class Loader
 				position_right < ?i
 			AND
 				position_depth = ?i
-		', array(
+		", array(
 			$page->left,
 			$page->right,
 			$page->depth+1,
 		));
 
 		return count($result) ? $this->getById($result->flatten()) : array();
+	}
+
+	public function setPagination(Pagination $pagination)
+	{
+		$this->_pagination = $pagination;
+
+		return $this;
 	}
 
 	/**
@@ -514,7 +524,7 @@ class Loader
 			return $this->_returnAsArray ? array() : false;
 		}
 
-		$result = $this->_query->run('
+		$sql = '
 			SELECT
 				/* locale, */
 				page.page_id AS id,
@@ -571,11 +581,22 @@ class Loader
 			GROUP BY
 				page.page_id
 			ORDER BY
-				position_left ASC',
-			array(
-				$pageID,
-			)
+				position_left ASC
+		';
+
+		$params = array(
+			$pageID,
 		);
+
+		if (null !== $this->_pagination) {
+			$this->_pagination->setQuery($sql, $params);
+			$this->_pagination->setCountColumn('page.page_id');
+			$result = $this->_pagination->getCurrentPageResults();
+			$this->_pagination = null;
+		}
+		else {
+			$result = $this->_query->run($sql, $params);
+		}
 
 		if (0 === count($result)) {
 			return ($this->_returnAsArray) ? array() : false;
@@ -693,6 +714,7 @@ class Loader
 			}
 
 		}
+
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
 	}
 
