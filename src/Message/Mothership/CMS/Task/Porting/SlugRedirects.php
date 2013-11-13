@@ -45,6 +45,7 @@ class SlugRedirects extends BaseTask
 
 		$i = 0;
 		$addedCount = 0;
+
 		while(!$file->eof() && $data = $file->fgetcsv()) {
 			$i++;
 
@@ -61,7 +62,7 @@ class SlugRedirects extends BaseTask
 			if ($row['page_id']) {
 				$page = $this->get('cms.page.loader')->includeUnpublished(true)->getByID((int) $row['page_id']);
 			} elseif ($row['new_slug']) {
-				$page = $this->get('cms.page.loader')->includeUnpublished(true)->getBySlug($data['new_slug']);
+				$page = $this->get('cms.page.loader')->includeUnpublished(true)->getBySlug($row['new_slug']);
 			} else {
 	        	$this->writeln('<error>Please supply either a new slug or pageID</error>');
 				continue;
@@ -69,7 +70,8 @@ class SlugRedirects extends BaseTask
 
 			if (!$page) {
 				// output error if cannot find the page
-	        	$this->writeln('<error>Couldn\'t find page for '.($data[3] ? 'pageID:'.$data[3] : 'slug '. $data[1]).'</error>');
+	        	$this->writeln('<error>Couldn\'t find page for '.($data[2] ? 'pageID:'.$data[2] : 'slug '. $data[1]).'</error>');
+	        	continue;
 			}
 
 			$datetime = new \DateTime;
@@ -95,6 +97,6 @@ class SlugRedirects extends BaseTask
         	$this->writeln('<info>Successfully ported '.$addedCount.' slugs</info>');
 		}
 
-		return $ouput;
+		return true;
     }
 }
