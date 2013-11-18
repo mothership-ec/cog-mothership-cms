@@ -82,15 +82,6 @@ class Frontend extends Controller
 			throw $this->createAccessDeniedException();
 		}
 
-		$preparedResponse = new \Message\Cog\HTTP\Response;
-
-		$preparedResponse->setPublic();
-		$preparedResponse->setLastModified($page->authorship->updatedAt());
-
-		if ($preparedResponse->isNotModified($this->get('http.request.master'))) {
-			return $preparedResponse;
-		}
-
 		// Set service definition for the current page content
 		$content = $this->get('cms.page.content_loader')->load($page);
 
@@ -122,7 +113,7 @@ class Frontend extends Controller
 		}
 
 		// Render the view for the page type
-		return $this->render($page->type->getViewReference(), $params, $preparedResponse);
+		return $this->render($page->type->getViewReference(), $params);
 	}
 
 	/**
