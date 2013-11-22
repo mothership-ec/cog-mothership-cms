@@ -31,7 +31,7 @@ class Form extends Controller
 			$message->setTo($this->get('cfg')->app->defaultContactEmail, $this->get('cfg')->app->name);
 			$message->setView('::mail/broken-link', array(
 				'message' => $data['message'],
-				'uri'     => $this->get('http.request.master')->getUri(),
+				'uri'     => $data['broken_uri'],
 				'host'    => $host,
 			));
 
@@ -51,6 +51,10 @@ class Form extends Controller
 
 		$form->add('message', 'textarea', $this->trans('ms.cms.broken_link.message.label'))
 			->val()->optional();
+
+		$form->add('broken_uri', 'hidden', NULL , array(
+			'data' => $this->get('http.request.master')->getUri(),
+		));
 
 		return $form;
 	}
