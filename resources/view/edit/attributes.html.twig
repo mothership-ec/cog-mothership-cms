@@ -16,18 +16,17 @@
 
 <button type="submit" class="button small save" id="save-content">{{ 'ms.cms.attributes.button.save'|trans }}</button>
 
-
-<section class="display-group authorship">
+<section class="group">
 	<h2 class="title">{{ 'ms.cms.attributes.authorship.heading'|trans }}</h2>
-	<div class="content-wrap">
-	<dl>
-		<dt>{{ 'Created'|trans }}</dt>
-			<dd>{{ page.authorship.createdAt|date('h:ia \\o\\n d/m/y') }} {{ 'by'|trans }} {{ page.authorship.createdUser.name }}</dd>
-		{% if page.authorship.updatedAt is not null %}
-		<dt>{{ 'Updated'|trans }}</dt>
-			<dd>{{ 'at'|trans }} {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }} {{ 'by'|trans }} {{ page.authorship.updatedUser.name }}</dd>
-		{% endif %}
-	</dl>
+	<div class="content">
+		<dl>
+			<dt>{{ 'Created'|trans }}</dt>
+				<dd>{{ page.authorship.createdAt|date('h:ia \\o\\n d/m/y') }} {{ 'by'|trans }} {{ page.authorship.createdUser.name }}</dd>
+			{% if page.authorship.updatedAt is not null %}
+			<dt>{{ 'Updated'|trans }}</dt>
+				<dd>{{ 'at'|trans }} {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }} {{ 'by'|trans }} {{ page.authorship.updatedUser.name }}</dd>
+			{% endif %}
+		</dl>
 	</div>
 </section>
 
