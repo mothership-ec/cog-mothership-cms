@@ -35,7 +35,7 @@ class Menu extends Controller
 	public function sectionMenu($page = null)
 	{
 		$loader  = $this->get('cms.page.loader')->includeDeleted(false);
-		$current = $this->get('cms.page.current');
+		$current = isset($this->_services['cms.page.current']) ? ('cms.page.current') : null;
 
 		if (!is_null($page)) {
 			if (!($page instanceof Page)) {
@@ -44,6 +44,10 @@ class Menu extends Controller
 
 			$pages = $loader->getChildren($page);
 		} else {
+			if (!$current) {
+				throw new \InvalidArgumentException('For non-CMS frontend requests, a section menu can only be built for a specific page (not the current page)');
+			}
+
 			$pages = $loader->getChildren($current) ?: $loader->getSiblings($current, true);
 		}
 
