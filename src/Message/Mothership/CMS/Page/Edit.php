@@ -270,7 +270,7 @@ class Edit {
 			$trans = $this->_nestedSetHelper->move($page->id,$nearestSibling->id, false, $addAfter);
 			$trans->commit();
 			return true;
-		} catch (Expcetion $e) {
+		} catch (Exception $e) {
 			return false;
 		}
 	}
