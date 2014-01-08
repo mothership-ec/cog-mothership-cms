@@ -49,7 +49,7 @@ ms.cms:
       delete: Delete page
       view: View page
   create:
-    page-title: Create page
+    page-title: Add a new page
     button:
       save: Create page
       menu: Add a new page
