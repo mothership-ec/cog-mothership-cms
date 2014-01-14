@@ -6,11 +6,12 @@ use Message\Mothership\CMS\Field\Field;
 
 use Message\Mothership\FileManager\File\Type as FileType;
 
+use Message\ImageResize\ResizableInterface;
+
 use Message\Cog\Form\Handler;
 use Message\Cog\Filesystem;
 use Message\Cog\Service\ContainerInterface;
 use Message\Cog\Service\ContainerAwareInterface;
-use Message\Cog\ImageResize\ResizableInterface;
 
 /**
  * A field for a file in the file manager database.
@@ -99,8 +100,12 @@ class File extends Field implements ContainerAwareInterface, ResizableInterface
 
 	protected function _getChoices()
 	{
-		$files   = (array) $this->_services['file_manager.file.loader']->getAll();
+		$files   = $this->_services['file_manager.file.loader']->getAll();
 		$choices = array();
+
+		if (!$files) {
+			return array();
+		}
 
 		foreach ($files as $file) {
 			if ($this->_allowedTypes) {
