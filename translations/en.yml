@@ -46,7 +46,7 @@ ms.cms:
       disabled: This page can't be deleted
     button:
       title: Update title
-      delete: Delete page
+      delete: Delete
       view: View page
   create:
     page-title: Add a new page
