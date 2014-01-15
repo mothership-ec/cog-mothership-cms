@@ -35,7 +35,7 @@ class Menu extends Controller
 	public function sectionMenu($page = null)
 	{
 		$loader  = $this->get('cms.page.loader')->includeDeleted(false);
-		$current = isset($this->_services['cms.page.current']) ? ('cms.page.current') : null;
+		$current = isset($this->_services['cms.page.current']) ? $this->_services['cms.page.current'] : null;
 
 		if (!is_null($page)) {
 			if (!($page instanceof Page)) {
