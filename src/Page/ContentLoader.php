@@ -83,6 +83,10 @@ class ContentLoader
 				if ($groupName) {
 					$group = $content->$groupName;
 
+					if (!$group) {
+						continue;
+					}
+
 					// Get the right group instance if it's a repeatable group
 					if ($group instanceof Field\RepeatableContainer) {
 						// Ensure the right number of groups are defined
