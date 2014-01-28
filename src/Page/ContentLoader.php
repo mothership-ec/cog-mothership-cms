@@ -114,7 +114,7 @@ class ContentLoader
 				if ($field instanceof Field\MultipleValueField) {
 					$field->setValue($row->data_name, $row->value);
 				}
-				else {
+				elseif ($field instanceof Field\BaseField) {
 					$field->setValue($row->value);
 				}
 			}

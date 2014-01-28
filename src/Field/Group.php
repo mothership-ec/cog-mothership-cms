@@ -50,7 +50,7 @@ class Group implements FieldInterface, FieldContentInterface
 			return $this->_fields[$name];
 		}
 
-		throw new \OutOfBoundsException(sprintf('Group field does not exist: `%s`', $name));
+		return false;
 	}
 
 	/**
