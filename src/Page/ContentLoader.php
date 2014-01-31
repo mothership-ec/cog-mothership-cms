@@ -98,7 +98,12 @@ class ContentLoader
 					}
 
 					// Set the field
-					$field = $group->{$row->field};
+					try {
+						$field = $group->{$row->field};
+					}
+					catch (\OutOfBoundsException $e) {
+						continue;
+					}
 				}
 				// If not, finding the field is easy
 				else {
