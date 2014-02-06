@@ -26,7 +26,7 @@
 			<div class="publish">
 				{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Publishing#renderForm', {pageID: page.id})) }}
 			</div>
-			<a href="{{ url('ms.cms.frontend', {slug:page.slug.getFull}) }}" class="button small preview">{{ 'ms.cms.edit.button.view'|trans }}</a>
+			<a href="{{ url('ms.cms.frontend', { slug: page.slug|trim('/') }) }}" class="button small preview">{{ 'ms.cms.edit.button.view'|trans }}</a>
 		</div>
 	</div>
 

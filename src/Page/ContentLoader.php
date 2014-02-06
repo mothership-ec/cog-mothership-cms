@@ -83,6 +83,10 @@ class ContentLoader
 				if ($groupName) {
 					$group = $content->$groupName;
 
+					if (!$group) {
+						continue;
+					}
+
 					// Get the right group instance if it's a repeatable group
 					if ($group instanceof Field\RepeatableContainer) {
 						// Ensure the right number of groups are defined
@@ -94,7 +98,12 @@ class ContentLoader
 					}
 
 					// Set the field
-					$field = $group->{$row->field};
+					try {
+						$field = $group->{$row->field};
+					}
+					catch (\OutOfBoundsException $e) {
+						continue;
+					}
 				}
 				// If not, finding the field is easy
 				else {
@@ -110,7 +119,7 @@ class ContentLoader
 				if ($field instanceof Field\MultipleValueField) {
 					$field->setValue($row->data_name, $row->value);
 				}
-				else {
+				elseif ($field instanceof Field\BaseField) {
 					$field->setValue($row->value);
 				}
 			}
