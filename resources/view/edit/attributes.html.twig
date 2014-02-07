@@ -21,10 +21,10 @@
 	<div class="content">
 		<dl>
 			<dt>{{ 'Created by'|trans }}</dt>
-				<dd>{{ page.authorship.createdUser.name }} {{ 'at'|trans }} {{ page.authorship.createdAt|date('h:ia \\o\\n d/m/y') }}</dd>
+				<dd>{{ page.authorship.createdUser.name }} {{ 'at'|trans }} {{ page.authorship.createdAt|date }}</dd>
 			{% if page.authorship.updatedAt is not null %}
 			<dt>{{ 'Updated by'|trans }}</dt>
-				<dd>{{ page.authorship.updatedUser.name }} {{ 'at'|trans }} {{ page.authorship.updatedAt|date('h:ia \\o\\n d/m/y') }}</dd>
+				<dd>{{ page.authorship.updatedUser.name }} {{ 'at'|trans }} {{ page.authorship.updatedAt|date }}</dd>
 			{% endif %}
 		</dl>
 	</div>
