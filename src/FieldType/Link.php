@@ -1,8 +1,9 @@
 <?php
 
-namespace Message\Mothership\CMS\Field\Type;
+namespace Message\Mothership\CMS\FieldType;
 
-use Message\Mothership\CMS\Field;
+use Message\Cog\Field\MultipleValueField;
+use Message\Mothership\CMS\FormType;
 use Message\Mothership\CMS\Page\Page;
 
 use Message\Cog\Form\Handler;
@@ -14,7 +15,7 @@ use Message\Cog\Service\ContainerAwareInterface;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class Link extends Field\MultipleValueField implements ContainerAwareInterface
+class Link extends MultipleValueField implements ContainerAwareInterface
 {
 	protected $_services;
 
@@ -22,6 +23,11 @@ class Link extends Field\MultipleValueField implements ContainerAwareInterface
 	const SCOPE_EXTERNAL = 'external';
 //	const SCOPE_ROUTE    = 'route'; # for a future version?
 	const SCOPE_ANY      = 'any';
+
+	public function getFieldType()
+	{
+		return 'link';
+	}
 
 	/**
 	 * {@inheritdoc}

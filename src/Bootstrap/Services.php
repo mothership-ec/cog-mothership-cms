@@ -128,16 +128,6 @@ class Services implements ServicesInterface
 			);
 		};
 
-		$serviceContainer['cms.field.factory'] = function($c) {
-			$factory = new CMS\Field\Factory($c['validator'], $c);
-
-			return $factory;
-		};
-
-		$serviceContainer['cms.field.form'] = function($c) {
-			return new CMS\Field\Form($c);
-		};
-
 		$serviceContainer['form.factory'] = $serviceContainer->share(
 			$serviceContainer->extend('form.factory', function($factory, $c) {
 				$factory->addExtensions(array(
@@ -149,7 +139,7 @@ class Services implements ServicesInterface
 		);
 
 		$serviceContainer['form.cms_extension'] = function($c) {
-			$ext = new \Message\Mothership\CMS\Field\FormType\CmsExtension;
+			$ext = new \Message\Mothership\CMS\FormType\CmsExtension;
 			$ext->setContainer($c);
 
 			return $ext;

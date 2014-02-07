@@ -2,8 +2,8 @@
 
 namespace Message\Mothership\CMS\PageType;
 
-use Message\Mothership\CMS\Field\Factory;
-use Message\Mothership\CMS\Field\Group;
+use Message\Cog\Field\Factory;
+use Message\Cog\Field\Group;
 
 /**
  * Interface that must be used by all page type objects.

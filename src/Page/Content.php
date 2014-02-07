@@ -2,8 +2,8 @@
 
 namespace Message\Mothership\CMS\Page;
 
-use Message\Mothership\CMS\Field\FieldInterface;
-use Message\Mothership\CMS\Field\RepeatableContainer;
+use Message\Cog\Field\FieldInterface;
+use Message\Cog\Field\RepeatableContainer;
 
 use Message\Cog\Validation\Validator;
 
