@@ -2,7 +2,7 @@
 
 namespace Message\Mothership\CMS\Page;
 
-use Message\Mothership\CMS\Field;
+use Message\Cog\Field;
 
 use Message\User\UserInterface;
 
@@ -69,7 +69,7 @@ class ContentEdit
 
 				continue;
 			}
-			
+
 			$this->_transaction->add('
 				REPLACE INTO
 					page_content

@@ -2,14 +2,14 @@
 
 namespace Message\Mothership\CMS\Controller\ControlPanel;
 
-use Message\Mothership\CMS\Field;
+use Message\Cog\Field;
 
 use Message\Mothership\CMS\Page\Authorisation;
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Content;
-use Message\Mothership\CMS\Field\Form;
-use Message\Mothership\CMS\Field\Factory;
-use Message\Mothership\CMS\Field\RepeatableContainer;
+use Message\Cog\Field\Form;
+use Message\Cog\Field\Factory;
+use Message\Cog\Field\RepeatableContainer;
 
 use Message\Cog\ValueObject\Slug;
 

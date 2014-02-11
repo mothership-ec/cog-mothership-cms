@@ -2,7 +2,7 @@
 
 namespace Message\Mothership\CMS\Page;
 
-use Message\Mothership\CMS\Field;
+use Message\Cog\Field;
 
 use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\DB\Result as DBResult;
