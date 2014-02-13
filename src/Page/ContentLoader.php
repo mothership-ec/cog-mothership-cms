@@ -7,6 +7,7 @@ use Message\Cog\Field;
 use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\DB\Result as DBResult;
 use Message\Cog\Field\Factory;
+use Message\Cog\Field\Content;
 
 /**
  * Page content loader, responsible for loading content for pages and populating
