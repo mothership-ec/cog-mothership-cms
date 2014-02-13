@@ -4,14 +4,14 @@ namespace Message\Mothership\CMS\PageType;
 
 use Message\Cog\Field\Factory;
 use Message\Cog\Field\Group;
-use Message\Cog\Field\ContentInterface;
+use Message\Cog\Field\ContentTypeInterface;
 
 /**
  * Interface that must be used by all page type objects.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-interface PageTypeInterface extends ContentInterface
+interface PageTypeInterface extends ContentTypeInterface
 {
 	/**
 	 * Check if this page type allows children pages.
