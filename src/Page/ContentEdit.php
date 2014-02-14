@@ -14,7 +14,7 @@ use Message\Cog\Event\DispatcherInterface;
  */
 class ContentEdit
 {
-	protected $_query;
+	protected $_transaction;
 	protected $_dispatcher;
 	protected $_currentUser;
 

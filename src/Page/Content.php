@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Cog\Validation\Validator;
+use Message\Cog\Field;
 
 /**
  * Container for page content.
@@ -24,11 +25,11 @@ class Content implements \IteratorAggregate, \Countable
 	 */
 	public function __set($var, $value)
 	{
-		if (!($value instanceof FieldInterface || $value instanceof RepeatableContainer)) {
-			throw new \InvalidArgumentException(
+		if (!($value instanceof Field\FieldInterface || $value instanceof Field\RepeatableContainer)) {
+			throw new \InvalidArgumentException(sprintf(
 				'Page content must be a `FieldInterface` or a `RepeatableContainer`, `%s` given',
 				get_class($value)
-			);
+			));
 		}
 
 		$this->_fields[$var] = $value;
