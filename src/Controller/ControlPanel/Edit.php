@@ -297,7 +297,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				'pageID' => $page->id,
 			)));
 
-		return $this->get('cms.field.form')->generate($form, $content);
+		return $this->get('field.form')->generate($form, $content);
 	}
 
 	protected function _renderContentForm(Page $page, Content $content, $form)
