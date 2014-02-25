@@ -18,7 +18,7 @@
 
 {% block form %}
 	{% if content.count == 0 %}
-		<p>{{ 'ms.cms.content.type.no-content-areas'|trans({'%pageType': page.type.displayName}) }}
+		<p>{{ 'ms.cms.content.type.no-content-areas'|trans({'%pageType': page.type.displayName}) }}</p>
 	{% else %}
 
 		{% if page.isHomepage %}
@@ -76,7 +76,7 @@
 
 										<div class="content">
 											{% for field in repeatables[name] %}
-												{#{{ form_row(form[name][field][i]) }}#}
+												{{ form_row(form[name][field][i]) }}
 											{% endfor %}
 											<a href="#" data-group-remove
 											   class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
