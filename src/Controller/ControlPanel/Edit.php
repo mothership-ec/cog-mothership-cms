@@ -499,68 +499,67 @@ class Edit extends \Message\Cog\Controller\Controller
 		// Flag as to whether to update the slug
 		$update = true;
 
-		$slugSegments = $page->slug->getSegments();
-		$last  = array_pop($slugSegments);
-		$slugSegments[] = $newSlug;
-		$slug = '/'.implode('/',$slugSegments);
-		$checkSlug = $this->get('cms.page.loader')->getBySlug($slug, false);
-
-		// If not slug has been found, we need to check the history too
-		if (!$checkSlug) {
-			// Check for the slug historicaly and show deleted ones too
-			$historicalSlug = $this->get('cms.page.loader')
-				->includeDeleted(true)
-				->getBySlug($slug, true);
-
-			// If there is a page returned and it's not this page then offer
-			// a link to remove the slug from history and use it anyway
-			if ($historicalSlug && $historicalSlug->id != $page->id) {
-				// If it's been deleted then offer a differnt message that a non deleted one
-				if (!is_null($historicalSlug->authorship->deletedAt())) {
-					$this->addFlash(
-						'error',
-						$this->trans(
-							'ms.cms.feedback.force-slug.failure.deleted',
-							array(
-								'%slug%' => $slug,
-								'%forceUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug))
-							)
+		try {
+			$this->get('cms.page.slug_validator')->validate($slug);
+		}
+		catch (Exception\SlugExistsException $e) {
+			$exists = $$e->getPage();
+			if ($exists->id != $page->id) {
+				$this->addFlash(
+					'error',
+					$this->trans(
+						'ms.cms.feedback.force-slug.failure.already-used',
+						array(
+							'%slugUrl%' => $exists->slug->getFull(),
+							'%usingUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $exists->id)),
+							'%usingTitle%' => $exists->title,
 						)
-					);
-				} else {
-					$this->addFlash(
-						'error',
-						$this->trans(
-							'ms.cms.feedback.force-slug.failure.redirected',
-							array(
-								'%slug%' => $slug,
-								'%redirectedUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $historicalSlug->id)),
-								'%redirectedTitle%' => $historicalSlug->title,
-								'%forceUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)),
-							)
-						)
-					);
-				}
+					)
+				);
 
 				// We shouldn't update the slug as we need action
 				$update = false;
 			}
 		}
+		catch (Exception\DeletedSlugExistsException $e) {
+			$deleted = $e->getPage();
 
-		if ($checkSlug && $checkSlug->id != $page->id) {
-			$this->addFlash(
-				'error',
-				$this->trans(
-					'ms.cms.feedback.force-slug.failure.already-used',
-					array(
-						'%slugUrl%' => $checkSlug->slug->getFull(),
-						'%usingUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $checkSlug->id)),
-						'%usingTitle%' => $checkSlug->title,
+			if ($deleted->id != $page->id) {
+				$this->addFlash(
+					'error',
+					$this->trans(
+						'ms.cms.feedback.force-slug.failure.deleted',
+						array(
+							'%slug%' => $slug,
+							'%forceUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug))
+						)
 					)
-				)
-			);
-			// We shouldn't update the slug as we need action
-			$update = false;
+				);
+
+				// We shouldn't update the slug as we need action
+				$update = false;
+			}
+		}
+		catch (Exception\HistoricalSlugExistsException $e) {
+			$historical = $e->getPage();
+
+			if ($historical->id != $page->id) {
+				$this->addFlash(
+					'error',
+					$this->trans(
+						'ms.cms.feedback.force-slug.failure.redirected',
+						array(
+							'%slug%' => $slug,
+							'%redirectedUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $historical->id)),
+							'%redirectedTitle%' => $historical->title,
+							'%forceUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)),
+						)
+					)
+				);
+
+				// We shouldn't update the slug as we need action
+				$update = false;
+			}
 		}
 
 		// If the slug has changed then update the slug

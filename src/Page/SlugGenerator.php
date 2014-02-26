@@ -81,6 +81,10 @@ class SlugGenerator
 			$existsPage = $e->getPage();
 		}
 		catch (Exception\DeletedSlugExistsException $e) {
+			// Re-throw the exception if this is the original generation
+			// request
+			if (1 === $attempt) throw $e;
+
 			$existsPage = $e->getPage();
 		}
 		catch (Exception\HistoricalSlugExistsException $e) {
