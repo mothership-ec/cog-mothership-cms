@@ -27,10 +27,11 @@ class SlugGenerator
 	 * @param array|null $substitutions Array of string substitutions to use
 	 *                                  when sanitizing slugs
 	 */
-	public function __construct(Loader $loader, array $substitutions = null)
+	public function __construct(Loader $loader, array $substitutions = null, SlugValidator $validator)
 	{
 		$this->_loader        = $loader;
 		$this->_substitutions = $substitutions;
+		$this->_validator     = $validator;
 	}
 
 	/**
@@ -71,21 +72,29 @@ class SlugGenerator
 			$slug->sanitize();
 		}
 
-		// Check to see if this slug exists in the history
-		$redirectPage = $this->_loader->checkSlugHistory($slug->getFull());
+		// Validate the slug
+		$existsPage = false;
+		try {
+			$this->_validator->validate($slug);
+		}
+		catch (Exception\SlugExistsException $e) {
+			$existsPage = $e->getPage();
+		}
+		catch (Exception\DeletedSlugExistsException $e) {
+			$existsPage = $e->getPage();
+		}
+		catch (Exception\HistoricalSlugExistsException $e) {
+			// Re-throw the exception if this is the original generation
+			// request
+			if (1 === $attempt) throw $e;
 
-		// If this slug exists in the history and this is the original
-		// generation request, throw special exception
-		if ($redirectPage && 1 === $attempt) {
-			throw new Exception\HistoricalSlugExistsException(sprintf(
-				'Slug `%s` exists historically',
-				$slug->getFull()
-			), $slug, $redirectPage);
+			// Otherwise capture the page
+			$existsPage = $e->getPage();
 		}
 
 		// If the generated slug exists either historically or on a live page,
 		// try again with a flag for uniqueness
-		if ($redirectPage || $this->_loader->getBySlug($slug->getFull(), false)) {
+		if ($existsPage) {
 			$newTitle  = $attempt > 1 ? substr($title, 0, strrpos($title, '-')) : $title;
 			$newTitle .= '-' . $attempt;
 
