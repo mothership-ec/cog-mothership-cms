@@ -2,7 +2,7 @@
 
 namespace Message\Mothership\CMS\Page;
 
-use Message\Mothership\CMS\Exception\SlugExistsException;
+use Message\Mothership\CMS\Exception;
 use Message\Cog\ValueObject\Slug;
 
 class SlugValidator
@@ -18,13 +18,19 @@ class SlugValidator
 	{
 		// Check if the slug is currently in use
 		if ($exists = $this->_loader->getBySlug($slug, false)) {
-			throw new SlugExistsException(sprintf(
+			throw new Exception\SlugExistsException(sprintf(
 				'Slug `%s` exists',
 				$slug->getFull()
 			), $slug, $exists);
 		}
 
 		// Check if the slug has been used historically
+		if ($historical = $this->_loader->checkSlugHistory($slug->getFull())) {
+			throw new Exception\HistoricalSlugExistsException(sprintf(
+				'Slug `%s` exists historically',
+				$slug->getFull()
+			), $slug, $historical);
+		}
 
 		// Check if the slug has been used by a deleted page
 	}
