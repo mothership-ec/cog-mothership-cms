@@ -3,7 +3,7 @@
 namespace Message\Mothership\CMS\Controller\ControlPanel;
 
 use Message\Mothership\CMS\Field;
-
+use Message\Mothership\CMS\Exception;
 use Message\Mothership\CMS\Page\Authorisation;
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Content;
@@ -162,6 +162,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		$this->get('cms.page.edit')->removeHistoricalSlug($fullSlug);
 		$page = $this->_updateSlug($page, new Slug($slug));
+
 		$this->addFlash('success', $this->trans('ms.cms.feedback.force-slug.success'));
 
 		return $this->redirectToReferer();
