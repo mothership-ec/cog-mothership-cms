@@ -22,6 +22,10 @@ class Services implements ServicesInterface
 			return new CMS\Page\SlugGenerator($c['cms.page.loader'], (array) $c['cfg']->cms->slug->substitutions);
 		};
 
+		$serviceContainer['cms.page.slug_validator'] = function($c) {
+			return new CMS\Page\SlugValidator($c['cms.page.loader']);
+		};
+
 		$serviceContainer['cms.page.nested_set_helper'] = function($c) {
 			$helper = $c['db.nested_set_helper'];
 
