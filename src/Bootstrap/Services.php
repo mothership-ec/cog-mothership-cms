@@ -19,7 +19,15 @@ class Services implements ServicesInterface
 		});
 
 		$serviceContainer['cms.page.slug_generator'] = function($c) {
-			return new CMS\Page\SlugGenerator($c['cms.page.loader'], (array) $c['cfg']->cms->slug->substitutions);
+			return new CMS\Page\SlugGenerator(
+				$c['cms.page.loader'],
+				(array) $c['cfg']->cms->slug->substitutions,
+				$c['cms.page.slug_validator']
+			);
+		};
+
+		$serviceContainer['cms.page.slug_validator'] = function($c) {
+			return new CMS\Page\SlugValidator($c['cms.page.loader']);
 		};
 
 		$serviceContainer['cms.page.nested_set_helper'] = function($c) {
