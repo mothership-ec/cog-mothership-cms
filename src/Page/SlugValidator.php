@@ -33,5 +33,15 @@ class SlugValidator
 		}
 
 		// Check if the slug has been used by a deleted page
+		$this->_loader->includeDeleted(true);
+		if ($deleted = $this->_loader->getBySlug($slug, false)) {
+			throw new Exception\DeletedSlugExistsException(sprintf(
+				'Slug `%s` exists on a deleted page',
+				$slug->getFull()
+			), $slug, $deleted);
+		}
+		$this->_loader->includeDeleted(false);
+
+		return $slug;
 	}
 }

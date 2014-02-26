@@ -31,6 +31,7 @@ class SlugValidatorTest extends \PHPUnit_Framework_TestCase
 	{
 		$slug = new Slug('an-existing-slug');
 
+		// Expect the check for an existing slug
 		$this->loader->expects($this->once())
 		             ->method('getBySlug')
 		             ->with($slug)
@@ -46,25 +47,42 @@ class SlugValidatorTest extends \PHPUnit_Framework_TestCase
 	{
 		$slug = new Slug('an-historical-slug');
 
-		// Ignore the getBySlug method
+		// Ignore the check for existing slugs
 		$this->loader->expects($this->once())
 		             ->method('getBySlug')
-		             ->with($slug)
 		             ->will($this->returnValue(false));
 
+		// Expect the check for a historical slug
 		$this->loader->expects($this->once())
 		             ->method('checkSlugHistory')
-		             ->with($slug)
 		             ->will($this->returnValue(new Page));
 
 		$this->validator->validate($slug);
 	}
 
 	/**
-	 * @expectedException Exception\DeletedSlugExistsException
+	 * @expectedException Message\Mothership\CMS\Exception\DeletedSlugExistsException
 	 */
 	public function testSlugExistsOnDeletedPage()
 	{
+		$slug = new Slug('a-deleted-slug');
 
+		// Ignore the check for existing slugs
+		$this->loader->expects($this->at(0))
+		             ->method('getBySlug')
+		             ->will($this->returnValue(false));
+
+		// Ignore the check for historical slugs
+		$this->loader->expects($this->once())
+		             ->method('checkSlugHistory')
+		             ->will($this->returnValue(false));
+
+		// Expect the check for a slug on a deleted page as the 4th function
+		// call (3rd index)
+		$this->loader->expects($this->at(3))
+		             ->method('getBySlug')
+		             ->will($this->returnValue(new Page));
+
+		$this->validator->validate($slug);
 	}
 }
