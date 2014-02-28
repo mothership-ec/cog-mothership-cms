@@ -32,7 +32,7 @@ ms.cms:
       success: The Url was successfully updated
   repeatable_group:
     add: "{0} Add a %name%|[1,Inf] Add another %name%"
-    remove: Remove this group
+    remove: Remove this %name%
   dashboard:
     page-title: Dashboard
   edit:
