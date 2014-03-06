@@ -138,7 +138,7 @@ class Services implements ServicesInterface
 			return new CMS\Field\Form($c);
 		});
 
-		$services['form.factory'] = $services->extend('form.factory', function($factory, $c) {
+		$services->extend('form.factory', function($factory, $c) {
 			$factory->addExtensions(array(
 				$c['form.cms_extension']
 			));
@@ -153,19 +153,19 @@ class Services implements ServicesInterface
 			return $ext;
 		});
 
-		$services['form.templates.twig'] = $services->extend('form.templates.twig', function($templates, $c) {
+		$services->extend('form.templates.twig', function($templates, $c) {
 			$templates[] = 'Message:Mothership:CMS::form:twig:form_div_layout';
 
 			return $templates;
 		});
 
-		$services['form.templates.php'] = $services->extend('form.templates.php', function($templates, $c) {
+		$services->extend('form.templates.php', function($templates, $c) {
 			$templates[] = 'Message:Mothership:CMS::form:php';
 
 			return $templates;
 		});
 
-		$services['user.groups'] = $services->extend('user.groups', function($groups) {
+		$services->extend('user.groups', function($groups) {
 			$groups->add(new CMS\UserGroup\ContentManager);
 
 			return $groups;
