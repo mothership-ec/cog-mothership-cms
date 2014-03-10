@@ -12,13 +12,15 @@
 			<p>
 				/{% for segment in value %}{% if not loop.last %}{{ segment }}/{% endif %}{% endfor %}
 			</p>
-			{%  for i, segment in value %}
-				{%  if loop.last %}
-					<input name="{{ full_name }}[{{ i }}]" type="text" {{ block('widget_attributes') }} value="{{ segment }}"/>
-				{%  else %}
-					<input name="{{ full_name }}[{{ i }}]" type="hidden" value="{{ segment }}" />
-				{% endif %}
-			{%  endfor %}
+			<div>
+				{%  for i, segment in value %}
+					{%  if loop.last %}
+						<input name="{{ full_name }}[{{ i }}]" type="text" {{ block('widget_attributes') }} value="{{ segment }}"/>
+					{%  else %}
+						<input name="{{ full_name }}[{{ i }}]" type="hidden" value="{{ segment }}" />
+					{% endif %}
+				{%  endfor %}
+			</div>
 		</div>
 	{% endspaceless %}
 {% endblock ms_slug_widget %}
