@@ -138,10 +138,8 @@ class Services implements ServicesInterface
 			return new CMS\Field\Form($c);
 		});
 
-		$services->extend('form.factory', function($factory, $c) {
-			$factory->addExtensions(array(
-				$c['form.cms_extension']
-			));
+		$services->extend('form.factory.builder', function($factory, $c) {
+			$factory->addExtension($c['form.cms_extension']);
 
 			return $factory;
 		});
