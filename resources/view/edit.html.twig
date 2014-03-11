@@ -6,10 +6,8 @@
 
 {% block main %}
 	<hgroup class="title">
-		<h1 data-title>{{ page.title }}</h1>
-		<h2>{{ page.type.getDisplayName() }}</h2>
+		<h1 data-title>{{ page.title }}<span>{{ page.type.getDisplayName() }}</span></h1>
 	</hgroup>
-
 	<form class="edit-title" data-title-edit action="{{ url('ms.cp.cms.edit.action',{pageID: page.id}) }}" method="post" {% if page.isHomepage %}data-confirm="{{ 'ms.cms.content.home.confirm'|trans }}"{% endif %}>
 
 		<label for="edit-title">{{ 'ms.cms.edit.title.label'|trans }}</label>
@@ -17,10 +15,8 @@
 
 		<button type="submit" id="edit-submit" value="{{ 'ms.cms.edit.button.title'|trans }}" class="button update small">{{ 'ms.cms.edit.button.title'|trans }}</button>
 	</form>
-
 	<div class="topbar">
 		{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Edit#tabs'))}}
-
 		<div class="controls">
 			{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Delete#renderForm', {pageID: page.id})) }}
 			<div class="publish">
@@ -29,11 +25,7 @@
 			<a href="{{ url('ms.cms.frontend', { slug: page.slug|trim('/') ?: '/' }) }}" class="button small preview">{{ 'ms.cms.edit.button.view'|trans }}</a>
 		</div>
 	</div>
-
-	<section class="container-content">
+	<section class="container-content short">
 		{% block form %}{% endblock %}
-		<secton class="widget-sidebar">
-			{% block widgets %}{% endblock %}
-		</secton>
 	</section>
 {% endblock %}
