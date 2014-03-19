@@ -134,18 +134,10 @@ class Services implements ServicesInterface
 			return $fields;
 		});
 
-		$services->extend('form.factory', function($factory, $c) {
-			$factory->addExtensions([
-				$c['form.cms_extension'],
-			]);
+		$services->extend('form.extensions', function($extensions, $c) {
+			$extensions[] = $c['form.cms_extension'];
 
-			return $factory;
-		});
-
-		$services->extend('form.factory.builder', function($factory, $c) {
-			$factory->addExtension($c['form.cms_extension']);
-
-			return $factory;
+			return $extensions;
 		});
 
 		$services['form.cms_extension'] = $services->factory(function($c) {
