@@ -3,9 +3,7 @@
 		<section class="group" data-collapse data-identifier-field="{{ identifierField }}">
 			<h1 class="title" data-group-label></h1>
 			<div class="content">
-				{% for field in fields %}
-				{{ form_row(form[groupName][field].vars.prototype) }}
-				{% endfor %}
+				{{ form_row(form[groupName].vars.prototype) }}
 				<a href="#" data-group-remove class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
 			</div>
 		</section>
@@ -71,9 +69,14 @@
 										{% endif %}
 									</h1>
 									<div class="content">
-										{% for field in repeatables[name] %}
-											{{ form_row(form[name][field][i]) }}
-										{% endfor %}
+										{#{{ form_row[name] }}#}
+										{{ dump(repeatables[name]) }}
+										{#{{ form_row(repeatables[name]) }}#}
+										{#{% for field in repeatables[name] %}#}
+											{#&#123;&#35;{{ dump(name, field, i) }}&#35;&#125;#}
+											{#&#123;&#35;{{ form_row(form[name][field][i]) }}&#35;&#125;#}
+											{#{{ form_row(form.name) }}#}
+										{#{% endfor %}#}
 										<a href="#" data-group-remove class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
 									</div>
 								</section>

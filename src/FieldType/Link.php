@@ -6,9 +6,9 @@ use Message\Cog\Field\MultipleValueField;
 use Message\Mothership\CMS\FormType;
 use Message\Mothership\CMS\Page\Page;
 
-use Message\Cog\Form\Handler;
 use Message\Cog\Service\ContainerInterface;
 use Message\Cog\Service\ContainerAwareInterface;
+use Symfony\Component\Form\FormBuilder;
 
 /**
  * A field for a link to an internal or external page.
@@ -37,9 +37,9 @@ class Link extends MultipleValueField implements ContainerAwareInterface
 		$this->_services = $container;
 	}
 
-	public function getFormField(Handler $form)
+	public function getFormField(FormBuilder $form)
 	{
-		$form->add($this->getName(), new Field\FormType\Link, $this->getLabel(), $this->getFieldOptions());
+		$form->add($this->getName(), new FormType\Link, $this->getFieldOptions());
 	}
 
 	public function setScope($scope)

@@ -136,7 +136,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			);
 		}
 
-		$form = $this->_getAttibuteForm($page);
+		$form = $this->_getAttributeForm($page);
 
 		return $this->render('::edit/attributes', array(
 			'page' => $page,
@@ -179,7 +179,7 @@ class Edit extends \Message\Cog\Controller\Controller
 	public function attributesAction($pageID)
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
-		$form = $this->_getAttibuteForm($page);
+		$form = $this->_getAttributeForm($page);
 
 		if ($form->isValid() && $data = $form->getFilteredData()) {
 			$parent = $this->get('cms.page.loader')->getParent($page);
@@ -290,14 +290,14 @@ class Edit extends \Message\Cog\Controller\Controller
 			$content = $this->get('cms.page.content_loader')->load($page);
 		}
 
-		$form = $this->get('form')
-			->setName('content-edit-content')
-			->setMethod('POST')
-			->setAction($this->generateUrl('ms.cp.cms.edit.content.action', array(
-				'pageID' => $page->id,
-			)));
+//		$form = $this->get('form')
+//			->setName('content-edit-content')
+//			->setMethod('POST')
+//			->setAction($this->generateUrl('ms.cp.cms.edit.content.action', array(
+//				'pageID' => $page->id,
+//			)));
 
-		return $this->get('field.form')->generate($form, $content);
+		return $this->get('field.form')->generate($content);
 	}
 
 	protected function _renderContentForm(Page $page, Content $content, $form)
@@ -312,7 +312,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				}
 			}
 		}
-
+//de($repeatables);
 		return $this->render('::edit/content', array(
 			'page'        => $page,
 			'content'     => $content,
@@ -321,7 +321,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		));
 	}
 
-	protected function _getAttibuteForm(Page $page)
+	protected function _getAttributeForm(Page $page)
 	{
 		$accessGroups = array();
 
