@@ -101,9 +101,11 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		$this->_page = $page;
 
+		$form->handleRequest();
+
 		// Redirect user back to the form if there are any errors
 		if ($form->isValid()) {
-			$content = $this->get('cms.page.content_edit')->updateContent($form->getFilteredData(), $content);
+			$content = $this->get('cms.page.content_edit')->updateContent($form->getData(), $content);
 
 			if ($this->get('cms.page.content_edit')->save($page, $content)) {
 				$this->addFlash('success', $this->trans('ms.cms.feedback.edit.content.success'));
@@ -290,13 +292,6 @@ class Edit extends \Message\Cog\Controller\Controller
 			$content = $this->get('cms.page.content_loader')->load($page);
 		}
 
-//		$form = $this->get('form')
-//			->setName('content-edit-content')
-//			->setMethod('POST')
-//			->setAction($this->generateUrl('ms.cp.cms.edit.content.action', array(
-//				'pageID' => $page->id,
-//			)));
-
 		return $this->get('field.form')->generate($content);
 	}
 
@@ -312,7 +307,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				}
 			}
 		}
-//de($repeatables);
+
 		return $this->render('::edit/content', array(
 			'page'        => $page,
 			'content'     => $content,

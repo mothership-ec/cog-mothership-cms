@@ -69,14 +69,9 @@
 										{% endif %}
 									</h1>
 									<div class="content">
-										{#{{ form_row[name] }}#}
-										{{ dump(repeatables[name]) }}
-										{#{{ form_row(repeatables[name]) }}#}
-										{#{% for field in repeatables[name] %}#}
-											{#&#123;&#35;{{ dump(name, field, i) }}&#35;&#125;#}
-											{#&#123;&#35;{{ form_row(form[name][field][i]) }}&#35;&#125;#}
-											{#{{ form_row(form.name) }}#}
-										{#{% endfor %}#}
+										{% for field in repeatables[name] %}
+											{{ form_widget(form[name][i]) }}
+										{% endfor %}
 										<a href="#" data-group-remove class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
 									</div>
 								</section>
