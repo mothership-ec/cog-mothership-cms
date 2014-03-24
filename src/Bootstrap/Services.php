@@ -10,10 +10,6 @@ class Services implements ServicesInterface
 {
 	public function registerServices($services)
 	{
-		$services['markdown.parser'] = $services->factory(function() {
-			return new \dflydev\markdown\MarkdownParser;
-		});
-
 		$services['cms.page.types'] = function($c) {
 			return new CMS\PageType\Collection;
 		};

@@ -126,8 +126,6 @@ class ContentLoader
 			}
 		}
 
-		$content->setValidator($this->_fieldFactory->getValidator());
-
 		return $content;
 	}
 }
