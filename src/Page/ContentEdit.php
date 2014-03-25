@@ -90,8 +90,6 @@ class ContentEdit
 
 	public function updateContent(array $data, Content $content)
 	{
-		$data = $this->_restructureData($data, $content);
-
 		foreach ($data as $name => $val) {
 			$part = $content->$name;
 
@@ -107,10 +105,15 @@ class ContentEdit
 				}
 
 				// Set the values
-				$val = array_values($val);
+//				$val = array_values($val);
 				foreach ($val as $i => $instance) {
 					foreach ($instance as $fieldName => $value) {
-						$part->get($i)->$fieldName->setValue($value);
+						try {
+							$part->get($i)->$fieldName->setValue($value);
+						}
+						catch (\Exception $e) {
+							de($e->getMessage(), $part->count(), $i, $fieldName, $data);
+						}
 					}
 				}
 			}
@@ -150,25 +153,6 @@ class ContentEdit
 		$this->_updates = array();
 
 		return $tmp;
-	}
-
-	protected function _restructureData(array $data, Content $content)
-	{
-		foreach ($data as $name => $val) {
-			if ($content->{$name} instanceof Field\RepeatableContainer) {
-				$groupInstances = array();
-
-				foreach ($val as $fieldName => $values) {
-					foreach ($values as $i => $value) {
-						$groupInstances[$i][$fieldName] = $value;
-					}
-				}
-
-				$data[$name] = $groupInstances;
-			}
-		}
-
-		return $data;
 	}
 
 	protected function _appendGroup(Field\Group $group, $sequence = null)
