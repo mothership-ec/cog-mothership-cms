@@ -577,6 +577,9 @@ class Edit extends \Message\Cog\Controller\Controller
 
 	protected function _parseTags($tags)
 	{
+		if (!$tags) {
+			return [];
+		}
 		if (!is_string($tags) && !is_array($tags)) {
 			throw new \InvalidArgumentException('$tags must be a string or an array, ' . gettype($tags) . ' given');
 		}

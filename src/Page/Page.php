@@ -98,4 +98,15 @@ class Page
 	{
 		return ($this->right - $this->left) > 1;
 	}
+
+	/**
+	 * Method to check if a page has a certain tag
+	 *
+	 * @param string $tag     The tag you want to check for
+	 * @return bool
+	 */
+	public function hasTag($tag)
+	{
+		return in_array($tag, $this->tags);
+	}
 }

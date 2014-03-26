@@ -615,6 +615,7 @@ class Loader
 	protected function _loadPage(Result $results)
 	{
 		$pages = $results->bindTo('Message\\Mothership\\CMS\\Page\\Page');
+
 		foreach ($results as $key => $data) {
 			// Skip deleted pages
 			if ($data->deletedAt && !$this->_loadDeleted) {
@@ -672,6 +673,7 @@ class Loader
 			// parent to find the inherited access level.
 			$pages[$key]->accessInherited = false;
 			$check = $pages[$key];
+
 			while ($pages[$key]->access < 0) {
 				$check = $this->_query->run('
 					SELECT
@@ -691,6 +693,7 @@ class Loader
 					$check->depth,
 				));
 
+				$check = $check->bindTo('Message\\Mothership\\CMS\\Page\\Page');
 				$check = $check[0];
 
 				$pages[$key]->access = $check->access;
@@ -732,9 +735,7 @@ class Loader
 				page_id = ?i
 		', $page->id);
 
-		foreach ($tags->flatten() as $tag) {
-			$page->tags[] = $tag;
-		}
+		$page->tags = $tags->flatten();
 
 		return $page;
 	}
