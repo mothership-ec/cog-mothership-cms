@@ -21,7 +21,7 @@ class Page
 	public $type;
 	public $publishDateRange;
 	public $slug;
-	public $tags = array();
+	public $tags = [];
 
 	public $left;
 	public $right;

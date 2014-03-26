@@ -102,6 +102,7 @@ class Edit {
 
 		// Update the user groups for this page in the DB
 		$this->_updateAccessGroups($page);
+		$this->_updateTags($page);
 
 		$event = new Event\Event($page);
 		// Dispatch the edit event
@@ -361,5 +362,48 @@ class Edit {
 			);
 		}
 
+	}
+
+	protected function _updateTags(Page $page)
+	{
+		$this->_query->run("
+				DELETE FROM
+					page_tag
+				WHERE
+					page_id = :pageId?i
+			", [
+			'pageId' => $page->id
+		]);
+
+		if (!empty($page->tags)) {
+			$sqlValues = [];
+			$tagQuery = [];
+
+			foreach ($page->tags as $key => $tag) {
+				$name = 'tag' . $key;
+				$sqlValues[$name] = $tag;
+				$tagQuery[] .= "\n(\n
+					:pageId?i,\n
+					:" . $name . "?s\n
+				)";
+			}
+
+			$sqlValues['pageId'] = $page->id;
+
+			$tagQuery = implode(',', $tagQuery);
+			$tagQuery = rtrim($tagQuery, ',');
+
+			$this->_query->run("
+				INSERT INTO
+					page_tag
+					(
+						page_id,
+						tag_name
+					)
+				VALUES
+					" . $tagQuery ."
+			", $sqlValues
+			);
+		}
 	}
 }

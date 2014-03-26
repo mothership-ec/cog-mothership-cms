@@ -210,6 +210,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			$page->visibilityAggregator = $data['visibility_aggregator'];
 			$page->access               = $data['access'] ?: 0;
 			$page->accessGroups         = $data['access_groups'];
+			$page->tags                 = $this->_parseTags($data['tags']);
 
 			$page = $this->get('cms.page.edit')->save($page);
 			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
@@ -427,6 +428,12 @@ class Edit extends \Message\Cog\Controller\Controller
 			'empty_value' => 'Top level',
 		))->val()->optional();
 
+		$form->add('tags', 'textarea', $this->trans('ms.cms.attributes.tags.label'), [
+			'attr' => [
+				'data-help-key' => 'ms.cms.attributes.tags.help'
+			],
+		])->val()->optional();
+
 		return $form;
 	}
 
@@ -566,5 +573,21 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		// return the updated or unchanged page
 		return $page;
+	}
+
+	protected function _parseTags($tags)
+	{
+		if (!is_string($tags) && !is_array($tags)) {
+			throw new \InvalidArgumentException('$tags must be a string or an array, ' . gettype($tags) . ' given');
+		}
+		elseif (is_string($tags)) {
+			$tags = explode(',', $tags);
+		}
+
+		foreach ($tags as $key => $tag) {
+			$tags[$key] = trim($tag);
+		}
+
+		return $tags;
 	}
 }
