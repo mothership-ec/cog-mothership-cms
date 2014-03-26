@@ -88,4 +88,14 @@ class Page
 	{
 		return '/' === (string) $this->slug;
 	}
+
+	/**
+	 * Check to see if the page has any child pages
+	 *
+	 * @return boolean
+	 */
+	public function hasChildren()
+	{
+		return ($this->right - $this->left) > 1;
+	}
 }
