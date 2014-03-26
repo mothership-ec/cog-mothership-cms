@@ -665,6 +665,9 @@ class Loader
 				$pages[$key]->authorship->delete(new DateTimeImmutable(date('c',$data->deletedAt)), $data->deletedBy);
 			}
 
+			// Load tags
+			$this->_loadTags($pages[$key]);
+
 			// If the page is set to inherit it's access then loop through each
 			// parent to find the inherited access level.
 			$pages[$key]->accessInherited = false;
@@ -716,6 +719,24 @@ class Loader
 		}
 
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
+	}
+
+	protected function _loadTags(Page $page)
+	{
+		$tags = $this->_query->run('
+			SELECT
+				tag_name
+			FROM
+				page_tag
+			WHERE
+				page_id = ?i
+		', $page->id);
+
+		foreach ($tags->flatten() as $tag) {
+			$page->tags[] = $tag;
+		}
+
+		return $page;
 	}
 
 	protected function _sortPages(Page $a, Page $b)
