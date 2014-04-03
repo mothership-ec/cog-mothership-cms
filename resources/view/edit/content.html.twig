@@ -3,7 +3,7 @@
 		<section class="group" data-collapse data-identifier-field="{{ identifierField }}">
 			<h1 class="title" data-group-label></h1>
 			<div class="content">
-				{{ form_row(form[groupName].vars.prototype) }}
+				{{ form_widget(form[groupName].vars.prototype) }}
 				<a href="#" data-group-remove class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
 			</div>
 		</section>

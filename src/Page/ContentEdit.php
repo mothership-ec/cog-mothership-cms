@@ -108,12 +108,9 @@ class ContentEdit
 //				$val = array_values($val);
 				foreach ($val as $i => $instance) {
 					foreach ($instance as $fieldName => $value) {
-						try {
-							$part->get($i)->$fieldName->setValue($value);
-						}
-						catch (\Exception $e) {
-							de($e->getMessage(), $part->count(), $i, $fieldName, $data);
-						}
+						$part->get($i)
+							->$fieldName
+							->setValue($value);
 					}
 				}
 			}
