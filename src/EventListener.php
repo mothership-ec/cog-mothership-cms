@@ -5,6 +5,7 @@ namespace Message\Mothership\CMS;
 use Message\Mothership\CMS\Event\Frontend\BuildPageMenuEvent as FrontendBuildMenuEvent;
 
 use Message\Mothership\ControlPanel\Event\BuildMenuEvent as ControlPanelBuildMenuEvent;
+use Message\Mothership\ControlPanel\Event\Dashboard\DashboardIndexEvent;
 
 use Message\Cog\Event\EventListener as BaseListener;
 use Message\Cog\Event\SubscriberInterface;
@@ -35,7 +36,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 			KernelEvents::EXCEPTION => array(
 				array('pageNotFound'),
 			),
-
+			DashboardIndexEvent::DASHBOARD_INDEX => array(
+				'buildDashboardIndex',
+			),
 		);
 	}
 
@@ -83,5 +86,15 @@ class EventListener extends BaseListener implements SubscriberInterface
 		// 		$this->_services['routing.generator']->generate('ms.cp.cms.dashboard')
 		// 	));
 		// };
+	}
+
+	/**
+	 * Add controller references to the dashboard index.
+	 *
+	 * @param  DashboardIndexEvent $event
+	 */
+	public function buildDashboardIndex(DashboardIndexEvent $event)
+	{
+		$event->addReference('Message:Mothership:CMS::Controller:Module:Dashboard:CMSSummary#index');
 	}
 }
