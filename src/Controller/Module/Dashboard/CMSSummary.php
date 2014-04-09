@@ -37,10 +37,18 @@ class CMSSummary extends Controller
 				LIMIT {$count}
 			");
 
-			$updated = array_slice($updated->transpose('page_id'), 0, self::UPDATED_COUNT);
+			$count = self::DELETED_COUNT;
+			$deleted = $this->get('db.query')->run("
+				SELECT page_id, title, updated_at
+				FROM page
+				WHERE deleted_at > 0
+				ORDER BY deleted_at DESC
+				LIMIT {$count}
+			");
 
 			$data = [
-				'updated' => $updated
+				'updated' => $updated->transpose('page_id'),
+				'deleted' => $deleted->transpose('page_id')
 			];
 
 			$this->get('cache')->store(self::CACHE_KEY, $data, self::CACHE_TTL);

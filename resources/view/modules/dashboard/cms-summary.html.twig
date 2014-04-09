@@ -6,15 +6,22 @@
 		<h3>Recently added/edited</h3>
 		<ol>
 			{% for item in updated %}
-				<li><time>{{ item.updated_at|date }}</time><a href="#">{{ item.title }}</a></li>
+				<li>
+					<time>{{ item.updated_at|date }}</time>
+					<a href="#">{{ item.title }}</a>
+				</li>
 			{% endfor %}
 		</ol>
 		<hr>
 		<h3>Recently deleted</h3>
 		<ol>
-			<li><time>1 hour ago</time><span>lorem ipsum</span><a class="restore button small" href="#">Restore</a></li>
-			<li><time>9 days ago</time><span>lorem ipsum</span><a class="restore button small" href="#">Restore</a></li>
-			<li><time>9 days ago</time><span>lorem ipsum</span><a class="restore button small" href="#">Restore</a></li>
+			{% for item in deleted %}
+				<li>
+					<time>{{ item.updated_at|date }}</time>
+					<span>{{ item.title }}</span>
+					<a class="restore button small" href="#">Restore</a>
+				</li>
+			{% endfor %}
 		</ol>
 	</div>
 </div>
