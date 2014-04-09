@@ -39,6 +39,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 			DashboardIndexEvent::DASHBOARD_INDEX => array(
 				'buildDashboardIndex',
 			),
+			'dashboard.user.summary.activities' => array(
+				'buildDashboardUserSummary',
+			),
 		);
 	}
 
@@ -96,5 +99,34 @@ class EventListener extends BaseListener implements SubscriberInterface
 	public function buildDashboardIndex(DashboardIndexEvent $event)
 	{
 		$event->addReference('Message:Mothership:CMS::Controller:Module:Dashboard:CMSSummary#index');
+	}
+
+	/**
+	 * Add the user's last edited page into the user summary dashboard block.
+	 *
+	 * @param  [type] $event
+	 */
+	public function buildDashboardUserSummary($event)
+	{
+		$pageID = $this->get('db.query')->run("
+			SELECT page_id
+			FROM page
+			WHERE updated_by = :userID?i
+			ORDER BY updated_at DESC
+			LIMIT 1
+		", [
+			'userID' => $event->getUser()->id
+		]);
+
+		if (count($pageID)) {
+			$page = $this->get('cms.page.loader')->getByID($pageID[0]->page_id);
+
+			$event->addActivity([
+				'label' => 'Last edited page',
+				'date'  => $page->authorship->updatedAt(),
+				'name'  => $page->title,
+				'url'   => '',
+			]);
+		}
 	}
 }
