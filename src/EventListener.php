@@ -5,7 +5,8 @@ namespace Message\Mothership\CMS;
 use Message\Mothership\CMS\Event\Frontend\BuildPageMenuEvent as FrontendBuildMenuEvent;
 
 use Message\Mothership\ControlPanel\Event\BuildMenuEvent as ControlPanelBuildMenuEvent;
-use Message\Mothership\ControlPanel\Event\Dashboard\DashboardIndexEvent;
+use Message\Mothership\ControlPanel\Event\Dashboard\DashboardEvent;
+use Message\Mothership\ControlPanel\Event\Dashboard\ActivitySummaryEvent;
 
 use Message\Cog\Event\EventListener as BaseListener;
 use Message\Cog\Event\SubscriberInterface;
@@ -36,11 +37,14 @@ class EventListener extends BaseListener implements SubscriberInterface
 			KernelEvents::EXCEPTION => array(
 				array('pageNotFound'),
 			),
-			DashboardIndexEvent::DASHBOARD_INDEX => array(
+			DashboardEvent::DASHBOARD_INDEX => array(
 				'buildDashboardIndex',
 			),
+			'dashboard.cms.content' => array(
+				'buildDashboardContent',
+			),
 			'dashboard.user.summary.activities' => array(
-				'buildDashboardUserSummary',
+				'buildDashboardBlockUserSummary',
 			),
 		);
 	}
@@ -94,9 +98,19 @@ class EventListener extends BaseListener implements SubscriberInterface
 	/**
 	 * Add controller references to the dashboard index.
 	 *
-	 * @param  DashboardIndexEvent $event
+	 * @param  DashboardEvent $event
 	 */
-	public function buildDashboardIndex(DashboardIndexEvent $event)
+	public function buildDashboardIndex(DashboardEvent $event)
+	{
+		$event->addReference('Message:Mothership:CMS::Controller:Module:Dashboard:CMSSummary#index');
+	}
+
+	/**
+	 * Add controller references to the content dashboard.
+	 *
+	 * @param  DashboardEvent $event
+	 */
+	public function buildDashboardContent(DashboardEvent $event)
 	{
 		$event->addReference('Message:Mothership:CMS::Controller:Module:Dashboard:CMSSummary#index');
 	}
@@ -104,9 +118,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 	/**
 	 * Add the user's last edited page into the user summary dashboard block.
 	 *
-	 * @param  [type] $event
+	 * @param  ActivitySummaryEvent $event
 	 */
-	public function buildDashboardUserSummary($event)
+	public function buildDashboardBlockUserSummary(ActivitySummaryEvent $event)
 	{
 		$pageID = $this->get('db.query')->run("
 			SELECT page_id
