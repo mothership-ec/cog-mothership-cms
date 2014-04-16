@@ -15,6 +15,8 @@ use Message\Cog\ValueObject\Slug;
 
 class Edit extends \Message\Cog\Controller\Controller
 {
+	protected $_page;
+
 	/**
 	 * Index for editing, this just redirects to the content edit screen.
 	 *
@@ -293,7 +295,13 @@ class Edit extends \Message\Cog\Controller\Controller
 			$content = $this->get('cms.page.content_loader')->load($page);
 		}
 
-		return $this->get('field.form')->generate($content);
+		$options = [
+			'action' => $this->generateUrl('ms.cp.cms.edit.content.action', [
+				'pageID' => $page->id
+			]),
+		];
+
+		return $this->get('field.form')->generate($content, $options);
 	}
 
 	protected function _renderContentForm(Page $page, Content $content, $form)
