@@ -162,3 +162,7 @@ ms.cms:
     message:
       label: How did you get here?
     button: Report broken link / missing page
+  contact:
+    button:
+      submit: Submit
+      success: Thank you, your message has been sent

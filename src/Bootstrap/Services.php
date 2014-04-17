@@ -190,6 +190,8 @@ class Services implements ServicesInterface
 					'message' => $factory->message,
 				]);
 			});
+
+			return $factory;
 		});
 	}
 }
