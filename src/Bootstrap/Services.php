@@ -163,10 +163,33 @@ class Services implements ServicesInterface
 			return $templates;
 		});
 
+		$services['form.contact'] = $services->factory(function($c) {
+			return new \Message\Mothership\CMS\Form\Contact;
+		});
+
 		$services->extend('user.groups', function($groups) {
 			$groups->add(new CMS\UserGroup\ContentManager);
 
 			return $groups;
+		});
+
+		$services['mail.factory.contact'] = $services->factory(function($c) {
+			$factory = new \Message\Cog\Mail\Factory($c['mail.message']);
+
+			$factory->requires('email', 'name', 'message');
+			$toEmail = $c['cfg']->contact->contactEmail;
+			$appName = $c['cfg']->app->name;
+
+			$factory->extend(function($factory, $message) use ($appName, $toEmail) {
+				$message->setFrom($factory->email, $factory->name);
+				$message->setTo($toEmail, $appName);
+				$message->setSubject('New contact from the ' . $appName . ' site');
+				$message->setView('Message:Mothership:CMS::mail:contact', [
+					'name'    => $factory->name,
+					'email'   => $factory->email,
+					'message' => $factory->message,
+				]);
+			});
 		});
 	}
 }
