@@ -51,26 +51,26 @@ class Edit {
 			'UPDATE
 				page
 			SET
-				page.title = :title?s,
-				page.type = :type?s,
-				page.publish_at = :publishAt?dn,
-				page.unpublish_at = :unpublishAt?dn,
-				page.updated_at = :updatedAt?dn,
-				page.created_by = :updatedBy?i,
-				page.meta_title = :metaTitle?s,
-				page.meta_description = :metaDescription?s,
-				page.meta_html_head = :metaHtmlHead?s,
-				page.meta_html_foot = :metaHtmlFoot?s,
-				page.visibility_search = :visibilitySearch?i,
-				page.visibility_menu = :visibilityMenu?i,
+				page.title                 = :title?s,
+				page.type                  = :type?s,
+				page.publish_at            = :publishAt?dn,
+				page.unpublish_at          = :unpublishAt?dn,
+				page.updated_at            = :updatedAt?dn,
+				page.created_by            = :updatedBy?i,
+				page.meta_title            = :metaTitle?s,
+				page.meta_description      = :metaDescription?s,
+				page.meta_html_head        = :metaHtmlHead?s,
+				page.meta_html_foot        = :metaHtmlFoot?s,
+				page.visibility_search     = :visibilitySearch?i,
+				page.visibility_menu       = :visibilityMenu?i,
 				page.visibility_aggregator = :visibilityAggregator?i,
-				page.password = :password?s,
-				page.access = :access?s,
-				page.comment_enabled = :commentsEnabled?i,
-				page.comment_access = :commentsAccess?i,
-				page.comment_access = :commentsAccessGroups?i,
-				page.comment_approval = :commentsApproval?i,
-				page.comment_expiry = :commentsExpiry?i
+				page.password              = :password?s,
+				page.access                = :access?s,
+				page.comment_enabled       = :commentsEnabled?i,
+				page.comment_access        = :commentsAccess?i,
+				page.comment_access        = :commentsAccessGroups?i,
+				page.comment_approval      = :commentsApproval?i,
+				page.comment_expiry        = :commentsExpiry?i
 			WHERE
 				page.page_id = :pageID?i',
 			array(
@@ -102,6 +102,7 @@ class Edit {
 
 		// Update the user groups for this page in the DB
 		$this->_updateAccessGroups($page);
+		$this->_updateTags($page);
 
 		$event = new Event\Event($page);
 		// Dispatch the edit event
@@ -269,8 +270,9 @@ class Edit {
 
 			$trans = $this->_nestedSetHelper->move($page->id,$nearestSibling->id, false, $addAfter);
 			$trans->commit();
+
 			return true;
-		} catch (Expcetion $e) {
+		} catch (Exception $e) {
 			return false;
 		}
 	}
@@ -286,6 +288,7 @@ class Edit {
 		try {
 			$trans = $this->_nestedSetHelper->move($pageID, $newParentID, true);
 			$trans->commit();
+
 			return true;
 		} catch (Exception $e) {
 			return false;
@@ -359,5 +362,48 @@ class Edit {
 			);
 		}
 
+	}
+
+	protected function _updateTags(Page $page)
+	{
+		$this->_query->run("
+				DELETE FROM
+					page_tag
+				WHERE
+					page_id = :pageId?i
+			", [
+			'pageId' => $page->id
+		]);
+
+		if (!empty($page->tags)) {
+			$sqlValues = [];
+			$tagQuery = [];
+
+			foreach ($page->tags as $key => $tag) {
+				$name = 'tag' . $key;
+				$sqlValues[$name] = $tag;
+				$tagQuery[] .= "\n(\n
+					:pageId?i,\n
+					:" . $name . "?s\n
+				)";
+			}
+
+			$sqlValues['pageId'] = $page->id;
+
+			$tagQuery = implode(',', $tagQuery);
+			$tagQuery = rtrim($tagQuery, ',');
+
+			$this->_query->run("
+				INSERT INTO
+					page_tag
+					(
+						page_id,
+						tag_name
+					)
+				VALUES
+					" . $tagQuery ."
+			", $sqlValues
+			);
+		}
 	}
 }

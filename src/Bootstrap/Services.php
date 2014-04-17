@@ -10,10 +10,6 @@ class Services implements ServicesInterface
 {
 	public function registerServices($services)
 	{
-		$services['markdown.parser'] = $services->factory(function() {
-			return new \dflydev\markdown\MarkdownParser;
-		});
-
 		$services['cms.page.types'] = function($c) {
 			return new CMS\PageType\Collection;
 		};
@@ -73,7 +69,7 @@ class Services implements ServicesInterface
 		};
 
 		$services['cms.page.content_loader'] = $services->factory(function($c) {
-			return new CMS\Page\ContentLoader($c['db.query'], $c['cms.field.factory']);
+			return new CMS\Page\ContentLoader($c['db.query'], $c['field.factory']);
 		});
 
 		$services['cms.page.content_edit'] = $services->factory(function($c) {
@@ -128,24 +124,20 @@ class Services implements ServicesInterface
 			);
 		});
 
-		$services['cms.field.factory'] = $services->factory(function($c) {
-			$factory = new CMS\Field\Factory($c['validator'], $c);
+		$services->extend('field.collection', function($fields, $c) {
+			$fields->add(new \Message\Mothership\CMS\FieldType\Link($c['validator']));
 
-			return $factory;
+			return $fields;
 		});
 
-		$services['cms.field.form'] = $services->factory(function($c) {
-			return new CMS\Field\Form($c);
-		});
+		$services->extend('form.extensions', function($extensions, $c) {
+			$extensions[] = $c['form.cms_extension'];
 
-		$services->extend('form.factory.builder', function($factory, $c) {
-			$factory->addExtension($c['form.cms_extension']);
-
-			return $factory;
+			return $extensions;
 		});
 
 		$services['form.cms_extension'] = $services->factory(function($c) {
-			$ext = new \Message\Mothership\CMS\Field\FormType\CmsExtension;
+			$ext = new \Message\Mothership\CMS\FormType\CmsExtension;
 			$ext->setContainer($c);
 
 			return $ext;
