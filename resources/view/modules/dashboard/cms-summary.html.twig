@@ -19,7 +19,7 @@
 				<li>
 					<time>{{ item.updated_at|date }}</time>
 					<span>{{ item.title }}</span>
-					<a class="restore button small" href="{{ url('ms.cp.cms.restore', {pageID: item.id}) }}" data-confirm>Restore</a>
+					<a class="restore button small" href="{{ url('ms.cp.cms.restore', {pageID: item.page_id}) }}" data-confirm>Restore</a>
 				</li>
 			{% endfor %}
 		</ol>
