@@ -34,8 +34,8 @@ class CMSSummary extends Controller
 				SELECT page_id, title, updated_at
 				FROM page
 				ORDER BY updated_at DESC
-				LIMIT {$count}
-			");
+				LIMIT ?i
+			", [$count]);
 
 			$count = self::DELETED_COUNT;
 			$deleted = $this->get('db.query')->run("
@@ -43,8 +43,8 @@ class CMSSummary extends Controller
 				FROM page
 				WHERE deleted_at > 0
 				ORDER BY deleted_at DESC
-				LIMIT {$count}
-			");
+				LIMIT ?i
+			", [$count]);
 
 			$data = [
 				'updated' => $updated->transpose('page_id'),
