@@ -26,7 +26,7 @@ class CMSSummary extends Controller
 	 */
 	public function index()
 	{
-		// if (false === $data = $this->get('cache')->fetch(self::CACHE_KEY)) {
+		if (false === $data = $this->get('cache')->fetch(self::CACHE_KEY)) {
 			$updated = $deleted = [];
 
 			$count = self::UPDATED_COUNT;
@@ -52,7 +52,7 @@ class CMSSummary extends Controller
 			];
 
 			$this->get('cache')->store(self::CACHE_KEY, $data, self::CACHE_TTL);
-		// }
+		}
 
 		return $this->render('Message:Mothership:CMS::modules:dashboard:cms-summary', $data);
 	}
