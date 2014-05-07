@@ -103,6 +103,7 @@ class Page
 	 * Method to check if a page has a certain tag
 	 *
 	 * @param string $tag     The tag you want to check for
+	 * 
 	 * @return bool
 	 */
 	public function hasTag($tag)
