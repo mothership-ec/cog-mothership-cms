@@ -376,34 +376,24 @@ class Edit {
 		]);
 
 		if (!empty($page->tags)) {
-			$sqlValues = [];
-			$tagQuery = [];
-
-			foreach ($page->tags as $key => $tag) {
-				$name = 'tag' . $key;
-				$sqlValues[$name] = $tag;
-				$tagQuery[] .= "\n(\n
-					:pageId?i,\n
-					:" . $name . "?s\n
-				)";
+			foreach ($page->tags as $tag) {
+				$this->_query->run("
+					INSERT INTO
+						page_tag
+						(
+							page_id,
+							tag_name
+						)
+					VALUES
+						(
+							:pageID?i,
+							:tag?s
+						)
+				", [
+					'pageID' => $page->id,
+					'tag'    => $tag,
+				]);
 			}
-
-			$sqlValues['pageId'] = $page->id;
-
-			$tagQuery = implode(',', $tagQuery);
-			$tagQuery = rtrim($tagQuery, ',');
-
-			$this->_query->run("
-				INSERT INTO
-					page_tag
-					(
-						page_id,
-						tag_name
-					)
-				VALUES
-					" . $tagQuery ."
-			", $sqlValues
-			);
 		}
 	}
 }
