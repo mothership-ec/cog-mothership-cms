@@ -5,7 +5,7 @@ namespace Message\Mothership\CMS\Page;
 use Message\Mothership\CMS\PageType\PageTypeInterface;
 use Message\Mothership\CMS\Page\Event;
 use Message\Cog\Event\DispatcherInterface;
-use Message\Cog\DB\Query as DBQuery;
+use Message\Cog\DB\Transaction;
 use Message\Cog\DB\NestedSetHelper;
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\DateTimeImmutable;
@@ -24,7 +24,7 @@ class Edit {
 
 	public function __construct(
 		Loader $loader,
-		DBQuery $query,
+		Transaction $query,
 		DispatcherInterface $eventDispatcher,
 		NestedSetHelper $nestedSetHelper,
 		UserInterface $user)
@@ -47,7 +47,7 @@ class Edit {
 	{
 		$page->authorship->update(new DateTimeImmutable, $this->_currentUser->id);
 
-		$result = $this->_query->run(
+		$this->_query->run(
 			'UPDATE
 				page
 			SET
@@ -111,6 +111,8 @@ class Edit {
 			$event
 		);
 
+		$this->_query->commit();
+
 		return $event->getPage();
 	}
 
@@ -127,7 +129,7 @@ class Edit {
 		// Get all the segements
 		$segements = $page->slug->getSegments();
 		$date = new DateTimeImmutable;
-		$result = $this->_query->run('
+		$this->_query->run('
 			REPLACE INTO
 				page_slug_history
 			SET
@@ -143,7 +145,7 @@ class Edit {
 			)
 		);
 
-		$update = $this->_query->run('
+		$this->_query->run('
 			UPDATE
 				page
 			SET
@@ -164,6 +166,8 @@ class Edit {
 		// Add it to the page object
 		$page->slug = $slug;
 
+		$this->_query->commit();
+
 		return $page;
 	}
 
@@ -174,7 +178,7 @@ class Edit {
 	 */
 	public function removeHistoricalSlug($slug)
 	{
-		$delete = $this->_query->run('
+		$this->_query->run('
 			DELETE FROM
 				page_slug_history
 			WHERE
@@ -182,6 +186,8 @@ class Edit {
 		', array(
 			$slug
 		));
+
+		$this->_query->commit();
 	}
 
 	/**
@@ -304,7 +310,7 @@ class Edit {
 	 */
 	protected function _savePublishData(Page $page)
 	{
-		$result = $this->_query->run('
+		$this->_query->run('
 			UPDATE
 				page
 			SET
@@ -319,8 +325,9 @@ class Edit {
 			)
 		);
 
-		return $result->affected() ? $page : false;
+		$this->_query->commit();
 
+		return $page;
 	}
 
 	/**
@@ -331,7 +338,7 @@ class Edit {
 	protected function _updateAccessGroups(Page $page)
 	{
 		// Remove any existing access groups as groups may havge been unselected
-		$result = $this->_query->run(
+		$this->_query->run(
 			'DELETE FROM
 				page_access_group
 			WHERE
@@ -352,7 +359,7 @@ class Edit {
 
 		// If there is changes to be made then run the built query
 		if ($values) {
-			$result = $this->_query->run(
+			$this->_query->run(
 				'INSERT INTO
 					page_access_group
 					(page_id, group_name)
@@ -361,6 +368,8 @@ class Edit {
 				', $values
 			);
 		}
+
+		$this->_query->commit();
 
 	}
 
@@ -395,5 +404,8 @@ class Edit {
 				]);
 			}
 		}
+
+		$this->_query->commit();
+
 	}
 }

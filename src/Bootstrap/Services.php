@@ -103,7 +103,7 @@ class Services implements ServicesInterface
 		$services['cms.page.edit'] = $services->factory(function($c) {
 			return new CMS\Page\Edit(
 				$c['cms.page.loader'],
-				$c['db.query'],
+				$c['db.transaction'],
 				$c['event.dispatcher'],
 				$c['cms.page.nested_set_helper'],
 				$c['user.current']
