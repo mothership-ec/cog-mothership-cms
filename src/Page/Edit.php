@@ -283,7 +283,12 @@ class Edit {
 				$nearestSibling = $this->_loader->getByID($nearestSibling);
 			}
 
-			$this->_nestedSetHelper->move($page->id,$nearestSibling->id, false, $addAfter);
+			$this->_nestedSetHelper->move(
+				$page->id,
+				$nearestSibling->id,
+				false,
+				$addAfter
+			);
 			$this->_query->commit();
 
 			return true;
