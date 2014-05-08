@@ -603,6 +603,6 @@ class Edit extends \Message\Cog\Controller\Controller
 			}
 		}
 
-		return $tags;
+		return array_unique($tags);
 	}
 }
