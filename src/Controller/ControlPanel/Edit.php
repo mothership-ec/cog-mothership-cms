@@ -597,6 +597,10 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		foreach ($tags as $key => $tag) {
 			$tags[$key] = trim($tag);
+
+			if (empty($tags[$key])) {
+				unset($tags[$key]);
+			}
 		}
 
 		return $tags;
