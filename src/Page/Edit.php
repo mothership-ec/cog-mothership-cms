@@ -34,6 +34,8 @@ class Edit {
 		$this->_eventDispatcher = $eventDispatcher;
 		$this->_nestedSetHelper = $nestedSetHelper;
 		$this->_currentUser		= $user;
+
+		$this->_nestedSetHelper->setTransaction($this->_query);
 	}
 
 	/**
@@ -216,7 +218,11 @@ class Edit {
 		// the page object
 		$page->publishDateRange = new DateRange($start, $end);
 		// Save the page to the DB
-		return $this->_savePublishData($page);
+		$page = $this->_savePublishData($page);
+
+		$this->_query->commit();
+
+		return $page;
 	}
 
 	/**
@@ -241,6 +247,9 @@ class Edit {
 		// Save the page to the DB
 		$this->_savePublishData($page);
 		// Return the updated Page object
+
+		$this->_query->commit();
+
 		return $page;
 	}
 
@@ -274,8 +283,8 @@ class Edit {
 				$nearestSibling = $this->_loader->getByID($nearestSibling);
 			}
 
-			$trans = $this->_nestedSetHelper->move($page->id,$nearestSibling->id, false, $addAfter);
-			$trans->commit();
+			$this->_nestedSetHelper->move($page->id,$nearestSibling->id, false, $addAfter);
+			$this->_query->commit();
 
 			return true;
 		} catch (Exception $e) {
@@ -292,11 +301,11 @@ class Edit {
 	public function changeParent($pageID, $newParentID)
 	{
 		try {
-			$trans = $this->_nestedSetHelper->move($pageID, $newParentID, true);
-			$trans->commit();
+			$this->_nestedSetHelper->move($pageID, $newParentID, true);
+			$this->_query->commit();
 
 			return true;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return false;
 		}
 	}
@@ -324,8 +333,6 @@ class Edit {
 				$page->id,
 			)
 		);
-
-		$this->_query->commit();
 
 		return $page;
 	}
@@ -369,8 +376,6 @@ class Edit {
 			);
 		}
 
-		$this->_query->commit();
-
 	}
 
 	protected function _updateTags(Page $page)
@@ -404,8 +409,6 @@ class Edit {
 				]);
 			}
 		}
-
-		$this->_query->commit();
 
 	}
 }
