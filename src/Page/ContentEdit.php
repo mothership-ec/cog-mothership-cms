@@ -98,20 +98,18 @@ class ContentEdit
 			}
 
 			if ($part instanceof Field\RepeatableContainer) {
-				// Clear all group instances and re-add them (so they have no values)
+				// Clear all group instances to re-add them later (so they have no values)
 				$part->clear();
-				while ($part->count() < count($val)) {
-					$part->add();
-				}
 
-				// Set the values
-//				$val = array_values($val);
-				foreach ($val as $i => $instance) {
+				$key = 0;
+				foreach ($val as $instance) {
+					$part->add($key);
 					foreach ($instance as $fieldName => $value) {
-						$part->get($i)
+						$part->get($key)
 							->$fieldName
 							->setValue($value);
 					}
+					$key++;
 				}
 			}
 			elseif ($part instanceof Field\Group) {
