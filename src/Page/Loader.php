@@ -615,6 +615,7 @@ class Loader
 	protected function _loadPage(Result $results)
 	{
 		$pages = $results->bindTo('Message\\Mothership\\CMS\\Page\\Page');
+
 		foreach ($results as $key => $data) {
 			// Skip deleted pages
 			if ($data->deletedAt && !$this->_loadDeleted) {
@@ -665,10 +666,14 @@ class Loader
 				$pages[$key]->authorship->delete(new DateTimeImmutable(date('c',$data->deletedAt)), $data->deletedBy);
 			}
 
+			// Load tags
+			$this->_loadTags($pages[$key]);
+
 			// If the page is set to inherit it's access then loop through each
 			// parent to find the inherited access level.
 			$pages[$key]->accessInherited = false;
 			$check = $pages[$key];
+
 			while ($pages[$key]->access < 0) {
 				$check = $this->_query->run('
 					SELECT
@@ -688,6 +693,7 @@ class Loader
 					$check->depth,
 				));
 
+				$check = $check->bindTo('Message\\Mothership\\CMS\\Page\\Page');
 				$check = $check[0];
 
 				$pages[$key]->access = $check->access;
@@ -716,6 +722,22 @@ class Loader
 		}
 
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
+	}
+
+	protected function _loadTags(Page $page)
+	{
+		$tags = $this->_query->run('
+			SELECT
+				tag_name
+			FROM
+				page_tag
+			WHERE
+				page_id = ?i
+		', $page->id);
+
+		$page->tags = $tags->flatten();
+
+		return $page;
 	}
 
 	protected function _sortPages(Page $a, Page $b)

@@ -1,10 +1,10 @@
 <?php
 
-namespace Message\Mothership\CMS\Field\FormType;
+namespace Message\Mothership\CMS\FormType;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Message\Mothership\CMS\Field\FormType\DataTransform\Slug as SlugTransform;
+use Message\Mothership\CMS\FormType\DataTransform\Slug as SlugTransform;
 
 class Slug extends AbstractType
 {
