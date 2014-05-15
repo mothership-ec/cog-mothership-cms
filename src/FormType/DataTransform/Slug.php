@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\CMS\Field\FormType\DataTransform;
+namespace Message\Mothership\CMS\FormType\DataTransform;
 
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;

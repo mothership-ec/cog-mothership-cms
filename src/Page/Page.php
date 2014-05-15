@@ -21,7 +21,7 @@ class Page
 	public $type;
 	public $publishDateRange;
 	public $slug;
-	public $tags = array();
+	public $tags = [];
 
 	public $left;
 	public $right;
@@ -87,5 +87,27 @@ class Page
 	public function isHomepage()
 	{
 		return '/' === (string) $this->slug;
+	}
+
+	/**
+	 * Check to see if the page has any child pages
+	 *
+	 * @return boolean
+	 */
+	public function hasChildren()
+	{
+		return ($this->right - $this->left) > 1;
+	}
+
+	/**
+	 * Method to check if a page has a certain tag
+	 *
+	 * @param string $tag     The tag you want to check for
+	 *
+	 * @return bool
+	 */
+	public function hasTag($tag)
+	{
+		return in_array($tag, $this->tags);
 	}
 }

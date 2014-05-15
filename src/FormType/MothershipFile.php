@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\CMS\Field\FormType;
+namespace Message\Mothership\CMS\FormType;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;

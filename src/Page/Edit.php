@@ -5,7 +5,7 @@ namespace Message\Mothership\CMS\Page;
 use Message\Mothership\CMS\PageType\PageTypeInterface;
 use Message\Mothership\CMS\Page\Event;
 use Message\Cog\Event\DispatcherInterface;
-use Message\Cog\DB\Query as DBQuery;
+use Message\Cog\DB\Transaction;
 use Message\Cog\DB\NestedSetHelper;
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\DateTimeImmutable;
@@ -24,7 +24,7 @@ class Edit {
 
 	public function __construct(
 		Loader $loader,
-		DBQuery $query,
+		Transaction $query,
 		DispatcherInterface $eventDispatcher,
 		NestedSetHelper $nestedSetHelper,
 		UserInterface $user)
@@ -34,6 +34,8 @@ class Edit {
 		$this->_eventDispatcher = $eventDispatcher;
 		$this->_nestedSetHelper = $nestedSetHelper;
 		$this->_currentUser		= $user;
+
+		$this->_nestedSetHelper->setTransaction($this->_query);
 	}
 
 	/**
@@ -47,30 +49,30 @@ class Edit {
 	{
 		$page->authorship->update(new DateTimeImmutable, $this->_currentUser->id);
 
-		$result = $this->_query->run(
+		$this->_query->run(
 			'UPDATE
 				page
 			SET
-				page.title = :title?s,
-				page.type = :type?s,
-				page.publish_at = :publishAt?dn,
-				page.unpublish_at = :unpublishAt?dn,
-				page.updated_at = :updatedAt?dn,
-				page.created_by = :updatedBy?i,
-				page.meta_title = :metaTitle?s,
-				page.meta_description = :metaDescription?s,
-				page.meta_html_head = :metaHtmlHead?s,
-				page.meta_html_foot = :metaHtmlFoot?s,
-				page.visibility_search = :visibilitySearch?i,
-				page.visibility_menu = :visibilityMenu?i,
+				page.title                 = :title?s,
+				page.type                  = :type?s,
+				page.publish_at            = :publishAt?dn,
+				page.unpublish_at          = :unpublishAt?dn,
+				page.updated_at            = :updatedAt?dn,
+				page.created_by            = :updatedBy?i,
+				page.meta_title            = :metaTitle?s,
+				page.meta_description      = :metaDescription?s,
+				page.meta_html_head        = :metaHtmlHead?s,
+				page.meta_html_foot        = :metaHtmlFoot?s,
+				page.visibility_search     = :visibilitySearch?i,
+				page.visibility_menu       = :visibilityMenu?i,
 				page.visibility_aggregator = :visibilityAggregator?i,
-				page.password = :password?s,
-				page.access = :access?s,
-				page.comment_enabled = :commentsEnabled?i,
-				page.comment_access = :commentsAccess?i,
-				page.comment_access = :commentsAccessGroups?i,
-				page.comment_approval = :commentsApproval?i,
-				page.comment_expiry = :commentsExpiry?i
+				page.password              = :password?s,
+				page.access                = :access?s,
+				page.comment_enabled       = :commentsEnabled?i,
+				page.comment_access        = :commentsAccess?i,
+				page.comment_access        = :commentsAccessGroups?i,
+				page.comment_approval      = :commentsApproval?i,
+				page.comment_expiry        = :commentsExpiry?i
 			WHERE
 				page.page_id = :pageID?i',
 			array(
@@ -102,6 +104,7 @@ class Edit {
 
 		// Update the user groups for this page in the DB
 		$this->_updateAccessGroups($page);
+		$this->_updateTags($page);
 
 		$event = new Event\Event($page);
 		// Dispatch the edit event
@@ -109,6 +112,8 @@ class Edit {
 			$event::EDIT,
 			$event
 		);
+
+		$this->_query->commit();
 
 		return $event->getPage();
 	}
@@ -126,7 +131,7 @@ class Edit {
 		// Get all the segements
 		$segements = $page->slug->getSegments();
 		$date = new DateTimeImmutable;
-		$result = $this->_query->run('
+		$this->_query->run('
 			REPLACE INTO
 				page_slug_history
 			SET
@@ -142,7 +147,7 @@ class Edit {
 			)
 		);
 
-		$update = $this->_query->run('
+		$this->_query->run('
 			UPDATE
 				page
 			SET
@@ -163,6 +168,8 @@ class Edit {
 		// Add it to the page object
 		$page->slug = $slug;
 
+		$this->_query->commit();
+
 		return $page;
 	}
 
@@ -173,7 +180,7 @@ class Edit {
 	 */
 	public function removeHistoricalSlug($slug)
 	{
-		$delete = $this->_query->run('
+		$this->_query->run('
 			DELETE FROM
 				page_slug_history
 			WHERE
@@ -181,6 +188,8 @@ class Edit {
 		', array(
 			$slug
 		));
+
+		$this->_query->commit();
 	}
 
 	/**
@@ -209,7 +218,11 @@ class Edit {
 		// the page object
 		$page->publishDateRange = new DateRange($start, $end);
 		// Save the page to the DB
-		return $this->_savePublishData($page);
+		$page = $this->_savePublishData($page);
+
+		$this->_query->commit();
+
+		return $page;
 	}
 
 	/**
@@ -234,6 +247,9 @@ class Edit {
 		// Save the page to the DB
 		$this->_savePublishData($page);
 		// Return the updated Page object
+
+		$this->_query->commit();
+
 		return $page;
 	}
 
@@ -267,10 +283,16 @@ class Edit {
 				$nearestSibling = $this->_loader->getByID($nearestSibling);
 			}
 
-			$trans = $this->_nestedSetHelper->move($page->id,$nearestSibling->id, false, $addAfter);
-			$trans->commit();
+			$this->_nestedSetHelper->move(
+				$page->id,
+				$nearestSibling->id,
+				false,
+				$addAfter
+			);
+			$this->_query->commit();
+
 			return true;
-		} catch (Expcetion $e) {
+		} catch (Exception $e) {
 			return false;
 		}
 	}
@@ -284,10 +306,11 @@ class Edit {
 	public function changeParent($pageID, $newParentID)
 	{
 		try {
-			$trans = $this->_nestedSetHelper->move($pageID, $newParentID, true);
-			$trans->commit();
+			$this->_nestedSetHelper->move($pageID, $newParentID, true);
+			$this->_query->commit();
+
 			return true;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return false;
 		}
 	}
@@ -301,7 +324,7 @@ class Edit {
 	 */
 	protected function _savePublishData(Page $page)
 	{
-		$result = $this->_query->run('
+		$this->_query->run('
 			UPDATE
 				page
 			SET
@@ -316,8 +339,7 @@ class Edit {
 			)
 		);
 
-		return $result->affected() ? $page : false;
-
+		return $page;
 	}
 
 	/**
@@ -328,7 +350,7 @@ class Edit {
 	protected function _updateAccessGroups(Page $page)
 	{
 		// Remove any existing access groups as groups may havge been unselected
-		$result = $this->_query->run(
+		$this->_query->run(
 			'DELETE FROM
 				page_access_group
 			WHERE
@@ -349,7 +371,7 @@ class Edit {
 
 		// If there is changes to be made then run the built query
 		if ($values) {
-			$result = $this->_query->run(
+			$this->_query->run(
 				'INSERT INTO
 					page_access_group
 					(page_id, group_name)
@@ -357,6 +379,40 @@ class Edit {
 					'.implode(',',$inserts).'
 				', $values
 			);
+		}
+
+	}
+
+	protected function _updateTags(Page $page)
+	{
+		$this->_query->run("
+				DELETE FROM
+					page_tag
+				WHERE
+					page_id = :pageId?i
+			", [
+			'pageId' => $page->id
+		]);
+
+		if (!empty($page->tags)) {
+			foreach ($page->tags as $tag) {
+				$this->_query->run("
+					INSERT INTO
+						page_tag
+						(
+							page_id,
+							tag_name
+						)
+					VALUES
+						(
+							:pageID?i,
+							:tag?s
+						)
+				", [
+					'pageID' => $page->id,
+					'tag'    => $tag,
+				]);
+			}
 		}
 
 	}
