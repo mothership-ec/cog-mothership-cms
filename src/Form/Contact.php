@@ -33,11 +33,6 @@ class Contact extends Form\AbstractType
 		]);
 	}
 
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
-	{
-
-	}
-
 	public function getName()
 	{
 		return 'ms_cms_contact';

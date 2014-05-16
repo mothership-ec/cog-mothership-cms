@@ -12,6 +12,9 @@ class Routes implements RoutesInterface
 
 		$router['ms.cms']->add('ms.cms.search', '/search', 'Message:Mothership:CMS::Controller:Frontend#searchResults');
 
+		$router['ms.cms']->add('ms.cms.contact.action', '/contact/submit', 'Message:Mothership:CMS::Controller:Module:Contact#contactAction')
+			->setMethod('POST');
+
 		$router['ms.cms']->add('ms.cms.frontend', '{slug}', 'Message:Mothership:CMS::Controller:Frontend#renderPage')
 			->setRequirement('slug', '[a-z0-9\-\/]+')
 			->setDefault('slug', '/');

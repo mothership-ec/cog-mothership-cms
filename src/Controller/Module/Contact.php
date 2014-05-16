@@ -8,7 +8,21 @@ class Contact extends Controller
 {
 	public function contact()
 	{
+		$form = $this->createForm(
+			$this->get('form.contact'),
+			null,
+			['action' => $this->generateUrl('ms.cms.contact.action')]
+		);
+
+		return $this->render('Message:Mothership:CMS::modules:contact', [
+			'form' => $form,
+		]);
+	}
+
+	public function contactAction()
+	{
 		$form = $this->createForm($this->get('form.contact'));
+
 		$form->handleRequest();
 
 		if ($form->isValid()) {
@@ -17,9 +31,7 @@ class Contact extends Controller
 			$this->addFlash('success', $this->trans('ms.cms.contact.success'));
 		}
 
-		return $this->render('Message:Mothership:CMS::modules:contact', [
-			'form' => $form,
-		]);
+		return $this->redirectToReferer();
 	}
 
 	protected function _sendEmail(array $data)
