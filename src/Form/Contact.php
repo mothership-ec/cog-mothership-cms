@@ -23,13 +23,7 @@ class Contact extends Form\AbstractType
 			],
 		]);
 
-		// @todo this is not a real captcha, will need to be made in the cog form extension
-		$builder->add('captcha', 'text', [
-			'label' => 'Security question: What is 2+2?',
-			'constraints' => [
-				new Constraints\NotBlank,
-			],
-		]);
+		$builder->add('captcha', 'captcha');
 
 		$builder->add('message', 'textarea', [
 			'label' => 'Your message',
