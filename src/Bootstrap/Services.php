@@ -156,7 +156,7 @@ class Services implements ServicesInterface
 		});
 
 		$services['form.contact'] = $services->factory(function($c) {
-			return new \Message\Mothership\CMS\Form\Contact;
+			return new \Message\Mothership\CMS\Form\Contact($c['translator']);
 		});
 
 		$services->extend('user.groups', function($groups) {

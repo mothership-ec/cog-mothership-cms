@@ -163,6 +163,10 @@ ms.cms:
       label: How did you get here?
     button: Report broken link / missing page
   contact:
+    form:
+      name: Your name
+      email: Your email address
+      message: Message
     button:
-      submit: Submit
+      submit: Send message
     success: Thank you, your message has been sent
