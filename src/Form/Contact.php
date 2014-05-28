@@ -38,7 +38,9 @@ class Contact extends Form\AbstractType
 			]
 		]);
 
-		$builder->add('captcha', 'captcha');
+		$builder->add('captcha', 'captcha', [
+			'label_prefix' => $this->_trans->trans('ms.cms.contact.form.captcha-prefix'),
+		]);
 	}
 
 	public function getName()

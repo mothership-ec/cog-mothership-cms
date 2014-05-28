@@ -167,6 +167,7 @@ ms.cms:
       name: Your name
       email: Your email address
       message: Message
+      captcha-prefix: Security question
     button:
       submit: Send message
     success: Thank you, your message has been sent
