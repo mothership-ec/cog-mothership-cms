@@ -169,13 +169,13 @@ class Services implements ServicesInterface
 			$factory = new \Message\Cog\Mail\Factory($c['mail.message']);
 
 			$factory->requires('email', 'name', 'message');
-			$toEmail = $c['cfg']->contact->contactEmail;
+			$toEmail = $c['cfg']->app->defaultContactEmail;
 			$appName = $c['cfg']->app->name;
 
 			$factory->extend(function($factory, $message) use ($appName, $toEmail) {
 				$message->setFrom($factory->email, $factory->name);
 				$message->setTo($toEmail, $appName);
-				$message->setSubject('New contact from the ' . $appName . ' site');
+				$message->setSubject('New contact from the ' . $appName . ' website');
 				$message->setView('Message:Mothership:CMS::mail:contact', [
 					'name'    => $factory->name,
 					'email'   => $factory->email,
