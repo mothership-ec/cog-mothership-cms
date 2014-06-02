@@ -58,7 +58,7 @@ class Edit {
 				page.publish_at            = :publishAt?dn,
 				page.unpublish_at          = :unpublishAt?dn,
 				page.updated_at            = :updatedAt?dn,
-				page.created_by            = :updatedBy?i,
+				page.updated_by            = :updatedBy?i,
 				page.meta_title            = :metaTitle?s,
 				page.meta_description      = :metaDescription?s,
 				page.meta_html_head        = :metaHtmlHead?s,
