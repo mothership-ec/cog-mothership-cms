@@ -1,20 +1,21 @@
 <?php
 
-namespace Message\Mothership\CMS\Field\Type;
+namespace Message\Mothership\CMS\FieldType;
 
-use Message\Mothership\CMS\Field;
+use Message\Cog\Field\MultipleValueField;
+use Message\Mothership\CMS\FormType;
 use Message\Mothership\CMS\Page\Page;
 
-use Message\Cog\Form\Handler;
 use Message\Cog\Service\ContainerInterface;
 use Message\Cog\Service\ContainerAwareInterface;
+use Symfony\Component\Form\FormBuilder;
 
 /**
  * A field for a link to an internal or external page.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class Link extends Field\MultipleValueField implements ContainerAwareInterface
+class Link extends MultipleValueField implements ContainerAwareInterface
 {
 	protected $_services;
 
@@ -22,6 +23,11 @@ class Link extends Field\MultipleValueField implements ContainerAwareInterface
 	const SCOPE_EXTERNAL = 'external';
 //	const SCOPE_ROUTE    = 'route'; # for a future version?
 	const SCOPE_ANY      = 'any';
+
+	public function getFieldType()
+	{
+		return 'link';
+	}
 
 	/**
 	 * {@inheritdoc}
@@ -31,11 +37,9 @@ class Link extends Field\MultipleValueField implements ContainerAwareInterface
 		$this->_services = $container;
 	}
 
-	public function getFormField(Handler $form)
+	public function getFormField(FormBuilder $form)
 	{
-		$form->add($this->getName(), new Field\FormType\Link, $this->getLabel(), array(
-			'attr' => array('data-help-key' => $this->_getHelpKeys()),
-		));
+		$form->add($this->getName(), new FormType\Link, $this->getFieldOptions());
 	}
 
 	public function setScope($scope)

@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\CMS\Field\FormType;
+namespace Message\Mothership\CMS\FormType;
 
 use Message\Cog\Service\ContainerAwareInterface;
 use Message\Cog\Service\ContainerInterface;

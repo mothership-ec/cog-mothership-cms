@@ -2,12 +2,6 @@
 
 The `Message\Mothership\CMS` cogule provides a Content Management System for Mothership.
 
-## Markdown Parsing
-
-This cogule provides a [Markdown](http://daringfireball.net/projects/markdown/) parser as the service `markdown.parser`.
-
-Currently, the parser we use is [`dflydev/markdown`](https://packagist.org/packages/dflydev/markdown).
-
 ## Routes
 
 This cogule defines two route collections:
