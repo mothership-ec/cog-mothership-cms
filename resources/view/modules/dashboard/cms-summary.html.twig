@@ -8,7 +8,7 @@
 			{% for item in updated %}
 				<li>
 					<time>{{ item.updated_at|date }}</time>
-					<a href="#">{{ item.title }}</a>
+					<a href="{{ url('ms.cp.cms.edit', {pageID: item.page_id}) }}">{{ item.title }}</a>
 				</li>
 			{% endfor %}
 		</ol>
