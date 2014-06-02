@@ -7,6 +7,7 @@ use Message\Mothership\CMS\Event\Frontend\BuildPageMenuEvent as FrontendBuildMen
 use Message\Mothership\ControlPanel\Event\BuildMenuEvent as ControlPanelBuildMenuEvent;
 use Message\Mothership\ControlPanel\Event\Dashboard\DashboardEvent;
 use Message\Mothership\ControlPanel\Event\Dashboard\ActivitySummaryEvent;
+use Message\Mothership\ControlPanel\Event\Dashboard\Activity;
 
 use Message\Cog\Event\EventListener as BaseListener;
 use Message\Cog\Event\SubscriberInterface;
@@ -14,6 +15,7 @@ use Message\Cog\HTTP\RedirectResponse;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Event listener for the Mothership CMS.
@@ -43,7 +45,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 			'dashboard.cms.content' => array(
 				'buildDashboardContent',
 			),
-			'dashboard.user.summary.activities' => array(
+			'dashboard.activity.summary' => array(
 				'buildDashboardBlockUserSummary',
 			),
 		);
@@ -139,9 +141,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 				'Last edited page',
 				$page->authorship->updatedAt(),
 				$page->title,
-				$this->generateUrl('ms.cms.frontend', [
-					'slug' => $page->slug,
-				])
+				$this->get('routing.generator')->generate('ms.cp.cms.edit', [
+					'pageID' => $page->id,
+				], UrlGeneratorInterface::ABSOLUTE_URL)
 			));
 		}
 	}
