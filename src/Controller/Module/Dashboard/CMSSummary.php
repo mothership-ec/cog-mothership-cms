@@ -25,18 +25,29 @@ class CMSSummary extends Controller
 	{
 		$count = self::UPDATED_COUNT;
 		$updated = $this->get('db.query')->run("
-			SELECT page_id, title, updated_at
-			FROM page
-			ORDER BY updated_at DESC
+			SELECT
+				page_id,
+				title,
+				IFNULL(updated_at, created_at) as edited_at
+			FROM
+				page
+			ORDER BY
+				edited_at DESC
 			LIMIT ?i
 		", [$count]);
 
 		$count = self::DELETED_COUNT;
 		$deleted = $this->get('db.query')->run("
-			SELECT page_id, title, deleted_at
-			FROM page
-			WHERE deleted_at > 0
-			ORDER BY deleted_at DESC
+			SELECT
+				page_id,
+				title,
+				deleted_at
+			FROM
+				page
+			WHERE
+				deleted_at > 0
+			ORDER BY
+				deleted_at DESC
 			LIMIT ?i
 		", [$count]);
 
