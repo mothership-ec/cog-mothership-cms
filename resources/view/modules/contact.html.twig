@@ -1,0 +1,7 @@
+{{ form_start(form) }}
+	{{ form_row(form['name']) }}
+	{{ form_row(form['email']) }}
+	{{ form_row(form['message']) }}
+	{{ form_row(form['captcha']) }}
+	<button type="submit" class="button small save" id="save-content">{{ 'ms.cms.contact.button.submit'|trans }}</button>
+{{ form_end(form) }}
