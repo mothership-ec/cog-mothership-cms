@@ -162,3 +162,12 @@ ms.cms:
     message:
       label: How did you get here?
     button: Report broken link / missing page
+  contact:
+    form:
+      name: Your name
+      email: Your email address
+      message: Message
+      captcha-prefix: Security question
+    button:
+      submit: Send message
+    success: Thank you, your message has been sent
