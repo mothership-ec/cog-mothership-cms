@@ -7,7 +7,14 @@
 		<ol>
 			{% for item in updated %}
 				<li>
-					<time>{{ item.edited_at|date }}</time>
+					<time>
+						{% if item.updated_at %}
+							Updated:
+						{% else %}
+							Created:
+						{% endif %}
+						{{ item.edited_at|date }}
+					</time>
 					<a href="{{ url('ms.cp.cms.edit', {pageID: item.page_id}) }}">{{ item.title }}</a>
 				</li>
 			{% endfor %}
@@ -17,7 +24,7 @@
 		<ol>
 			{% for item in deleted %}
 				<li>
-					<time>{{ item.deleted_at|date }}</time>
+					<time>Deleted: {{ item.deleted_at|date }}</time>
 					<span>{{ item.title }}</span>
 					<a class="restore button small" href="{{ url('ms.cp.cms.restore', {pageID: item.page_id}) }}" data-confirm="{{ 'ms.cms.edit.restore.confirm'|trans }}">Restore</a>
 				</li>

@@ -28,6 +28,8 @@ class CMSSummary extends Controller
 			SELECT
 				page_id,
 				title,
+				created_at,
+				updated_at,
 				IFNULL(updated_at, created_at) as edited_at
 			FROM
 				page
