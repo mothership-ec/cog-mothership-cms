@@ -36,9 +36,7 @@ class SlugRedirects extends BaseTask
 
     public function process()
     {
-		$uwNew = $this->getToConnection();
-
-		$new = new \Message\Cog\DB\Transaction($uwNew);
+		$new = $this->get('db.transaction');
 
 		$file = new FileSystemFile($this->getRawInput()->getArgument('path'));
 		$file = $file->openFile('rw');
