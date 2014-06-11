@@ -10,10 +10,6 @@ class Services implements ServicesInterface
 {
 	public function registerServices($services)
 	{
-		$services['markdown.parser'] = $services->factory(function() {
-			return new \dflydev\markdown\MarkdownParser;
-		});
-
 		$services['cms.page.types'] = function($c) {
 			return new CMS\PageType\Collection;
 		};
@@ -73,7 +69,7 @@ class Services implements ServicesInterface
 		};
 
 		$services['cms.page.content_loader'] = $services->factory(function($c) {
-			return new CMS\Page\ContentLoader($c['db.query'], $c['cms.field.factory']);
+			return new CMS\Page\ContentLoader($c['db.query'], $c['field.factory']);
 		});
 
 		$services['cms.page.content_edit'] = $services->factory(function($c) {
@@ -107,7 +103,7 @@ class Services implements ServicesInterface
 		$services['cms.page.edit'] = $services->factory(function($c) {
 			return new CMS\Page\Edit(
 				$c['cms.page.loader'],
-				$c['db.query'],
+				$c['db.transaction'],
 				$c['event.dispatcher'],
 				$c['cms.page.nested_set_helper'],
 				$c['user.current']
@@ -128,24 +124,20 @@ class Services implements ServicesInterface
 			);
 		});
 
-		$services['cms.field.factory'] = $services->factory(function($c) {
-			$factory = new CMS\Field\Factory($c['validator'], $c);
+		$services->extend('field.collection', function($fields, $c) {
+			$fields->add(new \Message\Mothership\CMS\FieldType\Link($c['validator']));
 
-			return $factory;
+			return $fields;
 		});
 
-		$services['cms.field.form'] = $services->factory(function($c) {
-			return new CMS\Field\Form($c);
-		});
+		$services->extend('form.extensions', function($extensions, $c) {
+			$extensions[] = $c['form.cms_extension'];
 
-		$services->extend('form.factory.builder', function($factory, $c) {
-			$factory->addExtension($c['form.cms_extension']);
-
-			return $factory;
+			return $extensions;
 		});
 
 		$services['form.cms_extension'] = $services->factory(function($c) {
-			$ext = new \Message\Mothership\CMS\Field\FormType\CmsExtension;
+			$ext = new \Message\Mothership\CMS\FormType\CmsExtension;
 			$ext->setContainer($c);
 
 			return $ext;
@@ -163,10 +155,35 @@ class Services implements ServicesInterface
 			return $templates;
 		});
 
+		$services['form.contact'] = $services->factory(function($c) {
+			return new \Message\Mothership\CMS\Form\Contact($c['translator']);
+		});
+
 		$services->extend('user.groups', function($groups) {
 			$groups->add(new CMS\UserGroup\ContentManager);
 
 			return $groups;
+		});
+
+		$services['mail.factory.contact'] = $services->factory(function($c) {
+			$factory = new \Message\Cog\Mail\Factory($c['mail.message']);
+
+			$factory->requires('email', 'name', 'message');
+			$toEmail = $c['cfg']->app->defaultContactEmail;
+			$appName = $c['cfg']->app->name;
+
+			$factory->extend(function($factory, $message) use ($appName, $toEmail) {
+				$message->setFrom($factory->email, $factory->name);
+				$message->setTo($toEmail, $appName);
+				$message->setSubject('New contact from the ' . $appName . ' website');
+				$message->setView('Message:Mothership:CMS::mail:contact', [
+					'name'    => $factory->name,
+					'email'   => $factory->email,
+					'message' => $factory->message,
+				]);
+			});
+
+			return $factory;
 		});
 	}
 }

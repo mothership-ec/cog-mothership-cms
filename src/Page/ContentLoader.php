@@ -2,10 +2,11 @@
 
 namespace Message\Mothership\CMS\Page;
 
-use Message\Mothership\CMS\Field;
+use Message\Cog\Field;
 
 use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\DB\Result as DBResult;
+use Message\Cog\Field\Factory;
 
 /**
  * Page content loader, responsible for loading content for pages and populating
@@ -26,7 +27,7 @@ class ContentLoader
 	 * @param DBQuery       $query     The database query instance to use
 	 * @param Field\Factory $paramname The field factory
 	 */
-	public function __construct(DBQuery $query, Field\Factory $fieldFactory)
+	public function __construct(DBQuery $query, Factory $fieldFactory)
 	{
 		$this->_query        = $query;
 		$this->_fieldFactory = $fieldFactory;
@@ -124,8 +125,6 @@ class ContentLoader
 				}
 			}
 		}
-
-		$content->setValidator($this->_fieldFactory->getValidator());
 
 		return $content;
 	}

@@ -2,19 +2,21 @@
 
 namespace Message\Mothership\CMS\Controller\ControlPanel;
 
-use Message\Mothership\CMS\Field;
+use Message\Cog\Field;
 
 use Message\Mothership\CMS\Page\Authorisation;
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Content;
-use Message\Mothership\CMS\Field\Form;
-use Message\Mothership\CMS\Field\Factory;
-use Message\Mothership\CMS\Field\RepeatableContainer;
+use Message\Cog\Field\Form;
+use Message\Cog\Field\Factory;
+use Message\Cog\Field\RepeatableContainer;
 
 use Message\Cog\ValueObject\Slug;
 
 class Edit extends \Message\Cog\Controller\Controller
 {
+	protected $_page;
+
 	/**
 	 * Index for editing, this just redirects to the content edit screen.
 	 *
@@ -101,9 +103,11 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		$this->_page = $page;
 
+		$form->handleRequest();
+
 		// Redirect user back to the form if there are any errors
 		if ($form->isValid()) {
-			$content = $this->get('cms.page.content_edit')->updateContent($form->getFilteredData(), $content);
+			$content = $this->get('cms.page.content_edit')->updateContent($form->getData(), $content);
 
 			if ($this->get('cms.page.content_edit')->save($page, $content)) {
 				$this->addFlash('success', $this->trans('ms.cms.feedback.edit.content.success'));
@@ -136,7 +140,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			);
 		}
 
-		$form = $this->_getAttibuteForm($page);
+		$form = $this->_getAttributeForm($page);
 
 		return $this->render('::edit/attributes', array(
 			'page' => $page,
@@ -179,7 +183,7 @@ class Edit extends \Message\Cog\Controller\Controller
 	public function attributesAction($pageID)
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
-		$form = $this->_getAttibuteForm($page);
+		$form = $this->_getAttributeForm($page);
 
 		if ($form->isValid() && $data = $form->getFilteredData()) {
 			$parent = $this->get('cms.page.loader')->getParent($page);
@@ -208,6 +212,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			$page->visibilityAggregator = $data['visibility_aggregator'];
 			$page->access               = $data['access'] ?: 0;
 			$page->accessGroups         = $data['access_groups'];
+			$page->tags                 = $this->_parseTags($data['tags']);
 
 			$page = $this->get('cms.page.edit')->save($page);
 			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
@@ -290,14 +295,13 @@ class Edit extends \Message\Cog\Controller\Controller
 			$content = $this->get('cms.page.content_loader')->load($page);
 		}
 
-		$form = $this->get('form')
-			->setName('content-edit-content')
-			->setMethod('POST')
-			->setAction($this->generateUrl('ms.cp.cms.edit.content.action', array(
-				'pageID' => $page->id,
-			)));
+		$options = [
+			'action' => $this->generateUrl('ms.cp.cms.edit.content.action', [
+				'pageID' => $page->id
+			]),
+		];
 
-		return $this->get('cms.field.form')->generate($form, $content);
+		return $this->get('field.form')->generate($content, $options);
 	}
 
 	protected function _renderContentForm(Page $page, Content $content, $form)
@@ -321,7 +325,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		));
 	}
 
-	protected function _getAttibuteForm(Page $page)
+	protected function _getAttributeForm(Page $page)
 	{
 		$accessGroups = array();
 
@@ -431,6 +435,12 @@ class Edit extends \Message\Cog\Controller\Controller
 			'choices'     => $choices,
 			'empty_value' => 'Top level',
 		))->val()->optional();
+
+		$form->add('tags', 'textarea', $this->trans('ms.cms.attributes.tags.label'), [
+			'attr' => [
+				'data-help-key' => 'ms.cms.attributes.tags.help'
+			],
+		])->val()->optional();
 
 		return $form;
 	}
@@ -571,5 +581,28 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		// return the updated or unchanged page
 		return $page;
+	}
+
+	protected function _parseTags($tags)
+	{
+		if (!$tags) {
+			return [];
+		}
+		if (!is_string($tags) && !is_array($tags)) {
+			throw new \InvalidArgumentException('$tags must be a string or an array, ' . gettype($tags) . ' given');
+		}
+		elseif (is_string($tags)) {
+			$tags = explode(',', $tags);
+		}
+
+		foreach ($tags as $key => $tag) {
+			$tags[$key] = trim($tag);
+
+			if (empty($tags[$key])) {
+				unset($tags[$key]);
+			}
+		}
+
+		return array_unique($tags);
 	}
 }
