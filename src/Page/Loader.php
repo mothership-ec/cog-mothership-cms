@@ -325,6 +325,13 @@ class Loader
 	 */
 	public function getBySearchTerms($terms, $page = 1, $options = array())
 	{
+		if (!empty($options['min_length']) && is_int($options['min_length'])) {
+			$this->_searcher->setMinTermLength($options['min_length']);
+		}
+		elseif (!empty($options['min_length'])) {
+			throw new \InvalidArgumentException('`min_length` option must be an integer!');
+		}
+
 		$this->_searcher->setTerms($terms);
 
 		$ids = $this->_searcher->getIds();
