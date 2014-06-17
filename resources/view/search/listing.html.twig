@@ -8,7 +8,7 @@
 <ul class="search-results">
 {% for page in pages %}
 	<li>
-		{% set url = url('ms.cms.frontend', {slug: page.slug|trim('/')}) %}
+		{% set url = url('ms.cms.frontend', { slug: page.slug|trim('/') ?: '/' }) %}
 		<a href="{{ url }}">
 			{% if page.content.product %}
 				{{ getResizedImage(page.content.product.product.product.image, 109, 131) }}
