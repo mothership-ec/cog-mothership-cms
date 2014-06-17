@@ -136,7 +136,11 @@ class Frontend extends Controller
 		// Get the current page, default to first.
 		$page = ($this->get('request')->get('page')) ?: 1;
 
-		$pages = $this->get('cms.page.loader')->getBySearchTerms($terms);
+		$pages = $this->get('cms.page.loader')->getBySearchTerms(
+			$terms,
+			1,
+			['min_length' => 4]
+		);
 
 		// Slice the results to get the current page.
 		// $pages = array_slice($pages, ($page - 1) * $perPage, $perPage);
