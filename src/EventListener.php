@@ -5,6 +5,9 @@ namespace Message\Mothership\CMS;
 use Message\Mothership\CMS\Event\Frontend\BuildPageMenuEvent as FrontendBuildMenuEvent;
 
 use Message\Mothership\ControlPanel\Event\BuildMenuEvent as ControlPanelBuildMenuEvent;
+use Message\Mothership\ControlPanel\Event\Dashboard\DashboardEvent;
+use Message\Mothership\ControlPanel\Event\Dashboard\ActivitySummaryEvent;
+use Message\Mothership\ControlPanel\Event\Dashboard\Activity;
 
 use Message\Cog\Event\EventListener as BaseListener;
 use Message\Cog\Event\SubscriberInterface;
@@ -12,6 +15,7 @@ use Message\Cog\HTTP\RedirectResponse;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Event listener for the Mothership CMS.
@@ -35,7 +39,15 @@ class EventListener extends BaseListener implements SubscriberInterface
 			KernelEvents::EXCEPTION => array(
 				array('pageNotFound'),
 			),
-
+			DashboardEvent::DASHBOARD_INDEX => array(
+				'buildDashboardIndex',
+			),
+			'dashboard.cms.content' => array(
+				'buildDashboardContent',
+			),
+			'dashboard.activity.summary' => array(
+				'buildDashboardBlockUserSummary',
+			),
 		);
 	}
 
@@ -83,5 +95,56 @@ class EventListener extends BaseListener implements SubscriberInterface
 		// 		$this->_services['routing.generator']->generate('ms.cp.cms.dashboard')
 		// 	));
 		// };
+	}
+
+	/**
+	 * Add controller references to the dashboard index.
+	 *
+	 * @param  DashboardEvent $event
+	 */
+	public function buildDashboardIndex(DashboardEvent $event)
+	{
+		$event->addReference('Message:Mothership:CMS::Controller:Module:Dashboard:CMSSummary#index');
+	}
+
+	/**
+	 * Add controller references to the content dashboard.
+	 *
+	 * @param  DashboardEvent $event
+	 */
+	public function buildDashboardContent(DashboardEvent $event)
+	{
+		$event->addReference('Message:Mothership:CMS::Controller:Module:Dashboard:CMSSummary#index');
+	}
+
+	/**
+	 * Add the user's last edited page into the user summary dashboard block.
+	 *
+	 * @param  ActivitySummaryEvent $event
+	 */
+	public function buildDashboardBlockUserSummary(ActivitySummaryEvent $event)
+	{
+		$pageID = $this->get('db.query')->run("
+			SELECT page_id
+			FROM page
+			WHERE updated_by = :userID?i
+			ORDER BY updated_at DESC
+			LIMIT 1
+		", [
+			'userID' => $event->getUser()->id
+		]);
+
+		if (count($pageID)) {
+			$page = $this->get('cms.page.loader')->getByID($pageID[0]->page_id);
+
+			$event->addActivity(new Activity(
+				'Last edited page',
+				$page->authorship->updatedAt(),
+				$page->title,
+				$this->get('routing.generator')->generate('ms.cp.cms.edit', [
+					'pageID' => $page->id,
+				], UrlGeneratorInterface::ABSOLUTE_URL)
+			));
+		}
 	}
 }
