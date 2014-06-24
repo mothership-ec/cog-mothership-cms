@@ -8,6 +8,7 @@ use Message\User\UserInterface;
 
 use Message\Cog\DB;
 use Message\Cog\Event\DispatcherInterface;
+use Message\Cog\ValueObject\DateTimeImmutable;
 
 /**
  * @todo implement Locale
@@ -84,6 +85,22 @@ class ContentEdit
 					value_int    = :value?i
 			', array_merge($row, array('id' => $page->id)));
 		}
+
+		$page->authorship->update(new DateTimeImmutable, $this->_currentUser->id);
+
+		$this->_transaction->add('
+			UPDATE
+				page
+			SET
+				updated_at = :updatedAt?dn,
+				updated_by = :updatedBy?i
+			WHERE
+				page_id = :pageID?i
+		', [
+			'updatedAt' => $page->authorship->updatedAt(),
+			'updatedBy' => $page->authorship->updatedBy(),
+			'pageID'    => $page->id,
+		]);
 
 		return $this->_transaction->commit();
 	}
