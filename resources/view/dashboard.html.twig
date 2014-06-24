@@ -1,72 +1,15 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
 
 {% block sidebar %}
-{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index'))}}
+	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index'))}}
 {% endblock %}
 
 {% block main %}
 	<div class="dashboard">
-		<h1>{{ 'ms.cms.dashboard.page-title'|trans }}</h1>
-
-<!-- 		<a href="#" class="button">Default</a>
-		<a href="#" class="button edit">Edit</a>
-		<a href="#" class="button load">Load</a>
-		<a href="#" class="button submit">Submit</a>
-		<a href="#" class="button create">Create</a>
-		<a href="#" class="button upload">Upload</a>
-		<a href="#" class="button add">Add</a>
-		<a href="#" class="button update">Update</a>
-		<a href="#" class="button save">Save</a>
-		<a href="#" class="button accept">Accept</a>
-		<a href="#" class="button remove">Remove</a>
-		<a href="#" class="button delete">Delete</a>
-		<a href="#" class="button cancel">Cancel</a>
-
-		<button class="button">Default</button>
-		<button class="button submit">Submit</button>
-		<button class="button create">Create</button>
-		<button class="button upload">Upload</button>
-		<button class="button add">Add</button>
-		<button class="button update">Update</button>
-		<button class="button save">Save</button>
-		<button class="button accept">Accept</button>
-		<button class="button remove">Remove</button>
-		<button class="button delete">Delete</button>
-		<button class="button cancel">Cancel</button>
-
-		<div class="button button-group">
-			<a href="#">Button group</a>
-			<span class="dropdown-toggle" data-toggle="dropdown"></span>
-			<div class="dropdown-menu">
-				<p>Hello</p>
-			</div>
+		<div class="modules">
+			{% for reference in dashboardReferences %}
+				{{ render(controller(reference)) }}
+			{% endfor %}
 		</div>
-
-		<a href="#" class="button small">Default</a>
-		<a href="#" class="button small submit">Submit</a>
-		<a href="#" class="button small create">Create</a>
-		<a href="#" class="button small upload">Upload</a>
-		<a href="#" class="button small add">Add</a>
-		<a href="#" class="button small update">Update</a>
-		<a href="#" class="button small save">Save</a>
-		<a href="#" class="button small accept">Accept</a>
-		<a href="#" class="button small remove">Remove</a>
-		<a href="#" class="button small delete">Delete</a>
-		<a href="#" class="button small cancel">Cancel</a>
-
-		<button class="button small">Default</button>
-		<button class="button small submit">Submit</button>
-		<button class="button small create">Create</button>
-		<button class="button small upload">Upload</button>
-		<button class="button small add">Add</button>
-		<button class="button small update">Update</button>
-		<button class="button small save">Save</button>
-		<button class="button small accept">Accept</button>
-		<button class="button small remove">Remove</button>
-		<button class="button small delete">Delete</button>
-		<button class="button small cancel">Cancel</button> -->
-
-
-
 	</div>
 {% endblock %}
