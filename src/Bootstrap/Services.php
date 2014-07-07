@@ -125,7 +125,7 @@ class Services implements ServicesInterface
 		});
 
 		$services->extend('field.collection', function($fields, $c) {
-			$fields->add(new \Message\Mothership\CMS\FieldType\Link($c['validator']));
+			$fields->add(new \Message\Mothership\CMS\FieldType\Link($c['cms.page.loader']));
 
 			return $fields;
 		});

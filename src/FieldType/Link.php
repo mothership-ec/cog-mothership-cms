@@ -5,9 +5,8 @@ namespace Message\Mothership\CMS\FieldType;
 use Message\Cog\Field\MultipleValueField;
 use Message\Mothership\CMS\FormType;
 use Message\Mothership\CMS\Page\Page;
+use Message\Mothership\CMS\Page\Loader as PageLoader;
 
-use Message\Cog\Service\ContainerInterface;
-use Message\Cog\Service\ContainerAwareInterface;
 use Symfony\Component\Form\FormBuilder;
 
 /**
@@ -15,26 +14,23 @@ use Symfony\Component\Form\FormBuilder;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class Link extends MultipleValueField implements ContainerAwareInterface
+class Link extends MultipleValueField
 {
-	protected $_services;
+	protected $_loader;
 
 	const SCOPE_CMS      = 'cms';
 	const SCOPE_EXTERNAL = 'external';
 //	const SCOPE_ROUTE    = 'route'; # for a future version?
 	const SCOPE_ANY      = 'any';
 
+	public function __construct(PageLoader $loader)
+	{
+		$this->_loader = $loader;
+	}
+
 	public function getFieldType()
 	{
 		return 'link';
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function setContainer(ContainerInterface $container)
-	{
-		$this->_services = $container;
 	}
 
 	public function getFormField(FormBuilder $form)
@@ -81,7 +77,7 @@ class Link extends MultipleValueField implements ContainerAwareInterface
 	public function __toString()
 	{
 		if (self::SCOPE_CMS === $this->_value['scope']) {
-			$page = $this->_services['cms.page.loader']
+			$page = $this->_loader
 				->includeDeleted(true)
 				->getByID((int) $this->_value['target']);
 
