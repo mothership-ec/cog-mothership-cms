@@ -86,6 +86,23 @@ class Link extends Field
 	}
 
 	/**
+	 * Method to ensure that if the scope changes from CMS to something else, it returns the right value
+	 *
+	 * @return int|null|string
+	 */
+	public function getValue()
+	{
+		if (is_numeric($this->_value) && ($this->_scope !== self::SCOPE_CMS)) {
+			return $this->_getSlugFromID();
+		}
+		elseif ($this->_value && !is_numeric($this->_value) && ($this->_scope === self::SCOPE_CMS)) {
+			return $this->_getIDFromSlug();
+		}
+
+		return $this->_value;
+	}
+
+	/**
 	 * Magic method for converting this object to a string.
 	 *
 	 * If the scope is "cms", the returned value is the full slug to the target
@@ -98,13 +115,7 @@ class Link extends Field
 	public function __toString()
 	{
 		if (is_numeric($this->_value)) {
-			$page = $this->_loader
-				->includeDeleted(true)
-				->getByID((int) $this->_value);
-
-			if ($page instanceof Page) {
-				return $page->slug->getFull();
-			}
+			return ($this->_getSlugFromID()) ?: $this->_value;
 		}
 
 		return $this->_value;
@@ -154,5 +165,27 @@ class Link extends Field
 		$this->setFieldOptions([
 			'choices'  => $options,
 		]);
+	}
+
+	protected function _getSlugFromID()
+	{
+		$page = $this->_loader
+			->includeDeleted(true)
+			->getByID((int) $this->_value);
+
+		if ($page instanceof Page) {
+			return $page->slug->getFull();
+		}
+
+		return null;
+	}
+
+	protected function _getIDFromSlug()
+	{
+		$page = $this->_loader
+			->includeDeleted(true)
+			->getBySlug($this->_value);
+
+		return ($page instanceof Page) ? $page->id : null;
 	}
 }
