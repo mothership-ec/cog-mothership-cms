@@ -39,6 +39,20 @@ class Link extends Field
 		return 'link';
 	}
 
+	public function getFormType()
+	{
+		switch ($this->_scope) {
+			case self::SCOPE_CMS :
+				$this->_setSelectOptions();
+				return 'choice';
+			case self::SCOPE_EXTERNAL :
+				return 'url';
+			default :
+				$this->_setDatalistOptions();
+				return 'datalist';
+		}
+	}
+
 	public function getFormField(FormBuilder $form)
 	{
 		switch ($this->_scope) {
@@ -98,6 +112,20 @@ class Link extends Field
 
 	protected function _addPageSelect(FormBuilder $form)
 	{
+		$this->_setSelectOptions();
+
+		$form->add($this->getName(), 'choice', $this->getFieldOptions());
+	}
+
+	protected function _addPageDatalist(FormBuilder $form)
+	{
+		$this->_setDatalistOptions();
+
+		$form->add($this->getName(), 'datalist', $this->getFieldOptions());
+	}
+
+	protected function _setSelectOptions()
+	{
 		$pages   = $this->_loader->getAll();
 		$options = [];
 
@@ -107,14 +135,14 @@ class Link extends Field
 
 		asort($options);
 
-		$form->add($this->getName(), 'choice', [
+		$this->setFieldOptions([
 			'multiple' => false,
 			'expanded' => false,
 			'choices'  => $options,
 		]);
 	}
 
-	protected function _addPageDatalist(FormBuilder $form)
+	protected function _setDatalistOptions()
 	{
 		$pages   = $this->_loader->getAll();
 		$options = [];
@@ -123,7 +151,7 @@ class Link extends Field
 			$options[] = $page->slug->getFull();
 		}
 
-		$form->add($this->getName(), 'datalist', [
+		$this->setFieldOptions([
 			'choices'  => $options,
 		]);
 	}
