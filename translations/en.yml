@@ -44,6 +44,8 @@ ms.cms:
     delete:
       confirm: Are you sure you want to delete this page?
       disabled: This page can't be deleted
+    restore:
+      confirm: Are you sure you want to restore this page?
     button:
       title: Update title
       delete: Delete
