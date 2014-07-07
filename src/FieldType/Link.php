@@ -56,6 +56,8 @@ class Link extends Field
 
 	public function setScope($scope)
 	{
+		$scope = strtolower($scope);
+
 		if (!in_array($scope, [
 			self::SCOPE_CMS,
 			self::SCOPE_EXTERNAL,
