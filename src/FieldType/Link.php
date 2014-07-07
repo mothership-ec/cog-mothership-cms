@@ -2,7 +2,7 @@
 
 namespace Message\Mothership\CMS\FieldType;
 
-use Message\Cog\Field\MultipleValueField;
+use Message\Cog\Field\Field;
 use Message\Mothership\CMS\FormType;
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Loader as PageLoader;
@@ -12,11 +12,17 @@ use Symfony\Component\Form\FormBuilder;
 /**
  * A field for a link to an internal or external page.
  *
+ * @todo Write method to convert page IDs to slugs if the scope is changed within the code base to
+ * allow for easy swapping out between scopes
+ *
  * @author Joe Holdcroft <joe@message.co.uk>
+ * @author Thomas Marchant <thomas@message.co.uk>
  */
-class Link extends MultipleValueField
+class Link extends Field
 {
 	protected $_loader;
+
+	protected $_scope = 'any';
 
 	const SCOPE_CMS      = 'cms';
 	const SCOPE_EXTERNAL = 'external';
@@ -35,33 +41,32 @@ class Link extends MultipleValueField
 
 	public function getFormField(FormBuilder $form)
 	{
-		$form->add($this->getName(), new FormType\Link, $this->getFieldOptions());
+		switch ($this->_scope) {
+			case self::SCOPE_CMS :
+				$this->_addPageSelect($form);
+				break;
+			case self::SCOPE_EXTERNAL :
+				// @todo use FormType\Link, or remove class if we never end up using values['scope'] thing
+				$form->add($this->getName(), 'url', $this->getFieldOptions());
+				break;
+			default:
+				$this->_addPageDatalist($form);
+		}
 	}
 
 	public function setScope($scope)
 	{
-		if (!in_array($scope, array(
+		if (!in_array($scope, [
 			self::SCOPE_CMS,
 			self::SCOPE_EXTERNAL,
 			self::SCOPE_ANY,
-		))) {
+		])) {
 			throw new \InvalidArgumentException(sprintf('Invalid scope: `%s`', $scope));
 		}
 
-		// actually, maybe this makes more sense on the form field object?
+		$this->_scope = $scope;
 
 		return $this;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getValueKeys()
-	{
-		return array(
-			'scope',
-			'target',
-		);
 	}
 
 	/**
@@ -76,16 +81,48 @@ class Link extends MultipleValueField
 	 */
 	public function __toString()
 	{
-		if (self::SCOPE_CMS === $this->_value['scope']) {
+		if (is_numeric($this->_value)) {
 			$page = $this->_loader
 				->includeDeleted(true)
-				->getByID((int) $this->_value['target']);
+				->getByID((int) $this->_value);
 
 			if ($page instanceof Page) {
 				return $page->slug->getFull();
 			}
 		}
 
-		return $this->_value['target'];
+		return $this->_value;
+	}
+
+	protected function _addPageSelect(FormBuilder $form)
+	{
+		$pages   = $this->_loader->getAll();
+		$options = [];
+
+		foreach ($pages as $page) {
+			$options[$page->id] = $page->title . ' (' . $page->id . ')';
+		}
+
+		asort($options);
+
+		$form->add($this->getName(), 'choice', [
+			'multiple' => false,
+			'expanded' => false,
+			'choices'  => $options,
+		]);
+	}
+
+	protected function _addPageDatalist(FormBuilder $form)
+	{
+		$pages   = $this->_loader->getAll();
+		$options = [];
+
+		foreach ($pages as $page) {
+			$options[] = $page->slug->getFull();
+		}
+
+		$form->add($this->getName(), 'datalist', [
+			'choices'  => $options,
+		]);
 	}
 }
