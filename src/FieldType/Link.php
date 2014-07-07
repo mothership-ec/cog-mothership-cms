@@ -12,9 +12,6 @@ use Symfony\Component\Form\FormBuilder;
 /**
  * A field for a link to an internal or external page.
  *
- * @todo Write method to convert page IDs to slugs if the scope is changed within the code base to
- * allow for easy swapping out between scopes
- *
  * @author Joe Holdcroft <joe@message.co.uk>
  * @author Thomas Marchant <thomas@message.co.uk>
  */
