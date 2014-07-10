@@ -38,4 +38,11 @@ class AnyLink extends AbstractType
 	{
 		return 'any_link';
 	}
+
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	{
+		$resolver->setDefaults(array(
+			'choices'  => [],
+		));
+	}
 }

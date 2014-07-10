@@ -21,9 +21,9 @@ class CmsLink extends AbstractType
 		$builder->add('target', 'choice', [
 			'multiple' => false,
 			'expanded' => false,
-			'label'    => $options['label'],
+			'label'    => (!empty($options['label'])) ? $options['label'] : 'Link',
 			'choices'  => $options['choices'],
-			'data'     => $options['data'],
+			'data'     => (!empty($options['data'])) ? $options['data'] : null,
 		]);
 	}
 
@@ -40,5 +40,14 @@ class CmsLink extends AbstractType
 	public function getName()
 	{
 		return 'cms_link';
+	}
+
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	{
+		$resolver->setDefaults(array(
+			'choices'  => [],
+			'multiple' => false,
+			'expanded' => false,
+		));
 	}
 }

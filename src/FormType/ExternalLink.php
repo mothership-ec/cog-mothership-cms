@@ -19,7 +19,7 @@ class ExternalLink extends AbstractType
 			'data' => 'external',
 		]);
 		$builder->add('target', 'url', [
-			'label' => $options['label'],
+			'label'    => $options['label'],
 			'data'     => $options['data'],
 		]);
 	}

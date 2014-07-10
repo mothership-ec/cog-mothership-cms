@@ -2,7 +2,7 @@
 
 namespace Message\Mothership\CMS\FieldType;
 
-use Message\Cog\Field\Field;
+use Message\Cog\Field\MultipleValueField;
 use Message\Mothership\CMS\FormType;
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Loader as PageLoader;
@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormBuilder;
  * @author Joe Holdcroft <joe@message.co.uk>
  * @author Thomas Marchant <thomas@message.co.uk>
  */
-class Link extends Field
+class Link extends MultipleValueField
 {
 	protected $_loader;
 
@@ -28,6 +28,8 @@ class Link extends Field
 
 	public function __construct(PageLoader $loader)
 	{
+		$loader->includeDeleted(true);
+
 		$this->_loader = $loader;
 	}
 
@@ -89,14 +91,74 @@ class Link extends Field
 	 */
 	public function getValue()
 	{
-		if (is_numeric($this->_value) && ($this->_scope !== self::SCOPE_CMS)) {
-			return $this->_getSlugFromID();
-		}
-		elseif ($this->_value && !is_numeric($this->_value) && ($this->_scope === self::SCOPE_CMS)) {
-			return $this->_getIDFromSlug();
+		if (empty($this->_value)) {
+			return null;
 		}
 
-		return $this->_value;
+		if ($this->_value['scope'] !== $this->_scope) {
+			$this->_convertTarget();
+		}
+
+		return $this->_value['target'];
+	}
+
+	public function getValueKeys()
+	{
+		return [
+			'scope',
+			'target',
+		];
+	}
+
+	protected function _convertTarget()
+	{
+		switch ($this->_scope) {
+			case self::SCOPE_CMS :
+				$value = $this->_convertToCMS();
+				break;
+			case self::SCOPE_EXTERNAL :
+				$value = $this->_convertToExternalLink();
+				break;
+			default :
+				$value = $this->_convertToAny();
+				break;
+		}
+
+		return $value;
+	}
+
+	protected function _convertToCMS()
+	{
+		if ($page = $this->_loader->getByID($this->_value['target'])) {
+			return $page->id;
+		}
+
+		$page = $this->_loader
+			->getBySlug($this->_value['target']);
+
+		return ($page instanceof Page) ? $page->id : null;
+	}
+
+	protected function _convertToExternalLink()
+	{
+		if (filter_var($this->_value['target'], FILTER_VALIDATE_URL)) {
+			return $this->_value['target'];
+		}
+
+		return $this->_convertToAny();
+	}
+
+	protected function _convertToAny()
+	{
+		if (filter_var($this->_value['target'], FILTER_VALIDATE_URL) || substr($this->_value['target'], 0) === '/') {
+			return $this->_value['target'];
+		}
+
+		$page = $this->_loader
+			->getByID((int) $this->_value);
+
+		return ($page instanceof Page) ? $page->slug->getFull() : null;
+
 	}
 
 	/**
@@ -111,11 +173,13 @@ class Link extends Field
 	 */
 	public function __toString()
 	{
-		if (is_numeric($this->_value)) {
-			return ($this->_getSlugFromID()) ?: $this->_value;
-		}
-
-		return $this->_value;
+		return $this->_convertToAny();
+//
+//		if ($this->_value['scope'] === self::SCOPE_CMS) {
+//			return ($this->_getSlugFromID()) ?: $this->_value['target'];
+//		}
+//
+//		return $this->_value['target'];
 	}
 
 	protected function _addPageSelect(FormBuilder $form)
@@ -138,7 +202,7 @@ class Link extends Field
 		$options = [];
 
 		foreach ($pages as $page) {
-			$options[$page->id] = $page->title . ' (' . $page->id . ')';
+			$options[$page->id] = $page->title;
 		}
 
 		asort($options);
@@ -162,27 +226,5 @@ class Link extends Field
 		$this->setFieldOptions([
 			'choices'  => $options,
 		]);
-	}
-
-	protected function _getSlugFromID()
-	{
-		$page = $this->_loader
-			->includeDeleted(true)
-			->getByID((int) $this->_value);
-
-		if ($page instanceof Page) {
-			return $page->slug->getFull();
-		}
-
-		return null;
-	}
-
-	protected function _getIDFromSlug()
-	{
-		$page = $this->_loader
-			->includeDeleted(true)
-			->getBySlug($this->_value);
-
-		return ($page instanceof Page) ? $page->id : null;
 	}
 }
