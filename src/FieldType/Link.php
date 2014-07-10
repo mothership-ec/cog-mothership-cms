@@ -110,61 +110,6 @@ class Link extends MultipleValueField
 		];
 	}
 
-	protected function _convertTarget()
-	{
-		switch ($this->_scope) {
-			case self::SCOPE_CMS :
-				$value = $this->_convertToCMS();
-				break;
-			case self::SCOPE_EXTERNAL :
-				$value = $this->_convertToExternalLink();
-				break;
-			default :
-				$value = $this->_convertToAny();
-				break;
-		}
-
-		return $value;
-	}
-
-	protected function _convertToCMS()
-	{
-		if ($page = $this->_loader->getByID($this->_value['target'])) {
-			return $page->id;
-		}
-
-		$page = $this->_loader
-			->getBySlug($this->_value['target']);
-
-		return ($page instanceof Page) ? $page->id : null;
-	}
-
-	protected function _convertToExternalLink()
-	{
-		if (filter_var($this->_value['target'], FILTER_VALIDATE_URL)) {
-			return $this->_value['target'];
-		}
-
-		return $this->_convertToAny();
-	}
-
-	protected function _convertToAny()
-	{
-		if (empty($this->_value['target'])) {
-			return null;
-		}
-
-		if (filter_var($this->_value['target'], FILTER_VALIDATE_URL) || substr($this->_value['target'], 0) === '/') {
-			return $this->_value['target'];
-		}
-
-		$page = $this->_loader
-			->getByID((int) $this->_value['target']);
-
-		return ($page instanceof Page) ? $page->slug->getFull() : null;
-
-	}
-
 	/**
 	 * Magic method for converting this object to a string.
 	 *
@@ -178,6 +123,17 @@ class Link extends MultipleValueField
 	public function __toString()
 	{
 		return (string) $this->_convertToAny();
+	}
+
+	public function setFieldOptions(array $options)
+	{
+		$base = $this->getFieldOptions();
+
+		$options = array_merge($base, $options);
+
+		parent::setFieldOptions($options);
+
+		return $this;
 	}
 
 	protected function _addCmsLink(FormBuilder $form)
@@ -206,6 +162,7 @@ class Link extends MultipleValueField
 		asort($options);
 
 		$this->setFieldOptions([
+			'empty_value' => 'Please select a page...',
 			'choices'  => $options,
 		]);
 	}
@@ -222,5 +179,68 @@ class Link extends MultipleValueField
 		$this->setFieldOptions([
 			'choices'  => $options,
 		]);
+	}
+
+	protected function _convertTarget()
+	{
+		switch ($this->_scope) {
+			case self::SCOPE_CMS :
+				$value = $this->_convertToCMS();
+				break;
+			case self::SCOPE_EXTERNAL :
+				$value = $this->_convertToExternalLink();
+				break;
+			default :
+				$value = $this->_convertToAny();
+				break;
+		}
+
+		return $value;
+	}
+
+	protected function _convertToCMS()
+	{
+		if (empty($this->_value['target'])) {
+			return null;
+		}
+
+		if ($page = $this->_loader->getByID($this->_value['target'])) {
+			return $page->id;
+		}
+
+		$page = $this->_loader
+			->getBySlug($this->_value['target']);
+
+		return ($page instanceof Page) ? $page->id : null;
+	}
+
+	protected function _convertToExternalLink()
+	{
+		if (empty($this->_value['target'])) {
+			return null;
+		}
+
+		if (filter_var($this->_value['target'], FILTER_VALIDATE_URL)) {
+			return $this->_value['target'];
+		}
+
+		return $this->_convertToAny();
+	}
+
+	protected function _convertToAny()
+	{
+		if (empty($this->_value['target'])) {
+			return null;
+		}
+
+		if (filter_var($this->_value['target'], FILTER_VALIDATE_URL) || substr($this->_value['target'], 0) === '/') {
+			return $this->_value['target'];
+		}
+
+		$page = $this->_loader
+			->getByID((int) $this->_value['target']);
+
+		return ($page instanceof Page) ? $page->slug->getFull() : null;
+
 	}
 }
