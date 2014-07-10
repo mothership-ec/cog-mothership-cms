@@ -23,7 +23,6 @@ class CmsLink extends AbstractType
 			'expanded' => false,
 			'label'    => (!empty($options['label'])) ? $options['label'] : 'Link',
 			'choices'  => $options['choices'],
-			'data'     => (!empty($options['data'])) ? $options['data'] : null,
 		]);
 	}
 

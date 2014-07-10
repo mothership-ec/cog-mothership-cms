@@ -56,14 +56,13 @@ class Link extends MultipleValueField
 	{
 		switch ($this->_scope) {
 			case self::SCOPE_CMS :
-				$this->_addPageSelect($form);
+				$this->_addCmsLink($form);
 				break;
 			case self::SCOPE_EXTERNAL :
-				// @todo use FormType\Link, or remove class if we never end up using values['scope'] thing
-				$form->add($this->getName(), 'url', $this->getFieldOptions());
+				$form->add($this->getName(), 'external_link', $this->getFieldOptions());
 				break;
 			default:
-				$this->_addPageDatalist($form);
+				$this->_addAnyLink($form);
 		}
 	}
 
@@ -95,11 +94,12 @@ class Link extends MultipleValueField
 			return null;
 		}
 
-		if ($this->_value['scope'] !== $this->_scope) {
-			$this->_convertTarget();
-		}
+		$value = ($this->_value['scope'] === $this->_scope) ? $this->_value['target'] : $this->_convertTarget();
 
-		return $this->_value['target'];
+		return [
+			'target' => $value,
+			'scope'  => $this->_scope,
+		];
 	}
 
 	public function getValueKeys()
@@ -150,12 +150,16 @@ class Link extends MultipleValueField
 
 	protected function _convertToAny()
 	{
+		if (empty($this->_value['target'])) {
+			return null;
+		}
+
 		if (filter_var($this->_value['target'], FILTER_VALIDATE_URL) || substr($this->_value['target'], 0) === '/') {
 			return $this->_value['target'];
 		}
 
 		$page = $this->_loader
-			->getByID((int) $this->_value);
+			->getByID((int) $this->_value['target']);
 
 		return ($page instanceof Page) ? $page->slug->getFull() : null;
 
@@ -173,27 +177,21 @@ class Link extends MultipleValueField
 	 */
 	public function __toString()
 	{
-		return $this->_convertToAny();
-//
-//		if ($this->_value['scope'] === self::SCOPE_CMS) {
-//			return ($this->_getSlugFromID()) ?: $this->_value['target'];
-//		}
-//
-//		return $this->_value['target'];
+		return (string) $this->_convertToAny();
 	}
 
-	protected function _addPageSelect(FormBuilder $form)
+	protected function _addCmsLink(FormBuilder $form)
 	{
 		$this->_setSelectOptions();
 
-		$form->add($this->getName(), 'choice', $this->getFieldOptions());
+		$form->add($this->getName(), 'cms_link', $this->getFieldOptions());
 	}
 
-	protected function _addPageDatalist(FormBuilder $form)
+	protected function _addAnyLink(FormBuilder $form)
 	{
 		$this->_setDatalistOptions();
 
-		$form->add($this->getName(), 'datalist', $this->getFieldOptions());
+		$form->add($this->getName(), 'any_link', $this->getFieldOptions());
 	}
 
 	protected function _setSelectOptions()
@@ -208,8 +206,6 @@ class Link extends MultipleValueField
 		asort($options);
 
 		$this->setFieldOptions([
-			'multiple' => false,
-			'expanded' => false,
 			'choices'  => $options,
 		]);
 	}
