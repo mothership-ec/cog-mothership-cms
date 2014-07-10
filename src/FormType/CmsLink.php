@@ -8,15 +8,23 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class Link extends AbstractType
+class CmsLink extends AbstractType
 {
 	/**
 	 * {@inheritdoc}
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('scope', 'hidden');
-		$builder->add('target', 'url', array('label' => $options['label'])); // Copy label to "target" field
+		$builder->add('scope', 'hidden', [
+			'data' => 'cms',
+		]);
+		$builder->add('target', 'choice', [
+			'multiple' => false,
+			'expanded' => false,
+			'label'    => $options['label'],
+			'choices'  => $options['choices'],
+			'data'     => $options['data'],
+		]);
 	}
 
 	/**
@@ -31,6 +39,6 @@ class Link extends AbstractType
 
 	public function getName()
 	{
-		return 'link';
+		return 'cms_link';
 	}
 }

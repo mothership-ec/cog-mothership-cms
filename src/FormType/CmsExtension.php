@@ -19,10 +19,12 @@ class CmsExtension extends AbstractExtension implements ContainerAwareInterface
 
 	protected function loadTypes()
 	{
-		return array(
-			new Link,
+		return [
+			new AnyLink,
+			new CmsLink,
+			new ExternalLink,
 			new MothershipFile,
 			new Slug
-		);
+		];
 	}
 }

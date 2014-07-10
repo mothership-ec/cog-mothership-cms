@@ -41,12 +41,12 @@ class Link extends Field
 		switch ($this->_scope) {
 			case self::SCOPE_CMS :
 				$this->_setSelectOptions();
-				return 'choice';
+				return 'cms_link';
 			case self::SCOPE_EXTERNAL :
-				return 'url';
+				return 'external_link';
 			default :
 				$this->_setDatalistOptions();
-				return 'datalist';
+				return 'any_link';
 		}
 	}
 
