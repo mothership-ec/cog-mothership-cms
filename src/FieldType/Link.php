@@ -236,8 +236,7 @@ class Link extends MultipleValueField
 		$options = [];
 
 		foreach ($this->_pages as $page) {
-			$prefix    = str_repeat('-', $page->depth);
-			$options[] = $prefix . ' ' . $page->slug->getFull();
+			$options[] = $page->slug->getFull();
 		}
 
 		$this->setFieldOptions([
@@ -290,16 +289,16 @@ class Link extends MultipleValueField
 	 */
 	protected function _convertToCms()
 	{
-		if (empty($this->_value['target'])) {
+		if (empty($this->_value['target']) || $this->_value['scope'] === self::SCOPE_EXTERNAL) {
 			return null;
 		}
-
-		if ($page = $this->_loader->getByID($this->_value['target'])) {
-			return $page->id;
+		elseif ($this->_value['scope'] === self::SCOPE_CMS) {
+			return $this->_value['target'];
 		}
 
 		$page = $this->_loader
 			->getBySlug($this->_value['target']);
+
 
 		return ($page instanceof Page) ? $page->id : null;
 	}
@@ -312,14 +311,6 @@ class Link extends MultipleValueField
 	 */
 	protected function _convertToExternalLink()
 	{
-		if (empty($this->_value['target'])) {
-			return null;
-		}
-
-		if (filter_var($this->_value['target'], FILTER_VALIDATE_URL)) {
-			return $this->_value['target'];
-		}
-
 		return $this->_convertToAny();
 	}
 
@@ -335,14 +326,12 @@ class Link extends MultipleValueField
 			return null;
 		}
 
-		if (filter_var($this->_value['target'], FILTER_VALIDATE_URL) || substr($this->_value['target'], 0) === '/') {
-			return $this->_value['target'];
+		if ($this->_value['scope'] === self::SCOPE_CMS) {
+			$page = $this->_loader->getByID((int) $this->_value['target']);
+
+			return ($page instanceof Page) ? $page->slug->getFull() : null;
 		}
 
-		$page = $this->_loader
-			->getByID((int) $this->_value['target']);
-
-		return ($page instanceof Page) ? $page->slug->getFull() : null;
-
+		return $this->_value['target'];
 	}
 }
