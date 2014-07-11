@@ -18,8 +18,8 @@ use Symfony\Component\Form\FormBuilder;
 class Link extends MultipleValueField
 {
 	protected $_loader;
-
 	protected $_scope = 'any';
+	protected $_pages = [];
 
 	const SCOPE_CMS      = 'cms';
 	const SCOPE_EXTERNAL = 'external';
@@ -28,6 +28,7 @@ class Link extends MultipleValueField
 
 	const DEFAULT_LABEL = 'ms.cms.field_types.link.default_label';
 	const EMPTY_VALUE   = 'ms.cms.field_types.link.empty_value';
+
 
 	public function __construct(PageLoader $loader)
 	{
@@ -204,14 +205,13 @@ class Link extends MultipleValueField
 	 */
 	protected function _setCmsLinkOptions()
 	{
-		$pages   = $this->_loader->getAll();
+		$this->_setPageHeirarchy();
 		$options = [];
 
-		foreach ($pages as $page) {
-			$options[$page->id] = $page->title;
+		foreach ($this->_pages as $page) {
+			$prefix             = str_repeat('-', $page->depth);
+			$options[$page->id] = $prefix . ' ' . $page->title;
 		}
-
-		asort($options);
 
 		$this->setFieldOptions([
 			'empty_value' => self::EMPTY_VALUE,
@@ -232,16 +232,32 @@ class Link extends MultipleValueField
 	 */
 	protected function _setAnyLinkOptions()
 	{
-		$pages   = $this->_loader->getAll();
+		$this->_setPageHeirarchy();
 		$options = [];
 
-		foreach ($pages as $page) {
-			$options[] = $page->slug->getFull();
+		foreach ($this->_pages as $page) {
+			$prefix    = str_repeat('-', $page->depth);
+			$options[] = $prefix . ' ' . $page->slug->getFull();
 		}
 
 		$this->setFieldOptions([
 			'choices'  => $options,
 		]);
+	}
+
+	/**
+	 * Load pages in a flat array so that child pages appear after their parents
+	 *
+	 * @param Page $parent
+	 */
+	protected function _setPageHeirarchy(Page $parent = null)
+	{
+		$children = $this->_loader->getChildren($parent);
+
+		foreach ($children as $page) {
+			$this->_pages[$page->id] = $page;
+			$this->_setPageHeirarchy($page);
+		}
 	}
 
 	/**
