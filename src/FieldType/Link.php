@@ -178,6 +178,12 @@ class Link extends MultipleValueField
 		$form->add($this->getName(), 'external_link', $this->getFieldOptions());
 	}
 
+	/**
+	 * Set the default options depending on scope.
+	 * 
+	 * @todo Currently setting the field options before setting the scope is kinda flakey, the label will be redefined
+	 * but any other options will be overwritten as this method is called when the scope is set
+	 */
 	protected function _setDefaultOptions()
 	{
 		switch ($this->_scope) {
