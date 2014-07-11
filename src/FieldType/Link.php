@@ -26,6 +26,9 @@ class Link extends MultipleValueField
 //	const SCOPE_ROUTE    = 'route'; # for a future version?
 	const SCOPE_ANY      = 'any';
 
+	const DEFAULT_LABEL = 'ms.cms.field_types.link.default_label';
+	const EMPTY_VALUE   = 'ms.cms.field_types.link.empty_value';
+
 	public function __construct(PageLoader $loader)
 	{
 		$loader->includeDeleted(true);
@@ -42,12 +45,12 @@ class Link extends MultipleValueField
 	{
 		switch ($this->_scope) {
 			case self::SCOPE_CMS :
-				$this->_setSelectOptions();
+				$this->_setCmsLinkOptions();
 				return 'cms_link';
 			case self::SCOPE_EXTERNAL :
 				return 'external_link';
 			default :
-				$this->_setDatalistOptions();
+				$this->_setAnyLinkOptions();
 				return 'any_link';
 		}
 	}
@@ -59,7 +62,7 @@ class Link extends MultipleValueField
 				$this->_addCmsLink($form);
 				break;
 			case self::SCOPE_EXTERNAL :
-				$form->add($this->getName(), 'external_link', $this->getFieldOptions());
+				$this->_addExternalLink($form);
 				break;
 			default:
 				$this->_addAnyLink($form);
@@ -79,6 +82,7 @@ class Link extends MultipleValueField
 		}
 
 		$this->_scope = $scope;
+		$this->_setDefaultOptions();
 
 		return $this;
 	}
@@ -125,6 +129,13 @@ class Link extends MultipleValueField
 		return (string) $this->_convertToAny();
 	}
 
+	/**
+	 * Merge field options with existing options
+	 *
+	 * @param array $options
+	 *
+	 * @return Link
+	 */
 	public function setFieldOptions(array $options)
 	{
 		$base = $this->getFieldOptions();
@@ -136,21 +147,62 @@ class Link extends MultipleValueField
 		return $this;
 	}
 
+	/**
+	 * Add a drop down of all CMS pages to the form
+	 *
+	 * @param FormBuilder $form
+	 */
 	protected function _addCmsLink(FormBuilder $form)
 	{
-		$this->_setSelectOptions();
-
 		$form->add($this->getName(), 'cms_link', $this->getFieldOptions());
 	}
 
+	/**
+	 * Add a datalist containing all existing slugs to the form.
+	 *
+	 * @param FormBuilder $form
+	 */
 	protected function _addAnyLink(FormBuilder $form)
 	{
-		$this->_setDatalistOptions();
-
 		$form->add($this->getName(), 'any_link', $this->getFieldOptions());
 	}
 
-	protected function _setSelectOptions()
+	/**
+	 * Add a URL field to the form
+	 *
+	 * @param FormBuilder $form
+	 */
+	protected function _addExternalLink(FormBuilder $form)
+	{
+		$form->add($this->getName(), 'external_link', $this->getFieldOptions());
+	}
+
+	protected function _setDefaultOptions()
+	{
+		switch ($this->_scope) {
+			case self::SCOPE_CMS :
+				$this->_setCmsLinkOptions();
+				break;
+			case self::SCOPE_EXTERNAL :
+				$this->_setExternalLinkOptions();
+				break;
+			default:
+				$this->_setAnyLinkOptions();
+		}
+
+		$options = $this->getFieldOptions();
+
+		if (empty($options['label'])) {
+			$this->setFieldOptions([
+				'label' => self::DEFAULT_LABEL,
+			]);
+		}
+	}
+
+	/**
+	 * Load and sort all existing pages and set them as choices for the CMS link, and set the label and empty value
+	 */
+	protected function _setCmsLinkOptions()
 	{
 		$pages   = $this->_loader->getAll();
 		$options = [];
@@ -162,12 +214,23 @@ class Link extends MultipleValueField
 		asort($options);
 
 		$this->setFieldOptions([
-			'empty_value' => 'ms.cms.field_types.link.empty_value',
-			'choices'  => $options,
+			'empty_value' => self::EMPTY_VALUE,
+			'choices'     => $options,
 		]);
 	}
 
-	protected function _setDatalistOptions()
+	/**
+	 * Currently does nothing, but put in place if any external link specific options need to be added
+	 */
+	protected function _setExternalLinkOptions()
+	{
+		// No options to add
+	}
+
+	/**
+	 * Load and sort slugs for all existing pages and set them choices for the 'any' link, and set the label
+	 */
+	protected function _setAnyLinkOptions()
 	{
 		$pages   = $this->_loader->getAll();
 		$options = [];
@@ -181,11 +244,16 @@ class Link extends MultipleValueField
 		]);
 	}
 
+	/**
+	 * Method to attempt to convert values from one scope to another
+	 *
+	 * @return int | string | null
+	 */
 	protected function _convertTarget()
 	{
 		switch ($this->_scope) {
 			case self::SCOPE_CMS :
-				$value = $this->_convertToCMS();
+				$value = $this->_convertToCms();
 				break;
 			case self::SCOPE_EXTERNAL :
 				$value = $this->_convertToExternalLink();
@@ -198,7 +266,13 @@ class Link extends MultipleValueField
 		return $value;
 	}
 
-	protected function _convertToCMS()
+	/**
+	 * Attempt to convert value to 'cms' scope. If it can load a page using the value then it will return the id of
+	 * that page, else it will try to load the page assuming the value is a slug
+	 *
+	 * @return int | null
+	 */
+	protected function _convertToCms()
 	{
 		if (empty($this->_value['target'])) {
 			return null;
@@ -214,6 +288,12 @@ class Link extends MultipleValueField
 		return ($page instanceof Page) ? $page->id : null;
 	}
 
+	/**
+	 * Will return the current value if it is a valid URL, else it will use the convertToAny() method to convert the
+	 * value to a slug
+	 *
+	 * @return string | null
+	 */
 	protected function _convertToExternalLink()
 	{
 		if (empty($this->_value['target'])) {
@@ -227,6 +307,12 @@ class Link extends MultipleValueField
 		return $this->_convertToAny();
 	}
 
+	/**
+	 * If the value is a valid URL or slug, it will return it, else it will assume it's an ID and try to load the
+	 * page slug from that
+	 *
+	 * @return string | null
+	 */
 	protected function _convertToAny()
 	{
 		if (empty($this->_value['target'])) {

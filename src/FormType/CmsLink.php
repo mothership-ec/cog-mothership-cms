@@ -21,7 +21,7 @@ class CmsLink extends AbstractType
 		$builder->add('target', 'choice', [
 			'multiple'    => false,
 			'expanded'    => false,
-			'label'       => (!empty($options['label'])) ? $options['label'] : 'ms.cms.field_types.link.label',
+			'label'       => $options['label'],
 			'choices'     => $options['choices'],
 			'empty_value' => $options['empty_value'],
 			'constraints' => $options['constraints'],

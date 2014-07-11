@@ -156,7 +156,7 @@ ms.cms:
       help: -
     link:
       help: -
-      empty_value: Please select a page
+      empty_value: Please select a page...
       default_label: Link
     richtext:
       help: -
