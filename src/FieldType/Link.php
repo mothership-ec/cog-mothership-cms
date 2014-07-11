@@ -162,7 +162,7 @@ class Link extends MultipleValueField
 		asort($options);
 
 		$this->setFieldOptions([
-			'empty_value' => 'Please select a page...',
+			'empty_value' => 'ms.cms.field_types.link.empty_value',
 			'choices'  => $options,
 		]);
 	}

@@ -19,10 +19,10 @@ class CmsLink extends AbstractType
 			'data' => 'cms',
 		]);
 		$builder->add('target', 'choice', [
-			'multiple' => false,
-			'expanded' => false,
-			'label'    => (!empty($options['label'])) ? $options['label'] : 'Link',
-			'choices'  => $options['choices'],
+			'multiple'    => false,
+			'expanded'    => false,
+			'label'       => (!empty($options['label'])) ? $options['label'] : 'ms.cms.field_types.link.label',
+			'choices'     => $options['choices'],
 			'empty_value' => $options['empty_value'],
 			'constraints' => $options['constraints'],
 		]);
@@ -38,18 +38,24 @@ class CmsLink extends AbstractType
 		));
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
 	public function getName()
 	{
 		return 'cms_link';
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
-		$resolver->setDefaults(array(
-			'choices'  => [],
-			'multiple' => false,
-			'expanded' => false,
+		$resolver->setDefaults([
+			'choices'     => [],
+			'multiple'    => false,
+			'expanded'    => false,
 			'empty_value' => null,
-		));
+		]);
 	}
 }
