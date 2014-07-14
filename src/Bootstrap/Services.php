@@ -159,6 +159,10 @@ class Services implements ServicesInterface
 			return new \Message\Mothership\CMS\Form\Contact($c['translator']);
 		});
 
+		$services['form.publishschedule'] = $services->factory(function() {
+			return new \Message\Mothership\CMS\Form\PublishSchedule();
+		});
+
 		$services->extend('user.groups', function($groups) {
 			$groups->add(new CMS\UserGroup\ContentManager);
 
