@@ -32,7 +32,7 @@ class PublishSchedule extends Form\AbstractType
       ]);
 
     $form->add('unpublish_date', 'datetime', [
-      'label' => 'ms.cms.publish.publish-date.label',
+      'label' => 'ms.cms.publish.unpublish-date.label',
       'attr' => ['data-help-key' => 'ms.cms.publish.unpublish-date.help'],
       'data' => $model->publishDateRange->getEnd(),
       'mapped' => false
