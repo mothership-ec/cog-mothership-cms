@@ -8,15 +8,20 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class Link extends AbstractType
+class AnyLink extends AbstractType
 {
 	/**
 	 * {@inheritdoc}
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('scope', 'hidden');
-		$builder->add('target', 'url', array('label' => $options['label'])); // Copy label to "target" field
+		$builder->add('scope', 'hidden', [
+			'data' => 'any',
+		]);
+		$builder->add('target', 'datalist', [
+			'label'   => $options['label'],
+			'choices' => $options['choices'],
+		]);
 	}
 
 	/**
@@ -31,6 +36,13 @@ class Link extends AbstractType
 
 	public function getName()
 	{
-		return 'link';
+		return 'any_link';
+	}
+
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	{
+		$resolver->setDefaults(array(
+			'choices'  => [],
+		));
 	}
 }
