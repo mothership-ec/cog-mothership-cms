@@ -311,7 +311,28 @@ class Loader
 		', strtolower($pageType));
 
 		return count($result) ? $this->getById($result->flatten()) : false;
+	}
 
+	/**
+	 * Select a page that has a certain tag
+	 *
+	 * @param $tag
+	 * @return array | bool |Page
+	 */
+	public function getByTag($tag)
+	{
+		$result = $this->_query->run('
+			SELECT
+				page_id
+			FROM
+				page_tag
+			WHERE
+				tag_name = :tag?s
+		', [
+			'tag' => $tag
+		]);
+
+		return count($result) ? $this->getByID($result->flatten()) : false;
 	}
 
 	/**
