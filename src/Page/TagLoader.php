@@ -25,7 +25,7 @@ class TagLoader implements EntityLoaderInterface
 	 */
 	public function __construct(DBQuery $query)
 	{
-		$this->_query        = $query;
+		$this->_query = $query;
 	}
 
 	public function load(Page $page)
