@@ -137,14 +137,16 @@ class EventListener extends BaseListener implements SubscriberInterface
 		if (count($pageID)) {
 			$page = $this->get('cms.page.loader')->getByID($pageID[0]->page_id);
 
-			$event->addActivity(new Activity(
-				'Last edited page',
-				$page->authorship->updatedAt(),
-				$page->title,
-				$this->get('routing.generator')->generate('ms.cp.cms.edit', [
-					'pageID' => $page->id,
-				], UrlGeneratorInterface::ABSOLUTE_URL)
-			));
+			if($page) {
+				$event->addActivity(new Activity(
+					'Last edited page',
+					$page->authorship->updatedAt(),
+					$page->title,
+					$this->get('routing.generator')->generate('ms.cp.cms.edit', [
+						'pageID' => $page->id,
+					], UrlGeneratorInterface::ABSOLUTE_URL)
+				));
+			}
 		}
 	}
 }
