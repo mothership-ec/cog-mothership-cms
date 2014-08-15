@@ -18,7 +18,6 @@ class CookieTrailBuilder
 	public function getTrailByPage(Page $page)
 	{
 		$trail = new CookieTrail;
-
 		$trailArray = [$page];
 		$trailArray = $this->_getTrailArray($trailArray);
 
@@ -37,7 +36,7 @@ class CookieTrailBuilder
 			return $trail;
 		}
 
-		array_unshift($nextParent, $trail);
-		return $this->_getTrailArray();
+		array_unshift($trail, $nextParent);
+		return $this->_getTrailArray($trail);
 	}
 }

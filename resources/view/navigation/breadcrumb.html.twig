@@ -1,9 +1,9 @@
-{% if breadcrumb.count > 0 %}
+{% if trail.count > 0 %}
 <nav class="breadcrumb">
 	<ul>
-		{% for page in breadcrumb %}
+		{% for page in trail %}
 		    <li>
-		    {% if page == currentPage %}
+		    {% if page != currentPage %}
 		    	<a href="{{ page.slug }}">{{ page.title }}</a>
 		    {% else %}
 		    	<span>{{ page.title }}</span>

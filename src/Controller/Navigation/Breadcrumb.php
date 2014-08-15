@@ -12,7 +12,7 @@ class Breadcrumb extends Controller
 		$builder = $this->get('cms.page.cookietrail.builder');
 		$trail   = $builder->getTrailByPage($page);
 
-		return $this->render('::navigation:breadcrumb', [
+		return $this->render('Message:Mothership:CMS::navigation:breadcrumb', [
 				'trail'       => $trail,
 				'currentPage' => $page,
 			]);
