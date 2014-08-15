@@ -1,0 +1,15 @@
+{% if breadcrumb.count > 0 %}
+<nav class="breadcrumb">
+	<ul>
+		{% for page in breadcrumb %}
+		    <li>
+		    {% if page == currentPage %}
+		    	<a href="{{ page.slug }}">{{ page.title }}</a>
+		    {% else %}
+		    	<span>{{ page.title }}</span>
+		    {% endif %}
+		    </li>
+		{% endfor %}
+	</ul>
+</nav>
+{% endif %}
