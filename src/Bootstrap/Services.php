@@ -110,6 +110,10 @@ class Services implements ServicesInterface
 			);
 		});
 
+		$services['cms.page.cookietrail.builder'] = $services->factory(function() {
+			return new CMS\Page\CookieTrail\CookieTrailBuilder;
+		});
+
 		$services['cms.search.loader'] = $services->factory(function($c) {
 			return new CMS\SearchLog\Loader(
 				$c['db.query']
