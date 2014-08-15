@@ -9,8 +9,8 @@ class Breadcrumb extends Controller
 {
 	public function breadcrumb(Page $page)
 	{
-		$builder = $this->get('cms.page.breadcrumb.builder');
-		$trail   = $builder->getTrailFromPage($page);
+		$builder = $this->get('cms.page.cookietrail.builder');
+		$trail   = $builder->getTrailByPage($page);
 
 		return $this->render('::navigation:breadcrumb', [
 				'trail'       => $trail,

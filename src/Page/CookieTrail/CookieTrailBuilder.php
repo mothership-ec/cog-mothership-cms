@@ -4,9 +4,17 @@ namespace Message\Mothership\CMS\Page\CookieTrail;
 
 use Message\Cog\ValueObject\Collection;
 use Message\Mothership\CMS\Page\Page;
+use Message\Mothership\CMS\Page\Loader as PageLoader;
 
 class CookieTrailBuilder
 {
+	protected $_pageLoader;
+
+	public function __construct(PageLoader $pageLoader)
+	{
+		$this->_pageLoader = $pageLoader;
+	}
+
 	public function getTrailByPage(Page $page)
 	{
 		$trail = new CookieTrail;
@@ -23,7 +31,7 @@ class CookieTrailBuilder
 
 	protected function _getTrailArray($trail)
 	{
-		$nextParent = $trail[0]->getParent();
+		$nextParent = $this->_pageLoader->getParent($trail[0]);
 
 		if($nextParent == null) {
 			return $trail;
