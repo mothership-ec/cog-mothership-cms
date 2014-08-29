@@ -53,7 +53,7 @@ class Search extends \Message\Cog\Controller\Controller
 
 		$form->add('terms', 'search', $this->trans('ms.cms.search.label'), array(
 			'attr' => array(
-				'placeholder' => 'Search content&hellip;'
+				'placeholder' => 'Search content…'
 			)
 		));
 
