@@ -1,0 +1,17 @@
+{% if trail.count > 0 %}
+<nav class="breadcrumb">
+	<ul>
+		{% for page in trail %}
+		    {% if page != currentPage %}
+		    <li>
+		    	<a href="{{ page.slug }}">{{ page.title }}</a>
+		    </li>
+		    {% else %}
+		    <li class="bc-primary">
+		    	<span>{{ page.title }}</span>
+		    </li>
+		    {% endif %}
+		{% endfor %}
+	</ul>
+</nav>
+{% endif %}
