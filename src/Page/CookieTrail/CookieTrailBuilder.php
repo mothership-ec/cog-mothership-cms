@@ -28,7 +28,7 @@ class CookieTrailBuilder
 		return $trail;
 	}
 
-	protected function _getTrailArray($trail)
+	protected function _getTrailArray(array $trail)
 	{
 		$nextParent = $this->_pageLoader->getParent($trail[0]);
 
@@ -37,6 +37,7 @@ class CookieTrailBuilder
 		}
 
 		array_unshift($trail, $nextParent);
+
 		return $this->_getTrailArray($trail);
 	}
 }
