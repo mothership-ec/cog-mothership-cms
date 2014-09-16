@@ -16,6 +16,7 @@ use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\Query;
 use Message\Cog\DB\Result;
 use Message\Cog\Pagination\Pagination;
+use Message\Cog\DB\Entity\EntityLoaderCollection;
 
 /**
  * Responsible for loading page data and returning prepared instances of `Page`.
@@ -54,6 +55,7 @@ class Loader
 	protected $_query;
 	protected $_pageTypes;
 	protected $_authorisation;
+	protected $_loaders;
 
 	protected $_pagination;
 
@@ -72,7 +74,7 @@ class Loader
 	 * @var boolean
 	 */
 	protected $_loadUnpublished = true;
-	protected $_loadUnviewable = true;
+	protected $_loadUnviewable  = true;
 
 	/**
 	 * Constructor
@@ -89,9 +91,9 @@ class Loader
 		UserGroupCollection $groups,
 		Authorisation $authorisation,
 		UserInterface $user,
-		Searcher $searcher
-	)
-	{
+		Searcher $searcher,
+		EntityLoaderCollection $loaders
+	) {
 		$this->_locale        = $locale;
 		$this->_query         = $query;
 		$this->_pageTypes     = $pageTypes;
@@ -99,6 +101,7 @@ class Loader
 		$this->_authorisation = $authorisation;
 		$this->_user 		  = $user;
 		$this->_searcher      = $searcher;
+		$this->_loaders       = $loaders;
 	}
 
 	/**
@@ -534,7 +537,6 @@ class Loader
 		return $this;
 	}
 
-
 	/**
 	 * Load all the given pages and pass the results onto the _loadPage method
 	 *
@@ -642,7 +644,10 @@ class Loader
 	 */
 	protected function _loadPage(Result $results)
 	{
-		$pages = $results->bindTo('Message\\Mothership\\CMS\\Page\\Page');
+		$pages = $results->bindTo(
+			'Message\\Mothership\\CMS\\Page\\PageProxy',
+			[$this->_loaders]
+		);
 
 		foreach ($results as $key => $data) {
 			// Skip deleted pages
@@ -693,9 +698,6 @@ class Loader
 			if ($data->deletedAt) {
 				$pages[$key]->authorship->delete(new DateTimeImmutable(date('c',$data->deletedAt)), $data->deletedBy);
 			}
-
-			// Load tags
-			$this->_loadTags($pages[$key]);
 
 			// If the page is set to inherit it's access then loop through each
 			// parent to find the inherited access level.
@@ -750,22 +752,6 @@ class Loader
 		}
 
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
-	}
-
-	protected function _loadTags(Page $page)
-	{
-		$tags = $this->_query->run('
-			SELECT
-				tag_name
-			FROM
-				page_tag
-			WHERE
-				page_id = ?i
-		', $page->id);
-
-		$page->tags = $tags->flatten();
-
-		return $page;
 	}
 
 	protected function _sortPages(Page $a, Page $b)

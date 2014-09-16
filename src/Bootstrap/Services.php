@@ -4,6 +4,7 @@ namespace Message\Mothership\CMS\Bootstrap;
 
 use Message\Mothership\CMS;
 
+use Message\Cog\DB\Entity\EntityLoaderCollection;
 use Message\Cog\Bootstrap\ServicesInterface;
 
 class Services implements ServicesInterface
@@ -32,7 +33,11 @@ class Services implements ServicesInterface
 				$c['user.groups'],
 				$c['cms.page.authorisation'],
 				$c['user.current'],
-				$c['cms.page.searcher']
+				$c['cms.page.searcher'],
+				new EntityLoaderCollection([
+					'content' => $c['cms.page.content_loader'],
+					'tags' => $c['cms.page.tag.loader'],
+				])
 			);
 		});
 
@@ -78,6 +83,10 @@ class Services implements ServicesInterface
 
 		$services['cms.page.authorisation'] = $services->factory(function($c) {
 			return new CMS\Page\Authorisation($c['user.group.loader'], $c['user.current']);
+		});
+
+		$services['cms.page.tag.loader'] = $services->factory(function($c) {
+			return new CMS\Page\TagLoader($c['db.query']);
 		});
 
 		$services['cms.page.create'] = $services->factory(function($c) {

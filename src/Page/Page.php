@@ -21,6 +21,7 @@ class Page
 	public $type;
 	public $publishDateRange;
 	public $slug;
+	// public to avoid BC break for now
 	public $tags = [];
 
 	public $left;
@@ -77,6 +78,18 @@ class Page
 		}
 
 		return $this->_content;
+	}
+
+	public function getTags()
+	{
+		return $this->tags;
+	}
+
+	public function setTags($tags)
+	{
+		$this->tags = $tags;
+
+		return $this;
 	}
 
 	/**

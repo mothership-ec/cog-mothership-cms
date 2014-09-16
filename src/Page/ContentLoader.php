@@ -6,6 +6,7 @@ use Message\Cog\Field;
 
 use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\DB\Result as DBResult;
+use Message\Cog\DB\Entity\EntityLoaderInterface;
 use Message\Cog\Field\Factory;
 
 /**
@@ -16,7 +17,7 @@ use Message\Cog\Field\Factory;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
-class ContentLoader
+class ContentLoader implements EntityLoaderInterface
 {
 	protected $_query;
 	protected $_fieldFactory;
