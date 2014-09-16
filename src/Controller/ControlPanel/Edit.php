@@ -212,7 +212,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			$page->visibilityAggregator = $data['visibility_aggregator'];
 			$page->access               = $data['access'] ?: 0;
 			$page->accessGroups         = $data['access_groups'];
-			$page->tags                 = $this->_parseTags($data['tags']);
+			$page->setTags($this->_parseTags($data['tags']));
 
 			$page = $this->get('cms.page.edit')->save($page);
 			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
@@ -347,7 +347,7 @@ class Edit extends \Message\Cog\Controller\Controller
 				'visibility_aggregator' => $page->visibilityAggregator,
 				'access'                => ($page->accessInherited) ? Authorisation::ACCESS_INHERITED : $page->access,
 				'access_groups'         => $accessGroups,
-				'tags'                  => implode(', ', $page->tags),
+				'tags'                  => implode(', ', $page->getTags()),
 				'parent'                => $parent ? $parent->id : 0,
 				'siblings'              => '',
 			));
