@@ -14,7 +14,10 @@ class Dashboard extends Controller
 			new DashboardEvent
 		);
 
+		$pages = $this->get('cms.page.loader')->getAll();
+
 		return $this->render('::dashboard', [
+			'pages' => $pages,
 			'dashboardReferences' => $event->getReferences()
 		]);
 	}
