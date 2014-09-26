@@ -3,6 +3,8 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Cog\Service\Container;
+use Message\Cog\ValueObject\DateRange;
+use Message\Cog\ValueObject\DateTimeImmutable;
 
 /**
  * Represents the properties of a single page.
@@ -90,6 +92,21 @@ class Page
 		$this->tags = $tags;
 
 		return $this;
+	}
+
+	public function setPublished($publish = true)
+	{
+		if ($publish) {
+			$this->publishDateRange = new DateRange(
+				new DateTimeImmutable(time())
+			);
+		}
+		else {
+			$this->publishDateRange = new DateRange(
+				new DateTimeImmutable(time()),
+				new DateTimeImmutable(time())
+			);
+		}
 	}
 
 	/**
