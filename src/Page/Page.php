@@ -98,13 +98,13 @@ class Page
 	{
 		if ($publish) {
 			$this->publishDateRange = new DateRange(
-				new DateTimeImmutable(time())
+				new DateTimeImmutable()
 			);
 		}
 		else {
 			$this->publishDateRange = new DateRange(
-				new DateTimeImmutable(time()),
-				new DateTimeImmutable(time())
+				new DateTimeImmutable(),
+				new DateTimeImmutable()
 			);
 		}
 	}
