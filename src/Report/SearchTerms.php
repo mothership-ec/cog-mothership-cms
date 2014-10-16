@@ -64,8 +64,6 @@ class SearchTerms extends AbstractReport
 			->orderBY('Frequency DESC')
 		;
 
-		//de($queryBuilder->getQuery());
-
 		return $queryBuilder->getQuery();
 	}
 
