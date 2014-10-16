@@ -6,11 +6,14 @@ use Message\Mothership\CMS;
 
 use Message\Cog\DB\Entity\EntityLoaderCollection;
 use Message\Cog\Bootstrap\ServicesInterface;
+use Message\Mothership\Report\Report\Collection as ReportCollection;
 
 class Services implements ServicesInterface
 {
 	public function registerServices($services)
 	{
+		$this->registerReports($services);
+
 		$services['cms.page.types'] = function($c) {
 			return new CMS\PageType\Collection;
 		};
@@ -202,5 +205,21 @@ class Services implements ServicesInterface
 
 			return $factory;
 		});
+	}
+
+	public function registerReports($services)
+	{
+		$services['cms.search_terms_report'] = $services->factory(function($c) {
+			return new CMS\Report\SearchTerms($c['db.query.builder.factory']);
+		});
+
+		$services['cms.reports'] = function($c) {
+			$reports = new ReportCollection;
+			$reports
+				->add($c['cms.search_terms_report'])
+			;
+
+			return $reports;
+		};
 	}
 }
