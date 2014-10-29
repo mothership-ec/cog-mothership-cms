@@ -209,14 +209,14 @@ class Services implements ServicesInterface
 
 	public function registerReports($services)
 	{
-		$services['cms.search_terms_report'] = $services->factory(function($c) {
-			return new CMS\Report\SearchTerms($c['db.query.builder.factory']);
+		$services['cms.search_terms'] = $services->factory(function($c) {
+			return new CMS\Report\SearchTerms($c['db.query.builder.factory'],$c['translator']);
 		});
 
 		$services['cms.reports'] = function($c) {
 			$reports = new ReportCollection;
 			$reports
-				->add($c['cms.search_terms_report'])
+				->add($c['cms.search_terms'])
 			;
 
 			return $reports;

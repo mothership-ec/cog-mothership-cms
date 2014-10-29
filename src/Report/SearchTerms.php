@@ -3,11 +3,13 @@
 namespace Message\Mothership\CMS\Report;
 
 use Message\Cog\DB\QueryBuilderInterface;
-use Message\Report\ReportInterface;
-use Message\Mothership\Report\Report\AbstractReport;
 use Message\Cog\DB\QueryBuilderFactory;
+use Message\Cog\Localisation\Translator;
+
+use Message\Mothership\Report\Report\AbstractReport;
 use Message\Mothership\Report\Chart\TableChart;
-use Message\Mothership\Report\Filter\DateFilter;
+
+use Message\Report\ReportInterface;
 
 class SearchTerms extends AbstractReport
 {
@@ -15,14 +17,13 @@ class SearchTerms extends AbstractReport
 	private $_from = [];
 	private $_builderFactory;
 	private $_charts;
-	private $_filters;
 
-	public function __construct(QueryBuilderFactory $builderFactory)
+	public function __construct(QueryBuilderFactory $builderFactory, Translator $trans)
 	{
-		$this->name = "search-terms-report";
+		$this->name = 'search_terms';
+		$this->reportGroup = "Misc";
 		$this->_builderFactory = $builderFactory;
 		$this->_charts = [new TableChart];
-		$this->_filters = [new DateFilter];
 	}
 
 	public function getName()
@@ -30,15 +31,32 @@ class SearchTerms extends AbstractReport
 		return $this->name;
 	}
 
+	public function getReportGroup()
+	{
+		return $this->reportGroup;
+	}
+
 	public function getCharts()
 	{
 		$data = $this->dataTransform($this->getQuery()->run());
+		$columns = $this->getColumns();
 
 		foreach ($this->_charts as $chart) {
+			$chart->setColumns($columns);
 			$chart->setData($data);
 		}
 
 		return $this->_charts;
+	}
+
+	public function getColumns()
+	{
+		$columns = [
+			['type' => 'string', 	'name' => "Search Term",],
+			['type' => 'number',	'name' => "Frequency",	],
+		];
+
+		return json_encode($columns);
 	}
 
 	/**
@@ -70,13 +88,14 @@ class SearchTerms extends AbstractReport
 	protected function dataTransform($data)
 	{
 		$result = [];
-		$result[] = $data->columns();
 
 		foreach ($data as $row) {
-			$result[] = get_object_vars($row);
-
+			$result[] = [
+				$row->Term,
+				$row->Frequency,
+			];
 		}
 
-		return $result;
+		return json_encode($result);
 	}
 }
