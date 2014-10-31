@@ -5,40 +5,25 @@ namespace Message\Mothership\CMS\Report;
 use Message\Cog\DB\QueryBuilderInterface;
 use Message\Cog\DB\QueryBuilderFactory;
 use Message\Cog\Localisation\Translator;
+use Message\Cog\Routing\UrlGenerator;
 
 use Message\Mothership\Report\Report\AbstractReport;
 use Message\Mothership\Report\Chart\TableChart;
 
-use Message\Report\ReportInterface;
-
 class SearchTerms extends AbstractReport
 {
-	private $_to = [];
-	private $_from = [];
-	private $_builderFactory;
-	private $_charts;
-
-	public function __construct(QueryBuilderFactory $builderFactory, Translator $trans)
+	public function __construct(QueryBuilderFactory $builderFactory, Translator $trans, UrlGenerator $routingGenerator)
 	{
 		$this->name = 'search_terms';
-		$this->reportGroup = "Misc";
-		$this->_builderFactory = $builderFactory;
+		$this->displayName = 'Search Terms';
+		$this->reportGroup = "Logs";
 		$this->_charts = [new TableChart];
-	}
-
-	public function getName()
-	{
-		return $this->name;
-	}
-
-	public function getReportGroup()
-	{
-		return $this->reportGroup;
+		parent::__construct($builderFactory,$trans,$routingGenerator);
 	}
 
 	public function getCharts()
 	{
-		$data = $this->dataTransform($this->getQuery()->run());
+		$data = $this->_dataTransform($this->_getQuery()->run());
 		$columns = $this->getColumns();
 
 		foreach ($this->_charts as $chart) {
@@ -67,7 +52,7 @@ class SearchTerms extends AbstractReport
 	 *
 	 * @return string
 	 */
-	public function getQuery()
+	private function _getQuery()
 	{
 		$queryBuilder = $this->_builderFactory->getQueryBuilder();
 
@@ -85,7 +70,7 @@ class SearchTerms extends AbstractReport
 		return $queryBuilder->getQuery();
 	}
 
-	protected function dataTransform($data)
+	protected function _dataTransform($data)
 	{
 		$result = [];
 
