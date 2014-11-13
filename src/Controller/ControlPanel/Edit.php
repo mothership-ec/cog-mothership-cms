@@ -108,7 +108,6 @@ class Edit extends \Message\Cog\Controller\Controller
 		// Redirect user back to the form if there are any errors
 		if ($form->isValid()) {
 			$content = $this->get('cms.page.content_edit')->updateContent($form->getData(), $content);
-
 			if ($this->get('cms.page.content_edit')->save($page, $content)) {
 				$this->addFlash('success', $this->trans('ms.cms.feedback.edit.content.success'));
 			} else {

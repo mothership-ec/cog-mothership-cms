@@ -6,7 +6,7 @@ use Message\Cog\Field\Factory as FieldFactory;
 
 use Symfony\Component\Validator\Constraints;
 
-abstract class BlogListing implements PageTypeInterface
+abstract class AbstractBlogListing implements PageTypeInterface
 {
 	public function getName()
 	{

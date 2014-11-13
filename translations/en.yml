@@ -135,6 +135,21 @@ ms.cms:
       help: -
     button:
       save: Save changes
+  page_type:
+    blog:
+      body: Post body
+      images: Images
+      caption_heading: Caption heading
+      caption: Caption
+      date: Display date
+      author: Author override
+      description: Description for listings
+      comments: Comments
+      comments_enable: Enable comments?
+      require_approval: Comments require approval
+      allow_comments: Allow comments
+      disable_comments: Disable comments
+      comment_permission: Who can comment?
   sidebar:
     search:
       label: Search
@@ -175,3 +190,8 @@ ms.cms:
     button:
       submit: Send message
     success: Thank you, your message has been sent
+page:
+  blog:
+    comments:
+      name: Comment management
+      description: Enable/disable commenting, and set permissions for them
