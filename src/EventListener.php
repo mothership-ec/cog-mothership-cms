@@ -49,7 +49,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 			'dashboard.activity.summary' => array(
 				'buildDashboardBlockUserSummary',
 			),
-			ReportEvents\ReportEvent::REGISTER_REPORTS => [
+			ReportEvents\Events::REGISTER_REPORTS => [
 				'registerReports'
 			],
 		);
