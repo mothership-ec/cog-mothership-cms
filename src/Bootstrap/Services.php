@@ -137,6 +137,18 @@ class Services implements ServicesInterface
 			);
 		});
 
+		$services['cms.blog.comment_builder'] = $services->factory(function($c) {
+			return new CMS\Blog\CommentBuilder($c['user.current'], $c['request'], $c['cms.blog.content_validator']);
+		});
+
+		$services['cms.blog.content_validator'] = function($c) {
+			return new CMS\Blog\ContentValidator;
+		};
+
+		$services['cms.blog.comment_create'] = function($c) {
+			return new CMS\Blog\CommentCreate($c['db.query']);
+		};
+
 		$services->extend('field.collection', function($fields, $c) {
 			$fields->add(new \Message\Mothership\CMS\FieldType\Link($c['cms.page.loader']));
 
@@ -166,6 +178,10 @@ class Services implements ServicesInterface
 			$templates[] = 'Message:Mothership:CMS::form:php';
 
 			return $templates;
+		});
+
+		$services['form.blog_comment'] = $services->factory(function($c) {
+			return new \Message\Mothership\CMS\Form\BlogComment();
 		});
 
 		$services['form.contact'] = $services->factory(function($c) {

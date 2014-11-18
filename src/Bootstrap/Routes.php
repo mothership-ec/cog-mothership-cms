@@ -15,6 +15,11 @@ class Routes implements RoutesInterface
 		$router['ms.cms']->add('ms.cms.contact.action', '/contact/submit', 'Message:Mothership:CMS::Controller:Module:Contact#contactAction')
 			->setMethod('POST');
 
+		$router['ms.cms']->add('ms.cms.blog_comment.submit', '/comment/{pageID}', 'Message:Mothership:CMS::Controller:Module:Blog:Comments#submitComment')
+			->setRequirement('pageID', '\d+')
+			->setMethod('POST');
+
+		// Be sure to put front end routes *before* this line (as with contact form and comments above)
 		$router['ms.cms']->add('ms.cms.frontend', '{slug}', 'Message:Mothership:CMS::Controller:Frontend#renderPage')
 			->setRequirement('slug', '[a-z0-9\-\/]+')
 			->setDefault('slug', '/');

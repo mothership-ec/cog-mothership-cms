@@ -190,6 +190,16 @@ ms.cms:
     button:
       submit: Send message
     success: Thank you, your message has been sent
+  blog_comment:
+    comment: Comment on this blog post
+    disabled: Comments are disabled on this post
+    form:
+      name: Name
+      email: Email
+      comment: Comment
+      captcha_prefix: Security question
+      button:
+        submit: Submit
 page:
   blog:
     comments:
