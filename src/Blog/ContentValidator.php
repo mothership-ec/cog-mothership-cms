@@ -29,6 +29,13 @@ class ContentValidator
 			);
 		}
 
+		$this->_validateDisplayOptions($comments);
+		$this->_validateAccessOptions($comments);
+
+	}
+
+	private function _validateDisplayOptions(Field\Group $comments)
+	{
 		if (null === $comments->{ContentOptions::ALLOW_COMMENTS}) {
 			throw new InvalidContentException('Option for `' . ContentOptions::ALLOW_COMMENTS . '` not defined');
 		}
@@ -45,6 +52,25 @@ class ContentValidator
 
 		if ($allowComments->getValue() !== ContentOptions::ALLOW && $allowComments->getValue() !== ContentOptions::APPROVE) {
 			throw new InvalidContentException('Comment setting `' . $allowComments->getValue() . '` is invalid');
+		}
+	}
+
+	private function _validateAccessOptions(Field\Group $comments)
+	{
+		if (null === $comments->{ContentOptions::PERMISSION}) {
+			throw new InvalidContentException('Option for `' . ContentOptions::PERMISSION . '` not set');
+		}
+
+		$permission = $comments->{ContentOptions::PERMISSION};
+
+		if (!$permission instanceof Field\MultipleValueField) {
+			throw new InvalidContentException('`' . ContentOptions::PERMISSION . '` field must be an instance of Message\\Cog\\Field\\MultipleValueField');
+		}
+
+		$permissionValue = $permission->getValue();
+
+		if (empty($permissionValue)) {
+			throw new InvalidContentException('`' . ContentOptions::PERMISSION . '` is not determined');
 		}
 	}
 }

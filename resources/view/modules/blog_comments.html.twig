@@ -1,0 +1,16 @@
+{% block comments %}
+	{% if comments | length > 0 %}
+		<ul>
+		{% for comment in comments %}
+			{% if comment.isPendingAndByCurrentUser(user.id) %}
+				<p><em>{{ 'ms.cms.blog_comment.pending'|trans }}</em></p>
+			{% endif %}
+			{% if comment.isAvailable or comment.isPendingAndByCurrentUser(user.id) %}
+				<p>{{ comment.getName }}</p>
+				<p>{{ comment.createdAt | date("F jS \\a\\t g:ia") }}</p>
+				<p>{{ comment.content }}</p>
+			{% endif %}
+		{% endfor %}
+		</ul>
+	{% endif %}
+{% endblock %}

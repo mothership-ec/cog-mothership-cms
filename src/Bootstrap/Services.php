@@ -137,16 +137,24 @@ class Services implements ServicesInterface
 			);
 		});
 
-		$services['cms.blog.comment_builder'] = $services->factory(function($c) {
-			return new CMS\Blog\CommentBuilder($c['user.current'], $c['request'], $c['cms.blog.content_validator']);
-		});
-
 		$services['cms.blog.content_validator'] = function($c) {
 			return new CMS\Blog\ContentValidator;
 		};
 
+		$services['cms.blog.comment_builder'] = $services->factory(function($c) {
+			return new CMS\Blog\CommentBuilder($c['user.current'], $c['request'], $c['cms.blog.content_validator']);
+		});
+
+		$services['cms.blog.comment_loader'] = function($c) {
+			return new CMS\Blog\CommentLoader($c['db.query.builder.factory']);
+		};
+
 		$services['cms.blog.comment_create'] = function($c) {
 			return new CMS\Blog\CommentCreate($c['db.query']);
+		};
+
+		$services['cms.blog.comment_filter'] = function($c) {
+			return new CMS\Blog\CommentFilter($c['user.current']);
 		};
 
 		$services->extend('field.collection', function($fields, $c) {

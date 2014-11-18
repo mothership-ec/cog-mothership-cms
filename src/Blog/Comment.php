@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Blog;
 
 use Message\Cog\ValueObject\Authorship;
+use Message\Cog\ValueObject\DateTimeImmutable;
 
 /**
  * Class Comment
@@ -172,7 +173,7 @@ class Comment
 	public function setName($name)
 	{
 		if (!is_string($name)) {
-			throw new \InvalidArgumentException('Name must be a string, ' . gettype($ipAddress) . ' given');
+			throw new \InvalidArgumentException('Name must be a string, ' . gettype($name) . ' given');
 		}
 
 		$this->_name = $name;
@@ -256,6 +257,41 @@ class Comment
 	public function getUserID()
 	{
 		return $this->_userID;
+	}
+
+	public function getCreatedAt()
+	{
+		return $this->_authorship->createdAt();
+	}
+
+	public function setCreatedAt($createdAt)
+	{
+		$dateTime = new DateTimeImmutable(date('c', $createdAt));
+		$this->_authorship->create($dateTime, $this->getUserID());
+
+		return $this;
+	}
+
+	public function setUpdatedAt($updatedAt)
+	{
+		if ($updatedAt !== $this->_authorship->createdAt()) {
+			$dateTime = new DateTimeImmutable(date('c', $updatedAt));
+			$this->_authorship->update($dateTime, $this->getUserID());
+		}
+
+		return $this;
+	}
+
+	public function isApproved()
+	{
+		return $this->getStatus() === Statuses::APPROVED;
+	}
+
+	public function isPendingAndByCurrentUser($userID)
+	{
+		$userID = (int) $userID;
+
+		return ($userID === $this->getUserID() && $this->getStatus() === Statuses::PENDING);
 	}
 
 }

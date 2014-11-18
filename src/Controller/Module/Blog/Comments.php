@@ -10,10 +10,26 @@ use Message\Mothership\CMS\Blog\FrontEndCommentException;
 use Message\Mothership\CMS\Blog\ContentOptions;
 use Message\Mothership\CMS\Blog\InvalidContentException;
 
+/**
+ * Class Comments
+ * @package Message\Mothership\CMS\Controller\Module\Blog
+ *
+ * Controller for handling blog comments on the front end of the site
+ */
 class Comments extends Controller
 {
 	const SESSION_NAME  = 'cms.blog_comment';
 	const CAPTCHA_FIELD = 'captcha';
+
+	public function display($pageID)
+	{
+		$comments = $this->get('cms.blog.comment_loader')->getByPage($pageID);
+
+		return $this->render('Message:Mothership:CMS::modules:blog_comments', [
+			'comments' => $comments,
+			'user'     => $this->get('user.current'),
+		]);
+	}
 
 	public function commentForm(Page $page, Content $content)
 	{
@@ -26,12 +42,17 @@ class Comments extends Controller
 			$validationError = true;
 		}
 
+		de($content->{ContentOptions::COMMENTS}->{ContentOptions::PERMISSION}->getValue());
+
 		if ($validationError === false &&
-			($content->{ContentOptions::COMMENTS}->{ContentOptions::ALLOW_COMMENTS}->getValue() !== ContentOptions::DISABLED)) {
+			($content->{ContentOptions::COMMENTS}->{ContentOptions::ALLOW_COMMENTS}->getValue() !== ContentOptions::DISABLED)
+
+		) {
 
 			$form = $this->createForm($this->get('form.blog_comment'), $this->_getDataFromSession($page->id));
+			$this->get('http.session')->remove(self::SESSION_NAME . $page->id);
 
-			return $this->render('Message:Mothership:CMS::modules:blog_comment', [
+			return $this->render('Message:Mothership:CMS::modules:blog_comment_form', [
 				'form' => $form,
 				'page' => $page,
 			]);
@@ -59,6 +80,7 @@ class Comments extends Controller
 				$comment = $this->get('cms.blog.comment_builder')->buildFromForm($pageID, $data, $content);
 				$this->get('cms.blog.comment_create')->save($comment);
 				$this->get('http.session')->remove(self::SESSION_NAME . $pageID);
+				$this->addFlash('success', $this->trans('ms.cms.blog_comment.success'));
 			} catch (FrontEndCommentException $e) {
 				$this->addFlash('error', $this->trans($e->getMessage()));
 			}
