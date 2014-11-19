@@ -2,6 +2,8 @@
 
 namespace Message\Mothership\CMS\PageType;
 
+use Message\Mothership\CMS\Blog\ContentOptions;
+
 use Message\Cog\Field\Factory as FieldFactory;
 use Message\User\Group\Collection as UserGroups;
 use Message\Mothership\FileManager\File;
@@ -19,16 +21,14 @@ use Symfony\Component\Validator\Constraints;
  */
 abstract class AbstractBlog implements PageTypeInterface
 {
-	const GUEST_KEY = 'guest';
-
 	private $_userGroups;
 
 	private $_permissionChoices = [
-		self::GUEST_KEY => 'Guests',
+		ContentOptions::GUEST => 'Guests',
 	];
 
 	private $_permissionSelected = [
-		self::GUEST_KEY,
+		ContentOptions::GUEST,
 	];
 
 	public function __construct(UserGroups $userGroups)

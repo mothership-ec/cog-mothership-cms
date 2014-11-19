@@ -193,6 +193,7 @@ ms.cms:
   blog_comment:
     comment: Comment on this blog post
     disabled: Comments are disabled on this post
+    permission: You do not have permission to comment on this post
     pending: This comment is awaiting approval
     success: Comment posted successfully
     form:

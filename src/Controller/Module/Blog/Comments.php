@@ -7,8 +7,6 @@ use Message\Cog\Controller\Controller;
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Content;
 use Message\Mothership\CMS\Blog\FrontEndCommentException;
-use Message\Mothership\CMS\Blog\ContentOptions;
-use Message\Mothership\CMS\Blog\InvalidContentException;
 
 /**
  * Class Comments
@@ -33,21 +31,7 @@ class Comments extends Controller
 
 	public function commentForm(Page $page, Content $content)
 	{
-		$validationError = false;
-
-		try {
-			$this->get('cms.blog.content_validator')->validate($content);
-		}
-		catch (InvalidContentException $e) {
-			$validationError = true;
-		}
-
-		de($content->{ContentOptions::COMMENTS}->{ContentOptions::PERMISSION}->getValue());
-
-		if ($validationError === false &&
-			($content->{ContentOptions::COMMENTS}->{ContentOptions::ALLOW_COMMENTS}->getValue() !== ContentOptions::DISABLED)
-
-		) {
+		if ($this->get('cms.blog.comment_permission_resolver')->isVisible($content, $this->get('user.current'))) {
 
 			$form = $this->createForm($this->get('form.blog_comment'), $this->_getDataFromSession($page->id));
 			$this->get('http.session')->remove(self::SESSION_NAME . $page->id);
@@ -56,6 +40,9 @@ class Comments extends Controller
 				'form' => $form,
 				'page' => $page,
 			]);
+		}
+		elseif (!$this->get('cms.blog.comment_permission_resolver')->userAllowed($content, $this->get('user.current'))) {
+			return $this->render('Message:Mothership:CMS::modules:blog_comment_denied');
 		}
 
 		return $this->render('Message:Mothership:CMS::modules:blog_comment_disabled');

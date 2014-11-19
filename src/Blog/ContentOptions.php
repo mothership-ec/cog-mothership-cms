@@ -13,4 +13,5 @@ class ContentOptions
 
 	// Access
 	const PERMISSION = 'comment_permission';
+	const GUEST      = 'guest';
 }
