@@ -23,7 +23,7 @@ class Comments extends Controller
 	{
 		$comments = $this->get('cms.blog.comment_loader')->getByPage($pageID);
 
-		return $this->render('Message:Mothership:CMS::modules:blog_comments', [
+		return $this->render('Message:Mothership:CMS::modules:blog:comments', [
 			'comments' => $comments,
 			'user'     => $this->get('user.current'),
 		]);
@@ -36,16 +36,16 @@ class Comments extends Controller
 			$form = $this->createForm($this->get('form.blog_comment'), $this->_getDataFromSession($page->id));
 			$this->get('http.session')->remove(self::SESSION_NAME . $page->id);
 
-			return $this->render('Message:Mothership:CMS::modules:blog_comment_form', [
+			return $this->render('Message:Mothership:CMS::modules:blog:comment_form', [
 				'form' => $form,
 				'page' => $page,
 			]);
 		}
 		elseif (!$this->get('cms.blog.comment_permission_resolver')->userAllowed($content, $this->get('user.current'))) {
-			return $this->render('Message:Mothership:CMS::modules:blog_comment_denied');
+			return $this->render('Message:Mothership:CMS::modules:blog:comment_denied');
 		}
 
-		return $this->render('Message:Mothership:CMS::modules:blog_comment_disabled');
+		return $this->render('Message:Mothership:CMS::modules:blog:comment_disabled');
 	}
 
 	public function submitComment($pageID)

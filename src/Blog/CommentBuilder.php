@@ -4,6 +4,8 @@ namespace Message\Mothership\CMS\Blog;
 
 use Message\Mothership\CMS\Page\Content;
 
+use Message\Mothership\User\Avatar;
+
 use Message\User\UserInterface;
 use Message\User\User;
 
@@ -31,11 +33,6 @@ class CommentBuilder
 	 * @var \Message\Cog\HTTP\Request
 	 */
 	private $_request;
-
-	/**
-	 * @var ContentValidator
-	 */
-	private $_contentValidator;
 
 	/**
 	 * @param UserInterface $user
