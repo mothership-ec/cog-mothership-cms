@@ -14,6 +14,17 @@ use Message\Cog\Field;
  */
 class ContentValidator
 {
+	public function isValid(Content $content)
+	{
+		try {
+			$this->validate($content);
+		} catch (InvalidContentException $e) {
+			return false;
+		}
+
+		return true;
+	}
+
 	public function validate(Content $content)
 	{
 		$comments = $content->{ContentOptions::COMMENTS};
@@ -47,7 +58,7 @@ class ContentValidator
 		}
 
 		if ($allowComments->getValue() === ContentOptions::DISABLED) {
-			throw new InvalidContentException('Comments are disabled for this page, creating this comment should not have been possible');
+			throw new InvalidContentException('Comments are disabled for this page');
 		}
 
 		if ($allowComments->getValue() !== ContentOptions::ALLOW && $allowComments->getValue() !== ContentOptions::APPROVE) {

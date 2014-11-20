@@ -203,6 +203,12 @@ ms.cms:
       captcha_prefix: Security question
       button:
         submit: Submit
+    manage:
+      user_id: User ID
+      email: Email address
+      ip: IP address
+      comment: Comment
+      status: Status
 page:
   blog:
     comments:

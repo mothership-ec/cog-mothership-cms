@@ -101,6 +101,14 @@ class Routes implements RoutesInterface
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.metadata', '/edit/{pageID}/metadata', 'Message:Mothership:CMS::Controller:ControlPanel:Edit#metadata')
 			->setRequirement('pageID', '\d+');
 
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.comments.action', '/edit/{pageID}/comments', 'Message:Mothership:CMS::Controller:ControlPanel:Comments#manageCommentsAction')
+			->setRequirement('pageID', '\d+')
+			->setMethod('POST')
+		;
+
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.comments', '/edit/{pageID}/comments', 'Message:Mothership:CMS::Controller:ControlPanel:Comments#manageComments')
+			->setRequirement('pageID', '\d+');
+
 		$router['ms.cp.cms']->add('ms.cp.cms.search', '/search', 'Message:Mothership:CMS::Controller:ControlPanel:Search#process')
 			->setFormat('GET');
 	}

@@ -31,17 +31,29 @@ class Edit extends \Message\Cog\Controller\Controller
 
 	public function tabs()
 	{
-		$tabs = array(
-			'Content' => $this->generateUrl('ms.cp.cms.edit.content', array(
-				'pageID' => $this->get('http.request.master')->get('pageID')
-			)),
-			'Attributes' => $this->generateUrl('ms.cp.cms.edit.attributes', array(
-				'pageID' => $this->get('http.request.master')->get('pageID')
-			)),
-			'Metadata' => $this->generateUrl('ms.cp.cms.edit.metadata', array(
-				'pageID' => $this->get('http.request.master')->get('pageID')
-			)),
-		);
+		// This is introducing an inefficiency, loading the page and content in the menu, knowing they will be loaded
+		// later in another subrequest. We should consider a better way to add the 'Comments' tab to the appropriate menu
+		// in the future.
+		$page = $this->get('cms.page.loader')->getByID($this->get('http.request.master')->get('pageID'));
+		$content = $this->get('cms.page.content_loader')->load($page);
+
+		$tabs = [];
+		$tabs['Content'] = $this->generateUrl('ms.cp.cms.edit.content', [
+			'pageID' => $page->id
+		]);
+		$tabs['Attributes'] = $this->generateUrl('ms.cp.cms.edit.attributes', [
+			'pageID' => $page->id
+		]);
+
+		if ($this->get('cms.blog.content_validator')->isValid($content)) {
+			$tabs['Comments'] = $this->generateUrl('ms.cp.cms.edit.comments', [
+				'pageID' => $page->id
+			]);
+		}
+
+		$tabs['Metadata'] = $this->generateUrl('ms.cp.cms.edit.metadata', [
+			'pageID' => $page->id
+		]);
 
 		$current = ucfirst(trim(strrchr($this->get('http.request.master')->get('_controller'), '::'), ':'));
 

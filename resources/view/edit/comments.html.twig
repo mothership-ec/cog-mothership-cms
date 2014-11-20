@@ -1,0 +1,29 @@
+{% extends 'Message:Mothership:CMS::edit' %}
+
+{% block form %}
+	{{ form_start(form) }}
+		<table>
+			<thead>
+				<tr>
+					<th>{{ 'ms.cms.blog_comment.manage.user_id' | trans }}</th>
+					<th>{{ 'ms.cms.blog_comment.manage.email' | trans }}</th>
+					<th>{{ 'ms.cms.blog_comment.manage.ip' | trans }}</th>
+					<th>{{ 'ms.cms.blog_comment.manage.comment' | trans }}</th>
+					<th>{{ 'ms.cms.blog_comment.manage.status' | trans }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for comment in comments %}
+					<tr>
+						<td>{{ comment.userID }}</td>
+						<td>{{ comment.email }}</td>
+						<td>{{ comment.ipAddress }}</td>
+						<td>{{ comment.content }}</td>
+						<td>{{ form_widget(form['comment_' ~ comment.id]) }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		<button type="submit" class="button small save" id="save-content">{{ 'ms.cms.attributes.button.save'|trans }}</button>
+	{{ form_end(form) }}
+{% endblock %}

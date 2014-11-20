@@ -146,7 +146,7 @@ class Services implements ServicesInterface
 		});
 
 		$services['cms.blog.comment_loader'] = function($c) {
-			return new CMS\Blog\CommentLoader($c['db.query.builder.factory']);
+			return new CMS\Blog\CommentLoader($c['db.query.builder.factory'], $c['cms.blog.comment_statuses']);
 		};
 
 		$services['cms.blog.comment_create'] = function($c) {
@@ -159,6 +159,10 @@ class Services implements ServicesInterface
 
 		$services['cms.blog.comment_permission_resolver'] = function($c) {
 			return new CMS\Blog\CommentPermissionResolver($c['cms.blog.content_validator'], $c['user.group.loader']);
+		};
+
+		$services['cms.blog.comment_statuses'] = function($c) {
+			return new CMS\Blog\Statuses;
 		};
 
 		$services->extend('field.collection', function($fields, $c) {
@@ -194,6 +198,10 @@ class Services implements ServicesInterface
 
 		$services['form.blog_comment'] = $services->factory(function($c) {
 			return new \Message\Mothership\CMS\Form\BlogComment();
+		});
+
+		$services['form.manage_comments'] = $services->factory(function($c) {
+			return new CMS\Form\ManageComments($c['cms.blog.comment_statuses']);
 		});
 
 		$services['form.contact'] = $services->factory(function($c) {
