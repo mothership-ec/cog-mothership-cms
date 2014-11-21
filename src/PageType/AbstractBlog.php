@@ -36,26 +36,41 @@ abstract class AbstractBlog implements PageTypeInterface
 		$this->_userGroups = $userGroups;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getName()
 	{
 		return 'blog';
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getDisplayName()
 	{
 		return 'Blog';
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getDescription()
 	{
 		return 'A blog post page';
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function allowChildren()
 	{
 		return false;
 	}
 
+	/**
+	 * @param FieldFactory $factory
+	 */
 	public function setFields(FieldFactory $factory)
 	{
 		$this->_addContentFields($factory);
@@ -63,6 +78,9 @@ abstract class AbstractBlog implements PageTypeInterface
 
 	}
 
+	/**
+	 * @param FieldFactory $factory
+	 */
 	protected function _addContentFields(FieldFactory $factory)
 	{
 		$factory->add($factory->getField('richtext', 'body', 'ms.cms.page_type.blog.body')
@@ -108,6 +126,9 @@ abstract class AbstractBlog implements PageTypeInterface
 		;
 	}
 
+	/**
+	 * @param FieldFactory $factory
+	 */
 	protected function _addCommentOptions(FieldFactory $factory)
 	{
 		$commentsGroup = $factory->getGroup('comments', 'ms.cms.page_type.blog.comments');
@@ -135,6 +156,9 @@ abstract class AbstractBlog implements PageTypeInterface
 		$factory->add($commentsGroup);
 	}
 
+	/**
+	 * Build list of permission choices from user groups
+	 */
 	private function _setPermissions()
 	{
 		foreach ($this->_userGroups as $group) {

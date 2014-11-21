@@ -5,13 +5,28 @@ namespace Message\Mothership\CMS\Form;
 use Symfony\Component\Form;
 use Symfony\Component\Validator\Constraints;
 
+/**
+ * Class BlogComment
+ * @package Message\Mothership\CMS\Form
+ *
+ * @author Thomas Marchant <thomas@message.co.uk>
+ *
+ * Form for submitting comments
+ */
 class BlogComment extends Form\AbstractType
 {
+	/**
+	 * {@inheritDoc}
+	 */
 	public function getName()
 	{
 		return 'ms_blog_comment';
 	}
 
+	/**
+	 * @param Form\FormBuilderInterface $builder
+	 * @param array $options
+	 */
 	public function buildForm(Form\FormBuilderInterface $builder, array $options)
 	{
 		$builder->add('name', 'text', [

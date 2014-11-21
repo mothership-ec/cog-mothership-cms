@@ -8,6 +8,14 @@ use Symfony\Component\Form;
 use Symfony\Component\Validator\Constraints;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * Class ManageComments
+ * @package Message\Mothership\CMS\Form
+ *
+ * @author Thomas Marchant <thomas@message.co.uk>
+ *
+ * Form to display in admin panel, for managing comment statuses.
+ */
 class ManageComments extends Form\AbstractType
 {
 	private $_statuses;
@@ -17,11 +25,18 @@ class ManageComments extends Form\AbstractType
 		$this->_statuses = $statuses;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getName()
 	{
 		return 'ms_blog_manage_comments';
 	}
 
+	/**
+	 * @param Form\FormBuilderInterface $builder
+	 * @param array $options
+	 */
 	public function buildForm(Form\FormBuilderInterface $builder, array $options)
 	{
 		foreach ($options['comments'] as $comment) {
@@ -37,6 +52,9 @@ class ManageComments extends Form\AbstractType
 		}
 	}
 
+	/**
+	 * @param OptionsResolverInterface $resolver
+	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setRequired(['comments']);

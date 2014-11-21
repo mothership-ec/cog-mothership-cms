@@ -5,8 +5,21 @@ namespace Message\Mothership\CMS\Controller\ControlPanel;
 use Message\Mothership\CMS\Blog;
 use Message\Cog\Controller\Controller;
 
+/**
+ * Class Comments
+ * @package Message\Mothership\CMS\Controller\ControlPanel
+ *
+ * @author Thomas Marchant <thomas@message.co.uk>
+ */
 class Comments extends Controller
 {
+	/**
+	 * Display screen for managing comment statuses
+	 *
+	 * @param $pageID
+	 *
+	 * @return \Message\Cog\HTTP\Response
+	 */
 	public function manageComments($pageID)
 	{
 		$pageID = (int) $pageID;
@@ -27,6 +40,14 @@ class Comments extends Controller
 		]);
 	}
 
+	/**
+	 * Process changes to comment statuses
+	 *
+	 * @param $pageID
+	 * @throws \LogicException
+	 *
+	 * @return \Message\Cog\HTTP\RedirectResponse
+	 */
 	public function manageCommentsAction($pageID)
 	{
 		$pageID = (int) $pageID;

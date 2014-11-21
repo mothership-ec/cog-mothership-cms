@@ -19,6 +19,13 @@ class Comments extends Controller
 	const SESSION_NAME  = 'cms.blog_comment';
 	const CAPTCHA_FIELD = 'captcha';
 
+	/**
+	 * Display comments on a blog post
+	 *
+	 * @param $pageID
+	 *
+	 * @return \Message\Cog\HTTP\Response
+	 */
 	public function display($pageID)
 	{
 		$comments = $this->get('cms.blog.comment_loader')->getByPage($pageID, [Blog\Statuses::PENDING, Blog\Statuses::APPROVED]);
@@ -29,6 +36,14 @@ class Comments extends Controller
 		]);
 	}
 
+	/**
+	 * Render comment submission form
+	 *
+	 * @param Page $page
+	 * @param Content $content
+	 *
+	 * @return \Message\Cog\HTTP\Response
+	 */
 	public function commentForm(Page $page, Content $content)
 	{
 		if ($this->get('cms.blog.comment_permission_resolver')->isVisible($content, $this->get('user.current'))) {
@@ -48,6 +63,14 @@ class Comments extends Controller
 		return $this->render('Message:Mothership:CMS::modules:blog:comment_disabled');
 	}
 
+	/**
+	 * Process comment submission
+	 *
+	 * @param $pageID
+	 * @throws \LogicException
+	 *
+	 * @return \Message\Cog\HTTP\RedirectResponse
+	 */
 	public function submitComment($pageID)
 	{
 		$page = $this->get('cms.page.loader')->getByID($pageID);
@@ -80,6 +103,12 @@ class Comments extends Controller
 		return $this->redirectToReferer();
 	}
 
+	/**
+	 * Retrieve form data
+	 *
+	 * @param $pageID
+	 * @return array | null
+	 */
 	private function _getDataFromSession($pageID)
 	{
 		$data = $this->get('http.session')->get(self::SESSION_NAME . $pageID);
