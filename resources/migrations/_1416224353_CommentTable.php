@@ -19,7 +19,7 @@ class _1416224353_CommentTable extends Migration
 				ip_address VARCHAR(15) NOT NULL,
 				created_at INT(11) NOT NULL,
 				updated_at INT(11) NOT NULL,
-				updated_by INT(11) NOT NULL,
+				updated_by INT(11) DEFAULT NULL,
 				status VARCHAR(20) NOT NULL,
 				PRIMARY KEY (comment_id)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;

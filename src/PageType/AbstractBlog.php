@@ -58,6 +58,13 @@ abstract class AbstractBlog implements PageTypeInterface
 
 	public function setFields(FieldFactory $factory)
 	{
+		$this->_addContentFields($factory);
+		$this->_addCommentOptions($factory);
+
+	}
+
+	protected function _addContentFields(FieldFactory $factory)
+	{
 		$factory->add($factory->getField('richtext', 'body', 'ms.cms.page_type.blog.body')
 			->setLocalisable(true)
 			->setFieldOptions([
@@ -99,7 +106,10 @@ abstract class AbstractBlog implements PageTypeInterface
 
 		$factory->add($factory->getField('richtext', 'description', 'ms.cms.page_type.blog.description'))
 		;
+	}
 
+	protected function _addCommentOptions(FieldFactory $factory)
+	{
 		$commentsGroup = $factory->getGroup('comments', 'ms.cms.page_type.blog.comments');
 		$this->_setPermissions();
 

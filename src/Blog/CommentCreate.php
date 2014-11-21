@@ -28,7 +28,7 @@ class CommentCreate
 				ip_address = :ipAddress?s,
 				created_at = :createdAt?d,
 				updated_at = :updatedAt?d,
-				updated_by = :updatedBy?i,
+				updated_by = :updatedBy?in,
 				status = :status?s
 		", [
 			'pageID'    => $comment->getPageID(),
