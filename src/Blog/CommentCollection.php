@@ -4,6 +4,12 @@ namespace Message\Mothership\CMS\Blog;
 
 use Message\Cog\ValueObject\Collection;
 
+/**
+ * Class CommentCollection
+ * @package Message\Mothership\CMS\Blog
+ *
+ * @author Thomas Marchant <thomas@message.co.uk>
+ */
 class CommentCollection extends Collection
 {
 	protected function _configure()

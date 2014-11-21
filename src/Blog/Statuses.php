@@ -2,6 +2,14 @@
 
 namespace Message\Mothership\CMS\Blog;
 
+/**
+ * Class Statuses
+ * @package Message\Mothership\CMS\Blog
+ *
+ * @author Thomas Marchant <thomas@message.co.uk>
+ *
+ * Class containing constants for comment statuses.
+ */
 class Statuses
 {
 	const PENDING  = 'pending';
@@ -9,6 +17,11 @@ class Statuses
 	const SPAM     = 'spam';
 	const TRASH    = 'trash';
 
+	/**
+	 * Get an array of all available comment statuses
+	 *
+	 * @return array
+	 */
 	public function getStatuses()
 	{
 		return [

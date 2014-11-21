@@ -4,6 +4,12 @@ namespace Message\Mothership\CMS\Blog;
 
 use Message\Cog\DB\Query;
 
+/**
+ * Class CommentCreate
+ * @package Message\Mothership\CMS\Blog
+ *
+ * @author Thomas Marchant <thomas@message.co.uk>
+ */
 class CommentCreate
 {
 	private $_query;
@@ -13,6 +19,12 @@ class CommentCreate
 		$this->_query = $query;
 	}
 
+	/**
+	 * Save a new, individual comment
+	 *
+	 * @param Comment $comment
+	 * @return Comment
+	 */
 	public function save(Comment $comment)
 	{
 		$result = $this->_query->run("

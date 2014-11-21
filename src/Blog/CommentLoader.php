@@ -4,6 +4,12 @@ namespace Message\Mothership\CMS\Blog;
 
 use Message\Cog\DB\QueryBuilderFactory;
 
+/**
+ * Class CommentLoader
+ * @package Message\Mothership\CMS\Blog
+ *
+ * @author Thomas Marchant <thomas@message.co.uk>
+ */
 class CommentLoader
 {
 	const TABLE_NAME = 'blog_comment';
@@ -42,6 +48,15 @@ class CommentLoader
 		$this->_statuses            = $statuses;
 	}
 
+	/**
+	 * Get comments for a specific page
+	 *
+	 * @param $pageID
+	 * @param array $statuses
+	 * @throws \InvalidArgumentException
+	 *
+	 * @return CommentCollection
+	 */
 	public function getByPage($pageID, array $statuses = null)
 	{
 		$statuses = $this->_parseTypes($statuses);
@@ -62,6 +77,11 @@ class CommentLoader
 		return new CommentCollection($comments);
 	}
 
+	/**
+	 * Get QueryBuilder instance with appropriate selected fields
+	 *
+	 * @return \Message\Cog\DB\QueryBuilder
+	 */
 	private function _getSelect()
 	{
 		return $this->_queryBuilderFactory->getQueryBuilder()
@@ -70,6 +90,15 @@ class CommentLoader
 		;
 	}
 
+	/**
+	 * Check that requested statuses exist. If no statuses are set, default to all statuses
+	 *
+	 * @param array $statuses
+	 * @throws \LogicException
+	 * @throws \InvalidArgumentException
+	 *
+	 * @return array
+	 */
 	private function _parseTypes(array $statuses = null)
 	{
 		if (null === $statuses) {

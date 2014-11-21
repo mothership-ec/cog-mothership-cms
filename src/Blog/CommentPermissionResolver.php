@@ -10,6 +10,8 @@ use Message\User;
  * Class CommentPermissionResolver
  * @package Message\Mothership\CMS\Blog
  *
+ * @author Thomas Marchant <thomas@message.co.uk>
+ *
  * Class to determine whether or not a user is able to submit a comment on a blog post.
  */
 class CommentPermissionResolver

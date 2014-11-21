@@ -10,10 +10,19 @@ use Message\Cog\Field;
  * Class ContentValidator
  * @package Message\Mothership\CMS\Blog
  *
+ * @author Thomas Marchant <thomas@message.co.uk>
+ *
  * Class for validating that the Content object on a page has all the necessary fields to process a comment
  */
 class ContentValidator
 {
+	/**
+	 * Determine if a Content object has all the requisite fields needed to process comments
+	 *
+	 * @param Content $content
+	 *
+	 * @return bool
+	 */
 	public function isValid(Content $content)
 	{
 		try {
@@ -25,33 +34,46 @@ class ContentValidator
 		return true;
 	}
 
+	/**
+	 * Validate comments Content group
+	 *
+	 * @param Content $content
+	 * @throws InvalidContentException
+	 */
 	public function validate(Content $content)
 	{
-		$comments = $content->{ContentOptions::COMMENTS};
-		if (null === $comments) {
+		$commentsGroup = $content->{ContentOptions::COMMENTS};
+		if (null === $commentsGroup) {
 			throw new InvalidContentException('`comments` group not declared on Content object');
 		}
 
-		if (!$comments instanceof Field\Group) {
+		if (!$commentsGroup instanceof Field\Group) {
 			throw new InvalidContentException(
 				'`' . ContentOptions::COMMENTS . '` must be a content group, instance of ' .
-				(gettype($comments) === 'object' ? get_class($comments) : gettype($comments)) .
+				(gettype($commentsGroup) === 'object' ? get_class($commentsGroup) : gettype($commentsGroup)) .
 				' given'
 			);
 		}
 
-		$this->_validateDisplayOptions($comments);
-		$this->_validateAccessOptions($comments);
-
+		$this->_validateEnablingOptions($commentsGroup);
+		$this->_validateAccessOptions($commentsGroup);
 	}
 
-	private function _validateDisplayOptions(Field\Group $comments)
+	/**
+	 * Validate that all the necessary enabling option fields are present and correct on comments content group.
+	 * In this instance, 'enabling options' refers to whether or not comments are enabled on a page, and whether they
+	 * require approval.
+	 *
+	 * @param Field\Group $commentsGroup
+	 * @throws InvalidContentException
+	 */
+	private function _validateEnablingOptions(Field\Group $commentsGroup)
 	{
-		if (null === $comments->{ContentOptions::ALLOW_COMMENTS}) {
+		if (null === $commentsGroup->{ContentOptions::ALLOW_COMMENTS}) {
 			throw new InvalidContentException('Option for `' . ContentOptions::ALLOW_COMMENTS . '` not defined');
 		}
 
-		$allowComments = $comments->{ContentOptions::ALLOW_COMMENTS};
+		$allowComments = $commentsGroup->{ContentOptions::ALLOW_COMMENTS};
 
 		if (!$allowComments instanceof Field\Field) {
 			throw new InvalidContentException('`' . ContentOptions::ALLOW_COMMENTS . '` must be an instance of Message\\Cog\\Field\\Field');
@@ -66,6 +88,13 @@ class ContentValidator
 		}
 	}
 
+	/**
+	 * Validate that all the access options are present and correct on comments content group.
+	 * In this instance, 'access options' refers to which users can leave comments on a page.
+	 *
+	 * @param Field\Group $comments
+	 * @throws InvalidContentException
+	 */
 	private function _validateAccessOptions(Field\Group $comments)
 	{
 		if (null === $comments->{ContentOptions::PERMISSION}) {

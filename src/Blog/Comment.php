@@ -8,7 +8,10 @@ use Message\Cog\ValueObject\DateTimeImmutable;
 /**
  * Class Comment
  * @package Message\Mothership\CMS\Blog
+ *
  * @author Thomas Marchant <thomas@message.co.uk>
+ *
+ * Model representation of a comment. Holds information to be displayed, as well as its status and authorship properties
  */
 class Comment
 {
@@ -291,11 +294,19 @@ class Comment
 		return $this->_userID;
 	}
 
+	/**
+	 * @return \Message\Cog\ValueObject\DateTimeImmutable | null
+	 */
 	public function getCreatedAt()
 	{
 		return $this->_authorship->createdAt();
 	}
 
+	/**
+	 * @param $createdAt
+	 *
+	 * @return $this
+	 */
 	public function setCreatedAt($createdAt)
 	{
 		$dateTime = new DateTimeImmutable(date('c', $createdAt));
@@ -304,6 +315,11 @@ class Comment
 		return $this;
 	}
 
+	/**
+	 * @param $updatedAt
+	 *
+	 * @return $this
+	 */
 	public function setUpdatedAt($updatedAt)
 	{
 		if ($updatedAt !== $this->_authorship->createdAt()) {
@@ -314,11 +330,19 @@ class Comment
 		return $this;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function isApproved()
 	{
 		return $this->getStatus() === Statuses::APPROVED;
 	}
 
+	/**
+	 * @param $userID
+	 *
+	 * @return bool
+	 */
 	public function isPendingAndByCurrentUser($userID)
 	{
 		$userID = (int) $userID;

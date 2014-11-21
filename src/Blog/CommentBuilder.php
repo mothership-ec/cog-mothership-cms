@@ -15,6 +15,8 @@ use Message\Cog\HTTP\Request;
  * Class CommentBuilder
  * @package Message\Mothership\CMS\Blog
  *
+ * @author Thomas Marchant <thomas@message.co.uk>
+ *
  * Class for building instances of Comment from data
  */
 class CommentBuilder
