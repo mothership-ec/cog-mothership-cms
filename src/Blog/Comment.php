@@ -40,6 +40,11 @@ class Comment
 	/**
 	 * @var string
 	 */
+	private $_website;
+
+	/**
+	 * @var string
+	 */
 	private $_content;
 
 	/**
@@ -134,6 +139,33 @@ class Comment
 	public function getEmail()
 	{
 		return $this->_email;
+	}
+
+	public function setWebsite($website)
+	{
+		if (!is_string($website)) {
+			throw new \InvalidArgumentException('Website must be a string, ' . gettype($website) . ' given');
+		}
+
+		if (!preg_match("~^(?:f|ht)tps?://~i", $website)) {
+			$website = "http://" . $website;
+		}
+
+		if (!filter_var($website, FILTER_VALIDATE_URL)) {
+			throw new \LogicException('`' . $website . '` is not a valid URL!');
+		}
+
+		$this->_website = $website;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getWebsite()
+	{
+		return $this->_website;
 	}
 
 	/**

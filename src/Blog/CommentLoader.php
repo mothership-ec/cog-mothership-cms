@@ -27,6 +27,7 @@ class CommentLoader
 		'user_id AS userID',
 		'name',
 		'email_address AS email',
+		'website',
 		'content',
 		'ip_address AS ipAddress',
 		'created_at AS createdAt',
@@ -69,7 +70,7 @@ class CommentLoader
 		;
 	}
 
-	private function _parseTypes(array $statuses)
+	private function _parseTypes(array $statuses = null)
 	{
 		if (null === $statuses) {
 			return array_keys($this->_statuses->getStatuses());

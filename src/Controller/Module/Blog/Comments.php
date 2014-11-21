@@ -6,7 +6,7 @@ use Message\Cog\Controller\Controller;
 
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Content;
-use Message\Mothership\CMS\Blog\FrontEndCommentException;
+use Message\Mothership\CMS\Blog;
 
 /**
  * Class Comments
@@ -21,7 +21,7 @@ class Comments extends Controller
 
 	public function display($pageID)
 	{
-		$comments = $this->get('cms.blog.comment_loader')->getByPage($pageID);
+		$comments = $this->get('cms.blog.comment_loader')->getByPage($pageID, [Blog\Statuses::PENDING, Blog\Statuses::APPROVED]);
 
 		return $this->render('Message:Mothership:CMS::modules:blog:comments', [
 			'comments' => $comments,
@@ -64,15 +64,18 @@ class Comments extends Controller
 
 		if ($form->isValid()) {
 			try {
+				$this->get('http.session')->remove(self::SESSION_NAME . $pageID);
+
 				$comment = $this->get('cms.blog.comment_builder')->buildFromForm($pageID, $data, $content);
 				$this->get('cms.blog.comment_create')->save($comment);
-				$this->get('http.session')->remove(self::SESSION_NAME . $pageID);
 				$this->addFlash('success', $this->trans('ms.cms.blog_comment.success'));
-			} catch (FrontEndCommentException $e) {
+			} catch (Blog\FrontEndCommentException $e) {
 				$this->addFlash('error', $this->trans($e->getMessage()));
 			}
 		}
-		$this->get('http.session')->set(self::SESSION_NAME . $pageID, $data);
+		else {
+			$this->get('http.session')->set(self::SESSION_NAME . $pageID, $data);
+		}
 
 		return $this->redirectToReferer();
 	}

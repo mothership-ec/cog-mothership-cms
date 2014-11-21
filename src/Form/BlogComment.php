@@ -29,6 +29,13 @@ class BlogComment extends Form\AbstractType
 			],
 		]);
 
+		$builder->add($builder->create('website', 'text', [
+			'label' => 'ms.cms.blog_comment.form.website',
+			'constraints' => [
+				new Constraints\Url,
+			],
+		])->addModelTransformer(new DataTransform\Url));
+
 		$builder->add('comment', 'textarea', [
 			'label' => 'ms.cms.blog_comment.form.comment',
 			'constraints' => [

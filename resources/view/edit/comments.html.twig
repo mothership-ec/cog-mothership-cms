@@ -7,6 +7,7 @@
 				<tr>
 					<th>{{ 'ms.cms.blog_comment.manage.user_id' | trans }}</th>
 					<th>{{ 'ms.cms.blog_comment.manage.email' | trans }}</th>
+					<th>{{ 'ms.cms.blog_comment.manage.website' | trans }}</th>
 					<th>{{ 'ms.cms.blog_comment.manage.ip' | trans }}</th>
 					<th>{{ 'ms.cms.blog_comment.manage.comment' | trans }}</th>
 					<th>{{ 'ms.cms.blog_comment.manage.status' | trans }}</th>
@@ -17,6 +18,7 @@
 					<tr>
 						<td>{{ comment.userID }}</td>
 						<td>{{ comment.email }}</td>
+						<td><a href="{{ comment.website }}">{{ comment.website }}</a></td>
 						<td>{{ comment.ipAddress }}</td>
 						<td>{{ comment.content }}</td>
 						<td>{{ form_widget(form['comment_' ~ comment.id]) }}</td>

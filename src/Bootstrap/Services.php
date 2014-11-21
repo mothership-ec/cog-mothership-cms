@@ -153,6 +153,10 @@ class Services implements ServicesInterface
 			return new CMS\Blog\CommentCreate($c['db.query']);
 		};
 
+		$services['cms.blog.comment_edit'] = function($c) {
+			return new CMS\Blog\CommentEdit($c['db.transaction']);
+		};
+
 		$services['cms.blog.comment_filter'] = function($c) {
 			return new CMS\Blog\CommentFilter($c['user.current']);
 		};

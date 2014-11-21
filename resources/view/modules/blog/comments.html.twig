@@ -5,12 +5,16 @@
 			{% if comment.isPendingAndByCurrentUser(user.id) %}
 				<p><em>{{ 'ms.cms.blog_comment.pending'|trans }}</em></p>
 			{% endif %}
-			{% if comment.isAvailable or comment.isPendingAndByCurrentUser(user.id) %}
+			{% if comment.isApproved or comment.isPendingAndByCurrentUser(user.id) %}
 				{{ render(controller('Message:Mothership:CMS::Controller:Module:Blog:Avatar#renderAvatar', {
 					'comment': comment,
 					'size'   : 50,
 				})) }}
-				<p>{{ comment.getName }}</p>
+				{% if comment.website %}
+					<p><a href="{{ comment.website }}">{{ comment.getName }}</a></p>
+				{% else %}
+					<p>{{ comment.getName }}</p>
+				{% endif %}
 				<p>{{ comment.createdAt | date("F jS \\a\\t g:ia") }}</p>
 				<p>{{ comment.content }}</p>
 			{% endif %}

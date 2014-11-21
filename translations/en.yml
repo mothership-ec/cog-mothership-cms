@@ -199,6 +199,7 @@ ms.cms:
     form:
       name: Name
       email: Email
+      website: Website
       comment: Comment
       captcha_prefix: Security question
       button:
@@ -206,6 +207,7 @@ ms.cms:
     manage:
       user_id: User ID
       email: Email address
+      website: Website
       ip: IP address
       comment: Comment
       status: Status

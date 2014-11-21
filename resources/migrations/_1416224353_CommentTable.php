@@ -14,6 +14,7 @@ class _1416224353_CommentTable extends Migration
 				user_id INT(11) DEFAULT NULL,
 				`name` VARCHAR(255) NOT NULL,
 				email_address VARCHAR(255),
+				website VARCHAR(255) DEFAULT NULL,
 				content LONGTEXT NOT NULL,
 				ip_address VARCHAR(15) NOT NULL,
 				created_at INT(11) NOT NULL,

@@ -22,6 +22,7 @@ class CommentBuilder
 	// Form data constants
 	const NAME    = 'name';
 	const EMAIL   = 'email';
+	const WEBSITE = 'website';
 	const COMMENT = 'comment';
 
 	/**
@@ -64,6 +65,9 @@ class CommentBuilder
 		$comment->setPageID($pageID);
 		$comment->setName($data[self::NAME]);
 		$comment->setEmail($data[self::EMAIL]);
+		if (!empty($data[self::WEBSITE])) {
+			$comment->setWebsite($data[self::WEBSITE]);
+		}
 		$comment->setContent($data[self::COMMENT]);
 		$comment->setIpAddress($this->_request->getClientIp());
 		$allowed = $content->{ContentOptions::COMMENTS}->{ContentOptions::ALLOW_COMMENTS}->getValue();
