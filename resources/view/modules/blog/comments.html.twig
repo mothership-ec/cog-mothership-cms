@@ -2,22 +2,26 @@
 	{% if comments | length > 0 %}
 		<ul>
 		{% for comment in comments %}
-			{% if comment.isPendingAndByCurrentUser(user.id) %}
-				<p><em>{{ 'ms.cms.blog_comment.pending'|trans }}</em></p>
-			{% endif %}
-			{% if comment.isApproved or comment.isPendingAndByCurrentUser(user.id) %}
-				{{ render(controller('Message:Mothership:CMS::Controller:Module:Blog:Avatar#renderAvatar', {
-					'comment': comment,
-					'size'   : 50,
-				})) }}
-				{% if comment.website %}
-					<p><a href="{{ comment.website }}">{{ comment.getName }}</a></p>
-				{% else %}
-					<p>{{ comment.getName }}</p>
+			<li>
+				{% if comment.isApproved or comment.isPendingAndByCurrentUser(user.id) %}
+					{{ render(controller('Message:Mothership:CMS::Controller:Module:Blog:Avatar#renderAvatar', {
+						'comment': comment,
+						'size'   : 50,
+					})) }}
+					<div class="meta">
+						{% if comment.website %}
+							<p><a href="{{ comment.website }}">{{ comment.getName }}</a></p>
+						{% else %}
+							<p>{{ comment.getName }}</p>
+						{% endif %}
+						<p>{{ comment.createdAt | date("F jS \\a\\t g:ia") }}</p>
+					</div>
+					{% if comment.isPendingAndByCurrentUser(user.id) %}
+						<p class="status"><em>{{ 'ms.cms.blog_comment.pending'|trans }}</em></p>
+					{% endif %}
+					<p>{{ comment.content }}</p>
 				{% endif %}
-				<p>{{ comment.createdAt | date("F jS \\a\\t g:ia") }}</p>
-				<p>{{ comment.content }}</p>
-			{% endif %}
+			</li>
 		{% endfor %}
 		</ul>
 	{% endif %}
