@@ -20,7 +20,7 @@ class Comments extends Controller
 	 *
 	 * @return \Message\Cog\HTTP\Response
 	 */
-	public function manageComments($pageID)
+	public function comments($pageID)
 	{
 		$pageID = (int) $pageID;
 
@@ -48,7 +48,7 @@ class Comments extends Controller
 	 *
 	 * @return \Message\Cog\HTTP\RedirectResponse
 	 */
-	public function manageCommentsAction($pageID)
+	public function commentsAction($pageID)
 	{
 		$pageID = (int) $pageID;
 
