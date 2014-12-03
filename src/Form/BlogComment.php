@@ -2,6 +2,8 @@
 
 namespace Message\Mothership\CMS\Form;
 
+use Message\Cog\Form\Extension\Core\DataTransform;
+use Message\User;
 use Symfony\Component\Form;
 use Symfony\Component\Validator\Constraints;
 
@@ -15,6 +17,16 @@ use Symfony\Component\Validator\Constraints;
  */
 class BlogComment extends Form\AbstractType
 {
+	/**
+	 * @var \Message\User\UserInterface
+	 */
+	private $_user;
+
+	public function __construct(User\UserInterface $user)
+	{
+		$this->_user = $user;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -34,6 +46,7 @@ class BlogComment extends Form\AbstractType
 			'constraints' => [
 				new Constraints\NotBlank
 			],
+			'data' => (!$this->_user instanceof User\AnonymousUser) ? $this->_user->getName() : null,
 		]);
 
 		$builder->add('email', 'email', [
@@ -42,6 +55,7 @@ class BlogComment extends Form\AbstractType
 				new Constraints\NotBlank,
 				new Constraints\Email
 			],
+			'data' => $this->_user->email,
 		]);
 
 		$builder->add($builder->create('website', 'text', [

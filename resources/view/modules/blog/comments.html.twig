@@ -2,8 +2,8 @@
 	{% if comments | length > 0 %}
 		<ul>
 		{% for comment in comments %}
-			<li>
-				{% if comment.isApproved or comment.isPendingAndByCurrentUser(user.id) %}
+			{% if comment.isApproved or (comment.isPending() and comment.isByUser(user.id)) %}
+				<li>
 					<div class="meta">
 						{{ render(controller('Message:Mothership:CMS::Controller:Module:Blog:Avatar#renderAvatar', {
 							'comment': comment,
@@ -16,12 +16,12 @@
 						{% endif %}
 						<p>{{ comment.createdAt | date("F jS \\a\\t g:ia") }}</p>
 					</div>
-					{% if comment.isPendingAndByCurrentUser(user.id) %}
+					{% if comment.isPending() and comment.isByUser(user.id) %}
 						<p class="status"><em>{{ 'ms.cms.blog_comment.pending'|trans }}</em></p>
 					{% endif %}
-						<p>{{ comment.content }}</p>
-				{% endif %}
-			</li>
+					<p>{{ comment.content | nl2br }}</p>
+				</li>
+			{% endif %}
 		{% endfor %}
 		</ul>
 	{% endif %}

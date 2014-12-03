@@ -339,15 +339,23 @@ class Comment
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function isPending()
+	{
+		return $this->getStatus() === Statuses::PENDING;
+	}
+
+	/**
 	 * @param $userID
 	 *
 	 * @return bool
 	 */
-	public function isPendingAndByCurrentUser($userID)
+	public function isByUser($userID)
 	{
 		$userID = (int) $userID;
 
-		return ($userID === $this->getUserID() && $this->getStatus() === Statuses::PENDING);
+		return $userID === $this->getUserID();
 	}
 
 }

@@ -201,7 +201,7 @@ class Services implements ServicesInterface
 		});
 
 		$services['form.blog_comment'] = $services->factory(function($c) {
-			return new \Message\Mothership\CMS\Form\BlogComment();
+			return new \Message\Mothership\CMS\Form\BlogComment($c['user.current']);
 		});
 
 		$services['form.manage_comments'] = $services->factory(function($c) {
