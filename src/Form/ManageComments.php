@@ -50,6 +50,8 @@ class ManageComments extends Form\AbstractType
 				],
 			]);
 		}
+
+		$builder->addEventSubscriber(new EventListener\ManageCommentsEventListener($options['comments']));
 	}
 
 	/**

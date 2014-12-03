@@ -82,6 +82,9 @@ class CommentPermissionResolver
 		if ($user instanceof User\AnonymousUser) {
 			return array_key_exists(ContentOptions::GUEST, $allowedGroups);
 		}
+		if (array_key_exists(ContentOptions::LOGGED_IN, $allowedGroups)) {
+			return true;
+		}
 
 		$userGroups = $this->_groupLoader->getByUser($user);
 

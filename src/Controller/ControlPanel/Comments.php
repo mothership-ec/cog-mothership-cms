@@ -60,6 +60,7 @@ class Comments extends Controller
 		$form = $this->createForm($this->get('form.manage_comments'), null, [
 			'comments' => $comments,
 		]);
+
 		$form->handleRequest();
 
 		$data = $form->getData();
