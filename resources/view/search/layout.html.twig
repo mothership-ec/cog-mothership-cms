@@ -1,20 +1,12 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Search Results</title>
-	</head>
-	<body>
-	{% for key,types in app.session.getFlashBag.all %}
-		<div class="feedback {{ key }}">
-			{% for message in types %}
-				<p>{{ message|raw }}</p>
-			{% endfor %}
+{% extends '::templates/base' %}
+
+{% block content %}
+	<main class="content">
+		<div class="col-12">
+			<h1>{% block heading %}{% endblock %}</h1>
 		</div>
-	{% endfor %}
+		{% block listing %}
+		{% endblock %}
+	</main>
+{% endblock %}
 
-	<h1>{% block heading %}Search Results{% endblock %}</h1>
-
-	{% block content %}{% endblock %}
-
-	</body>
-</html>
