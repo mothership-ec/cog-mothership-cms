@@ -30,6 +30,7 @@ abstract class AbstractBlog implements PageTypeInterface
 
 	private $_permissionSelected = [
 		ContentOptions::GUEST,
+		ContentOptions::LOGGED_IN,
 	];
 
 	public function __construct(UserGroups $userGroups)
