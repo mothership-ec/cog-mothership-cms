@@ -45,7 +45,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			'pageID' => $page->id
 		]);
 
-		if ($this->get('cms.blog.content_validator')->isValid($content)) {
+		if ($this->get('cms.blog.content_validator')->isValid($content, true)) {
 			$tabs['Comments'] = $this->generateUrl('ms.cp.cms.edit.comments', [
 				'pageID' => $page->id
 			]);

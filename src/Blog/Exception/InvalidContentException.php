@@ -1,10 +1,10 @@
 <?php
 
-namespace Message\Mothership\CMS\Blog;
+namespace Message\Mothership\CMS\Blog\Exception;
 
 /**
  * Class InvalidContentException
- * @package Message\Mothership\CMS\Blog
+ * @package Message\Mothership\CMS\Blog\Exception
  *
  * @author Thomas Marchant <thomas@message.co.uk>
  *

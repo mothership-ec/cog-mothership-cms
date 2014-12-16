@@ -44,7 +44,7 @@ class CommentPermissionResolver
 	{
 		try {
 			$this->_validator->validate($content);
-		} catch (InvalidContentException $e) {
+		} catch (Exception\InvalidContentException $e) {
 			return false;
 		}
 

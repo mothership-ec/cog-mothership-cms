@@ -20,7 +20,7 @@
 						<td>{{ comment.email }}</td>
 						<td><a href="{{ comment.website }}">{{ comment.website }}</a></td>
 						<td>{{ comment.ipAddress }}</td>
-						<td>{{ comment.content }}</td>
+						<td>{{ comment.content | nl2br }}</td>
 						<td>{{ form_widget(form['comment_' ~ comment.id]) }}</td>
 					</tr>
 				{% endfor %}
