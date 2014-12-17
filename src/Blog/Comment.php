@@ -281,7 +281,9 @@ class Comment
 			throw new \InvalidArgumentException('User ID must be numeric, non-numeric ' . gettype($userID) . ' given');
 		}
 
-		$this->_userID = (int) $userID;
+		if (is_numeric($userID)) {
+			$this->_userID = (int) $userID;
+		}
 
 		return $this;
 	}
