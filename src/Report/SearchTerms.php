@@ -24,6 +24,8 @@ class SearchTerms extends AbstractReport
 		$this->displayName = 'Search Terms';
 		$this->reportGroup = "Logs";
 		$this->_charts = [new TableChart];
+		$this->description =
+			"This report shows all searches made on the site.";
 	}
 
 	/**
@@ -34,8 +36,8 @@ class SearchTerms extends AbstractReport
 	 */
 	public function getCharts()
 	{
-		$data = $this->_dataTransform($this->_getQuery()->run());
-		$columns = $this->getColumns();
+		$data = $this->_dataTransform($this->_getQuery()->run(), "json");
+		$columns = $this->_parseColumns($this->getColumns());
 
 		foreach ($this->_charts as $chart) {
 			$chart->setColumns($columns);
@@ -48,16 +50,14 @@ class SearchTerms extends AbstractReport
 	/**
 	 * Set columns for use in reports.
 	 *
-	 * @return String  Returns columns in JSON format.
+	 * @return array  Returns array of columns as keys with format for Google Charts as the value.
 	 */
 	public function getColumns()
 	{
-		$columns = [
-			['type' => 'string', 	'name' => "Search Term",],
-			['type' => 'number',	'name' => "Frequency",	],
+		return [
+			'Search Term' => 'string',
+			'Frequency'   => 'number',
 		];
-
-		return json_encode($columns);
 	}
 
 	/**
@@ -65,7 +65,7 @@ class SearchTerms extends AbstractReport
 	 *
 	 * @return Query
 	 */
-	private function _getQuery()
+	protected function _getQuery()
 	{
 		$queryBuilder = $this->_builderFactory->getQueryBuilder();
 
@@ -88,17 +88,29 @@ class SearchTerms extends AbstractReport
 	 *
 	 * @return String|Array  Returns columns as string in JSON format or array.
 	 */
-	private function _dataTransform($data)
+	protected function _dataTransform($data, $output = null)
 	{
 		$result = [];
 
-		foreach ($data as $row) {
-			$result[] = [
-				$row->Term,
-				$row->Frequency,
-			];
-		}
+		if ($output === "json") {
 
-		return json_encode($result);
+			foreach ($data as $row) {
+				$result[] = [
+					$row->Term,
+					$row->Frequency,
+				];
+			}
+			return json_encode($result);
+
+		} else {
+
+			foreach ($data as $row) {
+				$result[] = [
+					$row->Term,
+					$row->Frequency,
+				];
+			}
+			return $result;
+		}
 	}
 }
