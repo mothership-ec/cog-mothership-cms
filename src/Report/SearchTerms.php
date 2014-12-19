@@ -97,7 +97,7 @@ class SearchTerms extends AbstractReport
 			foreach ($data as $row) {
 				$result[] = [
 					$row->Term,
-					$row->Frequency,
+					(int) $row->Frequency,
 				];
 			}
 			return json_encode($result);
