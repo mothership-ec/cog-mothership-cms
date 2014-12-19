@@ -15,6 +15,11 @@ class Routes implements RoutesInterface
 		$router['ms.cms']->add('ms.cms.contact.action', '/contact/submit', 'Message:Mothership:CMS::Controller:Module:Contact#contactAction')
 			->setMethod('POST');
 
+		$router['ms.cms']->add('ms.cms.blog_comment.submit', '/comment/{pageID}', 'Message:Mothership:CMS::Controller:Module:Blog:Comments#submitComment')
+			->setRequirement('pageID', '\d+')
+			->setMethod('POST');
+
+		// Be sure to put front end routes *before* this line (as with contact form and comments above)
 		$router['ms.cms']->add('ms.cms.frontend', '{slug}', 'Message:Mothership:CMS::Controller:Frontend#renderPage')
 			->setRequirement('slug', '[a-z0-9\-\/]+')
 			->setDefault('slug', '/');
@@ -94,6 +99,14 @@ class Routes implements RoutesInterface
 			->enableCsrf('csrfHash');
 
 		$router['ms.cp.cms']->add('ms.cp.cms.edit.metadata', '/edit/{pageID}/metadata', 'Message:Mothership:CMS::Controller:ControlPanel:Edit#metadata')
+			->setRequirement('pageID', '\d+');
+
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.comments.action', '/edit/{pageID}/comments', 'Message:Mothership:CMS::Controller:ControlPanel:Comments#commentsAction')
+			->setRequirement('pageID', '\d+')
+			->setMethod('POST')
+		;
+
+		$router['ms.cp.cms']->add('ms.cp.cms.edit.comments', '/edit/{pageID}/comments', 'Message:Mothership:CMS::Controller:ControlPanel:Comments#comments')
 			->setRequirement('pageID', '\d+');
 
 		$router['ms.cp.cms']->add('ms.cp.cms.search', '/search', 'Message:Mothership:CMS::Controller:ControlPanel:Search#process')

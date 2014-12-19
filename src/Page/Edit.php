@@ -394,8 +394,9 @@ class Edit {
 			'pageId' => $page->id
 		]);
 
-		if (!empty($page->getTags())) {
-			foreach ($page->getTags() as $tag) {
+		$tags = $page->getTags();
+		if (!empty($tags)) {
+			foreach ($tags as $tag) {
 				$this->_query->run("
 					INSERT INTO
 						page_tag

@@ -1,0 +1,13 @@
+{% extends 'Message:Mothership:CMS::modules:blog:comment_disabled' %}
+
+{% block comment_form %}
+	<h3>{{ 'ms.cms.blog_comment.comment' | trans }}</h3>
+	{{ form_start(form, {'action': url('ms.cms.blog_comment.submit', {'pageID': page.id})}) }}
+		{{ form_row(form['name']) }}
+		{{ form_row(form['email']) }}
+		{{ form_row(form['website']) }}
+		{{ form_row(form['comment']) }}
+		{{ form_row(form['captcha']) }}
+		<button type="submit">{{ 'ms.cms.blog_comment.form.button.submit'|trans }}</button>
+	{{ form_end(form) }}
+{% endblock %}
