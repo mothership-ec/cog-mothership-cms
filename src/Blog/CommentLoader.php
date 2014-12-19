@@ -61,9 +61,11 @@ class CommentLoader
 	{
 		$statuses = $this->_parseTypes($statuses);
 
-		if (!is_int($pageID)) {
-			throw new \InvalidArgumentException('Page ID must be an integer, ' . gettype($pageID) . ' given');
+		if (!is_numeric($pageID)) {
+			throw new \InvalidArgumentException('Page ID must be a numeric, ' . gettype($pageID) . ' given');
 		}
+
+		$pageID = (int) $pageID;
 
 		$comments = (array) $this->_getSelect()
 			->where('page_id = :pageID?i', ['pageID' => $pageID])
