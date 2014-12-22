@@ -20,12 +20,11 @@ class SearchTerms extends AbstractReport
 	public function __construct(QueryBuilderFactory $builderFactory, UrlGenerator $routingGenerator)
 	{
 		parent::__construct($builderFactory, $routingGenerator);
-		$this->name = 'search_terms';
-		$this->displayName = 'Search Terms';
-		$this->reportGroup = "Logs";
+		$this->_setName('search_terms');
+		$this->_setDisplayName('Search Terms');
+		$this->_setReportGroup('Logs');
+		$this->_setDescription('This report shows all searches made on the site.');
 		$this->_charts = [new TableChart];
-		$this->description =
-			"This report shows all searches made on the site.";
 	}
 
 	/**
