@@ -16,6 +16,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Message\Mothership\Report\Event as ReportEvents;
 
 /**
  * Event listener for the Mothership CMS.
@@ -48,6 +49,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 			'dashboard.activity.summary' => array(
 				'buildDashboardBlockUserSummary',
 			),
+			ReportEvents\Events::REGISTER_REPORTS => [
+				'registerReports'
+			],
 		);
 	}
 
@@ -147,6 +151,13 @@ class EventListener extends BaseListener implements SubscriberInterface
 					], UrlGeneratorInterface::ABSOLUTE_URL)
 				));
 			}
+		}
+	}
+
+	public function registerReports(ReportEvents\BuildReportCollectionEvent $event)
+	{
+		foreach ($this->get('cms.reports') as $report) {
+			$event->registerReport($report);
 		}
 	}
 }
