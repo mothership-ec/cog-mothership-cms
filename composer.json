@@ -36,5 +36,6 @@
 		"message/cog-mothership-file-manager": "~2.0"
 	},
 	"suggest": {
+                "message/cog-mothership-reports" : "Module for displaying reports"
 	}
 }
