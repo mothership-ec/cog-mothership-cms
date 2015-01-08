@@ -61,8 +61,6 @@ class ContentLoader implements EntityLoaderInterface
 				group_name DESC, sequence ASC, field_name, data_name
 		', array(
 			'id'         => $page->id,
-			#'languageID' => $page->languageID,
-			#'countryID'  => $page->countryID,
 		));
 
 		$content = new Content;
