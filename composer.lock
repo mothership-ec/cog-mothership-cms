@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d22f2de481dae55667fe969e544e569a",
+    "hash": "90287aaccde6d3142d474bd44f4c1d13",
     "packages": [
         {
             "name": "dflydev/markdown",
@@ -651,16 +651,16 @@
         },
         {
             "name": "message/cog-mothership-cp",
-            "version": "1.9.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-mothership-cp.git",
-                "reference": "1.9.0"
+                "reference": "2.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/messagedigital/cog-mothership-cp/zipball/1.9.0",
-                "reference": "1.9.0",
+                "url": "https://api.github.com/repos/messagedigital/cog-mothership-cp/zipball/2.0.0",
+                "reference": "2.0.0",
                 "shasum": ""
             },
             "require": {
@@ -699,28 +699,28 @@
             "support": {
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog-mothership-cp/issues",
-                "source": "https://github.com/messagedigital/cog-mothership-cp/tree/1.9.0"
+                "source": "https://github.com/messagedigital/cog-mothership-cp/tree/2.0.0"
             },
-            "time": "2015-01-08 14:01:02"
+            "time": "2015-01-08 14:56:32"
         },
         {
             "name": "message/cog-mothership-file-manager",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-mothership-file-manager.git",
-                "reference": "2.0.1"
+                "reference": "2.0.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/messagedigital/cog-mothership-file-manager/zipball/2.0.1",
-                "reference": "2.0.1",
+                "url": "https://api.github.com/repos/messagedigital/cog-mothership-file-manager/zipball/2.0.2",
+                "reference": "2.0.2",
                 "shasum": ""
             },
             "require": {
                 "message/cog": "~3.4",
                 "message/cog-imageresize": "~1.0",
-                "message/cog-mothership-cp": "~1.1",
+                "message/cog-mothership-cp": "~1.1 | ~2.0",
                 "php": ">=5.4.0"
             },
             "type": "library",
@@ -756,28 +756,28 @@
             "support": {
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog-mothership-file-manager/issues",
-                "source": "https://github.com/messagedigital/cog-mothership-file-manager/tree/2.0.1"
+                "source": "https://github.com/messagedigital/cog-mothership-file-manager/tree/2.0.2"
             },
-            "time": "2014-09-23 12:11:32"
+            "time": "2015-01-08 15:08:18"
         },
         {
             "name": "message/cog-mothership-user",
-            "version": "3.3.0",
+            "version": "3.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-mothership-user.git",
-                "reference": "3.3.0"
+                "reference": "3.3.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/messagedigital/cog-mothership-user/zipball/3.3.0",
-                "reference": "3.3.0",
+                "url": "https://api.github.com/repos/messagedigital/cog-mothership-user/zipball/3.3.1",
+                "reference": "3.3.1",
                 "shasum": ""
             },
             "require": {
                 "kevinlebrun/colors.php": "0.*",
                 "message/cog": "~3.0",
-                "message/cog-mothership-cp": "~1.2",
+                "message/cog-mothership-cp": "~1.2 | ~2.0",
                 "message/cog-user": "~1.1",
                 "php": ">=5.4.0"
             },
@@ -809,9 +809,9 @@
             "support": {
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog-mothership-user/issues",
-                "source": "https://github.com/messagedigital/cog-mothership-user/tree/3.3.0"
+                "source": "https://github.com/messagedigital/cog-mothership-user/tree/3.3.1"
             },
-            "time": "2014-12-23 17:15:18"
+            "time": "2015-01-08 15:05:13"
         },
         {
             "name": "message/cog-user",
@@ -983,20 +983,23 @@
         },
         {
             "name": "mtdowling/cron-expression",
-            "version": "v1.0.3",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mtdowling/cron-expression.git",
-                "reference": "a47ac8d5ec15049013792401af5a4d13e3dbe7f6"
+                "reference": "fd92e883195e5dfa77720b1868cf084b08be4412"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mtdowling/cron-expression/zipball/a47ac8d5ec15049013792401af5a4d13e3dbe7f6",
-                "reference": "a47ac8d5ec15049013792401af5a4d13e3dbe7f6",
+                "url": "https://api.github.com/repos/mtdowling/cron-expression/zipball/fd92e883195e5dfa77720b1868cf084b08be4412",
+                "reference": "fd92e883195e5dfa77720b1868cf084b08be4412",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
             },
             "type": "library",
             "autoload": {
@@ -1020,7 +1023,7 @@
                 "cron",
                 "schedule"
             ],
-            "time": "2013-11-23 19:48:39"
+            "time": "2015-01-11 23:07:46"
         },
         {
             "name": "natxet/CssMin",
