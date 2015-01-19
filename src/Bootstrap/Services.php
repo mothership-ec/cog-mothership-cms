@@ -6,11 +6,14 @@ use Message\Mothership\CMS;
 
 use Message\Cog\DB\Entity\EntityLoaderCollection;
 use Message\Cog\Bootstrap\ServicesInterface;
+use Message\Mothership\Report\Report\Collection as ReportCollection;
 
 class Services implements ServicesInterface
 {
 	public function registerServices($services)
 	{
+		$this->registerReports($services);
+
 		$services['cms.page.types'] = function($c) {
 			return new CMS\PageType\Collection;
 		};
@@ -137,6 +140,34 @@ class Services implements ServicesInterface
 			);
 		});
 
+		$services['cms.blog.content_validator'] = function($c) {
+			return new CMS\Blog\ContentValidator;
+		};
+
+		$services['cms.blog.comment_builder'] = $services->factory(function($c) {
+			return new CMS\Blog\CommentBuilder($c['user.current'], $c['request'], $c['cms.blog.content_validator']);
+		});
+
+		$services['cms.blog.comment_loader'] = function($c) {
+			return new CMS\Blog\CommentLoader($c['db.query.builder.factory'], $c['cms.blog.comment_statuses']);
+		};
+
+		$services['cms.blog.comment_create'] = function($c) {
+			return new CMS\Blog\CommentCreate($c['db.query']);
+		};
+
+		$services['cms.blog.comment_edit'] = function($c) {
+			return new CMS\Blog\CommentEdit($c['db.transaction']);
+		};
+
+		$services['cms.blog.comment_permission_resolver'] = function($c) {
+			return new CMS\Blog\CommentPermissionResolver($c['cms.blog.content_validator'], $c['user.group.loader']);
+		};
+
+		$services['cms.blog.comment_statuses'] = function($c) {
+			return new CMS\Blog\Statuses;
+		};
+
 		$services->extend('field.collection', function($fields, $c) {
 			$fields->add(new \Message\Mothership\CMS\FieldType\Link($c['cms.page.loader']));
 
@@ -166,6 +197,14 @@ class Services implements ServicesInterface
 			$templates[] = 'Message:Mothership:CMS::form:php';
 
 			return $templates;
+		});
+
+		$services['form.blog_comment'] = $services->factory(function($c) {
+			return new \Message\Mothership\CMS\Form\BlogComment($c['user.current']);
+		});
+
+		$services['form.manage_comments'] = $services->factory(function($c) {
+			return new CMS\Form\ManageComments($c['cms.blog.comment_statuses']);
 		});
 
 		$services['form.contact'] = $services->factory(function($c) {
@@ -202,5 +241,24 @@ class Services implements ServicesInterface
 
 			return $factory;
 		});
+	}
+
+	public function registerReports($services)
+	{
+		$services['cms.search_terms'] = $services->factory(function($c) {
+			return new CMS\Report\SearchTerms(
+				$c['db.query.builder.factory'],
+				$c['routing.generator']
+			);
+		});
+
+		$services['cms.reports'] = function($c) {
+			$reports = new ReportCollection;
+			$reports
+				->add($c['cms.search_terms'])
+			;
+
+			return $reports;
+		};
 	}
 }
