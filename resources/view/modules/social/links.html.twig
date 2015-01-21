@@ -1,22 +1,22 @@
 <ul class="social">
 	{% if not networks.twitter.name is empty %}
 	<li class="twitter">
-		<a href="https://twitter.com/">Twitter</a>
+		<a href="https://twitter.com/{{ networks.twitter.slug|default(networks.twitter.name)|e('url') }}">Twitter</a>
 	</li>
 	{% endif %}
 	{% if not networks.instagram.name is empty %}
 	<li class-"instagram">
-		<a href="http://instagram.com/">Instagram</a>
+		<a href="http://instagram.com/{{ networks.instagram.slug|default(networks.instagram.name)|e('url') }}">Instagram</a>
 	</li>
 	{% endif %}
 	{% if not networks.facebook.name is empty %}
 	<li class="facebook">
-		<a href="https://www.facebook.com/">Facebook</a>
+		<a href="https://www.facebook.com/{{ networks.facebook.slug|default(networks.facebook.name)|e('url') }}">Facebook</a>
 	</li>
 	{% endif %}
 	{% if not networks.pintrest.name is empty %}
 	<li class="pinterest">
-		<a href="http://www.pinterest.com/">Pinterest</a>
+		<a href="http://www.pinterest.com/{{ networks.pintrest.slug|default(networks.pintrest.name)|e('url') }}">Pinterest</a>
 	</li>
 	{% endif %}
 </ul>
