@@ -1,7 +1,7 @@
 <ul class="social">
 	{% if not networks.twitter.name is empty %}
 	<li class="twitter">
-		<a href="https://twitter.com/share?url={{ uri|e('url') }}&amp;text={{ description|e('url') }}&amp;via={{ networks.twitter.name }}">Twitter</a>
+		<a href="https://twitter.com/share?url={{ uri|e('url') }}&amp;text={{ title|e('url') }}&amp;via={{ networks.twitter.name }}">Twitter</a>
 	</li>
 	{% endif %}
 	<li class="facebook">
