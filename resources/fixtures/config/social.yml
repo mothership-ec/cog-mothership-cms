@@ -1,8 +1,12 @@
 twitter:
-  name:
+  name: # username
+  slug: # slug to link to
 facebook:
-  name:
+  name: # username
+  slug: # slug to link to
 instagram:
-  name:
+  name: # username
+  slug: # slug to link to
 pintrest:
-  name:
+  name: # username
+  slug: # slug to link to
