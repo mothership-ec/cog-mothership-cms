@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Cog\Service\Container;
+use Message\Cog\Filesystem\File;
 
 /**
  * Represents the properties of a single page.
@@ -37,6 +38,8 @@ class Page
 	public $metaDescriptionInherit;
 	public $metaHtmlHeadInherit;
 	public $metaHtmlFootInherit;
+
+	private $_metaImage;
 
 	public $visibilitySearch;
 	public $visibilityMenu;
@@ -122,5 +125,75 @@ class Page
 	public function hasTag($tag)
 	{
 		return in_array($tag, $this->tags);
+	}
+
+	/**
+	 * Gets the meta title
+	 * 
+	 * @return string The meta title
+	 */
+	public function getMetaTitle()
+	{
+		return $this->metaTitle;
+	}
+
+	/**
+	 * Sets the value of metaTitle.
+	 *
+	 * @param mixed $metaTitle the meta title
+	 *
+	 * @return self
+	 */
+	public function setMetaTitle($metaTitle)
+	{
+		$this->metaTitle = $metaTitle;
+
+		return $this;
+	}
+
+	/**
+	 * Sets the meta description
+	 * 
+	 * @return self
+	 */
+	public function setMetaDescription($metaDescription)
+	{
+		$this->metaDescription = $metaDescription;
+
+		return $this;
+	}
+
+	/**
+	 * Gets the meta description
+	 * 
+	 * @return string The meta description
+	 */
+	public function getMetaDescription()
+	{
+		return $this->metaDescription;
+	}
+
+	/**
+	 * Sets the meta image
+	 * 
+	 * @param File $file the metaImage file
+	 * 
+	 * @return $this this for chainability
+	 */
+	public function setMetaImage(File $file)
+	{
+		$this->_metaImage = $file;
+
+		return $this;
+	}
+
+	/**
+	 * Gets the metaImage
+	 * 
+	 * @return Image the image
+	 */
+	public function getMetaImage()
+	{
+		return $this->_metaImage;
 	}
 }
