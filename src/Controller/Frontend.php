@@ -16,6 +16,8 @@ use Message\Cog\Controller\Controller;
  */
 class Frontend extends Controller
 {
+	const SUPER_ADMIN = 'ms-super-admin';
+
 	/**
 	 * Render a CMS page by a full slug.
 	 *
@@ -71,9 +73,13 @@ class Frontend extends Controller
 
 		// Check permissions
 		$auth = $this->get('cms.page.authorisation');
+		$userGroups = $this->get('user.group.loader')->getByUser($this->get('user.current'));
 
 		// Check the page is published
-		if (!$auth->isPublished($page)) {
+		if (!$auth->isPublished($page) && array_key_exists(self::SUPER_ADMIN, $userGroups)) {
+			$this->addFlash('info', 'This page is not published, and can be only be viewed by super admins');
+		}
+		elseif (!$auth->isPublished($page)) {
 			throw $this->createNotFoundException('Page exists, but it isn\'t published');
 		}
 
