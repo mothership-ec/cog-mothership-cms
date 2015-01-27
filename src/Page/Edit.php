@@ -6,6 +6,7 @@ use Message\Mothership\CMS\PageType\PageTypeInterface;
 use Message\Mothership\CMS\Page\Event;
 use Message\Cog\Event\DispatcherInterface;
 use Message\Cog\DB\Transaction;
+use Message\Cog\DB\TransactionalInterface;
 use Message\Cog\DB\NestedSetHelper;
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\DateTimeImmutable;
@@ -14,28 +15,47 @@ use Message\User\UserInterface;
 use Message\User\User;
 
 
-class Edit {
+class Edit implements TransactionalInterface
+{
+
+	/**
+	 * @var \Message\Cog\DB\Transaction
+	 * @deprecated Renamed to $_transaction. Can probably be deleted but deprecating in case this class is extended anywhere
+	 */
+	protected $_query;
 
 	protected $_loader;
-	protected $_query;
+	protected $_transaction;
 	protected $_eventDispatcher;
 	protected $_nestedSetHelper;
 	protected $_currentUser;
 
+	private $_transOverride = false;
+
 	public function __construct(
 		Loader $loader,
-		Transaction $query,
+		Transaction $transaction,
 		DispatcherInterface $eventDispatcher,
 		NestedSetHelper $nestedSetHelper,
 		UserInterface $user)
 	{
 		$this->_loader          = $loader;
-		$this->_query           = $query;
+		$this->_transaction     = $transaction;
+		$this->_query           = $transaction;
 		$this->_eventDispatcher = $eventDispatcher;
 		$this->_nestedSetHelper = $nestedSetHelper;
 		$this->_currentUser		= $user;
 
-		$this->_nestedSetHelper->setTransaction($this->_query);
+		$this->_nestedSetHelper->setTransaction($this->_transaction);
+	}
+
+	public function setTransaction(Transaction $transaction)
+	{
+		$this->_transaction = $transaction;
+		$this->_nestedSetHelper->setTransaction($this->_transaction);
+		$this->_transOverride = true;
+
+		return $this;
 	}
 
 	/**
@@ -49,7 +69,7 @@ class Edit {
 	{
 		$page->authorship->update(new DateTimeImmutable, $this->_currentUser->id);
 
-		$this->_query->run(
+		$this->_transaction->run(
 			'UPDATE
 				page
 			SET
@@ -113,7 +133,9 @@ class Edit {
 			$event
 		);
 
-		$this->_query->commit();
+		if (!$this->_transOverride) {
+			$this->_transaction->commit();
+		}
 
 		return $event->getPage();
 	}
@@ -131,7 +153,7 @@ class Edit {
 		// Get all the segements
 		$segements = $page->slug->getSegments();
 		$date = new DateTimeImmutable;
-		$this->_query->run('
+		$this->_transaction->run('
 			REPLACE INTO
 				page_slug_history
 			SET
@@ -147,7 +169,7 @@ class Edit {
 			)
 		);
 
-		$this->_query->run('
+		$this->_transaction->run('
 			UPDATE
 				page
 			SET
@@ -168,7 +190,7 @@ class Edit {
 		// Add it to the page object
 		$page->slug = $slug;
 
-		$this->_query->commit();
+		$this->_transaction->commit();
 
 		return $page;
 	}
@@ -180,7 +202,7 @@ class Edit {
 	 */
 	public function removeHistoricalSlug($slug)
 	{
-		$this->_query->run('
+		$this->_transaction->run('
 			DELETE FROM
 				page_slug_history
 			WHERE
@@ -189,7 +211,7 @@ class Edit {
 			$slug
 		));
 
-		$this->_query->commit();
+		$this->_transaction->commit();
 	}
 
 	/**
@@ -220,7 +242,7 @@ class Edit {
 		// Save the page to the DB
 		$page = $this->_savePublishData($page);
 
-		$this->_query->commit();
+		$this->_transaction->commit();
 
 		return $page;
 	}
@@ -248,7 +270,7 @@ class Edit {
 		$this->_savePublishData($page);
 		// Return the updated Page object
 
-		$this->_query->commit();
+		$this->_transaction->commit();
 
 		return $page;
 	}
@@ -289,7 +311,7 @@ class Edit {
 				false,
 				$addAfter
 			);
-			$this->_query->commit();
+			$this->_transaction->commit();
 
 			return true;
 		} catch (Exception $e) {
@@ -307,7 +329,7 @@ class Edit {
 	{
 		try {
 			$this->_nestedSetHelper->move($pageID, $newParentID, true);
-			$this->_query->commit();
+			$this->_transaction->commit();
 
 			return true;
 		} catch (\Exception $e) {
@@ -324,7 +346,7 @@ class Edit {
 	 */
 	protected function _savePublishData(Page $page)
 	{
-		$this->_query->run('
+		$this->_transaction->run('
 			UPDATE
 				page
 			SET
@@ -350,7 +372,7 @@ class Edit {
 	protected function _updateAccessGroups(Page $page)
 	{
 		// Remove any existing access groups as groups may havge been unselected
-		$this->_query->run(
+		$this->_transaction->run(
 			'DELETE FROM
 				page_access_group
 			WHERE
@@ -371,7 +393,7 @@ class Edit {
 
 		// If there is changes to be made then run the built query
 		if ($values) {
-			$this->_query->run(
+			$this->_transaction->run(
 				'INSERT INTO
 					page_access_group
 					(page_id, group_name)
@@ -385,7 +407,7 @@ class Edit {
 
 	protected function _updateTags(Page $page)
 	{
-		$this->_query->run("
+		$this->_transaction->run("
 				DELETE FROM
 					page_tag
 				WHERE
@@ -397,7 +419,7 @@ class Edit {
 		$tags = $page->getTags();
 		if (!empty($tags)) {
 			foreach ($tags as $tag) {
-				$this->_query->run("
+				$this->_transaction->run("
 					INSERT INTO
 						page_tag
 						(
