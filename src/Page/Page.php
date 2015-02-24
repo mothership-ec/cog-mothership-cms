@@ -48,12 +48,6 @@ class Page
 	public $access;
 	public $accessGroups = array();
 
-	public $commentsEnabled;
-	public $commentsAccess;
-	public $commentsAccessGroups;
-	public $commentsApproval;
-	public $commentsExpiry;
-
 	protected $_content;
 
 	public function getType()
