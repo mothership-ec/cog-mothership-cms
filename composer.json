@@ -1,18 +1,18 @@
 {
-	"name": "message/cog-mothership-cms",
+	"name": "mothership-ec/cog-mothership-cms",
 	"description": "Cog module for content management in Mothership",
 	"keywords": ["cms", "mothership", "content", "editing", "cog"],
-	"homepage": "http://message.co.uk",
-	"license": "proprietary",
+	"homepage": "http://mothership-ec",
+	"license": "GPL-3.0+",
 	"authors": [
 		{
-			"name" : "The Message Development Team",
-			"email": "dev@message.co.uk"
+			"name" : "The Mothership Development Team",
+			"email": "dev@mothership.ec"
 		}
 	],
 	"support": {
-		"wiki"  : "http://server.local/wiki/projects/cog",
-		"issues": "http://github.com/messagedigital/cog-mothership-cms/issues"
+		"wiki"  : "http://wiki.mothership.ec/CMS_module",
+		"issues": "http://github.com/mothership-ec/cog-mothership-cms/issues"
 	},
 	"autoload": {
 		"psr-4": {
@@ -20,22 +20,17 @@
 			"Message\\Mothership\\CMS\\Test\\": "tests"
 		}
 	},
-	"repositories": [
-		{
-			"type": "composer",
-			"url" : "http://packages.message.co.uk"
-		}
-	],
 	"require": {
 		"php": ">=5.4.0",
 
-		"message/cog"                        : "~3.7",
-		"message/cog-mothership-user"        : ">=3.2.2",
-		"message/cog-imageresize"            : "~1.0",
-		"message/cog-mothership-cp"          : "~2.0",
-		"message/cog-mothership-file-manager": "~2.0"
+		"mothership-ec/cog"                         : "~4.0",
+		"mothership-ec/cog-mothership-user"         : "~4.0",
+		"mothership-ec/cog-imageresize"             : "~2.0",
+		"mothership-ec/cog-mothership-cp"           : "~3.0",
+		"mothership-ec/cog-mothership-file-manager" : "~3.0",
+		"mothership-ec/cog-mothership-reports"      : "~2.0"
 	},
 	"suggest": {
-                "message/cog-mothership-reports" : "Module for displaying reports"
+        "mothership-ec/cog-mothership-reports" : "Module for displaying reports"
 	}
 }
