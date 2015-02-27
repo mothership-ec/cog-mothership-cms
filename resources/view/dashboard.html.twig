@@ -1,15 +1,10 @@
-{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
-
-{% block sidebar %}
-	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index'))}}
-{% endblock %}
+{% extends 'Message:Mothership:ControlPanel::_templates/cp' %}
 
 {% block main %}
-	<div class="dashboard">
-		<div class="modules">
-			{% for reference in dashboardReferences %}
-				{{ render(controller(reference.reference)) }}
-			{% endfor %}
-		</div>
-	</div>
+	<hgroup class="title">
+		<h1>Content</h1>
+	</hgroup>
+
+	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index'))}}
+
 {% endblock %}

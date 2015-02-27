@@ -1,7 +1,15 @@
-{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
+{% extends 'Message:Mothership:ControlPanel::_templates/cp' %}
 
-{% block sidebar %}
-	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index', {'currentPageID':page.id}))}}
+{% block stylesheets %}
+	{{ parent() }}
+	{% stylesheets
+		'@Message:Mothership:CMS::resources/assets/css/cms.css'
+
+		output='/assets/css/ms_cms.css'
+		filter='csscogulerewrite,?cssmin'
+	%}
+		<link rel="stylesheet" href="{{ asset_url }}">
+	{% endstylesheets %}
 {% endblock %}
 
 {% block main %}
@@ -25,7 +33,7 @@
 			<a href="{{ url('ms.cms.frontend', { slug: page.slug|trim('/') ?: '/' }) }}" class="button small preview">{{ 'ms.cms.edit.button.view'|trans }}</a>
 		</div>
 	</div>
-	<section class="container-content short">
+	<section class="container-content">
 		{% block form %}{% endblock %}
 	</section>
 {% endblock %}

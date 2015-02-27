@@ -1,8 +1,4 @@
-{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
-
-{% block sidebar %}
-	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index'))}}
-{% endblock %}
+{% extends 'Message:Mothership:ControlPanel::_templates/cp' %}
 
 {% block main %}
 <hgroup class="title">
@@ -18,7 +14,7 @@
 	{% for type in form.type %}
 	<label class="option-block">
 		{{ form_widget(type) }}
-		<p class="type"><strong>{{ type.vars.label }}</strong></p>
+		<p class="type">{{ type.vars.label }}</p>
 		<p>{{ types.get(type.vars.value).getDescription }}</p>
 	</label>
 	{% endfor %}
