@@ -51,6 +51,15 @@ use Message\Cog\DB\Entity\EntityLoaderCollection;
  */
 class Loader
 {
+	const ORDER_CREATED_DATE_ASC = "order.date.created.asc";
+	const ORDER_CREATED_DATE_DESC = "order.date.created.desc";
+	const ORDER_UPDATED_DATE_ASC = "order.date.created.asc";
+	const ORDER_UPDATED_DATE_DESC = "order.date.created.desc";
+	const ORDER_ID_ASC           = "order.id.asc";
+	const ORDER_ID_DESC           = "order.id.desc";
+	const ORDER_NATURAL_ASC      = "order.natural.asc";
+	const ORDER_NATURAL_DESC      = "order.natural.desc";
+
 	protected $_locale;
 	protected $_query;
 	protected $_pageTypes;
@@ -75,6 +84,13 @@ class Loader
 	 */
 	protected $_loadUnpublished = true;
 	protected $_loadUnviewable  = true;
+
+	/**
+	 * The order in which to load pages
+	 * 
+	 * @var string
+	 */
+	private $_order = self::ORDER_NATURAL_ASC;
 
 	/**
 	 * Constructor
@@ -464,7 +480,8 @@ class Loader
 			    	page.position_depth = 0
 				AND
 					page.page_id <> ?i
-			', array(
+				' . $this->_getOrderQuery()
+			, array(
 			    $page->id,
 			));
 
@@ -487,7 +504,8 @@ class Loader
 			        AND parent.position_right > ?i
 			        AND parent.position_depth = ?i
 					AND children.page_id <> ?i
-			', array(
+				' . $this->_getOrderQuery()
+			, array(
 			    $page->depth,
 			    $page->left,
 			    $page->right,
@@ -505,8 +523,6 @@ class Loader
 		if ($includeRequestPage) {
 			$pages[$page->id] = $page;
 		}
-
-		uasort($pages, array($this, '_sortPages'));
 
 		return $pages;
 	}
@@ -605,9 +621,7 @@ class Loader
 				page.page_id IN (?ij)
 			GROUP BY
 				page.page_id
-			ORDER BY
-				position_left ASC
-		';
+			' . $this->_getOrderQuery();
 
 		$params = array(
 			$pageID,
@@ -747,8 +761,41 @@ class Loader
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
 	}
 
-	protected function _sortPages(Page $a, Page $b)
+	private function _getOrderQuery()
 	{
-		return ($a->left < $b->left) ? -1 : 1;
+		switch ($this->_order) {
+			case self::ORDER_ID_ASC:
+				return "ORDER BY `page_id` ASC";
+			case self::ORDER_ID_DESC:
+				return "ORDER BY `page_id` DESC";
+
+			case self::ORDER_UPDATED_DATE_ASC:
+				return "ORDER BY `updated_at` ASC";
+			case self::ORDER_UPDATED_DATE_DESC:
+				return "ORDER BY `updated_at` DESC";
+
+			case self::ORDER_CREATED_DATE_ASC:
+				return "ORDER BY `created_at` ASC";
+			case self::ORDER_CREATED_DATE_DESC:
+				return "ORDER BY `created_at` DESC";
+				
+			case self::ORDER_NATURAL_DESC:
+				return "ORDER BY `position_left` DESC";
+			case self::ORDER_NATURAL_ASC:
+			default:
+				return "ORDER BY `position_left` ASC";
+		}
+	}
+
+	/**
+	 * set the ordering, use the order constants
+	 * 
+	 * @param string the ordering
+	 */
+	public function setOrder(/* string */ $order)
+	{
+		$this->_order = $order;
+
+		return $this;
 	}
 }
