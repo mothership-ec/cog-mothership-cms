@@ -51,13 +51,13 @@ use Message\Cog\DB\Entity\EntityLoaderCollection;
  */
 class Loader
 {
-	const ORDER_CREATED_DATE_ASC = "order.date.created.asc";
+	const ORDER_CREATED_DATE_ASC  = "order.date.created.asc";
 	const ORDER_CREATED_DATE_DESC = "order.date.created.desc";
-	const ORDER_UPDATED_DATE_ASC = "order.date.created.asc";
+	const ORDER_UPDATED_DATE_ASC  = "order.date.created.asc";
 	const ORDER_UPDATED_DATE_DESC = "order.date.created.desc";
-	const ORDER_ID_ASC           = "order.id.asc";
+	const ORDER_ID_ASC            = "order.id.asc";
 	const ORDER_ID_DESC           = "order.id.desc";
-	const ORDER_NATURAL_ASC      = "order.natural.asc";
+	const ORDER_NATURAL_ASC       = "order.natural.asc";
 	const ORDER_NATURAL_DESC      = "order.natural.desc";
 
 	protected $_locale;
