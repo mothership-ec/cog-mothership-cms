@@ -53,8 +53,8 @@ class Loader
 {
 	const ORDER_CREATED_DATE_ASC  = "order.date.created.asc";
 	const ORDER_CREATED_DATE_DESC = "order.date.created.desc";
-	const ORDER_UPDATED_DATE_ASC  = "order.date.created.asc";
-	const ORDER_UPDATED_DATE_DESC = "order.date.created.desc";
+	const ORDER_UPDATED_DATE_ASC  = "order.date.updated.asc";
+	const ORDER_UPDATED_DATE_DESC = "order.date.updated.desc";
 	const ORDER_ID_ASC            = "order.id.asc";
 	const ORDER_ID_DESC           = "order.id.desc";
 	const ORDER_NATURAL_ASC       = "order.natural.asc";
@@ -503,8 +503,7 @@ class Loader
 			        parent.position_left < ?i
 			        AND parent.position_right > ?i
 			        AND parent.position_depth = ?i
-					AND children.page_id <> ?i
-				' . $this->_getOrderQuery()
+					AND children.page_id <> ?i'
 			, array(
 			    $page->depth,
 			    $page->left,
@@ -770,14 +769,14 @@ class Loader
 				return "ORDER BY `page_id` DESC";
 
 			case self::ORDER_UPDATED_DATE_ASC:
-				return "ORDER BY `updated_at` ASC";
+				return "ORDER BY `page`.`updated_at` ASC";
 			case self::ORDER_UPDATED_DATE_DESC:
-				return "ORDER BY `updated_at` DESC";
+				return "ORDER BY `page`.`updated_at` DESC";
 
 			case self::ORDER_CREATED_DATE_ASC:
-				return "ORDER BY `created_at` ASC";
+				return "ORDER BY `page`.`created_at` ASC";
 			case self::ORDER_CREATED_DATE_DESC:
-				return "ORDER BY `created_at` DESC";
+				return "ORDER BY `page`.`created_at` DESC";
 				
 			case self::ORDER_NATURAL_DESC:
 				return "ORDER BY `position_left` DESC";
