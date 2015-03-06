@@ -11,7 +11,8 @@ class Social extends Controller
 	public function share(Page $page, $description = null, File $image = null)
 	{
 		$schemeAndHost = $this->get('http.request.master')->getSchemeAndHttpHost();
-		$uri           = $schemeAndHost . $this->generateUrl('ms.cms.frontend', array('slug' => ltrim($page->slug, '/')));
+		$trimmed       = rtrim($page->slug, '/');
+		$uri           = $schemeAndHost . $this->generateUrl('ms.cms.frontend', ['slug' => !empty($trimmed) ? $trimmed : $page->slug]);
 	
 		return $this->render('Message:Mothership:CMS::modules:social:share', [
 			'networks'    => $this->get('cfg')->social,
