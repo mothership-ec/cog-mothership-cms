@@ -191,7 +191,7 @@ class Page
 	 * 
 	 * @return $this this for chainability
 	 */
-	public function setMetaImage(File $file)
+	public function setMetaImage(File\File $file)
 	{
 		$this->_metaImage = $file;
 
