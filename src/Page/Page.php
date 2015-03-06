@@ -3,7 +3,7 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Cog\Service\Container;
-use Message\FileManager\File;
+use Message\Mothership\FileManager\File;
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\DateTimeImmutable;
 
