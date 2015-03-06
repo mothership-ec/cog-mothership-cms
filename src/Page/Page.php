@@ -4,6 +4,8 @@ namespace Message\Mothership\CMS\Page;
 
 use Message\Cog\Service\Container;
 use Message\Cog\Filesystem\File;
+use Message\Cog\ValueObject\DateRange;
+use Message\Cog\ValueObject\DateTimeImmutable;
 
 /**
  * Represents the properties of a single page.
@@ -49,12 +51,6 @@ class Page
 	public $access;
 	public $accessGroups = array();
 
-	public $commentsEnabled;
-	public $commentsAccess;
-	public $commentsAccessGroups;
-	public $commentsApproval;
-	public $commentsExpiry;
-
 	protected $_content;
 
 	public function getType()
@@ -93,6 +89,21 @@ class Page
 		$this->tags = $tags;
 
 		return $this;
+	}
+
+	public function setPublished($publish = true)
+	{
+		if ($publish) {
+			$this->publishDateRange = new DateRange(
+				new DateTimeImmutable()
+			);
+		}
+		else {
+			$this->publishDateRange = new DateRange(
+				new DateTimeImmutable(),
+				new DateTimeImmutable()
+			);
+		}
 	}
 
 	/**

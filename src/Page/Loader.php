@@ -594,13 +594,8 @@ class Loader
 				page.password AS password,
 				page.access AS access,
 
-				GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups,
+				GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups
 
-				page.comment_enabled AS commentsEnabled,
-				page.comment_access AS commentsAccess,
-				page.comment_access AS commentsAccessGroups,
-				page.comment_approval AS commentsApproval,
-				page.comment_expiry AS commentsExpiry
 
 			FROM
 				page
@@ -659,8 +654,6 @@ class Loader
 			$pages[$key]->visibilitySearch     = (bool) $pages[$key]->visibilitySearch;
 			$pages[$key]->visibilityMenu       = (bool) $pages[$key]->visibilityMenu;
 			$pages[$key]->visibilityAggregator = (bool) $pages[$key]->visibilityAggregator;
-			$pages[$key]->commentsEnabled      = (bool) $pages[$key]->commentsEnabled;
-			$pages[$key]->commentsApproval     = (bool) $pages[$key]->commentsApproval;
 
 			// Load the DateRange object for publishDateRange
 			$pages[$key]->publishDateRange = new DateRange(
