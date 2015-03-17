@@ -1,8 +1,4 @@
-{%  if hasPages == true %}
-
-    {{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Search#index'))}}
-
-{% endif %}
+{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Search#index'))}}
 
 <a href="{{ url('ms.cp.cms.create')}}" class="button small create" data-live>{{ 'ms.cms.create.button.menu'|trans }}</a>
 
