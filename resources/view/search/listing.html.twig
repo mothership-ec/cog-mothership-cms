@@ -25,21 +25,3 @@
 {% endfor %}
 </ul>
 {% endblock %}
-
-{#
-<nav>
-	{% if pagination.numPages > 1 %}
-		{% if pagination.page > 1 %}
-			<a href="{{ url('ms.cms.search', {terms: termsString, page: pagination.page-1}) }}">Prev</a>
-		{% endif %}
-
-		{% for i in 1..pagination.numPages %}
-			<a href="{{ url('ms.cms.search', {terms: termsString, page: i}) }}">{{ i }}</a>
-		{% endfor %}
-
-		{% if pagination.page < pagination.numPages %}
-			<a href="{{ url('ms.cms.search', {terms: termsString, page: pagination.page+1}) }}">Next</a>
-		{% endif %}
-	{% endif %}
-</nav>
-#}
