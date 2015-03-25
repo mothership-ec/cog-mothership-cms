@@ -191,8 +191,12 @@ class Page
 	 * 
 	 * @return $this this for chainability
 	 */
-	public function setMetaImage(File\File $file)
+	public function setMetaImage($file)
 	{
+		if(!$file instanceof File\File && $file !== null) {
+			throw new \InvalidArgumentException('Meta Image File must be of type Message\Mothership\FileManager\File\File or null');
+		}
+
 		$this->_metaImage = $file;
 
 		return $this;

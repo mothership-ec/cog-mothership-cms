@@ -14,7 +14,6 @@ class PageProxy extends Page
 {
 	protected $_loaders;
 	protected $_loaded = [];
-	private $_metaImageID;
 
 	public function __construct(EntityLoaderCollection $loaders)
 	{
@@ -56,13 +55,22 @@ class PageProxy extends Page
 		return parent::getContent();
 	}
 
+	public function setMetaImage($file)
+	{
+			parent::setMetaImage($file);
+
+			$this->_loaded[] = 'metaImage';
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public function getMetaImage()
 	{
 		if (!$this->_isLoaded('metaImage')) {
-			$image = $this->_loaders->get('image')->getById($this->_metaImageID);
+			$image = $this->_loaders->get('image')->load($this);
+			$this->setMetaImage($image);
+			$this->_loaded[] = 'metaImage';
 		}
 
 		return parent::getMetaImage();

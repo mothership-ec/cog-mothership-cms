@@ -280,9 +280,6 @@ class Edit extends \Message\Cog\Controller\Controller
 			$page->metaTitle       = $data['metaTitle'];
 			$page->metaDescription = $data['metaDescription'];
 			$page->setMetaImage($this->get('file_manager.file.loader')->getById($data['metaImage']));
-			// $page->metaHtmlHead    = $data['metaHtmlHead'];
-			// $page->metaHtmlFoot    = $data['metaHtmlFoot'];
-
 			$page = $this->get('cms.page.edit')->save($page);
 
 			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.metadata.success'));
@@ -477,6 +474,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			->setDefaultValues(array(
 				'metaTitle'       => $page->metaTitle,
 				'metaDescription' => $page->metaDescription,
+				'metaImage'       => $page->getMetaImage() ? $page->getMetaImage()->id : null,
 			));
 
 		$form->add('metaTitle', 'text', $this->trans('ms.cms.metadata.title.label'), array(
@@ -488,6 +486,11 @@ class Edit extends \Message\Cog\Controller\Controller
 		$form->add('metaDescription', 'textarea', $this->trans('ms.cms.metadata.description.label'), array(
 			'attr' => array('data-help-key' => 'ms.cms.metadata.description.help')
 		))->val()
+			->optional();
+
+		$form->add('metaImage', 'file', $this->trans('ms.cms.metadata.image.label'), [
+			'attr' => ['data-help-key' => 'ms.cms.metadata.image.help'],
+		])->val()
 			->optional();
 
 		$files   = (array) $this->get('file_manager.file.loader')->getAll();

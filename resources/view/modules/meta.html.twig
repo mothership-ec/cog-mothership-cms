@@ -5,5 +5,5 @@
 <meta name="description" content="{{ page.metaDescription|default(page.title ~ ' | ' ~ app.cfg.app.name) }}">
 <title>{% block title %}{{ page.metaTitle|default(page.title ~ ' | ' ~ app.cfg.app.name) }}{% endblock %}</title>
 {# @todo: make configurable #}
-{# <link rel="icon" type="image/png" href="{{ image }}"> #}
-{# <meta property="og:image" content="{{ image }}) }}" /> #}
+<link rel="icon" type="image/png" href="{{ page.metaImage }}">
+<meta property="og:image" content="{{ page.metaImage }}) }}" />
