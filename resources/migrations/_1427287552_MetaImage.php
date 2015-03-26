@@ -12,7 +12,7 @@ class _1427287552_MetaImage extends Migration
 			ADD
 				meta_image INTEGER DEFAULT NULL
 			AFTER
-				`type`
+				`meta_description`
 			;
 		");
 	}
