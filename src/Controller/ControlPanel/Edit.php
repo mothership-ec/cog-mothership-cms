@@ -279,7 +279,9 @@ class Edit extends \Message\Cog\Controller\Controller
 		if ($form->isValid() && ($data = $form->getFilteredData())) {
 			$page->metaTitle       = $data['metaTitle'];
 			$page->metaDescription = $data['metaDescription'];
-			$page->setMetaImage($this->get('file_manager.file.loader')->getById($data['metaImage']));
+			if ($data['metaImage']) {
+				$page->setMetaImage($this->get('file_manager.file.loader')->getById($data['metaImage']));
+			}
 			$page = $this->get('cms.page.edit')->save($page);
 
 			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.metadata.success'));
