@@ -10,12 +10,12 @@ namespace Message\Mothership\CMS\Page;
  */
 class PageOrder
 {
-	const CREATED_DATE         = "order.date.created.asc";
-	const CREATED_DATE_REVERSE = "order.date.created.desc";
-	const UPDATED_DATE         = "order.date.updated.asc";
-	const UPDATED_DATE_REVERSE = "order.date.updated.desc";
-	const ID                   = "order.id.asc";
-	const ID_REVERSE           = "order.id.desc";
-	const DEFAULT              = "order.natural.asc";
-	const REVERSE              = "order.natural.desc";
+	const CREATED_DATE         = "cms.page.order.date.created";
+	const CREATED_DATE_REVERSE = "cms.page.order.date.created.reverse";
+	const UPDATED_DATE         = "cms.page.order.date.updated";
+	const UPDATED_DATE_REVERSE = "cms.page.order.date.updated.reverse";
+	const ID                   = "cms.page.order.id";
+	const ID_REVERSE           = "cms.page.order.id.reverse";
+	const STANDARD             = "cms.page.order.standard";
+	const REVERSE              = "cms.page.order.reverse";
 }

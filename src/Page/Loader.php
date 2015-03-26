@@ -81,7 +81,7 @@ class Loader
 	 * 
 	 * @var string
 	 */
-	private $_order = PageOrder::DEFAULT;
+	private $_order = PageOrder::STANDARD;
 
 	/**
 	 * Constructor
@@ -771,7 +771,7 @@ class Loader
 				
 			case PageOrder::REVERSE:
 				return "ORDER BY `position_left` DESC";
-			case PageOrder::DEFAULT:
+			case PageOrder::STANDARD:
 			default:
 				return "ORDER BY `position_left` ASC";
 		}
