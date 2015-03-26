@@ -81,7 +81,7 @@ class Edit implements TransactionalInterface
 				page.updated_by            = :updatedBy?i,
 				page.meta_title            = :metaTitle?s,
 				page.meta_description      = :metaDescription?s,
-				page.meta_image            = :metaImage?i,
+				page.meta_image            = :metaImage?in,
 				page.meta_html_head        = :metaHtmlHead?s,
 				page.meta_html_foot        = :metaHtmlFoot?s,
 				page.visibility_search     = :visibilitySearch?i,

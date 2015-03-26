@@ -15,7 +15,7 @@ class Social extends Controller
 		$uri           = $schemeAndHost . $this->generateUrl('ms.cms.frontend', ['slug' => !empty($trimmed) ? $trimmed : $page->slug]);
 	
 		return $this->render('Message:Mothership:CMS::modules:social:share', [
-			'networks'    => $this->get('cfg')->social,
+			'social'      => $this->get('cfg')->social,
 			'uri'         => $uri,
 			'title'       => $page->metaTitle ?: $page->title,
 			'description' => $description ?: $page->metaDescription,
@@ -26,7 +26,7 @@ class Social extends Controller
 	public function links()
 	{
 		return $this->render('Message:Mothership:CMS::modules:social:links', [
-			'networks' => $this->get('cfg')->social,
+			'social' => $this->get('cfg')->social,
 		]);
 	}
 }
