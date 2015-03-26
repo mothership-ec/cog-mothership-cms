@@ -51,15 +51,6 @@ use Message\Cog\DB\Entity\EntityLoaderCollection;
  */
 class Loader
 {
-	const ORDER_CREATED_DATE_ASC  = "order.date.created.asc";
-	const ORDER_CREATED_DATE_DESC = "order.date.created.desc";
-	const ORDER_UPDATED_DATE_ASC  = "order.date.updated.asc";
-	const ORDER_UPDATED_DATE_DESC = "order.date.updated.desc";
-	const ORDER_ID_ASC            = "order.id.asc";
-	const ORDER_ID_DESC           = "order.id.desc";
-	const ORDER_NATURAL_ASC       = "order.natural.asc";
-	const ORDER_NATURAL_DESC      = "order.natural.desc";
-
 	protected $_locale;
 	protected $_query;
 	protected $_pageTypes;
@@ -90,7 +81,7 @@ class Loader
 	 * 
 	 * @var string
 	 */
-	private $_order = self::ORDER_NATURAL_ASC;
+	private $_order = PageOrder::DEFAULT;
 
 	/**
 	 * Constructor
@@ -763,24 +754,24 @@ class Loader
 	private function _getOrderQuery()
 	{
 		switch ($this->_order) {
-			case self::ORDER_ID_ASC:
-				return "ORDER BY `page_id` ASC";
-			case self::ORDER_ID_DESC:
-				return "ORDER BY `page_id` DESC";
+			case PageOrder::ID:
+				return "ORDER BY `page`.`page_id` ASC";
+			case PageOrder::ID_REVERSE:
+				return "ORDER BY `page`.`page_id` DESC";
 
-			case self::ORDER_UPDATED_DATE_ASC:
+			case PageOrder::UPDATED_DATE:
 				return "ORDER BY `page`.`updated_at` ASC";
-			case self::ORDER_UPDATED_DATE_DESC:
+			case PageOrder::UPDATED_DATE_REVERSE:
 				return "ORDER BY `page`.`updated_at` DESC";
 
-			case self::ORDER_CREATED_DATE_ASC:
+			case PageOrder::CREATED_DATE:
 				return "ORDER BY `page`.`created_at` ASC";
-			case self::ORDER_CREATED_DATE_DESC:
+			case PageOrder::CREATED_DATE_REVERSE:
 				return "ORDER BY `page`.`created_at` DESC";
 				
-			case self::ORDER_NATURAL_DESC:
+			case PageOrder::REVERSE:
 				return "ORDER BY `position_left` DESC";
-			case self::ORDER_NATURAL_ASC:
+			case PageOrder::DEFAULT:
 			default:
 				return "ORDER BY `position_left` ASC";
 		}
@@ -791,7 +782,7 @@ class Loader
 	 * 
 	 * @param string the ordering
 	 */
-	public function setOrder(/* string */ $order)
+	public function orderBy(/* string */ $order)
 	{
 		$this->_order = $order;
 
