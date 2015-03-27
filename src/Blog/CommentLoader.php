@@ -79,6 +79,16 @@ class CommentLoader
 		return new CommentCollection($comments);
 	}
 
+	/**
+	 * Load all comments with one or or one of many statuses
+	 *
+	 * @param array | string $statuses           Status(es) to check for. Can be either a string or an array
+	 *                                           but all statuses must be valid
+	 * @param string $order                      Order to load in, must be either ASC or DESC
+	 * @throws \InvalidArgumentException         Throws exception if $order is invalid
+	 *
+	 * @return CommentCollection
+	 */
 	public function getByStatus($statuses, $order = 'ASC')
 	{
 		$statuses = $this->_parseStatuses((array) $statuses);
