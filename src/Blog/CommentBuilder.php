@@ -91,6 +91,15 @@ class CommentBuilder
 		return $comment;
 	}
 
+	/**
+	 * Set the status of the comment, depending on the configuration of the blog post, and who is making the comment.
+	 * A super admin's comment will always be approved right away
+	 *
+	 * @param Comment $comment
+	 * @param Content $content
+	 *
+	 * @return Comment
+	 */
 	private function _setStatus(Comment $comment, Content $content)
 	{
 		if (!$this->_user instanceof AnonymousUser) {
