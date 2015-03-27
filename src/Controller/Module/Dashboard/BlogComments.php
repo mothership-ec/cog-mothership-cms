@@ -9,10 +9,10 @@ class BlogComments extends Controller
 {
 	public function index()
 	{
-		$pending          = $this->get('cms.blog.comment_dashboard_loader')->getPendingComments();
-		$recentlyApproved = $this->get('cms.blog.comment_dashboard_loader')->getRecentlyApprovedComments();
+		$pending          = $this->get('cms.blog.comment_dashboard_loader')->getPendingCounts();
+		$recentlyApproved = $this->get('cms.blog.comment_dashboard_loader')->getRecentlyApprovedCounts();
 
-		$pages = (count($pending) && count($recentlyApproved)) ? $this->get('cms.blog.comment_dashboard_loader')->getPages() : null;
+		$pages = ($pending || $recentlyApproved) ? $this->get('cms.blog.comment_dashboard_loader')->getPages() : null;
 
 		return $this->render('Message:Mothership:CMS::modules:dashboard:comments', [
 			'pending'          => $pending,

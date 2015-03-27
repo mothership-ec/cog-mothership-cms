@@ -145,7 +145,7 @@ class Services implements ServicesInterface
 		};
 
 		$services['cms.blog.comment_builder'] = $services->factory(function($c) {
-			return new CMS\Blog\CommentBuilder($c['user.current'], $c['request'], $c['cms.blog.content_validator']);
+			return new CMS\Blog\CommentBuilder($c['user.current'], $c['request'], $c['cms.blog.content_validator'], $c['user.group.loader']);
 		});
 
 		$services['cms.blog.comment_loader'] = function($c) {
@@ -169,7 +169,7 @@ class Services implements ServicesInterface
 		};
 
 		$services['cms.blog.comment_dashboard_loader'] = function($c) {
-			return new CMS\Blog\Dashboard\DashboardLoader($c['cms.blog.comment_loader'], $c['cms.blog.page_loader'], $c['cms.page.types']);
+			return new CMS\Blog\Dashboard\DashboardLoader($c['cms.blog.comment_loader'], $c['cms.page.loader'], $c['cms.page.types']);
 		};
 
 		$services->extend('field.collection', function($fields, $c) {

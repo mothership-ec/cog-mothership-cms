@@ -1,0 +1,42 @@
+{% if pages %}
+	<div class="module portrait recent-list">
+		<h2 class="title">
+			Comments
+		</h2>
+		<div class="wrap">
+			<h3>Pending comments</h3>
+			{% if pending | length > 0 %}
+				<ul>
+					{% for pPageID, pCount in pending %}
+						<li>
+							<a href="{{ url('ms.cp.cms.edit', {pageID: pPageID}) }}">
+								{{ pages[pPageID].title }}</a>
+							{{ 'ms.cms.dashboard.comment.pending' | transchoice(pCount, {'%count%': pCount}) | raw }}
+							<a href="{{ url('ms.cms.frontend', {slug: pages[pPageID].slug}) }}" class="button small">{{ 'ms.cms.dashboard.comment.view-page' | trans }}</a>
+							<a href="{{ url('ms.cp.cms.edit.comments', {pageID: pPageID} ) }}" class="button small">{{ 'ms.cms.dashboard.comment.review' | trans }}</a>
+						</li>
+					{% endfor %}
+				</ul>
+			{% else %}
+				<p><em>{{ 'ms.cms.dashboard.comment.no-pending' | trans }}</em></p>
+			{% endif %}
+			<hr>
+			<h3>Recently approved</h3>
+			{% if recentlyApproved | length > 0 %}
+				<ul>
+					{% for rPageID, rCount in recentlyApproved %}
+						<li>
+							<a href="{{ url('ms.cp.cms.edit', {pageID: rPageID}) }}">
+								{{ pages[rPageID].title }}</a>
+							{{ 'ms.cms.dashboard.comment.approved' | transchoice(rCount, {'%count%': rCount}) | raw }}
+							<a href="{{ url('ms.cms.frontend', {slug: pages[rPageID].slug}) }}" class="button small">{{ 'ms.cms.dashboard.comment.view-page' | trans }}</a>
+							<a href="{{ url('ms.cp.cms.edit.comments', {pageID: rPageID} ) }}" class="button small">{{ 'ms.cms.dashboard.comment.review' | trans }}</a>
+						</li>
+					{% endfor %}
+				</ul>
+			{% else %}
+				<p><em>{{ 'ms.cms.dashboard.comment.no-approved' | trans }}</em></p>
+			{% endif %}
+		</div>
+	</div>
+{% endif %}
