@@ -168,6 +168,10 @@ class Services implements ServicesInterface
 			return new CMS\Blog\Statuses;
 		};
 
+		$services['cms.blog.comment_dashboard_loader'] = function($c) {
+			return new CMS\Blog\Dashboard\DashboardLoader($c['cms.blog.comment_loader'], $c['cms.blog.page_loader'], $c['cms.page.types']);
+		};
+
 		$services->extend('field.collection', function($fields, $c) {
 			$fields->add(new \Message\Mothership\CMS\FieldType\Link($c['cms.page.loader']));
 
