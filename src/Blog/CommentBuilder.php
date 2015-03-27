@@ -39,8 +39,14 @@ class CommentBuilder
 	 */
 	private $_request;
 
+	/**
+	 * @var ContentValidator
+	 */
 	private $_contentValidator;
 
+	/**
+	 * @var UserGroupLoader
+	 */
 	private $_userGroupLoader;
 
 	/**
