@@ -4,7 +4,7 @@
 <meta name="viewport" content="initial-scale=1.0, width=device-width, height=device-height"/>
 <meta name="description" content="{{ page.metaDescription|default(page.title ~ ' | ' ~ app.cfg.app.name) }}">
 <title>{% block title %}{{ page.metaTitle|default(page.title ~ ' | ' ~ app.cfg.app.name) }}{% endblock %}</title>
-{% if page.metaImage is defined %}
+{% if not page.metaImage is null %}
   <link rel="icon" type="image/png" href="{{ getResizedUrl(page.metaImage, 500, 'AUTO') }}">
   <meta property="og:image" content="{{ getResizedUrl(page.metaImage, 500, 'AUTO') }}" />
 {% endif %}
