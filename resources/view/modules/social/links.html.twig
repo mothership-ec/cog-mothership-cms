@@ -5,7 +5,7 @@
 	</li>
 	{% endif %}
 	{% if not social.instagram.name is empty %}
-	<li class-"instagram">
+	<li class="instagram">
 		<a href="http://instagram.com/{{ social.instagram.slug|default(social.instagram.name)|e('url') }}">Instagram</a>
 	</li>
 	{% endif %}
