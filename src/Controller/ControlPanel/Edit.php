@@ -12,6 +12,7 @@ use Message\Cog\Field\Factory;
 use Message\Cog\Field\RepeatableContainer;
 
 use Message\Cog\ValueObject\Slug;
+use Message\Mothership\FileManager\File;
 
 class Edit extends \Message\Cog\Controller\Controller
 {
@@ -278,9 +279,9 @@ class Edit extends \Message\Cog\Controller\Controller
 		if ($form->isValid() && ($data = $form->getFilteredData())) {
 			$page->metaTitle       = $data['metaTitle'];
 			$page->metaDescription = $data['metaDescription'];
-			// $page->metaHtmlHead    = $data['metaHtmlHead'];
-			// $page->metaHtmlFoot    = $data['metaHtmlFoot'];
-
+			if ($data['metaImage']) {
+				$page->setMetaImage($this->get('file_manager.file.loader')->getById($data['metaImage']));
+			}
 			$page = $this->get('cms.page.edit')->save($page);
 
 			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.metadata.success'));
@@ -475,8 +476,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			->setDefaultValues(array(
 				'metaTitle'       => $page->metaTitle,
 				'metaDescription' => $page->metaDescription,
-				// 'metaHtmlHead'    => $page->metaHtmlHead,
-				// 'metaHtmlFoot'    => $page->metaHtmlFoot,
+				'metaImage'       => $page->getMetaImage() ? $page->getMetaImage()->id : null,
 			));
 
 		$form->add('metaTitle', 'text', $this->trans('ms.cms.metadata.title.label'), array(
@@ -490,15 +490,35 @@ class Edit extends \Message\Cog\Controller\Controller
 		))->val()
 			->optional();
 
-		// $form->add('metaHtmlHead', 'textarea', $this->trans('ms.cms.metadata.htmlHead.label'), array(
-		// 	'attr' => array('data-help-key' => 'ms.cms.metadata.htmlHead.help')
-		// ))->val()
-		// 	->optional();
+		$form->add('metaImage', 'file', $this->trans('ms.cms.metadata.image.label'), [
+			'attr' => ['data-help-key' => 'ms.cms.metadata.image.help'],
+		])->val()
+			->optional();
 
-		// $form->add('metaHtmlFoot', 'textarea', $this->trans('ms.cms.metadata.htmlFoot.label'), array(
-		// 	'attr' => array('data-help-key' => 'ms.cms.metadata.htmlFoot.help')
-		// ))->val()
-		// 	->optional();
+		$files   = (array) $this->get('file_manager.file.loader')->getAll();
+
+		// Get the available files
+		$choices = array();
+		$allowedTypes = array(File\Type::IMAGE);
+		foreach ($files as $file) {
+			if ($allowedTypes) {
+				if (!in_array($file->typeID, $allowedTypes)) {
+					continue;
+				}
+			}
+
+			$choices[$file->id] = $file->name;
+		}
+
+		uasort($choices, function($a, $b) {
+			return strcmp($a, $b);
+		});
+
+		$form->add('metaImage', 'ms_file', $this->trans('ms.commerce.product.image.file.label'), [
+			'choices' => $choices,
+			'empty_value' => 'Please select…',
+			'attr' => array('data-help-key' => 'ms.commerce.product.image.file.help'),
+		]);
 
 		return $form;
 	}

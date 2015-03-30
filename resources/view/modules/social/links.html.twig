@@ -1,0 +1,22 @@
+<ul class="social">
+	{% if not social.twitter.name is empty %}
+	<li class="twitter">
+		<a href="https://twitter.com/{{ social.twitter.slug|default(social.twitter.name)|e('url') }}">Twitter</a>
+	</li>
+	{% endif %}
+	{% if not social.instagram.name is empty %}
+	<li class="instagram">
+		<a href="http://instagram.com/{{ social.instagram.slug|default(social.instagram.name)|e('url') }}">Instagram</a>
+	</li>
+	{% endif %}
+	{% if not social.facebook.name is empty %}
+	<li class="facebook">
+		<a href="https://www.facebook.com/{{ social.facebook.slug|default(social.facebook.name)|e('url') }}">Facebook</a>
+	</li>
+	{% endif %}
+	{% if not social.pintrest.name is empty %}
+	<li class="pinterest">
+		<a href="http://www.pinterest.com/{{ social.pintrest.slug|default(social.pintrest.name)|e('url') }}">Pinterest</a>
+	</li>
+	{% endif %}
+</ul>

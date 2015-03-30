@@ -1,0 +1,8 @@
+<ul class="social">
+	<li class="twitter">
+		<a href="https://twitter.com/share?url={{ uri|e('url') }}&amp;text={{ title|e('url') }}{% if not social.twitter.name is empty %}&amp;via={{ social.twitter.name }}{% endif %}">Twitter</a>
+	</li>
+	<li class="facebook">
+		<a href="http://www.facebook.com/sharer.php?s=100&amp;p[url]={{ uri|e('url') }}&amp;p[images][0]={{ imageUri|e('url') }}&amp;p[title]={{ title|e('url') }}&amp;p[summary]={{ description|raw|striptags|e('url') }}">Facebook</a>
+	</li>
+</ul>

@@ -55,6 +55,27 @@ class PageProxy extends Page
 		return parent::getContent();
 	}
 
+	public function setMetaImage($file)
+	{
+			parent::setMetaImage($file);
+
+			$this->_loaded[] = 'metaImage';
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getMetaImage()
+	{
+		if (!$this->_isLoaded('metaImage')) {
+			$image = $this->_loaders->get('image')->load($this);
+			$this->setMetaImage($image);
+			$this->_loaded[] = 'metaImage';
+		}
+
+		return parent::getMetaImage();
+	}
+
 	protected function _isLoaded($entityName)
 	{
 		return in_array($entityName, $this->_loaded);
