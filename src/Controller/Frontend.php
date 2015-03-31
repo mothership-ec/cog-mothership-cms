@@ -144,12 +144,8 @@ class Frontend extends Controller
 
 		$pages = $this->get('cms.page.loader')->getBySearchTerms(
 			$terms,
-			1,
-			['min_length' => 4]
+			1
 		);
-
-		// Slice the results to get the current page.
-		// $pages = array_slice($pages, ($page - 1) * $perPage, $perPage);
 
 		// Log search request.
 		$searchLog            = new SearchLog;
