@@ -4,7 +4,7 @@
 
 - Share on social media (Twitter/Facebook only) controller
 - Controller for linking to social media sites
-- `social.yml` config file with suport for usernames and slug overrides for Twitter, Facebook, Pinterest and Instagram
+- `social.yml` config file with support for usernames and slug overrides for Twitter, Facebook, Pinterest and Instagram
 - Generic metadata view
 - Can assign meta image to pages
 - `meta_image` field on database
