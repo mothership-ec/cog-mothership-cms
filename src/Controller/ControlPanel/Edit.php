@@ -250,10 +250,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
 		}
 
-		return $this->render('::edit/attributes', array(
-			'page' => $page,
-			'form' => $form,
-		));
+		return $this->redirectToReferer();
 	}
 
 	/**
