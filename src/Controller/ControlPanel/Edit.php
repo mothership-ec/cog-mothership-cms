@@ -216,18 +216,13 @@ class Edit extends \Message\Cog\Controller\Controller
 
 			try {
 				if (($parent && $parent->id != $data['parent']) || (!$parent && $data['parent'] != 0)) {
-					if ($this->get('cms.page.edit')->changeParent($pageID, $data['parent'])) {
-						$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.parent.success'));
-					} else {
-						$this->addFlash('error', $this->trans('ms.cms.feedback.edit.attributes.parent.failure'));
-					}
+					$this->get('cms.page.edit')->changeParent($pageID, $data['parent']);
+					$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.parent.success'));
 				}
 
 				if (!is_null($data['siblings']) && $data['siblings'] >= 0) {
 					$index = $data['siblings'];
-					if (!$this->get('cms.page.edit')->changeOrder($page, $index)) {
-						$this->addFlash('error', $this->trans('ms.cms.feedback.edit.attributes.order.failure'));
-					}
+					$this->get('cms.page.edit')->changeOrder($page, $index);
 				}
 			} catch (NestedSetException $e) {
 				$this->addFlash('error', $this->trans('ms.cms.feedback.edit.attributes.nested-set.error', ['%error%' => $e->getMessage()]));
