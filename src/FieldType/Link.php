@@ -58,6 +58,7 @@ class Link extends MultipleValueField
 
 	public function getFormField(FormBuilder $form)
 	{
+		$this->_setDefaultOptions();
 		switch ($this->_scope) {
 			case self::SCOPE_CMS :
 				$this->_addCmsLink($form);
@@ -180,7 +181,7 @@ class Link extends MultipleValueField
 
 	/**
 	 * Set the default options depending on scope.
-	 * 
+	 *
 	 * @todo Currently setting the field options before setting the scope is kinda flakey, the label will be redefined
 	 * but any other options will be overwritten as this method is called when the scope is set
 	 */
@@ -222,6 +223,7 @@ class Link extends MultipleValueField
 		$this->setFieldOptions([
 			'empty_value' => self::EMPTY_VALUE,
 			'choices'     => $options,
+			'data'        => $this->getValue(),
 		]);
 	}
 
@@ -230,7 +232,9 @@ class Link extends MultipleValueField
 	 */
 	protected function _setExternalLinkOptions()
 	{
-		// No options to add
+		$this->setFieldOptions([
+			'data'        => $this->getValue(),
+		]);
 	}
 
 	/**
@@ -246,7 +250,8 @@ class Link extends MultipleValueField
 		}
 
 		$this->setFieldOptions([
-			'choices'  => $options,
+			'choices' => $options,
+			'data'    => $this->getValue(),
 		]);
 	}
 
