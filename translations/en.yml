@@ -9,6 +9,14 @@ ms.cms:
         failure: Sorry, an error occurred while updating the content
       attributes:
         success: Attributes updated successfully
+        failure: Attributes could not be update
+        parent:
+          success: Parent successfully changed
+          failure: Parent could not be changed
+        order:
+          failure: Could not change the page order
+        nested-set:
+          error: The page could not be moved to a new position. This may be due to malformed data, please contact your web developer quoting the error: `%error%`.
       metadata:
         success: Metadata updated successfully
       title:

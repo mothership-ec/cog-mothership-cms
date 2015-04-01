@@ -1,5 +1,19 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
 
+{% block javascripts %}
+	{{ parent() }}
+
+	{% javascripts
+		'@Message:Mothership:CMS::resources/assets/js/page-edit.js'
+
+		output='/assets/js/ms_cms.js'
+		filter='?jsmin'
+	%}
+		<script src="{{ asset_url }}"></script>
+	{% endjavascripts %}
+
+{% endblock %}
+
 {% block sidebar %}
 	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index', {'currentPageID':page.id}))}}
 {% endblock %}
