@@ -216,8 +216,9 @@ class Edit extends \Message\Cog\Controller\Controller
 					$this->addFlash('error', 'The page could not be moved to a new position');
 				}
 			}
-
-			$page = $this->_updateSlug($page, $data['slug']);
+			if (!$page->isHomepage()) {
+				$page = $this->_updateSlug($page, $data['slug']);
+			}
 
 			$page->visibilitySearch     = $data['visibility_search'];
 			$page->visibilityMenu       = $data['visibility_menu'];
