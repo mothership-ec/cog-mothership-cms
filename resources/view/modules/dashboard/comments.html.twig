@@ -12,8 +12,10 @@
 							<a href="{{ url('ms.cp.cms.edit', {pageID: pPageID}) }}">
 								{{ pages[pPageID].title }}</a>
 							{{ 'ms.cms.dashboard.comment.pending' | transchoice(pCount, {'%count%': pCount}) | raw }}
-							<a href="{{ url('ms.cms.frontend', {slug: pages[pPageID].slug}) }}" class="button small">{{ 'ms.cms.dashboard.comment.view-page' | trans }}</a>
-							<a href="{{ url('ms.cp.cms.edit.comments', {pageID: pPageID} ) }}" class="button small">{{ 'ms.cms.dashboard.comment.review' | trans }}</a>
+							<div>
+								<a href="{{ url('ms.cms.frontend', {slug: pages[pPageID].slug}) }}" class="button small preview">{{ 'ms.cms.dashboard.comment.view-page' | trans }}</a>
+								<a href="{{ url('ms.cp.cms.edit.comments', {pageID: pPageID} ) }}" class="button small comments">{{ 'ms.cms.dashboard.comment.review' | trans }}</a>
+							</div>	
 						</li>
 					{% endfor %}
 				</ul>
@@ -29,8 +31,10 @@
 							<a href="{{ url('ms.cp.cms.edit', {pageID: rPageID}) }}">
 								{{ pages[rPageID].title }}</a>
 							{{ 'ms.cms.dashboard.comment.approved' | transchoice(rCount, {'%count%': rCount}) | raw }}
-							<a href="{{ url('ms.cms.frontend', {slug: pages[rPageID].slug}) }}" class="button small">{{ 'ms.cms.dashboard.comment.view-page' | trans }}</a>
-							<a href="{{ url('ms.cp.cms.edit.comments', {pageID: rPageID} ) }}" class="button small">{{ 'ms.cms.dashboard.comment.review' | trans }}</a>
+							<div>
+								<a href="{{ url('ms.cms.frontend', {slug: pages[rPageID].slug}) }}" class="button small preview">{{ 'ms.cms.dashboard.comment.view-page' | trans }}</a>
+								<a href="{{ url('ms.cp.cms.edit.comments', {pageID: rPageID} ) }}" class="button small comments">{{ 'ms.cms.dashboard.comment.review' | trans }}</a>
+							</div>
 						</li>
 					{% endfor %}
 				</ul>
