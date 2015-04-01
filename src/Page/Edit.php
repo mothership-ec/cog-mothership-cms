@@ -81,18 +81,14 @@ class Edit implements TransactionalInterface
 				page.updated_by            = :updatedBy?i,
 				page.meta_title            = :metaTitle?s,
 				page.meta_description      = :metaDescription?s,
+				page.meta_image            = :metaImage?in,
 				page.meta_html_head        = :metaHtmlHead?s,
 				page.meta_html_foot        = :metaHtmlFoot?s,
 				page.visibility_search     = :visibilitySearch?i,
 				page.visibility_menu       = :visibilityMenu?i,
 				page.visibility_aggregator = :visibilityAggregator?i,
 				page.password              = :password?s,
-				page.access                = :access?s,
-				page.comment_enabled       = :commentsEnabled?i,
-				page.comment_access        = :commentsAccess?i,
-				page.comment_access        = :commentsAccessGroups?i,
-				page.comment_approval      = :commentsApproval?i,
-				page.comment_expiry        = :commentsExpiry?i
+				page.access                = :access?s
 			WHERE
 				page.page_id = :pageID?i',
 			array(
@@ -106,6 +102,7 @@ class Edit implements TransactionalInterface
 				'slug'                 => $page->slug->getLastSegment(),
 				'metaTitle'            => $page->metaTitle,
 				'metaDescription'      => $page->metaDescription,
+				'metaImage'            => $page->getMetaImage() ? $page->getMetaImage()->id : null,
 				'metaHtmlHead'         => $page->metaHtmlHead,
 				'metaHtmlFoot'         => $page->metaHtmlFoot,
 				'visibilitySearch'     => $page->visibilitySearch,
@@ -113,12 +110,6 @@ class Edit implements TransactionalInterface
 				'visibilityAggregator' => $page->visibilityAggregator,
 				'password'             => $page->password,
 				'access'               => $page->access,
-				'accessGroups'         => $page->accessGroups,
-				'commentsEnabled'      => $page->commentsEnabled,
-				'commentsAccess'       => $page->commentsAccess,
-				'commentsAccessGroups' => $page->commentsAccessGroups,
-				'commentsApproval'     => $page->commentsApproval,
-				'commentsExpiry'       => $page->commentsExpiry,
 			)
 		);
 

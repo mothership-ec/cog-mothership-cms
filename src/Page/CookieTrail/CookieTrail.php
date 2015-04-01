@@ -18,9 +18,8 @@ class CookieTrail extends Collection
 			return false;
 		});
 
-		// don't sort
 		$this->setSort(function($a, $b) {
-			return true;
+			return $a->depth >= $b->depth;
 		});
 	}
 }

@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Cog\Service\Container;
+use Message\Mothership\FileManager\File;
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\DateTimeImmutable;
 
@@ -40,6 +41,8 @@ class Page
 	public $metaHtmlHeadInherit;
 	public $metaHtmlFootInherit;
 
+	private $_metaImage;
+
 	public $visibilitySearch;
 	public $visibilityMenu;
 	public $visibilityAggregator;
@@ -47,12 +50,6 @@ class Page
 	public $password;
 	public $access;
 	public $accessGroups = array();
-
-	public $commentsEnabled;
-	public $commentsAccess;
-	public $commentsAccessGroups;
-	public $commentsApproval;
-	public $commentsExpiry;
 
 	protected $_content;
 
@@ -139,5 +136,79 @@ class Page
 	public function hasTag($tag)
 	{
 		return in_array($tag, $this->tags);
+	}
+
+	/**
+	 * Gets the meta title
+	 * 
+	 * @return string The meta title
+	 */
+	public function getMetaTitle()
+	{
+		return $this->metaTitle;
+	}
+
+	/**
+	 * Sets the value of metaTitle.
+	 *
+	 * @param mixed $metaTitle the meta title
+	 *
+	 * @return self
+	 */
+	public function setMetaTitle($metaTitle)
+	{
+		$this->metaTitle = $metaTitle;
+
+		return $this;
+	}
+
+	/**
+	 * Sets the meta description
+	 * 
+	 * @return self
+	 */
+	public function setMetaDescription($metaDescription)
+	{
+		$this->metaDescription = $metaDescription;
+
+		return $this;
+	}
+
+	/**
+	 * Gets the meta description
+	 * 
+	 * @return string The meta description
+	 */
+	public function getMetaDescription()
+	{
+		return $this->metaDescription;
+	}
+
+	/**
+	 * Sets the meta image
+	 * 
+	 * @param File $file the metaImage file
+	 * 
+	 * @return $this this for chainability
+	 */
+	public function setMetaImage($file)
+	{
+		if(!$file instanceof File\File && $file !== null) {
+			throw new \InvalidArgumentException('Meta Image File must be of type Message\Mothership\FileManager\File\File or null');
+		}
+
+		$this->_metaImage = $file;
+
+		return $this;
+	}
+
+	/**
+	 * Gets the metaImage
+	 * 
+	 * @return Image the image
+	 */
+	public function getMetaImage()
+	{
+		return $this->_metaImage;
 	}
 }
