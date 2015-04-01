@@ -675,9 +675,10 @@ class Loader
 			// Get the page type
 			$pages[$key]->type = $this->_pageTypes->get($data->type);
 
+
 			// If the page is the most left page then it is the homepage so
 			// we need to override the slug to avoid unnecessary redirects
-			if (1 == $data->left) {
+			if ($this->_getMinPositionLeft() == $data->left) {
 				$data->slug = new Slug('/');
 			}
 
@@ -749,6 +750,13 @@ class Loader
 		}
 
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
+	}
+
+	private function _getMinPositionLeft()
+	{
+		return $this->_query->run('
+				SELECT MIN(`position_left`) FROM `page` WHERE deleted_at IS NULL
+			')->value();
 	}
 
 	private function _getOrderQuery()
