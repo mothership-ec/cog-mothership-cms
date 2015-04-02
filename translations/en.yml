@@ -190,7 +190,7 @@ ms.cms:
             ### Smaller subheader
             #### Smaller subheader
         To italicize text, surround with asterisks e.g. *text in italics*
-        To embolden text, surround with double asterisks e.g. *bold text*
+        To embolden text, surround with double asterisks e.g. **bold text**
         For bullet lists, create a new line for each bullet point and start with a hyphen (bullet lists must start with a blank line):
 
             - First item
