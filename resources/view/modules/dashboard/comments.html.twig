@@ -2,7 +2,7 @@
 	<div class="module {{ pending | length > 4 ? 'portrait' : 'sq' }} recent-list">
 		<h2 class="title">Pending comments</h2>
 
-		<div class="wrap">
+		<div class="wrap scroll">
 			{% if pending | length > 0 %}
 				<ul>
 					{% for pPageID, pCount in pending %}
@@ -21,7 +21,7 @@
 	<div class="module {{ recentlyApproved | length > 4 ? 'portrait' : 'sq' }} recent-list">
 		<h2 class="title">Recently approved comments</h2>
 
-		<div class="wrap">
+		<div class="wrap scroll">
 			{% if recentlyApproved | length > 0 %}
 				<ul>
 					{% for rPageID, rCount in recentlyApproved %}
