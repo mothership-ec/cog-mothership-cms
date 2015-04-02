@@ -81,6 +81,7 @@ class Edit implements TransactionalInterface
 				page.updated_by            = :updatedBy?i,
 				page.meta_title            = :metaTitle?s,
 				page.meta_description      = :metaDescription?s,
+				page.meta_image            = :metaImage?in,
 				page.meta_html_head        = :metaHtmlHead?s,
 				page.meta_html_foot        = :metaHtmlFoot?s,
 				page.visibility_search     = :visibilitySearch?i,
@@ -101,6 +102,7 @@ class Edit implements TransactionalInterface
 				'slug'                 => $page->slug->getLastSegment(),
 				'metaTitle'            => $page->metaTitle,
 				'metaDescription'      => $page->metaDescription,
+				'metaImage'            => $page->getMetaImage() ? $page->getMetaImage()->id : null,
 				'metaHtmlHead'         => $page->metaHtmlHead,
 				'metaHtmlFoot'         => $page->metaHtmlFoot,
 				'visibilitySearch'     => $page->visibilitySearch,
@@ -271,41 +273,41 @@ class Edit implements TransactionalInterface
 	 * @param  Page 	$page 				The Page object of the page we are
 	 *                         				going to move
 	 * @param  int  	$index				The position index to move to.
+	 *
+ 	 * @return bool
 	 */
 	public function changeOrder(Page $page, $index)
 	{
 		// This is important as we add 1 to the key
-		try {
+		$siblings = $this->_loader
+			->getSiblings($page);
+		// We minus one here as we have to add one in the controller so 0 is
+		// the move to top option.
+		$nearestSibling = isset($siblings[$index - 1]) ? $siblings[$index - 1]->id : false;
 
-			$siblings = $this->_loader
-				->getSiblings($page);
-			// We minus one here as we have to add one in the controller so 0 is
-			// the move to top option.
-			$nearestSibling = isset($siblings[$index - 1]) ? $siblings[$index - 1]->id : false;
-
-			$addAfter = false;
-			if ($index === 0) {
-				// Load the siblings and get the one which is at the top
-				$siblings = $this->_loader->getSiblings($page);
-				$nearestSibling = array_shift($siblings);
-				$addAfter = true;
-			} else {
-				// Otherwise just load the given sibling to move the page after
-				$nearestSibling = $this->_loader->getByID($nearestSibling);
-			}
-
-			$this->_nestedSetHelper->move(
-				$page->id,
-				$nearestSibling->id,
-				false,
-				$addAfter
-			);
-			$this->_transaction->commit();
-
-			return true;
-		} catch (Exception $e) {
-			return false;
+		$addAfter = false;
+		if ($index === 0) {
+			// Load the siblings and get the one which is at the top
+			$siblings = $this->_loader->getSiblings($page);
+			$nearestSibling = array_shift($siblings);
+			$addAfter = true;
+		} else {
+			// Otherwise just load the given sibling to move the page after
+			$nearestSibling = $this->_loader->getByID($nearestSibling);
 		}
+
+		if (!$nearestSibling) {
+			throw new Exception\PageEditException('Could not load nearest sibling');
+		}
+
+		$this->_nestedSetHelper->move(
+			$page->id,
+			$nearestSibling->id,
+			false,
+			$addAfter
+		);
+
+		return (bool) $this->_transaction->commit();
 	}
 
 	/**
@@ -313,17 +315,14 @@ class Edit implements TransactionalInterface
 	 *
 	 * @param int 	$pageID 		The ID of the page we are going to move
 	 * @param int   $newParentID 	The ID of the new parent we are moving to
+	 *
+	 * @return bool
 	 */
 	public function changeParent($pageID, $newParentID)
 	{
-		try {
-			$this->_nestedSetHelper->move($pageID, $newParentID, true);
-			$this->_transaction->commit();
+		$this->_nestedSetHelper->move($pageID, $newParentID, true);
 
-			return true;
-		} catch (\Exception $e) {
-			return false;
-		}
+		return (bool) $this->_transaction->commit();
 	}
 
 	/**

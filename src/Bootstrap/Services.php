@@ -39,6 +39,7 @@ class Services implements ServicesInterface
 				$c['cms.page.searcher'],
 				new EntityLoaderCollection([
 					'content' => $c['cms.page.content_loader'],
+					'image' => $c['cms.page.image.loader'],
 					'tags' => $c['cms.page.tag.loader'],
 				])
 			);
@@ -78,6 +79,10 @@ class Services implements ServicesInterface
 
 		$services['cms.page.content_loader'] = $services->factory(function($c) {
 			return new CMS\Page\ContentLoader($c['db.query'], $c['field.factory']);
+		});
+
+		$services['cms.page.image.loader'] = $services->factory(function($c) {
+			return new CMS\Page\ImageLoader($c['locale'], $c['db.query']);
 		});
 
 		$services['cms.page.content_edit'] = $services->factory(function($c) {

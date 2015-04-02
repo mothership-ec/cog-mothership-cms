@@ -3,15 +3,15 @@
 namespace Message\Mothership\CMS\Controller\ControlPanel;
 
 use Message\Cog\Field;
+use Message\Cog\DB\NestedSetException;
 
 use Message\Mothership\CMS\Page\Authorisation;
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Content;
-use Message\Cog\Field\Form;
-use Message\Cog\Field\Factory;
-use Message\Cog\Field\RepeatableContainer;
+use Message\Mothership\CMS\Page\Exception\PageEditException;
 
 use Message\Cog\ValueObject\Slug;
+use Message\Mothership\FileManager\File;
 
 class Edit extends \Message\Cog\Controller\Controller
 {
@@ -21,6 +21,8 @@ class Edit extends \Message\Cog\Controller\Controller
 	 * Index for editing, this just redirects to the content edit screen.
 	 *
 	 * @param int $pageID The page ID
+	 *
+	 * @return Response
 	 */
 	public function index($pageID)
 	{
@@ -67,6 +69,8 @@ class Edit extends \Message\Cog\Controller\Controller
 	 * POST action for updating the page's title.
 	 *
 	 * @param int $pageID The page ID
+	 *
+	 * @return Response
 	 */
 	public function updateTitle($pageID)
 	{
@@ -92,6 +96,8 @@ class Edit extends \Message\Cog\Controller\Controller
 	 * Render the content form.
 	 *
 	 * @param int $pageID The page ID
+	 *
+	 * @return Response
 	 */
 	public function content($pageID, $form = null)
 	{
@@ -138,6 +144,8 @@ class Edit extends \Message\Cog\Controller\Controller
 	 * Render the attributes form.
 	 *
 	 * @param int $pageID The page ID
+	 *
+	 * @return Response
 	 */
 	public function attributes($pageID)
 	{
@@ -165,6 +173,8 @@ class Edit extends \Message\Cog\Controller\Controller
 	 * @param  int 		$pageID 	The pageID of the page
 	 * @param  string 	$slug   	The slug to remove from history and update
 	 *                          	the given page
+	 *
+	 * @return Response
 	 */
 	public function forceSlugAction($pageID, $slug)
 	{
@@ -190,6 +200,8 @@ class Edit extends \Message\Cog\Controller\Controller
 	 *        	already exist in that new section.
 	 *
 	 * @param  	int 	$pageID 	id of the Page object to be loaded and updated
+	 *
+	 * @return Response
 	 */
 	public function attributesAction($pageID)
 	{
@@ -201,22 +213,27 @@ class Edit extends \Message\Cog\Controller\Controller
 			$data['parent'] = isset($data['parent']) ? $data['parent'] : 0;
 			// If the parentID != the submitted parent OR the parent is false
 			// (as it's root) and the submitted parent is not 0 (root)
-			if (($parent && $parent->id != $data['parent']) || (!$parent && $data['parent'] != 0)) {
-				if ($this->get('cms.page.edit')->changeParent($pageID, $data['parent'])) {
-					$this->addFlash('success', 'Parent successully changed');
-				} else {
-					$this->addFlash('error', 'The page could not be moved to a new position');
-				}
-			}
 
-			if (!is_null($data['siblings']) && $data['siblings'] >= 0) {
-				$index = $data['siblings'];
-				if (!$this->get('cms.page.edit')->changeOrder($page, $index)) {
-					$this->addFlash('error', 'The page could not be moved to a new position');
+			try {
+				if (($parent && $parent->id != $data['parent']) || (!$parent && $data['parent'] != 0)) {
+					$this->get('cms.page.edit')->changeParent($pageID, $data['parent']);
+					$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.parent.success'));
 				}
-			}
 
-			$page = $this->_updateSlug($page, $data['slug']);
+				if (!is_null($data['siblings']) && $data['siblings'] >= 0) {
+					$index = $data['siblings'];
+					$this->get('cms.page.edit')->changeOrder($page, $index);
+				}
+			} catch (NestedSetException $e) {
+				$this->addFlash('error', $this->trans('ms.cms.feedback.edit.attributes.nested-set.error', ['%error%' => $e->getMessage()]));
+
+				return $this->redirectToReferer();
+			} catch (PageEditException $e) {
+				$this->addFlash('error', $this->trans('ms.cms.feedback.edit.attributes.order.failure'));
+			}
+			if (!$page->isHomepage()) {
+				$page = $this->_updateSlug($page, $data['slug']);
+			}
 
 			$page->visibilitySearch     = $data['visibility_search'];
 			$page->visibilityMenu       = $data['visibility_menu'];
@@ -229,11 +246,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.attributes.success'));
 		}
 
-
-		return $this->render('::edit/attributes', array(
-			'page' => $page,
-			'form' => $form,
-		));
+		return $this->redirectToReferer();
 	}
 
 	/**
@@ -278,9 +291,9 @@ class Edit extends \Message\Cog\Controller\Controller
 		if ($form->isValid() && ($data = $form->getFilteredData())) {
 			$page->metaTitle       = $data['metaTitle'];
 			$page->metaDescription = $data['metaDescription'];
-			// $page->metaHtmlHead    = $data['metaHtmlHead'];
-			// $page->metaHtmlFoot    = $data['metaHtmlFoot'];
-
+			if ($data['metaImage']) {
+				$page->setMetaImage($this->get('file_manager.file.loader')->getById($data['metaImage']));
+			}
 			$page = $this->get('cms.page.edit')->save($page);
 
 			$this->addFlash('success', $this->trans('ms.cms.feedback.edit.metadata.success'));
@@ -475,8 +488,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			->setDefaultValues(array(
 				'metaTitle'       => $page->metaTitle,
 				'metaDescription' => $page->metaDescription,
-				// 'metaHtmlHead'    => $page->metaHtmlHead,
-				// 'metaHtmlFoot'    => $page->metaHtmlFoot,
+				'metaImage'       => $page->getMetaImage() ? $page->getMetaImage()->id : null,
 			));
 
 		$form->add('metaTitle', 'text', $this->trans('ms.cms.metadata.title.label'), array(
@@ -490,15 +502,35 @@ class Edit extends \Message\Cog\Controller\Controller
 		))->val()
 			->optional();
 
-		// $form->add('metaHtmlHead', 'textarea', $this->trans('ms.cms.metadata.htmlHead.label'), array(
-		// 	'attr' => array('data-help-key' => 'ms.cms.metadata.htmlHead.help')
-		// ))->val()
-		// 	->optional();
+		$form->add('metaImage', 'file', $this->trans('ms.cms.metadata.image.label'), [
+			'attr' => ['data-help-key' => 'ms.cms.metadata.image.help'],
+		])->val()
+			->optional();
 
-		// $form->add('metaHtmlFoot', 'textarea', $this->trans('ms.cms.metadata.htmlFoot.label'), array(
-		// 	'attr' => array('data-help-key' => 'ms.cms.metadata.htmlFoot.help')
-		// ))->val()
-		// 	->optional();
+		$files   = (array) $this->get('file_manager.file.loader')->getAll();
+
+		// Get the available files
+		$choices = array();
+		$allowedTypes = array(File\Type::IMAGE);
+		foreach ($files as $file) {
+			if ($allowedTypes) {
+				if (!in_array($file->typeID, $allowedTypes)) {
+					continue;
+				}
+			}
+
+			$choices[$file->id] = $file->name;
+		}
+
+		uasort($choices, function($a, $b) {
+			return strcmp($a, $b);
+		});
+
+		$form->add('metaImage', 'ms_file', $this->trans('ms.commerce.product.image.file.label'), [
+			'choices' => $choices,
+			'empty_value' => 'Please select…',
+			'attr' => array('data-help-key' => 'ms.commerce.product.image.file.help'),
+		]);
 
 		return $form;
 	}

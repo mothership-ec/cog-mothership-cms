@@ -77,6 +77,13 @@ class Loader
 	protected $_loadUnviewable  = true;
 
 	/**
+	 * The order in which to load pages
+	 * 
+	 * @var string
+	 */
+	private $_order = PageOrder::STANDARD;
+
+	/**
 	 * Constructor
 	 *
 	 * @param \Locale             $locale    		The current locale
@@ -464,7 +471,8 @@ class Loader
 			    	page.position_depth = 0
 				AND
 					page.page_id <> ?i
-			', array(
+				' . $this->_getOrderQuery()
+			, array(
 			    $page->id,
 			));
 
@@ -486,8 +494,8 @@ class Loader
 			        parent.position_left < ?i
 			        AND parent.position_right > ?i
 			        AND parent.position_depth = ?i
-					AND children.page_id <> ?i
-			', array(
+					AND children.page_id <> ?i'
+			, array(
 			    $page->depth,
 			    $page->left,
 			    $page->right,
@@ -505,8 +513,6 @@ class Loader
 		if ($includeRequestPage) {
 			$pages[$page->id] = $page;
 		}
-
-		uasort($pages, array($this, '_sortPages'));
 
 		return $pages;
 	}
@@ -605,9 +611,7 @@ class Loader
 				page.page_id IN (?ij)
 			GROUP BY
 				page.page_id
-			ORDER BY
-				position_left ASC
-		';
+			' . $this->_getOrderQuery();
 
 		$params = array(
 			$pageID,
@@ -671,9 +675,10 @@ class Loader
 			// Get the page type
 			$pages[$key]->type = $this->_pageTypes->get($data->type);
 
+
 			// If the page is the most left page then it is the homepage so
 			// we need to override the slug to avoid unnecessary redirects
-			if (1 == $data->left) {
+			if ($this->_getMinPositionLeft() == $data->left) {
 				$data->slug = new Slug('/');
 			}
 
@@ -747,8 +752,48 @@ class Loader
 		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
 	}
 
-	protected function _sortPages(Page $a, Page $b)
+	private function _getMinPositionLeft()
 	{
-		return ($a->left < $b->left) ? -1 : 1;
+		return $this->_query->run('
+				SELECT MIN(`position_left`) FROM `page` WHERE deleted_at IS NULL
+			')->value();
+	}
+
+	private function _getOrderQuery()
+	{
+		switch ($this->_order) {
+			case PageOrder::ID:
+				return "ORDER BY `page`.`page_id` ASC";
+			case PageOrder::ID_REVERSE:
+				return "ORDER BY `page`.`page_id` DESC";
+
+			case PageOrder::UPDATED_DATE:
+				return "ORDER BY `page`.`updated_at` ASC";
+			case PageOrder::UPDATED_DATE_REVERSE:
+				return "ORDER BY `page`.`updated_at` DESC";
+
+			case PageOrder::CREATED_DATE:
+				return "ORDER BY `page`.`created_at` ASC";
+			case PageOrder::CREATED_DATE_REVERSE:
+				return "ORDER BY `page`.`created_at` DESC";
+				
+			case PageOrder::REVERSE:
+				return "ORDER BY `position_left` DESC";
+			case PageOrder::STANDARD:
+			default:
+				return "ORDER BY `position_left` ASC";
+		}
+	}
+
+	/**
+	 * set the ordering, use the order constants
+	 * 
+	 * @param string the ordering
+	 */
+	public function orderBy(/* string */ $order)
+	{
+		$this->_order = $order;
+
+		return $this;
 	}
 }
