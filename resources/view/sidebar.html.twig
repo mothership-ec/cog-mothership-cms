@@ -1,20 +1,31 @@
-{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Search#index'))}}
-
-<a href="{{ url('ms.cp.cms.create')}}" class="button small create" data-live>{{ 'ms.cms.create.button.menu'|trans }}</a>
-
-<ol class="menu">
+<table>
+    <tr>
+        <th>Page title</th>
+        <th>Created on</th>
+        <th>Created by</th>
+        <th>Last updated</th>
+    </tr>    
     {{ _self.menu_links(tree, currentPageID) }}
-</ol>
+</table>
 
 {% macro menu_links(links, currentPageID) %}
     {% for link in links %}
-        <li {% if link.id == currentPageID %} class="active" {% endif %} >
+    <tr>
+        <td>
             <a href="{{ url('ms.cp.cms.edit', {pageID: link.id}) }}" data-live>{{ link.title }}</a>
-            {% if link.children %}
-                <ol>
-                    {{ _self.menu_links(link.children, currentPageID) }}
-                </ol>
-            {% endif %}
-        </li>
+        </td>
+        <td>
+            {{ link.authorship.createdAt|date }}
+        </td>    
+        <td>
+            {{ link.authorship.createdUser.name }} 
+        </td> 
+        <td>
+            {{ link.authorship.updatedAt|date }}
+        </td>    
+    </tr>
+        {% if link.children %}
+                {{ _self.menu_links(link.children, currentPageID) }}
+        {% endif %}
     {% endfor %}
 {% endmacro %}

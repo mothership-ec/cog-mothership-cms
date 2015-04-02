@@ -3,8 +3,15 @@
 {% block main %}
 	<hgroup class="title">
 		<h1>Content</h1>
-	</hgroup>
+		<div class="controls">
+			{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Search#index'))}}
 
-	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index'))}}
+			<a href="{{ url('ms.cp.cms.create')}}" class="button small create" data-live>{{ 'ms.cms.create.button.menu'|trans }}</a>
+
+		</div>	
+	</hgroup>
+	<div class="container-content">
+		{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index'))}}
+	</div>
 
 {% endblock %}
