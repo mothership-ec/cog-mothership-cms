@@ -3,7 +3,7 @@
 		<h2 class="title">
 			Comments
 		</h2>
-		<div class="wrap">
+		<div class="wrap scroll">
 			<h3>Pending comments</h3>
 			{% if pending | length > 0 %}
 				<ul>
@@ -12,10 +12,6 @@
 							<a href="{{ url('ms.cp.cms.edit', {pageID: pPageID}) }}">
 								{{ pages[pPageID].title }}</a>
 							{{ 'ms.cms.dashboard.comment.pending' | transchoice(pCount, {'%count%': pCount}) | raw }}
-							<div>
-								<a href="{{ url('ms.cms.frontend', {slug: pages[pPageID].slug}) }}" class="button small preview">{{ 'ms.cms.dashboard.comment.view-page' | trans }}</a>
-								<a href="{{ url('ms.cp.cms.edit.comments', {pageID: pPageID} ) }}" class="button small comments">{{ 'ms.cms.dashboard.comment.review' | trans }}</a>
-							</div>	
 						</li>
 					{% endfor %}
 				</ul>
@@ -31,10 +27,6 @@
 							<a href="{{ url('ms.cp.cms.edit', {pageID: rPageID}) }}">
 								{{ pages[rPageID].title }}</a>
 							{{ 'ms.cms.dashboard.comment.approved' | transchoice(rCount, {'%count%': rCount}) | raw }}
-							<div>
-								<a href="{{ url('ms.cms.frontend', {slug: pages[rPageID].slug}) }}" class="button small preview">{{ 'ms.cms.dashboard.comment.view-page' | trans }}</a>
-								<a href="{{ url('ms.cp.cms.edit.comments', {pageID: rPageID} ) }}" class="button small comments">{{ 'ms.cms.dashboard.comment.review' | trans }}</a>
-							</div>
 						</li>
 					{% endfor %}
 				</ul>
