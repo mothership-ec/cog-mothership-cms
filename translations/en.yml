@@ -9,6 +9,14 @@ ms.cms:
         failure: Sorry, an error occurred while updating the content
       attributes:
         success: Attributes updated successfully
+        failure: Attributes could not be update
+        parent:
+          success: Parent successfully changed
+          failure: Parent could not be changed
+        order:
+          failure: Could not change the page order
+        nested-set:
+          error: The page could not be moved to a new position. This may be due to malformed data, please contact your web developer quoting the error: `%error%`.
       metadata:
         success: Metadata updated successfully
       title:
@@ -38,7 +46,7 @@ ms.cms:
   edit:
     title:
       label: Title
-      help: -
+      help: Click to change the title of the page.
     home:
       confirm: Are you sure you wish to update the homepage?
     delete:
@@ -61,10 +69,10 @@ ms.cms:
       unpublish: Unpublish
     publish-date:
       label: Publish at
-      help: -
+      help: Set the date and time at which the page will publish.
     unpublish-date:
       label: Unpublish at
-      help: -
+      help: Set the date and time at which the page will unpublish.
     button:
       save: Save range
   content:
@@ -99,9 +107,9 @@ ms.cms:
       label: Which user groups can access this page?
       help: Restrict access to a specific group of site users. These will be visitors with accounts and specific access privileges (e.g. administrators, members etc.).
     siblings:
-      label: Siblings
+      label: Sibling
       placeholder: Select
-      help: -
+      help: The sibling is the page that comes before the current page in the page tree. Select 'Move to top' to make it the first sibling under this parent.
     visibility:
       menu:
         label: Show link to this page in navigation menus

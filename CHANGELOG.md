@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.1.1
+
+- Can no longer change parent and sibling of a page at the same time
+- Task `cms:page:fix_tree` to rebuild page structure if the data has become malformed (i.e. as a result of a user changing the parent and sibling at the same time)
+- Renamed "Siblings" in admin panel to "Sibling"
+- Added `PageEditException` to be thrown when a page cannot be edited due to the nearest sibling not being found
+- `changeParent()` and `changeOrder()` on `Page\Edit` class no longer catch exceptions and return false. They will always return a boolean of the result of the database transaction (which should always be true)
+- Added help text for "Sibling" field
+- Moved error messages to translation file
+- Added error message for malformed nested set data
+- Updated `Cog` dependency to 4.2
+
 ## 4.1.0
 
 - Share on social media (Twitter/Facebook only) controller
