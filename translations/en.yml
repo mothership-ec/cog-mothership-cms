@@ -46,7 +46,7 @@ ms.cms:
   edit:
     title:
       label: Title
-      help: Click to change the title of the page
+      help: Click to change the title of the page.
     home:
       confirm: Are you sure you wish to update the homepage?
     delete:
@@ -69,10 +69,10 @@ ms.cms:
       unpublish: Unpublish
     publish-date:
       label: Publish at
-      help: Set the date and time at which the page will publish
+      help: Set the date and time at which the page will publish.
     unpublish-date:
       label: Unpublish at
-      help: Set the date and time at which the page will unpublish
+      help: Set the date and time at which the page will unpublish.
     button:
       save: Save range
   content:
