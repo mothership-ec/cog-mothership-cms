@@ -8,6 +8,8 @@
 - Added `PageEditException` to be thrown when a page cannot be edited due to the nearest sibling not being found
 - `changeParent()` and `changeOrder()` on `Page\Edit` class no longer catch exceptions and return false. They will always return a boolean of the result of the database transaction (which should always be true)
 - Added help text for "Sibling" field
+- Moved error messages to translation file
+- Added error message for malformed nested set data
 - Updated `Cog` dependency to 4.2
 
 ## 4.1.0
