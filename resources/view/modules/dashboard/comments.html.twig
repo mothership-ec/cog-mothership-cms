@@ -1,40 +1,34 @@
-{% if pages %}
+{% if pending | length > 0 %}
 	<div class="module {{ pending | length > 4 ? 'portrait' : 'sq' }} recent-list">
 		<h2 class="title">Pending comments</h2>
 
 		<div class="wrap scroll">
-			{% if pending | length > 0 %}
-				<ul>
-					{% for pPageID, pCount in pending %}
-						<li>
-							<a href="{{ url('ms.cp.cms.edit.comments', {pageID: pPageID} ) }}">
-								{{ pages[pPageID].title }}</a>
-							{{ 'ms.cms.dashboard.comment.pending' | transchoice(pCount, {'%count%': pCount}) | raw }}
-						</li>
-					{% endfor %}
-				</ul>
-			{% else %}
-				<p><em>{{ 'ms.cms.dashboard.comment.no-pending' | trans }}</em></p>
-			{% endif %}
+			<ul>
+				{% for pPageID, pCount in pending %}
+					<li>
+						<a href="{{ url('ms.cp.cms.edit.comments', {pageID: pPageID} ) }}">
+							{{ pages[pPageID].title }}</a>
+						{{ 'ms.cms.dashboard.comment.pending' | transchoice(pCount, {'%count%': pCount}) | raw }}
+					</li>
+				{% endfor %}
+			</ul>
 		</div>
 	</div>
+{% endif %}
+{% if recentlyApproved | length > 0 %}
 	<div class="module {{ recentlyApproved | length > 4 ? 'portrait' : 'sq' }} recent-list">
 		<h2 class="title">Recently approved comments</h2>
 
 		<div class="wrap scroll">
-			{% if recentlyApproved | length > 0 %}
-				<ul>
-					{% for rPageID, rCount in recentlyApproved %}
-						<li>
-							<a href="{{ url('ms.cp.cms.edit.comments', {pageID: rPageID} ) }}">
-								{{ pages[rPageID].title }}</a>
-							{{ 'ms.cms.dashboard.comment.approved' | transchoice(rCount, {'%count%': rCount}) | raw }}
-						</li>
-					{% endfor %}
-				</ul>
-			{% else %}
-				<p><em>{{ 'ms.cms.dashboard.comment.no-approved' | trans }}</em></p>
-			{% endif %}
+			<ul>
+				{% for rPageID, rCount in recentlyApproved %}
+					<li>
+						<a href="{{ url('ms.cp.cms.edit.comments', {pageID: rPageID} ) }}">
+							{{ pages[rPageID].title }}</a>
+						{{ 'ms.cms.dashboard.comment.approved' | transchoice(rCount, {'%count%': rCount}) | raw }}
+					</li>
+				{% endfor %}
+			</ul>
 		</div>
 	</div>
 {% endif %}
