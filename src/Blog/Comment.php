@@ -318,6 +318,18 @@ class Comment
 	}
 
 	/**
+	 * @return \Message\Cog\ValueObject\DateTimeImmutable | null
+	 */
+	public function getUpdatedAt()
+	{
+		if ($updatedAt = $this->_authorship->updatedAt()) {
+			return $updatedAt;
+		}
+
+		return $this->getCreatedAt();
+	}
+
+	/**
 	 * @param $updatedAt
 	 *
 	 * @return $this

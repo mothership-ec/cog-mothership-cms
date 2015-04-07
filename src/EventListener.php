@@ -92,13 +92,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 	public function pageNotFound(GetResponseForExceptionEvent $event)
 	{
 		$exception = $event->getException();
-
-		// if ($exception instanceof HttpException && $exception->getStatusCode() == 404 && in_array('ms.cp', $event->getRequest()->get('_route_collections'))) {
-		// 	$this->_services['http.session']->getFlashBag()->add('error', $exception->getMessage());
-		// 	$event->setResponse(new RedirectResponse(
-		// 		$this->_services['routing.generator']->generate('ms.cp.cms.dashboard')
-		// 	));
-		// };
 	}
 
 	/**
@@ -109,6 +102,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 	public function buildDashboardIndex(DashboardEvent $event)
 	{
 		$event->addReference('Message:Mothership:CMS::Controller:Module:Dashboard:CMSSummary#index');
+		$event->addReference('Message:Mothership:CMS::Controller:Module:Dashboard:BlogComments#index');
 	}
 
 	/**
@@ -119,6 +113,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 	public function buildDashboardContent(DashboardEvent $event)
 	{
 		$event->addReference('Message:Mothership:CMS::Controller:Module:Dashboard:CMSSummary#index');
+		$event->addReference('Message:Mothership:CMS::Controller:Module:Dashboard:BlogComments#index');
 	}
 
 	/**
