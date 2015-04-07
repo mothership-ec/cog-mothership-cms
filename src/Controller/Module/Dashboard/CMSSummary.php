@@ -17,8 +17,6 @@ class CMSSummary extends Controller
 	/**
 	 * Get recently updated pages.
 	 *
-	 * @todo Add recently deleted
-	 *
 	 * @return Message\Cog\HTTP\Response
 	 */
 	public function index()

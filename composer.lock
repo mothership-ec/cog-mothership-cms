@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f8e9647e9b0c5fb69ee545773ffe1b93",
+    "hash": "93f97c634be54da94f5759c261a59159",
     "packages": [
         {
             "name": "dflydev/markdown",
@@ -764,16 +764,16 @@
         },
         {
             "name": "mothership-ec/cog-mothership-cp",
-            "version": "3.2.0",
+            "version": "3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mothership-ec/cog-mothership-cp.git",
-                "reference": "f252b7f3abbb3ec3c3265f4fc5682d47fd0c65f6"
+                "reference": "78cc0ccc753b999e43495c71ecd1e74168df32f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mothership-ec/cog-mothership-cp/zipball/f252b7f3abbb3ec3c3265f4fc5682d47fd0c65f6",
-                "reference": "f252b7f3abbb3ec3c3265f4fc5682d47fd0c65f6",
+                "url": "https://api.github.com/repos/mothership-ec/cog-mothership-cp/zipball/78cc0ccc753b999e43495c71ecd1e74168df32f2",
+                "reference": "78cc0ccc753b999e43495c71ecd1e74168df32f2",
                 "shasum": ""
             },
             "require": {
@@ -810,7 +810,7 @@
                 "control panel",
                 "mothership"
             ],
-            "time": "2015-04-02 09:51:17"
+            "time": "2015-04-07 09:20:35"
         },
         {
             "name": "mothership-ec/cog-mothership-file-manager",

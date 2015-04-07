@@ -43,6 +43,13 @@ ms.cms:
     remove: Remove this %name%
   dashboard:
     page-title: Dashboard
+    comment:
+      pending: has <strong>%count%</strong> pending comment|has <strong>%count%</strong> pending comments
+      no-pending: No pending comments
+      approved: has <strong>%count%</strong> recently approved comment|has <strong>%count%</strong> recently approved comments
+      no-approved: No recently approved comments
+      view-page: View page
+      review: Review
   edit:
     title:
       label: Title

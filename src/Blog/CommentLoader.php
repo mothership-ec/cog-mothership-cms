@@ -59,7 +59,7 @@ class CommentLoader
 	 */
 	public function getByPage($pageID, array $statuses = null)
 	{
-		$statuses = $this->_parseTypes($statuses);
+		$statuses = $this->_parseStatuses($statuses);
 
 		if (!is_numeric($pageID)) {
 			throw new \InvalidArgumentException('Page ID must be a numeric, ' . gettype($pageID) . ' given');
@@ -71,6 +71,35 @@ class CommentLoader
 			->where('page_id = :pageID?i', ['pageID' => $pageID])
 			->where('status IN (?js)', [$statuses])
 			->orderBy('created_at ASC')
+			->getQuery()
+			->run()
+			->bindTo('\\Message\\Mothership\\CMS\\Blog\\Comment')
+		;
+
+		return new CommentCollection($comments);
+	}
+
+	/**
+	 * Load all comments with one or or one of many statuses
+	 *
+	 * @param array | string $statuses           Status(es) to check for. Can be either a string or an array
+	 *                                           but all statuses must be valid
+	 * @param string $order                      Order to load in, must be either ASC or DESC
+	 * @throws \InvalidArgumentException         Throws exception if $order is invalid
+	 *
+	 * @return CommentCollection
+	 */
+	public function getByStatus($statuses, $order = 'ASC')
+	{
+		$statuses = $this->_parseStatuses((array) $statuses);
+
+		if (!in_array($order, ['ASC', 'DESC'])) {
+			throw new \InvalidArgumentException('Order must be either `ASC` or `DESC`');
+		}
+
+		$comments = (array) $this->_getSelect()
+			->where('status IN (?js)', [$statuses])
+			->orderBy('created_at ' . $order)
 			->getQuery()
 			->run()
 			->bindTo('\\Message\\Mothership\\CMS\\Blog\\Comment')
@@ -101,7 +130,7 @@ class CommentLoader
 	 *
 	 * @return array
 	 */
-	private function _parseTypes(array $statuses = null)
+	private function _parseStatuses(array $statuses = null)
 	{
 		if (null === $statuses) {
 			return array_keys($this->_statuses->getStatuses());
