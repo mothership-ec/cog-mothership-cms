@@ -10,6 +10,7 @@
 - Added `getByStatus()` method to `CommentLoader`
 - Added user group loader constructor argument to `CommentBuilder` class
 - Automatic approval for comments made by super admins
+- Updated CP dependency to 3.3
 
 ## 4.1.1
 
