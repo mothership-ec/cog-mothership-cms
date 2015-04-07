@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.2.0
+
+- Added `Pending Comments` dashboard widget
+- Added `Recently Approved Comments` dashboard widget
+- Added `DashboardLoader` class in `Blog\Dashboard` namespace for loading appropriate comments and pages for dashboard
+- Widgets will only display when a page type that extends `AbstractBlog` is registered
+- Added `getUpdatedAt()` method to `Comment` object
+- Added `getByStatus()` method to `CommentLoader`
+- Added user group loader constructor argument to `CommentBuilder` class
+
 ## 4.1.1
 
 - Can no longer change parent and sibling of a page at the same time
