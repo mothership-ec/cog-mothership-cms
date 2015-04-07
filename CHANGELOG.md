@@ -9,6 +9,7 @@
 - Added `getUpdatedAt()` method to `Comment` object
 - Added `getByStatus()` method to `CommentLoader`
 - Added user group loader constructor argument to `CommentBuilder` class
+- Automatic approval for comments made by super admins
 
 ## 4.1.1
 
