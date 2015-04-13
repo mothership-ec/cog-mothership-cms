@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.2.1
+
+- Fix typo in `pinterest` config file (was `pintrest`)
+
 ## 4.2.0
 
 - Added `Pending Comments` dashboard widget
