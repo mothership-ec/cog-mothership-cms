@@ -618,8 +618,8 @@ class Loader
 		);
 
 		if (null !== $this->_pagination) {
+			$this->_pagination->setCountQuery('SELECT COUNT(p.id) as `count` FROM (' . $sql . ') as p', $params);
 			$this->_pagination->setQuery($sql, $params);
-			$this->_pagination->setCountColumn('page.page_id');
 			$result = $this->_pagination->getCurrentPageResults();
 			$this->_pagination = null;
 		}
