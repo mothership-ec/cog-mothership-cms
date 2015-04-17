@@ -154,6 +154,7 @@ ms.cms:
     blog:
       body: Post body
       images: Images
+      image: Image
       caption_heading: Caption heading
       caption: Caption
       date: Display date
