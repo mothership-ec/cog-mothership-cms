@@ -13,10 +13,10 @@ use Message\Cog\ValueObject\Authorship;
 use Message\Mothership\CMS\PageType\Collection;
 use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\Slug;
-use Message\Cog\DB\Query;
 use Message\Cog\DB\Result;
 use Message\Cog\Pagination\Pagination;
 use Message\Cog\DB\Entity\EntityLoaderCollection;
+use Message\Cog\DB\QueryBuilderFactory;
 
 /**
  * Responsible for loading page data and returning prepared instances of `Page`.
@@ -52,8 +52,7 @@ use Message\Cog\DB\Entity\EntityLoaderCollection;
 class Loader
 {
 	protected $_locale;
-	protected $_query;
-	protected $_pageTypes;
+	protected $_queryBuilderFactory->	protectedBuilderFactory $_pageTypes;
 	protected $_authorisation;
 	protected $_loaders;
 
@@ -93,7 +92,7 @@ class Loader
 	 * @param Authorisation  	  $authorisation 	Authorisation instance to use
 	 */
 	public function __construct(/* \Locale */ $locale,
-		Query $query,
+		QueryBuilderFactory $queryBuilderFactory,
 		PageTypeCollection $pageTypes,
 		UserGroupCollection $groups,
 		Authorisation $authorisation,
@@ -101,14 +100,14 @@ class Loader
 		Searcher $searcher,
 		EntityLoaderCollection $loaders
 	) {
-		$this->_locale        = $locale;
-		$this->_query         = $query;
-		$this->_pageTypes     = $pageTypes;
-		$this->_userGroups    = $groups;
-		$this->_authorisation = $authorisation;
-		$this->_user 		  = $user;
-		$this->_searcher      = $searcher;
-		$this->_loaders       = $loaders;
+		$this->_locale              = $locale;
+		$this->_queryBuilderFactory = $queryBuilderFactory;
+		$this->_pageTypes           = $pageTypes;
+		$this->_userGroups          = $groups;
+		$this->_authorisation       = $authorisation;
+		$this->_user 		        = $user;
+		$this->_searcher            = $searcher;
+		$this->_loaders             = $loaders;
 	}
 
 	/**
@@ -136,19 +135,16 @@ class Loader
 	 */
 	public function getHomepage()
 	{
-		$result = $this->_query->run('
-			SELECT
-				page_id
-			FROM
-				page
-			WHERE
-				deleted_at IS NULL
-			AND
-				position_depth = 0
-			ORDER BY
-				position_left ASC
-			LIMIT 1
-		');
+		$qb = $this->_getBaseQuery();
+
+		$qb
+			->where('page.deleted_at IS NULL')
+			->where('page.position_depth = 0')
+			->orderBy('position_left')
+			->limit(1)
+		;
+
+		$pages = $this->_load($qb);
 
 		return count($result) ? $this->getByID($result->first()->page_id) : false;
 	}
@@ -191,7 +187,7 @@ class Loader
 		}
 
 		// Run the query and add in the joins we made above
-		$result = $this->_query->run('
+		$result = $this->_queryBuilderFactory->run('BuilderFactory
 			SELECT
 				level1.page_id
 			FROM
@@ -220,7 +216,7 @@ class Loader
 
 	public function getParent(Page $page)
 	{
-		$result = $this->_query->run('
+		$result = $this->_queryBuilderFactory->run('BuilderFactory
 			SELECT
 				page_id
 			FROM
@@ -256,7 +252,7 @@ class Loader
 			return $page;
 		}
 
-		$result = $this->_query->run('
+		$result = $this->_queryBuilderFactory->run('BuilderFactory
 			SELECT
 				page_id
 			FROM
@@ -284,7 +280,7 @@ class Loader
 	{
 		$slug = '/' . ltrim($slug, '/');
 
-		$result = $this->_query->run('
+		$result = $this->_queryBuilderFactory->run('BuilderFactory
 			SELECT
 				page_id
 			FROM
@@ -311,7 +307,7 @@ class Loader
 			$pageType = $pageType->getName();
 		}
 
-		$result = $this->_query->run('
+		$result = $this->_queryBuilderFactory->run('BuilderFactory
 			SELECT
 				page_id
 			FROM
@@ -331,7 +327,7 @@ class Loader
 	 */
 	public function getByTag($tag)
 	{
-		$result = $this->_query->run('
+		$result = $this->_queryBuilderFactory->run('BuilderFactory
 			SELECT
 				page_id
 			FROM
@@ -392,7 +388,7 @@ class Loader
 	 */
 	public function getAll()
 	{
-		$result = $this->_query->run('
+		$result = $this->_queryBuilderFactory->run('BuilderFactory
 			SELECT
 				page_id
 			FROM
@@ -423,7 +419,7 @@ class Loader
 			$page->depth = -1;
 		}
 
-		$result = $this->_query->run("
+		$result = $this->_queryBuilderFactory->run("BuilderFactory
 			SELECT
 				page_id
 			FROM
@@ -462,7 +458,7 @@ class Loader
 		// We have to do a different query if the depth is zero, as this causes
 		// complications and have to change the query a fair bit. This way is simpler.
 		if ($page->depth == 0) {
-			$result = $this->_query->run('
+			$result = $this->_queryBuilderFactory->run('BuilderFactory
 			    SELECT
 			        page.page_id
 			    FROM
@@ -478,7 +474,7 @@ class Loader
 
 		} else {
 			// Get the parent, then get the children of that parent based on it's position.
-			$result = $this->_query->run('
+			$result = $this->_queryBuilderFactory->run('BuilderFactory
 			    SELECT
 			        children.page_id
 			    FROM
@@ -550,83 +546,9 @@ class Loader
 	 * @return Page|false 			populated Page object or array of Page
 	 *                              objects or false if not found
 	 */
-	protected function _load($pageID)
+	protected function _load($qb)
 	{
-		if (!is_array($pageID)) {
-			$pageID = (array) $pageID;
-		}
 
-		if (!$pageID) {
-			return $this->_returnAsArray ? array() : false;
-		}
-
-		$sql = '
-			SELECT
-				/* locale, */
-				page.page_id AS id,
-				page.title AS title,
-				page.type AS type,
-				page.publish_at AS publishAt,
-				page.unpublish_at AS unpublishAt,
-				page.created_at AS createdAt,
-				page.created_by AS createdBy,
-				page.updated_at AS updatedAt,
-				page.created_by AS updatedBy,
-				page.deleted_at AS deletedAt,
-				page.deleted_by AS deletedBy,
-				IFNULL(CONCAT((
-					SELECT
-						CONCAT(\'/\',GROUP_CONCAT(p.slug ORDER BY p.position_depth ASC SEPARATOR \'/\'))
-					FROM
-						page AS p
-					WHERE
-						p.position_left < page.position_left
-					AND
-						p.position_right > page.position_right),\'/\',page.slug),page.slug) AS slug,
-
-				page.position_left AS `left`,
-				page.position_right AS `right`,
-				page.position_depth AS depth,
-
-				page.meta_title AS metaTitle,
-				page.meta_description AS metaDescription,
-				page.meta_html_head AS metaHtmlHead,
-				page.meta_html_foot AS metaHtmlFoot,
-
-				page.visibility_search AS visibilitySearch,
-				page.visibility_menu AS visibilityMenu,
-				page.visibility_aggregator AS visibilityAggregator,
-
-				page.password AS password,
-				page.access AS access,
-
-				GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups
-
-
-			FROM
-				page
-			LEFT JOIN
-				page_access_group ON (page_access_group.page_id = page.page_id)
-			WHERE
-				page.page_id IN (?ij)
-			'
-			. ($this->_loadUnpublished == false ? 
-				'AND 
-					(page.unpublish_at IS NULL AND page.publish_at IS NOT NULL 
-					OR 
-					page.publish_at > page.unpublish_at)' . PHP_EOL : '')
-			. ($this->_loadDeleted == false ? 
-				'AND (page.deleted_at IS NULL AND page.created_at IS NOT NULL 
-					OR 
-					page.created_at > page.deleted_at)' . PHP_EOL : '')
-			. '
-			GROUP BY
-				page.page_id
-			' . $this->_getOrderQuery();
-
-		$params = array(
-			$pageID,
-		);
 
 		if (null !== $this->_pagination) {
 			$this->_pagination->setCountQuery('SELECT COUNT(p.id) as `count` FROM (' . $sql . ') as p', $params);
@@ -635,7 +557,7 @@ class Loader
 			$this->_pagination = null;
 		}
 		else {
-			$result = $this->_query->run($sql, $params);
+			$result = $this->_queryBuilderFactory->run($BuilderFactorysql, $params);
 		}
 
 		if (0 === count($result)) {
@@ -643,6 +565,71 @@ class Loader
 		}
 
 		return $this->_loadPage($result);
+	}
+	
+	protected function _getBaseQuery()
+	{
+		$qb = $this->_queryBuilderFactory->getQueryBuilder();
+
+		$qb
+			->select('page.page_id AS id')
+			->select('page.title AS title')
+			->select('page.type AS type')
+			->select('page.publish_at AS publishAt')
+			->select('page.unpublish_at AS unpublishAt')
+			->select('page.created_at AS createdAt')
+			->select('page.created_by AS createdBy')
+			->select('page.updated_at AS updatedAt')
+			->select('page.created_by AS updatedBy')
+			->select('page.deleted_at AS deletedAt')
+			->select('page.deleted_by AS deletedBy')
+			->select('IFNULL(CONCAT((
+					SELECT
+						CONCAT(\'/\',GROUP_CONCAT(p.slug ORDER BY p.position_depth ASC SEPARATOR \'/\'))
+					FROM
+						page AS p
+					WHERE
+						p.position_left < page.position_left
+					AND
+						p.position_right > page.position_right),\'/\',page.slug),page.slug) AS slug,')
+			->select('page.position_left AS `left`,')
+			->select('page.position_right AS `right`,')
+			->select('page.position_depth AS depth,')
+			->select('page.meta_title AS metaTitle,')
+			->select('page.meta_description AS metaDescription,')
+			->select('page.meta_html_head AS metaHtmlHead,')
+			->select('page.meta_html_foot AS metaHtmlFoot,')
+			->select('page.visibility_search AS visibilitySearch,')
+			->select('page.visibility_menu AS visibilityMenu,')
+			->select('page.visibility_aggregator AS visibilityAggregator,')
+			->select('page.password AS password,')
+			->select('page.access AS access,')
+			->select('GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups')
+
+			->from('page')
+
+			->leftJoin('page_access_group', 'page_access_group.page_id = page.page_id')
+		;
+
+		if (!$this->_loadUnpublished) {
+			$qb->where('
+				(page.unpublish_at IS NULL AND page.publish_at IS NOT NULL 
+					OR 
+				page.publish_at > page.unpublish_at)');
+		}
+
+		if (!$this->_loadDeleted) {
+			$qb->where('
+				(page.deleted_at IS NULL AND page.created_at IS NOT NULL 
+					OR 
+					page.created_at > page.deleted_at)');
+		}
+
+		$qb->groupBy('page.page_id');
+
+		$this->_orderQuery($qb);
+
+		return $qb;
 	}
 
 	/**
@@ -714,7 +701,7 @@ class Loader
 			$check = $pages[$key];
 
 			while ($pages[$key]->access < 0) {
-				$check = $this->_query->run('
+				$check = $this->_queryBuilderFactory->run('BuilderFactory
 					SELECT
 						access,
 						GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups
@@ -765,43 +752,57 @@ class Loader
 
 	private function _getMinPositionLeft()
 	{
-		return $this->_query->run('
+		return $this->_queryBuilderFactory->run('BuilderFactory
 				SELECT MIN(`position_left`) FROM `page` WHERE deleted_at IS NULL
 			')->value();
 	}
 
-	private function _getOrderQuery()
+	protected function _orderQuery(QueryBuilderFactory $qb)
 	{
+		if ($this->_order instanceof PageOrderStatement\PageOrderStatementInterface) {
+			$this->_order($qb);
+			return;
+		}
+
 		switch ($this->_order) {
 			case PageOrder::ID:
-				return "ORDER BY `page`.`page_id` ASC";
+				$qb->orderBy('`page`.`page_id` ASC';
+				return;
 			case PageOrder::ID_REVERSE:
-				return "ORDER BY `page`.`page_id` DESC";
+				$qb->orderBy('`page`.`page_id` DESC';
+				return;
 
 			case PageOrder::UPDATED_DATE:
-				return "ORDER BY `page`.`updated_at` ASC";
+				$qb->orderBy('`page`.`updated_at` ASC';
+				return;
 			case PageOrder::UPDATED_DATE_REVERSE:
-				return "ORDER BY `page`.`updated_at` DESC";
+				$qb->orderBy('`page`.`updated_at` DESC';
+				return;
 
 			case PageOrder::CREATED_DATE:
-				return "ORDER BY `page`.`created_at` ASC";
+				$qb->orderBy('`page`.`created_at` ASC';
+				return;
 			case PageOrder::CREATED_DATE_REVERSE:
-				return "ORDER BY `page`.`created_at` DESC";
+				$qb->orderBy('`page`.`created_at` DESC';
+				return;
 				
 			case PageOrder::REVERSE:
-				return "ORDER BY `position_left` DESC";
+				$qb->orderBy('`page`.`position_left` DESC';
+				return;
 			case PageOrder::STANDARD:
 			default:
-				return "ORDER BY `position_left` ASC";
+				$qb->orderBy('`page`.`position_left` ASC';
+				return;
 		}
 	}
+
 
 	/**
 	 * set the ordering, use the order constants
 	 * 
 	 * @param string the ordering
 	 */
-	public function orderBy(/* string */ $order)
+	public function orderBy(/* string | QueryBuilderFactor */ $order)
 	{
 		$this->_order = $order;
 
