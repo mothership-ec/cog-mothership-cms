@@ -609,6 +609,17 @@ class Loader
 				page_access_group ON (page_access_group.page_id = page.page_id)
 			WHERE
 				page.page_id IN (?ij)
+			'
+			. ($this->_loadUnpublished == false ? 
+				'AND 
+					(page.unpublish_at IS NULL AND page.publish_at IS NOT NULL 
+					OR 
+					page.publish_at > page.unpublish_at)' . PHP_EOL : '')
+			. ($this->_loadDeleted == false ? 
+				'AND (page.deleted_at IS NULL AND page.created_at IS NOT NULL 
+					OR 
+					page.created_at > page.deleted_at)' . PHP_EOL : '')
+			. '
 			GROUP BY
 				page.page_id
 			' . $this->_getOrderQuery();
@@ -618,8 +629,8 @@ class Loader
 		);
 
 		if (null !== $this->_pagination) {
+			$this->_pagination->setCountQuery('SELECT COUNT(p.id) as `count` FROM (' . $sql . ') as p', $params);
 			$this->_pagination->setQuery($sql, $params);
-			$this->_pagination->setCountColumn('page.page_id');
 			$result = $this->_pagination->getCurrentPageResults();
 			$this->_pagination = null;
 		}
