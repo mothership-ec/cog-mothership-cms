@@ -610,8 +610,8 @@ class Loader
 			WHERE
 				page.page_id IN (?ij)
 			'
-			. ($this->_loadUnpublished == false ? 'AND (page.unpublish_at IS NULL OR page.publish_at > page.unpublish_at)' . PHP_EOL : '')
-			. ($this->_loadDeleted == false ? 'AND (page.deleted_at IS NULL OR page.created_at > page.deleted_at)' . PHP_EOL : '')
+			. ($this->_loadUnpublished == false ? 'AND (page.unpublish_at IS NULL AND page.publish_at IS NOT NULL OR page.publish_at > page.unpublish_at)' . PHP_EOL : '')
+			. ($this->_loadDeleted == false ? 'AND (page.deleted_at IS NULL AND page.created_at IS NOT NULL OR page.created_at > page.deleted_at)' . PHP_EOL : '')
 			. '
 			GROUP BY
 				page.page_id
