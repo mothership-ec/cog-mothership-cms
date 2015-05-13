@@ -52,7 +52,8 @@ use Message\Cog\DB\QueryBuilderFactory;
 class Loader
 {
 	protected $_locale;
-	protected $_queryBuilderFactory->	protectedBuilderFactory $_pageTypes;
+	protected $_queryBuilderFactory;
+	protected $_pageTypes;
 	protected $_authorisation;
 	protected $_loaders;
 
@@ -766,32 +767,32 @@ class Loader
 
 		switch ($this->_order) {
 			case PageOrder::ID:
-				$qb->orderBy('`page`.`page_id` ASC';
+				$qb->orderBy('`page`.`page_id` ASC');
 				return;
 			case PageOrder::ID_REVERSE:
-				$qb->orderBy('`page`.`page_id` DESC';
+				$qb->orderBy('`page`.`page_id` DESC');
 				return;
 
 			case PageOrder::UPDATED_DATE:
-				$qb->orderBy('`page`.`updated_at` ASC';
+				$qb->orderBy('`page`.`updated_at` ASC');
 				return;
 			case PageOrder::UPDATED_DATE_REVERSE:
-				$qb->orderBy('`page`.`updated_at` DESC';
+				$qb->orderBy('`page`.`updated_at` DESC');
 				return;
 
 			case PageOrder::CREATED_DATE:
-				$qb->orderBy('`page`.`created_at` ASC';
+				$qb->orderBy('`page`.`created_at` ASC');
 				return;
 			case PageOrder::CREATED_DATE_REVERSE:
-				$qb->orderBy('`page`.`created_at` DESC';
+				$qb->orderBy('`page`.`created_at` DESC');
 				return;
 				
 			case PageOrder::REVERSE:
-				$qb->orderBy('`page`.`position_left` DESC';
+				$qb->orderBy('`page`.`position_left` DESC');
 				return;
 			case PageOrder::STANDARD:
 			default:
-				$qb->orderBy('`page`.`position_left` ASC';
+				$qb->orderBy('`page`.`position_left` ASC');
 				return;
 		}
 	}
