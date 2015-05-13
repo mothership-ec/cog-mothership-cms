@@ -19,4 +19,9 @@
 		<a href="http://www.pinterest.com/{{ social.pinterest.slug|default(social.pinterest.name)|e('url') }}">Pinterest</a>
 	</li>
 	{% endif %}
+	{% if not social.linkedIn.name is empty %}
+	<li class="linked-in">
+		<a href="http://www.linkedin.com/{{ social.linkedIn.slug|default(social.linkedIn.name)|e('url') }}">Linked In</a>
+	</li>
+	{% endif %}
 </ul>
