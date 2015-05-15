@@ -134,9 +134,9 @@ class Loader
 	{
 		if (!is_array($pageIDs)) {
 			$pageIDs = [$pageIDs];
-			$this->_returnAsArray = true;
-		} else {
 			$this->_returnAsArray = false;
+		} else {
+			$this->_returnAsArray = true;
 		}
 
 		$this->_buildQuery();
