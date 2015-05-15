@@ -30,8 +30,7 @@ class Services implements ServicesInterface
 
 		$services['cms.page.loader'] = $services->factory(function($c) {
 			return new CMS\Page\Loader(
-				'Locale class',
-				$c['db.query'],
+				$c['db.query.builder.factory'],
 				$c['cms.page.types'],
 				$c['user.groups'],
 				$c['cms.page.authorisation'],

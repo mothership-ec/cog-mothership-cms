@@ -10,10 +10,10 @@ use Message\User\UserInterface;
 
 use Message\Cog\ValueObject\DateRange;
 use Message\Cog\ValueObject\Authorship;
-use Message\Mothership\CMS\PageType\Collection;
 use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\Slug;
-use Message\Cog\DB\Query;
+use Message\Cog\DB\QueryBuilderFactory;
+use Message\Cog\DB\QueryBuilderInterface;
 use Message\Cog\DB\Result;
 use Message\Cog\Pagination\Pagination;
 use Message\Cog\DB\Entity\EntityLoaderCollection;
@@ -23,9 +23,7 @@ use Message\Cog\DB\Entity\EntityLoaderCollection;
  *
  * Usage as follows:
  *
- * <code>
  * # Load by pageID
- * $loader = new Loader($locale, $query);
  * $page = $loader->getByID(1); // returns page object
  *
  * # Load deleted page - deleted pages are not loaded by default
@@ -44,20 +42,27 @@ use Message\Cog\DB\Entity\EntityLoaderCollection;
  *
  * # You can also load by type
  * $pages = $loader->getByType(new PageType\Blog); // returns array of page types
- * </code>
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  * @author Danny Hannah <danny@message.co.uk>
  */
 class Loader
 {
-	protected $_locale;
-	protected $_query;
 	protected $_pageTypes;
 	protected $_authorisation;
 	protected $_loaders;
 
 	protected $_pagination;
+
+	/**
+	 * @var QueryBuilderFactory
+	 */
+	private $_queryBuilderFactory;
+
+	/**
+	 * @var QueryBuilderInterface
+	 */
+	private $_queryBuilder;
 
 	/**
 	 * var to toggle the loading of deleted pages
@@ -83,17 +88,22 @@ class Loader
 	 */
 	private $_order = PageOrder::STANDARD;
 
+	private $_returnAsArray;
+
 	/**
 	 * Constructor
 	 *
-	 * @param \Locale             $locale    		The current locale
-	 * @param Query               $query     		Database query instance to use
-	 * @param PageTypeCollection  $pageTypes 		Page types available to the system
-	 * @param UserGroupCollection $groups    		User groups available to the system
-	 * @param Authorisation  	  $authorisation 	Authorisation instance to use
+	 * @param QueryBuilderFactory    $queryBuilderFactory   Database query instance to use
+	 * @param PageTypeCollection     $pageTypes             Page types available to the system
+	 * @param UserGroupCollection    $groups                User groups available to the system
+	 * @param Authorisation  	     $authorisation         Authorisation instance to use
+	 * @param UserInterface  	     $user                  The logged in user
+	 * @param Searcher               $searcher              The page searcher
+	 * @param EntityLoaderCollection $loaders               Entity loaders to allow for lazy loading of pages
+	 *                                                      via PageProxy instances
 	 */
-	public function __construct(/* \Locale */ $locale,
-		Query $query,
+	public function __construct(
+		QueryBuilderFactory $queryBuilderFactory,
 		PageTypeCollection $pageTypes,
 		UserGroupCollection $groups,
 		Authorisation $authorisation,
@@ -101,14 +111,13 @@ class Loader
 		Searcher $searcher,
 		EntityLoaderCollection $loaders
 	) {
-		$this->_locale        = $locale;
-		$this->_query         = $query;
-		$this->_pageTypes     = $pageTypes;
-		$this->_userGroups    = $groups;
-		$this->_authorisation = $authorisation;
-		$this->_user 		  = $user;
-		$this->_searcher      = $searcher;
-		$this->_loaders       = $loaders;
+		$this->_queryBuilderFactory  = $queryBuilderFactory;
+		$this->_pageTypes            = $pageTypes;
+		$this->_userGroups           = $groups;
+		$this->_authorisation        = $authorisation;
+		$this->_user 		         = $user;
+		$this->_searcher             = $searcher;
+		$this->_loaders              = $loaders;
 	}
 
 	/**
@@ -123,9 +132,19 @@ class Loader
 	 */
 	public function getByID($pageIDs)
 	{
-		$this->_returnAsArray = is_array($pageIDs);
+		if (!is_array($pageIDs)) {
+			$pageIDs = [$pageIDs];
+			$this->_returnAsArray = true;
+		} else {
+			$this->_returnAsArray = false;
+		}
 
-		return $this->_load($pageIDs);
+		$this->_buildQuery();
+
+		$this->_queryBuilder
+			->where('page.page_id IN (:pageIDs?ji)', ['pageIDs' => $pageIDs]);
+
+		return $this->_loadPages();
 	}
 
 	/**
@@ -136,21 +155,233 @@ class Loader
 	 */
 	public function getHomepage()
 	{
-		$result = $this->_query->run('
-			SELECT
-				page_id
-			FROM
-				page
-			WHERE
-				deleted_at IS NULL
-			AND
-				position_depth = 0
-			ORDER BY
-				position_left ASC
-			LIMIT 1
-		');
+		$this->_buildQuery();
+		$this->_returnAsArray = false;
 
-		return count($result) ? $this->getByID($result->first()->page_id) : false;
+		$this->_queryBuilder->where('page.deleted_at IS NULL')
+			->where('page.position_depth = 0')
+			->orderBy('page.position_left')
+			->limit(1)
+		;
+
+		return $this->_loadPages();
+	}
+
+	public function getParent(Page $page)
+	{
+		$this->_buildQuery();
+		$this->_returnAsArray = false;
+
+		$this->_queryBuilder
+			->where('page.position_left < ?i', [$page->left])
+			->where('page.position_right >= ?i', [$page->left])
+			->where('page.position_depth = ?i - 1', [$page->depth])
+		;
+
+		return $this->_loadPages();
+	}
+
+	/**
+	 * Get the root page for a given page.
+	 *
+	 * If the given page has a depth of 0, it is the root page and is returned
+	 * immediately without any database loading.
+	 *
+	 * Otherwise, the top-level root page for this page is loaded and returned.
+	 *
+	 * @param  Page   $page The page to search up from
+	 *
+	 * @return Page|false   The top-level (root) page
+	 */
+	public function getRoot(Page $page)
+	{
+		if (0 === $page->depth) {
+			return $page;
+		}
+
+		$this->_buildQuery();
+		$this->_returnAsArray = false;
+
+		$this->_queryBuilder
+			->where('page.position_left < ?i', [$page->left])
+			->where('page.position_right >= ?i', [$page->right])
+			->where('page.position_depth = ?i', [0])
+		;
+
+		return $this->_loadPages();
+	}
+
+	/**
+	 * Find a page by an ancestral slug
+	 *
+	 * @param string $slug		Slug to check for
+	 * @return Page|false		Prepared `Page` instance, or false if not found
+	 */
+	public function checkSlugHistory($slug)
+	{
+		$slug = '/' . ltrim($slug, '/');
+
+		$this->_buildQuery();
+
+		$this->_queryBuilder
+			->join('page_slug_history', 'page.page_id = page_slug_history.page_id')
+			->where('page_slug_history.slug = ?s', [$slug])
+		;
+
+		return $this->_loadPages();
+	}
+
+	/**
+	 * Get all pages of a specific type.
+	 *
+	 * @param PageTypeInterface|string $pageType The page type or page type name
+	 *                                           to get pages for
+	 *
+	 * @return array[Page]                       An array of prepared `Page`
+	 *                                           instances
+	 */
+	public function getByType($pageType)
+	{
+		if ($pageType instanceof PageTypeInterface) {
+			$pageType = $pageType->getName();
+		}
+
+		$this->_buildQuery();
+
+		$this->_queryBuilder
+			->where('page.type = ?s', [$pageType])
+		;
+
+		return $this->_loadPages();
+	}
+
+	/**
+	 * Select a page that has a certain tag
+	 *
+	 * @param $tag
+	 * @return array | bool |Page
+	 */
+	public function getByTag($tag)
+	{
+		$this->_buildQuery();
+
+		$this->_queryBuilder
+			->join('page_tag', 'page.page_id = page_tag.page_id')
+			->where('tag_name = ?s', [$tag])
+		;
+
+		return $this->_loadPages();
+	}
+
+	/**
+	 * Return all files in an array
+	 * @return Array|File|false - 	returns either an array of File objects, a
+	 * 								single file object or false
+	 */
+	public function getAll()
+	{
+		$this->_buildQuery();
+
+		return $this->_loadPages();
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getTopLevel()
+	{
+		return $this->getChildren(null);
+	}
+
+	/**
+	 * Get the child pages for a page.
+	 *
+	 * @param Page|null $page The page to find the children for
+	 *
+	 * @return array[Page]	 An array of prepared `Page` instances
+	 */
+	public function getChildren(Page $page = null)
+	{
+		$this->_returnAsArray = true;
+
+		if (!$page) {
+			$page = new Page;
+			$page->left = 0;
+			$page->right = null;
+			$page->depth = -1;
+		}
+
+		$this->_buildQuery();
+
+		$this->_queryBuilder
+			->where('page.position_left > ?i', [$page->left])
+			->where('page.position_depth = ?i', [$page->depth + 1])
+		;
+
+		if (null !== $page->right) {
+			$this->_queryBuilder->where('page.position_right < ?i', [$page->right]);
+		}
+
+		return $this->_loadPages();
+	}
+
+	/**
+	 * Get the siblings (pages at the same level in the IA) for a page.
+	 *
+	 * @param Page $page                 The page to find the siblings for
+	 * @param $includeRequestPage bool   Set as true to include $page in the results
+	 *
+	 * @return array[Page]	 An array of prepared `Page` instances
+	 */
+	public function getSiblings(Page $page, $includeRequestPage = false)
+	{
+		$parentQuery = null;
+		$this->_buildQuery();
+
+		// If the page is in the top level, just load all top level pages, else work out
+		// which pages have the same parent first
+		if ($page->depth === 0) {
+			$this->_queryBuilder
+				->where('page.position_depth = ?i', [0])
+			;
+
+			if (!$includeRequestPage) {
+				$this->_queryBuilder
+					->where('page.page_id != ?i', [$page->id])
+				;
+			}
+		} else {
+			if (null !== $this->_queryBuilder) {
+				throw new \LogicException('Cannot load siblings without resetting query builder');
+			}
+
+			// Don't try this at home. Since the QueryBuilder doesn't allow us to parse variables in
+			// ON statements, I am casting the page depth to an integer here to give to the query
+			// directly.
+			$pageDepth = (int) $page->depth;
+
+			$subQuery = $this->_queryBuilderFactory->getQueryBuilder()
+				->select('children.page_id')
+				->from('parent', 'page')
+				->leftJoin('children', '
+					children.position_left = parent.position_left
+					AND children.position_right < parent.position_right
+					AND children.position_depth = ' . $pageDepth . '
+				', 'page')
+				->where('parent.position_left < ?i', [$page->left])
+				->where('parent.position_depth = ?i', [$page->depth])
+			;
+
+			if (!$includeRequestPage) {
+				$subQuery->where('children.page_id <> ?i', [$page->id]);
+			}
+
+			$this->_queryBuilder
+				->join('siblings', 'siblings.page_id = page.page_id', $subQuery)
+			;
+		}
+
+		return $this->_loadPages();
 	}
 
 	/**
@@ -173,176 +404,40 @@ class Loader
 		$parts 	= array_reverse(explode('/', $path));
 		$base 	= array_shift($parts);
 
-		$joins 	= '';
-		$where 	= '';
-		$params = array(
-			$base,
-			count($parts),
-		);
+		$this->_buildQuery();
 
 		// Loop thorough the parts of the url and build joins in order to get
 		// all the parent slugs so we can build the full slug because we do not
 		// store the full slug in the db
 		for ($i = 2; $i <= count($parts) +1; $i++) {
-			$joins.= " JOIN page level$i ON (level$i.position_left < level".($i-1).".position_left AND level$i.position_right > level".($i-1).".position_right)";
-			$where.= " AND level$i.slug = ?s";
-			$where.= " AND level$i.deleted_at IS NULL";
-			$params[] = $parts[$i-2];
+			$level = 'level' . $i;
+			$upperLevel = $i === 2 ? 'page' : 'level' . ($i - 1);
+			$this->_queryBuilder
+				->join($level, $level . '.position_left < ' . $upperLevel . '.position_left AND ' . $level . '.position_right > ' . $upperLevel . '.position_right', 'page')
+				->where($level . '.slug = ?s', [$parts[$i-2]])
+			;
+
+			if ($this->_loadDeleted) {
+				$this->_queryBuilder->where($level . '.deleted_at IS NULL');
+			}
 		}
 
-		// Run the query and add in the joins we made above
-		$result = $this->_query->run('
-			SELECT
-				level1.page_id
-			FROM
-				page level1
-			'.$joins.'
-			WHERE
-				level1.slug = ?s
-				AND level1.position_depth = ?i
-				AND level1.deleted_at IS NULL
-			'.$where.'',
-			$params
-		);
+		$this->_queryBuilder
+			->where('page.slug = ?s', [$base])
+			->where('page.position_depth = ?i', [count($parts)])
+		;
 
-		// If there is a result then retun a page object
-		if (count($result)) {
-			return $this->getByID($result->first()->page_id);
+		$pages = $this->_loadPages();
+
+		if ($pages) {
+			return $pages;
 		}
-		// If no result has been returned at this point and $checkHistory is true
-		// then we will check the history to see if it existed in the past
+
 		if ($checkHistory && $page = $this->checkSlugHistory($slug)) {
-			return $page;
+			return $this->_returnAsArray ? [$page] : $page;
 		}
 
 		return false;
-	}
-
-	public function getParent(Page $page)
-	{
-		$result = $this->_query->run('
-			SELECT
-				page_id
-			FROM
-				page
-			WHERE
-				position_left < ?i
-			AND position_right >= ?i
-			AND position_depth = ?i -1',
-		array(
-			$page->left,
-			$page->left,
-			$page->depth,
-		));
-
-		return count($result) ? $this->getByID($result->value()) : false;
-	}
-
-	/**
-	 * Get the root page for a given page.
-	 *
-	 * If the given page has a depth of 0, it is the root page and is returned
-	 * immediately without any database loading.
-	 *
-	 * Otherwise, the top-level root page for this page is loaded and returned.
-	 *
-	 * @param  Page   $page The page to search up from
-	 *
-	 * @return Page|false   The top-level (root) page
-	 */
-	public function getRoot(Page $page)
-	{
-		if (0 == $page->depth) {
-			return $page;
-		}
-
-		$result = $this->_query->run('
-			SELECT
-				page_id
-			FROM
-				page
-			WHERE
-				position_left < :left?i
-			AND position_right >= :right?i
-			AND position_depth = 0
-		', array(
-			'left'  => $page->left,
-			'right' => $page->right,
-		));
-
-		return count($result) ? $this->getByID($result->value()) : false;
-	}
-
-
-	/**
-	 * Find a page by an ancestral slug
-	 *
-	 * @param string $slug		Slug to check for
-	 * @return Page|false		Prepared `Page` instance, or false if not found
-	 */
-	public function checkSlugHistory($slug)
-	{
-		$slug = '/' . ltrim($slug, '/');
-
-		$result = $this->_query->run('
-			SELECT
-				page_id
-			FROM
-				page_slug_history
-			WHERE
-				slug = ?s
-		', $slug);
-
-		return count($result) ? $this->getByID($result->value()) : false;
-	}
-
-	/**
-	 * Get all pages of a specific type.
-	 *
-	 * @param PageTypeInterface|string $pageType The page type or page type name
-	 *                                           to get pages for
-	 *
-	 * @return array[Page]                       An array of prepared `Page`
-	 *                                           instances
-	 */
-	public function getByType($pageType)
-	{
-		if ($pageType instanceof PageTypeInterface) {
-			$pageType = $pageType->getName();
-		}
-
-		$result = $this->_query->run('
-			SELECT
-				page_id
-			FROM
-				page
-			WHERE
-				type = ?s
-		', strtolower($pageType));
-
-		return count($result) ? $this->getById($result->flatten()) : false;
-	}
-
-	/**
-	 * Select a page that has a certain tag
-	 *
-	 * @param $tag
-	 * @return array | bool |Page
-	 */
-	public function getByTag($tag)
-	{
-		$result = $this->_query->run('
-			SELECT
-				page_id
-			FROM
-				page_tag
-			WHERE
-				tag_name = :tag?s
-		', [
-			'tag' => $tag
-		]);
-
-		return count($result) ? $this->getByID($result->flatten()) : false;
 	}
 
 	/**
@@ -365,13 +460,13 @@ class Loader
 
 		$this->_searcher->setTerms($terms);
 
-		$ids = $this->_searcher->getIds();
+		$ids = $this->_searcher->getIDs();
 
 		if (empty($ids)) {
 			return array();
 		}
 
-		$results = $this->getById($ids);
+		$results = $this->getByID($ids);
 
 		// Check authorisation restrictions on pages.
 		foreach ($results as $i => $page) {
@@ -385,138 +480,12 @@ class Loader
 		return $this->_searcher->getSorted($results);
 	}
 
-	/**
-	 * Return all files in an array
-	 * @return Array|File|false - 	returns either an array of File objects, a
-	 * 								single file object or false
-	 */
-	public function getAll()
-	{
-		$result = $this->_query->run('
-			SELECT
-				page_id
-			FROM
-				page
-		');
-
-		return count($result) ? $this->getByID($result->flatten()) : false;
-	}
-
-	public function getTopLevel()
-	{
-		return $this->getChildren(null);
-	}
-
-	/**
-	 * Get the child pages for a page.
-	 *
-	 * @param Page|null $page The page to find the children for
-	 *
-	 * @return array[Page]	 An array of prepared `Page` instances
-	 */
-	public function getChildren(Page $page = null)
-	{
-		if (!$page) {
-			$page = new Page;
-			$page->left = 0;
-			$page->right = 99999;
-			$page->depth = -1;
-		}
-
-		$result = $this->_query->run("
-			SELECT
-				page_id
-			FROM
-				page
-			WHERE
-				position_left > ?i
-			AND
-				position_right < ?i
-			AND
-				position_depth = ?i
-		", array(
-			$page->left,
-			$page->right,
-			$page->depth+1,
-		));
-
-		return count($result) ? $this->getById($result->flatten()) : array();
-	}
-
 	public function setPagination(Pagination $pagination)
 	{
 		$this->_pagination = $pagination;
 
 		return $this;
 	}
-
-	/**
-	 * Get the siblings (pages at the same level in the IA) for a page.
-	 *
-	 * @param Page $page The page to find the siblings for
-	 *
-	 * @return array[Page]	 An array of prepared `Page` instances
-	 */
-	public function getSiblings(Page $page, $includeRequestPage = false)
-	{
-		// We have to do a different query if the depth is zero, as this causes
-		// complications and have to change the query a fair bit. This way is simpler.
-		if ($page->depth == 0) {
-			$result = $this->_query->run('
-			    SELECT
-			        page.page_id
-			    FROM
-			        page
-			    WHERE
-			    	page.position_depth = 0
-				AND
-					page.page_id <> ?i
-				' . $this->_getOrderQuery()
-			, array(
-			    $page->id,
-			));
-
-		} else {
-			// Get the parent, then get the children of that parent based on it's position.
-			$result = $this->_query->run('
-			    SELECT
-			        children.page_id
-			    FROM
-			        page AS parent
-			    LEFT JOIN page AS children
-			        ON (
-			        	children.position_left > parent.position_left
-			        	AND children.position_right < parent.position_right
-			        	AND children.position_depth = ?i
-			        )
-
-			    WHERE
-			        parent.position_left < ?i
-			        AND parent.position_right > ?i
-			        AND parent.position_depth = ?i
-					AND children.page_id <> ?i'
-			, array(
-			    $page->depth,
-			    $page->left,
-			    $page->right,
-			    $page->depth -1,
-			    $page->id,
-			));
-		}
-
-		if (0 === count($result)) {
-			return ($includeRequestPage) ? array($page->id => $page) : array();
-		}
-
-		$pages = $this->getById($result->flatten());
-
-		if ($includeRequestPage) {
-			$pages[$page->id] = $page;
-		}
-
-		return $pages;
-	}
-
 
 	/**
 	 * Toggle whether or not to load deleted pages
@@ -544,37 +513,39 @@ class Loader
 	}
 
 	/**
+	 * @deprecated use getByID() instead
+	 *
+	 * @param $pageID
+	 */
+	protected function _load($pageID)
+	{
+		return $this->getByID($pageID);
+	}
+
+	/**
 	 * Load all the given pages and pass the results onto the _loadPage method
 	 *
 	 * @param int|array		$pageID id of the page to load
 	 * @return Page|false 			populated Page object or array of Page
 	 *                              objects or false if not found
 	 */
-	protected function _load($pageID)
+	private function _buildQuery()
 	{
-		if (!is_array($pageID)) {
-			$pageID = (array) $pageID;
-		}
-
-		if (!$pageID) {
-			return $this->_returnAsArray ? array() : false;
-		}
-
-		$sql = '
-			SELECT
-				/* locale, */
-				page.page_id AS id,
-				page.title AS title,
-				page.type AS type,
-				page.publish_at AS publishAt,
-				page.unpublish_at AS unpublishAt,
-				page.created_at AS createdAt,
-				page.created_by AS createdBy,
-				page.updated_at AS updatedAt,
-				page.created_by AS updatedBy,
-				page.deleted_at AS deletedAt,
-				page.deleted_by AS deletedBy,
-				IFNULL(CONCAT((
+		$this->_queryBuilder = $this->_queryBuilderFactory
+			->getQueryBuilder()
+			->select([
+				'page.page_id AS id',
+				'page.title AS title',
+				'page.type AS type',
+				'page.publish_at AS publishAt',
+				'page.unpublish_at AS unpublishAt',
+				'page.created_at AS createdAt',
+				'page.created_by AS createdBy',
+				'page.updated_at AS updatedAt',
+				'page.created_by AS updatedBy',
+				'page.deleted_at AS deletedAt',
+				'page.deleted_by AS deletedBy',
+				'IFNULL(CONCAT((
 					SELECT
 						CONCAT(\'/\',GROUP_CONCAT(p.slug ORDER BY p.position_depth ASC SEPARATOR \'/\'))
 					FROM
@@ -582,67 +553,66 @@ class Loader
 					WHERE
 						p.position_left < page.position_left
 					AND
-						p.position_right > page.position_right),\'/\',page.slug),page.slug) AS slug,
+						p.position_right > page.position_right),\'/\',page.slug),page.slug) AS slug',
+				'page.position_left AS `left`',
+				'page.position_right AS `right`',
+				'page.position_depth AS depth',
+				'page.meta_title AS metaTitle',
+				'page.meta_description AS metaDescription',
+				'page.meta_html_head AS metaHtmlHead',
+				'page.meta_html_foot AS metaHtmlFoot',
+				'page.visibility_search AS visibilitySearch',
+				'page.visibility_menu AS visibilityMenu',
+				'page.visibility_aggregator AS visibilityAggregator',
+				'page.password AS password',
+				'page.access AS access',
+				'GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups',
+			])
+			->from('page')
+			->leftJoin('page_access_group', 'page_access_group.page_id = page.page_id')
+			->groupBy('page.page_id')
+			->orderBy($this->_getOrderStatement())
+		;
 
-				page.position_left AS `left`,
-				page.position_right AS `right`,
-				page.position_depth AS depth,
+		if (!$this->_loadDeleted) {
+			$this->_queryBuilder->where('page.deleted_at IS NULL');
+		}
 
-				page.meta_title AS metaTitle,
-				page.meta_description AS metaDescription,
-				page.meta_html_head AS metaHtmlHead,
-				page.meta_html_foot AS metaHtmlFoot,
+		if (!$this->_loadUnpublished) {
+			$this->_queryBuilder->where('page.publish_at < ?d', [new DateTimeImmutable]);
+			$this->_queryBuilder->where('(page.unpublish_at > ?d OR page.unpublish_at IS NULL)', [new DateTimeImmutable]);
+		}
+	}
 
-				page.visibility_search AS visibilitySearch,
-				page.visibility_menu AS visibilityMenu,
-				page.visibility_aggregator AS visibilityAggregator,
-
-				page.password AS password,
-				page.access AS access,
-
-				GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups
-
-
-			FROM
-				page
-			LEFT JOIN
-				page_access_group ON (page_access_group.page_id = page.page_id)
-			WHERE
-				page.page_id IN (?ij)
-			GROUP BY
-				page.page_id
-			' . $this->_getOrderQuery();
-
-		$params = array(
-			$pageID,
-		);
+	private function _runQuery()
+	{
+		if (null === $this->_queryBuilder) {
+			throw new \LogicException('Query builder not set, run _buildQuery() first!');
+		}
 
 		if (null !== $this->_pagination) {
-			$this->_pagination->setQuery($sql, $params);
+			$this->_pagination->setQuery($this->_queryBuilder->getQueryString());
 			$this->_pagination->setCountColumn('page.page_id');
+
 			$result = $this->_pagination->getCurrentPageResults();
-			$this->_pagination = null;
-		}
-		else {
-			$result = $this->_query->run($sql, $params);
+		} else {
+			$result = $this->_queryBuilder->getQuery()->run();
 		}
 
-		if (0 === count($result)) {
-			return ($this->_returnAsArray) ? array() : false;
-		}
+		$this->_queryBuilder = null;
 
-		return $this->_loadPage($result);
+		return $result;
 	}
 
 	/**
 	 * Load the results into instances of `Page` and return them.
 	 *
-	 * @param  Result $results  Database result of page load query
-	 *
 	 * @return Page|array[Page] Singular Page object, or array of page objects
 	 */
-	protected function _loadPage(Result $results)
+	private function _loadPages()
 	{
+		$results = $this->_runQuery();
+
 		$pages = $results->bindTo(
 			'Message\\Mothership\\CMS\\Page\\PageProxy',
 			[$this->_loaders]
@@ -675,7 +645,6 @@ class Loader
 			// Get the page type
 			$pages[$key]->type = $this->_pageTypes->get($data->type);
 
-
 			// If the page is the most left page then it is the homepage so
 			// we need to override the slug to avoid unnecessary redirects
 			if ($this->_getMinPositionLeft() == $data->left) {
@@ -703,23 +672,19 @@ class Loader
 			$check = $pages[$key];
 
 			while ($pages[$key]->access < 0) {
-				$check = $this->_query->run('
-					SELECT
-						access,
-						GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups
-					FROM
-						page
-					LEFT JOIN
-						page_access_group ON (page_access_group.page_id = page.page_id)
-					WHERE
-						position_left < ?i
-					AND position_right >= ?i
-					AND position_depth = ?i -1',
-				array(
-					$check->left,
-					$check->left,
-					$check->depth,
-				));
+				$check = $this->_queryBuilderFactory->getQueryBuilder()
+					->select([
+						'access',
+						'GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups'
+					])
+					->from('page')
+					->leftJoin('page_access_group', 'page_access_group.page_id = page.page_id')
+					->where('page.position_left < ?i', [$check->left])
+					->where('page.position_right >= ?i', [$check->left])
+					->where('page.position_depth = ?i - 1', [$check->depth])
+					->getQuery()
+					->run()
+				;
 
 				$check = $check->bindTo('Message\\Mothership\\CMS\\Page\\Page');
 				$check = $check[0];
@@ -749,46 +714,55 @@ class Loader
 
 		}
 
-		return count($pages) == 1 && !$this->_returnAsArray ? $pages[0] : $pages;
+		return count($pages) == 1 && !$this->_returnAsArray ? array_shift($pages) : $pages;
 	}
 
 	private function _getMinPositionLeft()
 	{
-		return $this->_query->run('
-				SELECT MIN(`position_left`) FROM `page` WHERE deleted_at IS NULL
-			')->value();
+		$queryBuilder = $this->_queryBuilderFactory->getQueryBuilder()
+			->select('MIN(`position_left`)')
+			->from('page')
+		;
+
+		if (!$this->_loadDeleted) {
+			$queryBuilder->where('deleted_at IS NULL');
+		}
+
+		return $queryBuilder->getQuery()->run()->value();
 	}
 
-	private function _getOrderQuery()
+	private function _getOrderStatement()
 	{
 		switch ($this->_order) {
 			case PageOrder::ID:
-				return "ORDER BY `page`.`page_id` ASC";
+				return "`page`.`page_id` ASC";
 			case PageOrder::ID_REVERSE:
-				return "ORDER BY `page`.`page_id` DESC";
+				return "`page`.`page_id` DESC";
 
 			case PageOrder::UPDATED_DATE:
-				return "ORDER BY `page`.`updated_at` ASC";
+				return "`page`.`updated_at` ASC";
 			case PageOrder::UPDATED_DATE_REVERSE:
-				return "ORDER BY `page`.`updated_at` DESC";
+				return "`page`.`updated_at` DESC";
 
 			case PageOrder::CREATED_DATE:
-				return "ORDER BY `page`.`created_at` ASC";
+				return "`page`.`created_at` ASC";
 			case PageOrder::CREATED_DATE_REVERSE:
-				return "ORDER BY `page`.`created_at` DESC";
+				return "`page`.`created_at` DESC";
 				
 			case PageOrder::REVERSE:
-				return "ORDER BY `position_left` DESC";
+				return "`page`.`position_left` DESC";
 			case PageOrder::STANDARD:
 			default:
-				return "ORDER BY `position_left` ASC";
+				return "`page`.`position_left` ASC";
 		}
 	}
 
 	/**
 	 * set the ordering, use the order constants
 	 * 
-	 * @param string the ordering
+	 * @param string $order ordering
+	 *
+	 * @return Loader
 	 */
 	public function orderBy(/* string */ $order)
 	{
