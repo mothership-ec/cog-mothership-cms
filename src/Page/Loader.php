@@ -351,10 +351,6 @@ class Loader
 				;
 			}
 		} else {
-			if (null !== $this->_queryBuilder) {
-				throw new \LogicException('Cannot load siblings without resetting query builder');
-			}
-
 			// Don't try this at home. Since the QueryBuilder doesn't allow us to parse variables in
 			// ON statements, I am casting the page depth to an integer here to give to the query
 			// directly.
@@ -379,6 +375,7 @@ class Loader
 			$this->_queryBuilder
 				->join('siblings', 'siblings.page_id = page.page_id', $subQuery)
 			;
+
 		}
 
 		return $this->_loadPages();
