@@ -92,9 +92,9 @@ class Services implements ServicesInterface
 			return new CMS\Page\Authorisation($c['user.group.loader'], $c['user.current']);
 		});
 
-		$services['cms.page.tag.loader'] = $services->factory(function($c) {
-			return new CMS\Page\TagLoader($c['db.query']);
-		});
+		$services['cms.page.tag.loader'] = function($c) {
+			return new CMS\Page\TagLoader($c['db.query.builder.factory']);
+		};
 
 		$services['cms.page.create'] = $services->factory(function($c) {
 			return new CMS\Page\Create(

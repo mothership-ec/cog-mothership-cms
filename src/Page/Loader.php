@@ -14,7 +14,7 @@ use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\DB\QueryBuilderFactory;
 use Message\Cog\DB\QueryBuilderInterface;
-use Message\Cog\DB\Result;
+use Message\Cog\Filter\FilterCollection;
 use Message\Cog\Pagination\Pagination;
 use Message\Cog\DB\Entity\EntityLoaderCollection;
 
@@ -513,9 +513,55 @@ class Loader
 	}
 
 	/**
+	 * set the ordering, use the order constants
+	 *
+	 * @param string $order ordering
+	 *
+	 * @return Loader
+	 */
+	public function orderBy(/* string */ $order)
+	{
+		$this->_order = $order;
+
+		return $this;
+	}
+
+	/**
+	 * Loop through filters and apply them to the query builder
+	 *
+	 * @param FilterCollection $filters
+	 */
+	public function applyFilters(FilterCollection $filters)
+	{
+		if (null === $this->_queryBuilder) {
+			$this->_buildQuery();
+		}
+
+		foreach ($filters as $filter) {
+			$filter->apply($this->_queryBuilder);
+		}
+	}
+
+	/**
+	 * Apply the filters to the query builder and then load the pages
+	 *
+	 * @param FilterCollection $filters
+	 *
+	 * @return array|Page
+	 */
+	public function loadFromFilters(FilterCollection $filters)
+	{
+		$this->applyFilters($filters);
+
+		return $this->_loadPages();
+	}
+
+	/**
 	 * @deprecated use getByID() instead
 	 *
 	 * @param $pageID
+	 *
+	 * @return Page | array
 	 */
 	protected function _load($pageID)
 	{
@@ -523,11 +569,8 @@ class Loader
 	}
 
 	/**
-	 * Load all the given pages and pass the results onto the _loadPage method
-	 *
-	 * @param int|array		$pageID id of the page to load
-	 * @return Page|false 			populated Page object or array of Page
-	 *                              objects or false if not found
+	 * Assign a new instance of QueryBuilder to the loader and build the main query for
+	 * loading pages
 	 */
 	private function _buildQuery()
 	{
@@ -584,6 +627,13 @@ class Loader
 		}
 	}
 
+	/**
+	 * Run the query set in the query builder
+	 *
+	 * @throws \LogicException            Throws exception if no query builder is set on the loader
+	 *
+	 * @return \Message\Cog\DB\Result     Returns database result from query
+	 */
 	private function _runQuery()
 	{
 		if (null === $this->_queryBuilder) {
@@ -717,6 +767,11 @@ class Loader
 		return count($pages) == 1 && !$this->_returnAsArray ? array_shift($pages) : $pages;
 	}
 
+	/**
+	 * Get the minimum left position from the nested set
+	 *
+	 * @return int
+	 */
 	private function _getMinPositionLeft()
 	{
 		$queryBuilder = $this->_queryBuilderFactory->getQueryBuilder()
@@ -731,6 +786,11 @@ class Loader
 		return $queryBuilder->getQuery()->run()->value();
 	}
 
+	/**
+	 * Get the order statement based on the order that has been set by the `orderBy()` method
+	 *
+	 * @return string
+	 */
 	private function _getOrderStatement()
 	{
 		switch ($this->_order) {
@@ -755,19 +815,5 @@ class Loader
 			default:
 				return "`page`.`position_left` ASC";
 		}
-	}
-
-	/**
-	 * set the ordering, use the order constants
-	 * 
-	 * @param string $order ordering
-	 *
-	 * @return Loader
-	 */
-	public function orderBy(/* string */ $order)
-	{
-		$this->_order = $order;
-
-		return $this;
 	}
 }
