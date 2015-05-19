@@ -559,6 +559,17 @@ class Edit extends \Message\Cog\Controller\Controller
 		$slug = '/'.implode('/',$slugSegments);
 		$checkSlug = $this->get('cms.page.loader')->getBySlug($slug, false);
 
+		try {
+			$routes = $this->get('routing.matcher')->match($slug);
+
+			// continue if the frontend route is the most promenant
+			if ($routes['_route'] !== 'ms.cms.frontend') {
+				$this->addFlash('error',  $this->trans('ms.cms.feedback.force-slug.failure.reserved-route'));
+			}
+		} catch (\Symfony\Component\Routing\Exception\ResourceNotFoundException $e) {	
+			// no route found so we can continue
+		}
+
 		// If not slug has been found, we need to check the history too
 		if (!$checkSlug) {
 			// Check for the slug historicaly and show deleted ones too
@@ -623,7 +634,9 @@ class Edit extends \Message\Cog\Controller\Controller
 			try {
 				$page = $this->get('cms.page.edit')->updateSlug($page, $newSlug);
 			} catch (InvalidSlugException $e) {
-				$this->addFlash('error', 'Could not update slug. ' . $e->getMessage());
+				$this->addFlash('error', $this->trans('ms.cms.feedback.force-slug.failure.generic', [
+					'%message%' => $e->getMessage(),
+				]));
 			}
 		}
 
