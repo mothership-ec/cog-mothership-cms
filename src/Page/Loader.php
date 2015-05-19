@@ -553,6 +553,8 @@ class Loader
 	 * Loop through filters and apply them to the query builder
 	 *
 	 * @param FilterCollection $filters
+	 *
+	 * @return Loader
 	 */
 	public function applyFilters(FilterCollection $filters)
 	{
@@ -564,7 +566,7 @@ class Loader
 			$filter->apply($this->_queryBuilder);
 		}
 
-		$this->_filters = true;
+		return $this;
 	}
 
 	/**
@@ -649,7 +651,7 @@ class Loader
 			}
 
 			if (!$this->_loadUnpublished) {
-				$this->_queryBuilder->where('page.publish_at < ?d', [new DateTimeImmutable]);
+				$this->_queryBuilder->where('page.publish_at <= ?d', [new DateTimeImmutable]);
 				$this->_queryBuilder->where('(page.unpublish_at > ?d OR page.unpublish_at IS NULL)', [new DateTimeImmutable]);
 			}
 		}
@@ -669,8 +671,8 @@ class Loader
 		}
 
 		if (null !== $this->_pagination) {
+			$this->_pagination->setCountQuery($this->_getCountQuery());
 			$this->_pagination->setQuery($this->_queryBuilder->getQueryString());
-			$this->_pagination->setCountColumn('page.page_id');
 
 			$result = $this->_pagination->getCurrentPageResults();
 		} else {
@@ -680,6 +682,19 @@ class Loader
 		$this->_queryBuilder = null;
 
 		return $result;
+	}
+
+	private function _getCountQuery()
+	{
+		if (null === $this->_queryBuilder) {
+			throw new \LogicException('Cannot set count query on page loader paginator before query has been built');
+		}
+
+		return $this->_queryBuilderFactory->getQueryBuilder()
+			->select('COUNT(p.id) as `count`')
+			->from('p', $this->_queryBuilder)
+			->getQueryString()
+		;
 	}
 
 	/**
