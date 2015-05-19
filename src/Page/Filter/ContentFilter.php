@@ -47,25 +47,30 @@ class ContentFilter extends AbstractFilter implements ContentFilterInterface
 			$this->_group = $group;
 		}
 
-		$this->_setChoices();
-
 		$this->_field = $field;
+		$this->_setChoices();
 	}
 
 	public function setValue($value)
 	{
-		if ($value instanceof \DateTime) {
-			$this->_value = (string) $value->getTimestamp();
-		} else {
-			$this->_value = (string) $value;
+		if (!is_array($value)) {
+			throw new \InvalidArgumentException('Value for ContentFilter must be an array, ' . gettype($value) . ' given');
 		}
+
+		array_walk($value, function (&$item) {
+			if ($item instanceof \DateTime) {
+				$item = $item->getTimestamp();
+			}
+		});
+
+		$this->_value = $value;
 	}
 
 	protected function _applyFilter(QueryBuilderInterface $queryBuilder)
 	{
 		$queryBuilder->leftJoin('page_content', 'page.page_id = page_content.page_id')
 			->where('page_content.field_name = ?s', [$this->_field])
-			->where('page_content.value_string = ?s', [$this->_value])
+			->where('page_content.value_string IN (?js)', [$this->_value])
 		;
 
 		if ($this->_group) {
@@ -87,7 +92,11 @@ class ContentFilter extends AbstractFilter implements ContentFilterInterface
 		$choices = [];
 
 		foreach ($result as $value) {
-			$choices[$value] = $value;
+			$value = (string) $value;
+
+			if ($value !== '') {
+				$choices[$value] = $value;
+			}
 		}
 
 		$this->setOptions(['choices' => $choices]);

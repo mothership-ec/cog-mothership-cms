@@ -18,10 +18,12 @@ class PageFilter extends Controller
 	/**
 	 * @param string | FilterCollection $filters       The name of the service for the filter collection to use when
 	 *                                                 building the form
+	 * @param array $data
+	 * @param array $options
 	 *
 	 * @return \Message\Cog\HTTP\Response
 	 */
-	public function filterForm($filters)
+	public function filterForm($filters, array $data = null, array $options = [])
 	{
 		if (!is_string($filters) && !$filters instanceof FilterCollection) {
 			throw new \InvalidArgumentException('Parameter to render filter form must be either the service name of the filter collection or an instance of \\Message\\Cog\\Filter\\FilterCollection');
@@ -37,7 +39,7 @@ class PageFilter extends Controller
 		}
 
 		return $this->render('Message:Mothership:CMS::modules:filter_form', [
-			'form' => $this->createForm($this->get('filter.form_factory')->getForm($filters))
+			'form' => $this->createForm($this->get('filter.form_factory')->getForm($filters), $data, $options)
 		]);
 	}
 }
