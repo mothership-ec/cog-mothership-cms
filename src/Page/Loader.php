@@ -48,10 +48,24 @@ use Message\Cog\DB\Entity\EntityLoaderCollection;
  */
 class Loader
 {
+	/**
+	 * @var PageTypeCollection
+	 */
 	protected $_pageTypes;
+
+	/**
+	 * @var Authorisation
+	 */
 	protected $_authorisation;
+
+	/**
+	 * @var EntityLoaderCollection
+	 */
 	protected $_loaders;
 
+	/**
+	 * @var Pagination
+	 */
 	protected $_pagination;
 
 	/**
@@ -79,6 +93,10 @@ class Loader
 	 * @var boolean
 	 */
 	protected $_loadUnpublished = true;
+
+	/**
+	 * @var bool
+	 */
 	protected $_loadUnviewable  = true;
 
 	/**
@@ -88,6 +106,9 @@ class Loader
 	 */
 	private $_order = PageOrder::STANDARD;
 
+	/**
+	 * @var bool
+	 */
 	private $_returnAsArray;
 
 	/**
@@ -477,6 +498,11 @@ class Loader
 		return $this->_searcher->getSorted($results);
 	}
 
+	/**
+	 * @param Pagination $pagination
+	 *
+	 * @return Loader
+	 */
 	public function setPagination(Pagination $pagination)
 	{
 		$this->_pagination = $pagination;
@@ -537,6 +563,8 @@ class Loader
 		foreach ($filters as $filter) {
 			$filter->apply($this->_queryBuilder);
 		}
+
+		$this->_filters = true;
 	}
 
 	/**
@@ -568,24 +596,27 @@ class Loader
 	/**
 	 * Assign a new instance of QueryBuilder to the loader and build the main query for
 	 * loading pages
+	 *
+	 * @param $replace bool    Set to replace the existing query builder if it exists
 	 */
-	private function _buildQuery()
+	private function _buildQuery($replace = false)
 	{
-		$this->_queryBuilder = $this->_queryBuilderFactory
-			->getQueryBuilder()
-			->select([
-				'page.page_id AS id',
-				'page.title AS title',
-				'page.type AS type',
-				'page.publish_at AS publishAt',
-				'page.unpublish_at AS unpublishAt',
-				'page.created_at AS createdAt',
-				'page.created_by AS createdBy',
-				'page.updated_at AS updatedAt',
-				'page.created_by AS updatedBy',
-				'page.deleted_at AS deletedAt',
-				'page.deleted_by AS deletedBy',
-				'IFNULL(CONCAT((
+		if (null === $this->_queryBuilder || $replace === true) {
+			$this->_queryBuilder = $this->_queryBuilderFactory
+				->getQueryBuilder()
+				->select([
+					'page.page_id AS id',
+					'page.title AS title',
+					'page.type AS type',
+					'page.publish_at AS publishAt',
+					'page.unpublish_at AS unpublishAt',
+					'page.created_at AS createdAt',
+					'page.created_by AS createdBy',
+					'page.updated_at AS updatedAt',
+					'page.created_by AS updatedBy',
+					'page.deleted_at AS deletedAt',
+					'page.deleted_by AS deletedBy',
+					'IFNULL(CONCAT((
 					SELECT
 						CONCAT(\'/\',GROUP_CONCAT(p.slug ORDER BY p.position_depth ASC SEPARATOR \'/\'))
 					FROM
@@ -594,33 +625,33 @@ class Loader
 						p.position_left < page.position_left
 					AND
 						p.position_right > page.position_right),\'/\',page.slug),page.slug) AS slug',
-				'page.position_left AS `left`',
-				'page.position_right AS `right`',
-				'page.position_depth AS depth',
-				'page.meta_title AS metaTitle',
-				'page.meta_description AS metaDescription',
-				'page.meta_html_head AS metaHtmlHead',
-				'page.meta_html_foot AS metaHtmlFoot',
-				'page.visibility_search AS visibilitySearch',
-				'page.visibility_menu AS visibilityMenu',
-				'page.visibility_aggregator AS visibilityAggregator',
-				'page.password AS password',
-				'page.access AS access',
-				'GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups',
-			])
-			->from('page')
-			->leftJoin('page_access_group', 'page_access_group.page_id = page.page_id')
-			->groupBy('page.page_id')
-			->orderBy($this->_getOrderStatement())
-		;
+					'page.position_left AS `left`',
+					'page.position_right AS `right`',
+					'page.position_depth AS depth',
+					'page.meta_title AS metaTitle',
+					'page.meta_description AS metaDescription',
+					'page.meta_html_head AS metaHtmlHead',
+					'page.meta_html_foot AS metaHtmlFoot',
+					'page.visibility_search AS visibilitySearch',
+					'page.visibility_menu AS visibilityMenu',
+					'page.visibility_aggregator AS visibilityAggregator',
+					'page.password AS password',
+					'page.access AS access',
+					'GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups',
+				])
+				->from('page')
+				->leftJoin('page_access_group', 'page_access_group.page_id = page.page_id')
+				->groupBy('page.page_id')
+				->orderBy($this->_getOrderStatement());
 
-		if (!$this->_loadDeleted) {
-			$this->_queryBuilder->where('page.deleted_at IS NULL');
-		}
+			if (!$this->_loadDeleted) {
+				$this->_queryBuilder->where('page.deleted_at IS NULL');
+			}
 
-		if (!$this->_loadUnpublished) {
-			$this->_queryBuilder->where('page.publish_at < ?d', [new DateTimeImmutable]);
-			$this->_queryBuilder->where('(page.unpublish_at > ?d OR page.unpublish_at IS NULL)', [new DateTimeImmutable]);
+			if (!$this->_loadUnpublished) {
+				$this->_queryBuilder->where('page.publish_at < ?d', [new DateTimeImmutable]);
+				$this->_queryBuilder->where('(page.unpublish_at > ?d OR page.unpublish_at IS NULL)', [new DateTimeImmutable]);
+			}
 		}
 	}
 

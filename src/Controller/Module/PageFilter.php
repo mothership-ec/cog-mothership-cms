@@ -18,6 +18,8 @@ class PageFilter extends Controller
 	/**
 	 * @param string | FilterCollection $filters       The name of the service for the filter collection to use when
 	 *                                                 building the form
+	 *
+	 * @return \Message\Cog\HTTP\Response
 	 */
 	public function filterForm($filters)
 	{

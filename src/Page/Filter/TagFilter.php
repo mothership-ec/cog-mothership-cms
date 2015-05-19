@@ -9,8 +9,8 @@ class TagFilter extends AbstractFilter
 {
 	public function setValue($value)
 	{
-		if (!is_string($value)) {
-			throw new \LogicException('Value must be a string');
+		if (!is_array($value)) {
+			throw new \LogicException('Tag filter value must be an array');
 		}
 
 		$this->_value = $value;
@@ -18,8 +18,12 @@ class TagFilter extends AbstractFilter
 
 	protected function _applyFilter(QueryBuilderInterface $queryBuilder)
 	{
-		$queryBuilder->leftJoin('page_tag', 'page.page_id = page_tag.page_id')
-			->where('page_tage.tag_name = ?s', $this->_value)
+		if (empty($this->_value)) {
+			return;
+		}
+
+		$queryBuilder->leftJoin('page_tag', 'page_tag.page_id = page.page_id')
+			->where('page_tag.tag_name IN (?js)', [$this->_value])
 		;
 	}
 }
