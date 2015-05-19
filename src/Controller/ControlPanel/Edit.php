@@ -567,7 +567,8 @@ class Edit extends \Message\Cog\Controller\Controller
 				$this->addFlash('error',  $this->trans('ms.cms.feedback.force-slug.failure.reserved-route'));
 			}
 		} catch (\Symfony\Component\Routing\Exception\ResourceNotFoundException $e) {	
-			// no route found so we can continue
+			$this->addFlash('error', $this->trans('ms.cms.feedback.force-slug.failure.not-matched'));
+			$update = false;
 		}
 
 		// If not slug has been found, we need to check the history too
