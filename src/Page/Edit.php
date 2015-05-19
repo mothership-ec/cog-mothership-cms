@@ -141,9 +141,14 @@ class Edit implements TransactionalInterface
 	 */
 	public function updateSlug(Page $page, $newSlug)
 	{
+		if (!preg_match(Page::SLUG_PATTERN, $newSlug)) {
+			throw new Exception\InvalidSlugException('Slug must only be formed of alphanumeric characters and hyphens.');
+		}
+
 		// Get all the segements
 		$segements = $page->slug->getSegments();
 		$date = new DateTimeImmutable;
+
 		$this->_transaction->run('
 			REPLACE INTO
 				page_slug_history
