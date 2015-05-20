@@ -51,15 +51,10 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 	 * @returns {string}
 	 */
 	function appendFormDataToUrl(url) {
-		var	dataString = form.serialize(),
-			baseUrl = url.split('?')[0]
+		var baseUrl = url.split('?')[0]
 			;
 
-		if (dataString) {
-			return baseUrl + '?' + replaceParams(url);
-		}
-
-		return url;
+		return baseUrl + '?' + replaceParams(url);
 	}
 
 	/**
@@ -74,21 +69,41 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 			dataArray = form.serializeArray(),
 			params = {},
 			newParamString = '',
-			first = true
+			first = true,
+			inputs = $(form).find('[name]'),
+			noValueInputs = []
 		;
+
+		$.each(inputs, function (i, v) {
+			noValueInputs.push($(v).attr('name'));
+		});
+
+		$.each(dataArray, function (i, v) {
+			var index = noValueInputs.indexOf(v['name']);
+
+			if (index > -1) {
+				noValueInputs.splice(index, 1);
+			}
+		});
 
 		// Split parameters into key/value pairs
 		$.each(paramArray, function(i, v) {
-			var split = v.split('=');
+			var split = v.split('=')
+				;
 
 			if (split.length === 2) {
-				params[decodeURIComponent(split[0])] = split[1];
+				var name = decodeURIComponent(split[0]);
+
+				if (noValueInputs.indexOf(name) === -1) {
+
+					params[name] = split[1];
+				}
 			}
 		});
 
 		// Build params object from array of parameters taken from the URL
 		$.each(dataArray, function(i, v) {
-			// Check
+			// Check whether it is a multivalue field e.g. checkboxes
 			var pattern = /\[\]$/,
 				value = v['value'].split(' ');
 
@@ -112,9 +127,6 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 
 		// Loop through params to build new parameter string
 		$.each(params, function(i, v) {
-			if (false === first) {
-				newParamString += '&';
-			}
 			if (v.constructor === Array) {
 				$.each(v, function (index, value) {
 					if (false === first) {
@@ -124,6 +136,9 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 					first = false;
 				})
 			} else {
+				if (false === first) {
+					newParamString += '&';
+				}
 				newParamString += encodeURIComponent(i) + '=' + v;
 				first = false;
 			}
