@@ -3,7 +3,7 @@
  *
  * @param ajaxUrl               URL to send AJAX request to
  * @param filterDestinationID   Identifier to inject response HTML into
- * @param method                Method to submit the form with
+ * @param method                Method to submit the form with - recommended to use GET for pagination
  * @param formID                The filtering form ID, defaults to '#page-filter-form'
  * @param paginationMenuID      The ID of the pagination menu, defaults to '#pagination-menu'
  */
@@ -16,10 +16,15 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 		paginationMenuLinks = paginationMenuID ? paginationMenuID + ' a' : '#pagination-menu a'
 		;
 
+	// Validate form method
 	if (submitMethod.toLowerCase() !== 'get' && submitMethod.toLowerCase !== 'post') {
 		alert('Third parameter must be either \'post\' or \'get\'');
 	}
 
+	// Declare functions
+	/**
+	 * Collect form data and append it to the hrefs of the pagination links if the method is set to get
+	 */
 	function appendFormDataToPagination() {
 		if (submitMethod.toLowerCase() === 'get') {
 			$(paginationMenuLinks).attr('href', function (i) {
@@ -29,11 +34,22 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 		}
 	}
 
+	/**
+	 * Collection form data and append it to the URL in the address bar
+	 */
 	function appendFormDataToAddressUrl() {
-		var url = window.location.href;
-		window.history.pushState('string', 'Title', appendFormDataToUrl(url));
+		if (submitMethod.toLowerCase() === 'get') {
+			var url = window.location.href;
+			window.history.pushState('string', 'Title', appendFormDataToUrl(url));
+		}
 	}
-	
+
+	/**
+	 * Collection form data and add it to the end of a URL
+	 *
+	 * @param url {string}
+	 * @returns {string}
+	 */
 	function appendFormDataToUrl(url) {
 		var	dataString = form.serialize(),
 			baseUrl = url.split('?')[0]
@@ -46,6 +62,12 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 		return url;
 	}
 
+	/**
+	 * Replace the parameters of the URL with the data from the form
+	 *
+	 * @param url {string}
+	 * @returns {string}
+	 */
 	function replaceParams(url) {
 		var paramString = url.substring(url.indexOf('?') + 1),
 			paramArray = paramString.split('&'),
@@ -55,6 +77,7 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 			first = true
 		;
 
+		// Split parameters into key/value pairs
 		$.each(paramArray, function(i, v) {
 			var split = v.split('=');
 
@@ -63,9 +86,20 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 			}
 		});
 
+		// Build params object from array of parameters taken from the URL
 		$.each(dataArray, function(i, v) {
-			var pattern = /\[\]$/;
+			// Check
+			var pattern = /\[\]$/,
+				value = v['value'].split(' ');
 
+			// URL encode values, replacing spaces with pluses
+			$.each(value, function (key, word) {
+				value[key] = encodeURIComponent(word);
+			});
+
+			v['value'] = value.join('+');
+
+			// If form value is an array, rebuild array as the value for that property on the params object
 			if (pattern.test(v['name'])) {
 				if (typeof params[v['name']] === 'undefined' || params[v['name']].constructor !== Array) {
 					params[v['name']] = [];
@@ -76,23 +110,34 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 			}
 		});
 
-		console.log($.param(params));
-
+		// Loop through params to build new parameter string
 		$.each(params, function(i, v) {
 			if (false === first) {
 				newParamString += '&';
 			}
-			newParamString += encodeURIComponent(i) + '=' + encodeURIComponent(v);
-			first = false;
+			if (v.constructor === Array) {
+				$.each(v, function (index, value) {
+					if (false === first) {
+						newParamString += '&';
+					}
+					newParamString += encodeURIComponent(i) + '=' + value;
+					first = false;
+				})
+			} else {
+				newParamString += encodeURIComponent(i) + '=' + v;
+				first = false;
+			}
 		});
 
 		return newParamString;
 	}
 
+	// Hide submit button
 	button.hide();
 
 	appendFormDataToPagination();
 
+	// Submit form when values change and populate the filter destination with the result
 	form.change(function () {
 		filterDestination.addClass('loading');
 		$.ajax({
