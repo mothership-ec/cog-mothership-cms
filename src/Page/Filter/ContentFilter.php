@@ -10,8 +10,10 @@ use Message\Cog\DB\QueryBuilderInterface;
  * Class ContentFilter
  *
  * @author Thomas Marchant <thomas@mothership.ec>
+ *
+ * Filter for finding pages with matching content
  */
-class ContentFilter extends AbstractFilter implements ContentFilterInterface
+class ContentFilter extends AbstractContentFilter
 {
 	const CONTENT_ALIAS = 'content_filter_pc';
 
@@ -21,15 +23,12 @@ class ContentFilter extends AbstractFilter implements ContentFilterInterface
 	private $_queryBuilderFactory;
 
 	/**
-	 * @var string
+	 * @param $name
+	 * @param $displayName
+	 * @param QueryBuilderFactory $queryBuilderFactory
+	 *
+	 * Include instance of QueryBuilderFactory to allow choices to be automatically loaded
 	 */
-	protected $_field;
-
-	/**
-	 * @var string
-	 */
-	protected $_group;
-
 	public function __construct($name, $displayName, QueryBuilderFactory $queryBuilderFactory)
 	{
 		parent::__construct($name, $displayName);
@@ -37,22 +36,22 @@ class ContentFilter extends AbstractFilter implements ContentFilterInterface
 		$this->_queryBuilderFactory = $queryBuilderFactory;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Call `setChoices()` after assigning the field and group
+	 */
 	public function setField($field, $group = null)
 	{
-		if (!is_string($field)) {
-			throw new \InvalidArgumentException('Field must be a string, ' . gettype($field) . ' given');
-		}
-
-		if (null !== $group && !is_string($group)) {
-			throw new \InvalidArgumentException('Group must be a string, ' . gettype($group) . ' given');
-		} elseif ($group) {
-			$this->_group = $group;
-		}
-
-		$this->_field = $field;
+		parent::setField($field, $group);
 		$this->_setChoices();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @throws \InvalidArgumentException    Throws exception if value is not an array
+	 */
 	public function setValue($value)
 	{
 		if (!is_array($value)) {
@@ -68,20 +67,33 @@ class ContentFilter extends AbstractFilter implements ContentFilterInterface
 		$this->_value = $value;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected function _applyFilter(QueryBuilderInterface $queryBuilder)
 	{
-		$queryBuilder->leftJoin(self::CONTENT_ALIAS, $this->_getJoinStatement(), 'page_content')
-			->where(self::CONTENT_ALIAS . '.field_name = ?s', [$this->_field])
-			->where(self::CONTENT_ALIAS . '.value_string IN (?js)', [$this->_value]);
+		$queryBuilder->leftJoin($this->_getContentAlias(), $this->_getJoinStatement(), 'page_content')
+			->where($this->_getContentAlias() . '.field_name = ?s', [$this->_field])
+			->where($this->_getContentAlias() . '.value_string IN (?js)', [$this->_value]);
 	}
 
+	/**
+	 * Load content assigned to field
+	 */
 	private function _setChoices()
 	{
-		$result = $this->_queryBuilderFactory->getQueryBuilder()
+		$queryBuilder = $this->_queryBuilderFactory->getQueryBuilder()
 			->select('value_string', true)
 			->from('page_content')
-			->where('field_name = ?s', [$this->_field])
-			->getQuery()
+			->where('field_name = ?s', [$this->_field]);
+
+		if (null !== $this->_group) {
+			$queryBuilder->where('group_name = ?s', [$this->_group]);
+		} else {
+			$queryBuilder->where('(group_name IS NULL OR group_name = \'\')');
+		}
+
+		$result = $queryBuilder->getQuery()
 			->run()
 			->flatten();
 
@@ -98,12 +110,11 @@ class ContentFilter extends AbstractFilter implements ContentFilterInterface
 		$this->setOptions(['choices' => $choices]);
 	}
 
-	private function _getJoinStatement()
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function _getContentAlias()
 	{
-		return 'page.page_id = ' . self::CONTENT_ALIAS . '.page_id  AND (' . self::CONTENT_ALIAS . '.group_name '
-		. ($this->_group ?
-			'= \'' . $this->_group . '\'' :
-			' IS NULL OR ' . self::CONTENT_ALIAS . '.group_name = \'\''
-		) . ')';
+		return self::CONTENT_ALIAS;
 	}
 }

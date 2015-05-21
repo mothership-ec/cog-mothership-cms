@@ -7,6 +7,9 @@ namespace Message\Mothership\CMS\Page\Filter;
  * @package Message\Mothership\CMS\Page\Filter
  *
  * @author  Thomas Marchant <thomas@mothership.ec>
+ *
+ * Interface representing filters that filter by page content.
+ * Includes `setField()` method for setting the field to filter content by.
  */
 interface ContentFilterInterface
 {

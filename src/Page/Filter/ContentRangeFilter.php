@@ -11,20 +11,12 @@ use Message\Mothership\CMS\Form\RangeFilterForm;
  * @package Message\Mothership\CMS\Page\Filter
  *
  * @author  Thomas Marchant <thomas@mothership.ec>
+ *
+ * Filter for finding pages that exist with content values within a certain range
  */
-class ContentRangeFilter extends AbstractFilter implements ContentFilterInterface
+class ContentRangeFilter extends AbstractContentFilter
 {
 	const CONTENT_ALIAS = 'content_range_filter_pc';
-
-	/**
-	 * @var string
-	 */
-	protected $_field;
-
-	/**
-	 * @var string
-	 */
-	protected $_group;
 
 	/**
 	 * @var array
@@ -43,25 +35,7 @@ class ContentRangeFilter extends AbstractFilter implements ContentFilterInterfac
 	{
 		return new RangeFilterForm;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function setField($field, $group = null)
-	{
-		if (!is_string($field)) {
-			throw new \InvalidArgumentException('Field must be a string, ' . gettype($field) . ' given');
-		}
-
-		if (null !== $group && !is_string($group)) {
-			throw new \InvalidArgumentException('Group must be a string, ' . gettype($group) . ' given');
-		} elseif ($group) {
-			$this->_group = $group;
-		}
-
-		$this->_field = $field;
-	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 *
@@ -110,15 +84,15 @@ class ContentRangeFilter extends AbstractFilter implements ContentFilterInterfac
 
 		foreach ($this->_value as $key => $value) {
 			if (false === $joinedContent && null !== $value) {
-				$queryBuilder->leftJoin(self::CONTENT_ALIAS, $this->_getJoinStatement(), 'page_content')
-					->where(self::CONTENT_ALIAS . '.field_name = ?s', [$this->_field]);
+				$queryBuilder->leftJoin($this->_getContentAlias(), $this->_getJoinStatement(), 'page_content')
+					->where($this->_getContentAlias() . '.field_name = ?s', [$this->_field]);
 				$joinedContent = true;
 			}
 			if (null !== $value) {
 				if ($key === RangeFilterForm::MIN) {
-					$queryBuilder->where(self::CONTENT_ALIAS . '.value_string >= ?s', [$this->_value[RangeFilterForm::MIN]]);
+					$queryBuilder->where($this->_getContentAlias() . '.value_string >= ?s', [$this->_value[RangeFilterForm::MIN]]);
 				} elseif ($key === RangeFilterForm::MAX) {
-					$queryBuilder->where(self::CONTENT_ALIAS . '.value_string <= ?s', [$this->_value[RangeFilterForm::MAX]]);
+					$queryBuilder->where($this->_getContentAlias() . '.value_string <= ?s', [$this->_value[RangeFilterForm::MAX]]);
 				} else {
 					throw new \LogicException('Key `' . $key . '` should not exist on value!');
 				}
@@ -126,12 +100,11 @@ class ContentRangeFilter extends AbstractFilter implements ContentFilterInterfac
 		}
 	}
 
-	private function _getJoinStatement()
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function _getContentAlias()
 	{
-		return 'page.page_id = ' . self::CONTENT_ALIAS . '.page_id  AND (' . self::CONTENT_ALIAS . '.group_name '
-		. ($this->_group ?
-			'= \'' . $this->_group . '\'' :
-			' IS NULL OR ' . self::CONTENT_ALIAS . '.group_name = \'\''
-		) . ')';
+		return self::CONTENT_ALIAS;
 	}
 }

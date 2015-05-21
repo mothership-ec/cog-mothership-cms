@@ -5,8 +5,19 @@ namespace Message\Mothership\CMS\Page\Filter;
 use Message\Cog\Filter\AbstractFilter;
 use Message\Cog\DB\QueryBuilderInterface;
 
+/**
+ * Class TagFilter
+ * @package Message\Mothership\CMS\Page\Filter
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ *
+ * Class for filtering pages by tag
+ */
 class TagFilter extends AbstractFilter
 {
+	/**
+	 * {@inheritDoc}
+	 */
 	public function setValue($value)
 	{
 		if (!is_array($value)) {
@@ -16,6 +27,9 @@ class TagFilter extends AbstractFilter
 		$this->_value = $value;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected function _applyFilter(QueryBuilderInterface $queryBuilder)
 	{
 		if (empty($this->_value)) {
