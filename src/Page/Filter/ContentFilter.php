@@ -13,6 +13,8 @@ use Message\Cog\DB\QueryBuilderInterface;
  */
 class ContentFilter extends AbstractFilter implements ContentFilterInterface
 {
+	const CONTENT_ALIAS = 'content_filter_pc';
+
 	/**
 	 * @var QueryBuilderFactory
 	 */
@@ -68,14 +70,9 @@ class ContentFilter extends AbstractFilter implements ContentFilterInterface
 
 	protected function _applyFilter(QueryBuilderInterface $queryBuilder)
 	{
-		$queryBuilder->leftJoin('page_content', 'page.page_id = page_content.page_id')
-			->where('page_content.field_name = ?s', [$this->_field])
-			->where('page_content.value_string IN (?js)', [$this->_value])
-		;
-
-		if ($this->_group) {
-			$queryBuilder->where('page_content.group_name = ?s', [$this->_group]);
-		}
+		$queryBuilder->leftJoin(self::CONTENT_ALIAS, $this->_getJoinStatement(), 'page_content')
+			->where(self::CONTENT_ALIAS . '.field_name = ?s', [$this->_field])
+			->where(self::CONTENT_ALIAS . '.value_string IN (?js)', [$this->_value]);
 	}
 
 	private function _setChoices()
@@ -86,13 +83,12 @@ class ContentFilter extends AbstractFilter implements ContentFilterInterface
 			->where('field_name = ?s', [$this->_field])
 			->getQuery()
 			->run()
-			->flatten()
-		;
+			->flatten();
 
 		$choices = [];
 
 		foreach ($result as $value) {
-			$value = (string) $value;
+			$value = (string)$value;
 
 			if ($value !== '') {
 				$choices[$value] = $value;
@@ -100,5 +96,14 @@ class ContentFilter extends AbstractFilter implements ContentFilterInterface
 		}
 
 		$this->setOptions(['choices' => $choices]);
+	}
+
+	private function _getJoinStatement()
+	{
+		return 'page.page_id = ' . self::CONTENT_ALIAS . '.page_id  AND (' . self::CONTENT_ALIAS . '.group_name '
+		. ($this->_group ?
+			'= \'' . $this->_group . '\'' :
+			' IS NULL OR ' . self::CONTENT_ALIAS . '.group_name = \'\''
+		) . ')';
 	}
 }

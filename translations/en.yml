@@ -227,6 +227,9 @@ ms.cms:
       ip: IP address
       comment: Comment
       status: Status
+  page_filter:
+    min: From
+    max: To
 page:
   blog:
     comments:
