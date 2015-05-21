@@ -29,7 +29,7 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 		if (submitMethod.toLowerCase() === 'get') {
 			$(paginationMenuLinks).attr('href', function (i) {
 				var url = $(this).attr('href');
-				return appendFormDataToUrl(url);
+				return appendFormDataToUrl(url, false);
 			});
 		}
 	}
@@ -40,7 +40,7 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 	function appendFormDataToAddressUrl() {
 		if (submitMethod.toLowerCase() === 'get') {
 			var url = window.location.href;
-			window.history.pushState('string', 'Title', appendFormDataToUrl(url));
+			window.history.pushState('string', 'Title', appendFormDataToUrl(url, true));
 		}
 	}
 
@@ -50,9 +50,16 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 	 * @param url {string}
 	 * @returns {string}
 	 */
-	function appendFormDataToUrl(url) {
-		var baseUrl = url.split('?')[0]
+	function appendFormDataToUrl(url, removeExisting) {
+		var baseUrl = url.split('?')[0],
+			dataString = form.serialize()
 			;
+
+		if (removeExisting && dataString) {
+			return baseUrl + '?' + dataString;
+		} else if (removeExisting) {
+			return baseUrl;
+		}
 
 		return baseUrl + '?' + replaceParams(url);
 	}

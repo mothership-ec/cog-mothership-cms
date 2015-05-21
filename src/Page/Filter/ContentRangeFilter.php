@@ -53,13 +53,17 @@ class ContentRangeFilter extends AbstractFilter implements ContentFilterInterfac
 		if (!array_key_exists(RangeFilterForm::MIN, $value)) {
 			$value[RangeFilterForm::MIN] = null;
 		} else {
-			$value[RangeFilterForm::MIN] = (float) $value[RangeFilterForm::MIN];
+			$value[RangeFilterForm::MIN] = ($value[RangeFilterForm::MIN] instanceof \DateTime) ?
+				$value[RangeFilterForm::MIN]->getTimestamp() :
+				(float) $value[RangeFilterForm::MIN];
 		}
 
 		if (!array_key_exists(RangeFilterForm::MAX, $value)) {
 			$value[RangeFilterForm::MAX] = null;
 		} else {
-			$value[RangeFilterForm::MAX] = (float) $value[RangeFilterForm::MAX];
+			$value[RangeFilterForm::MAX] = ($value[RangeFilterForm::MAX] instanceof \DateTime) ?
+				$value[RangeFilterForm::MAX]->getTimestamp() :
+				(float) $value[RangeFilterForm::MAX];
 		}
 
 		if (count($value) !== 2) {
@@ -73,9 +77,15 @@ class ContentRangeFilter extends AbstractFilter implements ContentFilterInterfac
 	{
 		$queryBuilder->leftJoin('page_content', 'page.page_id = page_content.page_id')
 			->where('page_content.field_name = ?s', [$this->_field])
-			->where('page_content.value_string >= ?s', [$this->_value[RangeFilterForm::MIN]])
-			->where('page_content.value_string <= ?s', [$this->_value[RangeFilterForm::MAX]])
 		;
+
+		if (null !== $this->_value[RangeFilterForm::MIN]) {
+			$queryBuilder->where('page_content.value_string >= ?s', [$this->_value[RangeFilterForm::MIN]]);
+		}
+
+		if (null !== $this->_value[RangeFilterForm::MAX]) {
+			$queryBuilder->where('page_content.value_string <= ?s', [$this->_value[RangeFilterForm::MAX]]);
+		}
 
 		if ($this->_group) {
 			$queryBuilder->where('page_content.group_name = ?s', [$this->_group]);

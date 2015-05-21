@@ -39,7 +39,27 @@ class PageFilter extends Controller
 		}
 
 		return $this->render('Message:Mothership:CMS::modules:filter_form', [
-			'form' => $this->createForm($this->get('filter.form_factory')->getForm($filters), $data, $options)
+			'form' => $this->_getForm($filters, $data, $options)
 		]);
+	}
+
+	/**
+	 * Gets the data to populate the form. Unfortunately this is somewhat inefficient as it involves building
+	 * the form twice, but I can't think of a better way to do it.
+	 *
+	 * @param FilterCollection $filters
+	 * @param array $data
+	 * @param array $options
+	 *
+	 * @return \Symfony\Component\Form\Form;
+	 */
+	private function _getForm(FilterCollection $filters, array $data = null, array $options = [])
+	{
+		$form = $this->createForm($this->get('filter.form_factory')->getForm($filters));
+		$form->handleRequest();
+
+		$data = $form->getData() ?: $data;
+
+		return $this->createForm($this->get('filter.form_factory')->getForm($filters), $data, $options);
 	}
 }

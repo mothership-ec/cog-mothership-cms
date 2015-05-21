@@ -372,30 +372,20 @@ class Loader
 				;
 			}
 		} else {
-			// Don't try this at home. Since the QueryBuilder doesn't allow us to parse variables in
-			// ON statements, I am casting the page depth to an integer here to give to the query
-			// directly.
-			$pageDepth = (int) $page->depth;
-
 			$subQuery = $this->_queryBuilderFactory->getQueryBuilder()
-				->select('children.page_id')
-				->from('parent', 'page')
-				->leftJoin('children', '
-					children.position_left = parent.position_left
-					AND children.position_right < parent.position_right
-					AND children.position_depth = ' . $pageDepth . '
-				', 'page')
-				->where('parent.position_left < ?i', [$page->left])
-				->where('parent.position_depth = ?i', [$page->depth])
+				->select('page.page_id')
+				->from('page')
+				->where('page.position_left < ?i', [$page->left])
+				->where('page.position_right >= ?i', [$page->left])
+				->where('page.position_depth = ?i - 1', [$page->depth])
 			;
-
-			if (!$includeRequestPage) {
-				$subQuery->where('children.page_id <> ?i', [$page->id]);
-			}
 
 			$this->_queryBuilder
-				->join('siblings', 'siblings.page_id = page.page_id', $subQuery)
-			;
+				->where('page.page_id IN (?s)', [$subQuery->getQueryString()]);
+
+			if (!$includeRequestPage) {
+				$this->_queryBuilder->where('page.page_id != ?i', [$page->id]);
+			}
 
 		}
 
