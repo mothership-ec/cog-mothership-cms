@@ -356,7 +356,7 @@ class Loader
 	 */
 	public function getSiblings(Page $page, $includeRequestPage = false)
 	{
-		$parentQuery = null;
+		$this->_returnAsArray = true;
 		$this->_buildQuery();
 
 		// If the page is in the top level, just load all top level pages, else work out
@@ -372,16 +372,21 @@ class Loader
 				;
 			}
 		} else {
-			$subQuery = $this->_queryBuilderFactory->getQueryBuilder()
-				->select('page.page_id')
+			$parentQuery = $this->_queryBuilderFactory->getQueryBuilder()
+				->select(['page_id', 'position_left', 'position_right', 'position_depth'])
 				->from('page')
 				->where('page.position_left < ?i', [$page->left])
 				->where('page.position_right >= ?i', [$page->left])
 				->where('page.position_depth = ?i - 1', [$page->depth])
 			;
 
+			$onStatement = 'page.position_left > parent.position_left
+				AND page.position_right < parent.position_right
+				AND page.position_depth = parent.position_depth + 1';
+
 			$this->_queryBuilder
-				->where('page.page_id IN (?s)', [$subQuery->getQueryString()]);
+				->join('parent', $onStatement, $parentQuery)
+			;
 
 			if (!$includeRequestPage) {
 				$this->_queryBuilder->where('page.page_id != ?i', [$page->id]);
