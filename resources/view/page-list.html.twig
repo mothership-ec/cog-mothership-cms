@@ -1,0 +1,31 @@
+<table>
+    <tr>
+        <th>Page title</th>
+        <th>Created on</th>
+        <th>Created by</th>
+        <th>Last updated</th>
+    </tr>    
+    {{ _self.menu_links(tree, currentPageID) }}
+</table>
+
+{% macro menu_links(links, currentPageID) %}
+    {% for link in links %}
+    <tr>
+        <td>
+            <a href="{{ url('ms.cp.cms.edit', {pageID: link.id}) }}" data-live>{{ link.title }}</a>
+        </td>
+        <td>
+            {{ link.authorship.createdAt|date }}
+        </td>    
+        <td>
+            {{ link.authorship.createdUser.name }} 
+        </td> 
+        <td>
+            {{ link.authorship.updatedAt|date }}
+        </td>    
+    </tr>
+        {% if link.children %}
+                {{ _self.menu_links(link.children, currentPageID) }}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
