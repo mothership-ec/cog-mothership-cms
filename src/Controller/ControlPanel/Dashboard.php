@@ -9,13 +9,47 @@ class Dashboard extends Controller
 {
 	public function index()
 	{
-		$event = $this->get('event.dispatcher')->dispatch(
-			'dashboard.cms.content',
-			new DashboardEvent
-		);
+		return $this->render('Message:Mothership:CMS::dashboard');
+	}
 
-		return $this->render('::dashboard', [
-			'dashboardReferences' => $event->getReferences()
-		]);
+	public function pageList($currentPageID = null)
+	{
+		$loader = $this->_services['cms.page.loader'];
+		$pages  = $loader->getAll();
+		$hasPages = !empty($pages);
+		$values = $this->buildTree($pages);
+		
+		return $this->render('Message:Mothership:CMS::page-list', array(
+			'tree'          => $values,
+			'hasPages'      => $hasPages,
+			'currentPageID' => $currentPageID,
+		));
+	}
+
+	/**
+	 * Build the full page tree and return a nice array
+	 *
+	 * @param  array  	$arr 		array of page objects
+	 * @param  Page  	$prev_sub  	loop of the page which is recurssive
+	 * @param  integer 	$cur_depth 	The current recurrsive depth
+	 *
+	 * @return array 				array of nested page objects
+	 */
+	public function buildTree(&$arr, &$prev_sub = null, $cur_depth = 0) {
+		$cur_sub = array();
+
+		while (!empty($arr) && ($line = current($arr))) {
+			if ($line->depth < $cur_depth) {
+				return $cur_sub;
+			} elseif ($line->depth > $cur_depth) {
+				$prev_sub = $this->buildTree($arr, $cur_sub, $cur_depth + 1);
+			} else {
+				$cur_sub[$line->id] = $line;
+				$prev_sub =& $cur_sub[$line->id]->children;
+				next($arr);
+			}
+		}
+
+		return $cur_sub;
 	}
 }

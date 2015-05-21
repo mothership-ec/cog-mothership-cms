@@ -1,4 +1,4 @@
-{% extends 'Message:Mothership:ControlPanel::_templates/cp' %}
+{% extends 'Message:Mothership:CMS::dashboard' %}
 
 {% block stylesheets %}
 	{{ parent() }}
@@ -12,7 +12,9 @@
 	{% endstylesheets %}
 {% endblock %}
 
-{% block main %}
+{% block slideAttr 'data-slide-loaded' %}
+
+{% block slide %}
 	<hgroup class="title">
 		<h1 data-title>{{ page.title }}<span>{{ page.type.getDisplayName() }}</span></h1>
 	</hgroup>
