@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2930f74dfbdf5111d15b18d61d60bdea",
+    "hash": "e49a92b36375f9aeb7f7f0e19651a8d6",
     "packages": [
         {
             "name": "dflydev/markdown",
@@ -626,16 +626,16 @@
         },
         {
             "name": "mothership-ec/cog",
-            "version": "dev-feature/filtering-component",
+            "version": "4.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mothership-ec/cog.git",
-                "reference": "17d1a8f5af8b0660a594273200d45d96e0a744a7"
+                "reference": "31458c092f65b896295ae69aa7f72b221cdfa55d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mothership-ec/cog/zipball/17d1a8f5af8b0660a594273200d45d96e0a744a7",
-                "reference": "17d1a8f5af8b0660a594273200d45d96e0a744a7",
+                "url": "https://api.github.com/repos/mothership-ec/cog/zipball/31458c092f65b896295ae69aa7f72b221cdfa55d",
+                "reference": "31458c092f65b896295ae69aa7f72b221cdfa55d",
                 "shasum": ""
             },
             "require": {
@@ -715,7 +715,7 @@
                 "cog",
                 "framework"
             ],
-            "time": "2015-05-15 12:38:04"
+            "time": "2015-05-22 12:42:01"
         },
         {
             "name": "mothership-ec/cog-imageresize",
@@ -2510,18 +2510,9 @@
         }
     ],
     "packages-dev": [],
-    "aliases": [
-        {
-            "alias": "4.4.0",
-            "alias_normalized": "4.4.0.0",
-            "version": "dev-feature/filtering-component",
-            "package": "mothership-ec/cog"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "mothership-ec/cog": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
