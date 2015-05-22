@@ -16,8 +16,6 @@ use Message\Mothership\CMS\Form\RangeFilterForm;
  */
 class ContentRangeFilter extends AbstractContentFilter
 {
-	protected $_alias = 'content_range_filter_pc';
-
 	/**
 	 * @var array
 	 */

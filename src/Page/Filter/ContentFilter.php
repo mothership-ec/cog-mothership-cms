@@ -15,8 +15,6 @@ use Message\Cog\DB\QueryBuilderInterface;
  */
 class ContentFilter extends AbstractContentFilter
 {
-	protected $_alias = 'content_filter_pc';
-
 	/**
 	 * @var QueryBuilderFactory
 	 */

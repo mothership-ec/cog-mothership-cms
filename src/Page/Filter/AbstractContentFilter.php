@@ -15,10 +15,7 @@ use Message\Cog\Filter\AbstractFilter;
  */
 abstract class AbstractContentFilter extends AbstractFilter implements ContentFilterInterface
 {
-	/**
-	 * @var string
-	 */
-	protected $_alias;
+	const DB_ALIAS = 'page_content_filter';
 
 	/**
 	 * @var string
@@ -67,14 +64,6 @@ abstract class AbstractContentFilter extends AbstractFilter implements ContentFi
 	 */
 	protected function _getContentAlias()
 	{
-		if (!is_string($this->_alias)) {
-			throw new \InvalidArgumentException('Alias must be a string, ' . gettype($this->_alias) . ' given');
-		}
-
-		if (null === $this->_field) {
-			throw new \LogicException('Cannot create table alias, field not set');
-		}
-
-		return $this->_alias . '_' . $this->_field . ($this->_group ? '_' . $this->_group : '');
+		return self::DB_ALIAS . '_' . $this->getName();
 	}
 }
