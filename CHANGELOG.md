@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.1
+
+- `RangeFilterForm` can take `min_placeholder` and `max_placeholder` options to set the placeholder text for the select fields
+
 ## 4.3.0
 
 - Implemented new `Filter` component
