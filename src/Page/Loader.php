@@ -45,6 +45,7 @@ use Message\Cog\DB\Entity\EntityLoaderCollection;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  * @author Danny Hannah <danny@message.co.uk>
+ * @author Thomas Marchant <thomas@message.co.uk>
  */
 class Loader
 {

@@ -27,6 +27,13 @@ class TagLoader implements EntityLoaderInterface
 		$this->_queryBuilderFactory = $queryBuilderFactory;
 	}
 
+	/**
+	 * Get all tags for one page
+	 *
+	 * @param Page $page
+	 *
+	 * @return array
+	 */
 	public function load(Page $page)
 	{
 		return $this->_getQueryBuilder()
@@ -37,6 +44,11 @@ class TagLoader implements EntityLoaderInterface
 		;
 	}
 
+	/**
+	 * Get all tags
+	 *
+	 * @return array
+	 */
 	public function getAll()
 	{
 		return $this->_getQueryBuilder()
@@ -46,10 +58,13 @@ class TagLoader implements EntityLoaderInterface
 		;
 	}
 
+	/**
+	 * @return \Message\Cog\DB\QueryBuilder
+	 */
 	private function _getQueryBuilder()
 	{
 		return $this->_queryBuilderFactory->getQueryBuilder()
-			->select('tag_name')
+			->select('tag_name', true)
 			->from('page_tag')
 		;
 	}
