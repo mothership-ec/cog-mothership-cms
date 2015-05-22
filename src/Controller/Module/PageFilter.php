@@ -44,8 +44,7 @@ class PageFilter extends Controller
 	}
 
 	/**
-	 * Gets the data to populate the form. Unfortunately this is somewhat inefficient as it involves building
-	 * the form twice, but I can't think of a better way to do it.
+	 * Builds the form, assigning data and options
 	 *
 	 * @param FilterCollection $filters
 	 * @param array $data
@@ -55,11 +54,9 @@ class PageFilter extends Controller
 	 */
 	private function _getForm(FilterCollection $filters, array $data = null, array $options = [])
 	{
-		$form = $this->createForm($this->get('filter.form_factory')->getForm($filters));
+		$form = $this->createForm($this->get('filter.form_factory')->getForm($filters), $data, $options);
 		$form->handleRequest();
 
-		$data = $form->getData() ?: $data;
-
-		return $this->createForm($this->get('filter.form_factory')->getForm($filters), $data, $options);
+		return $form;
 	}
 }
