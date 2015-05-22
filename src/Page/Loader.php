@@ -718,6 +718,11 @@ class Loader
 		return $result;
 	}
 
+	/**
+	 * Get query for counting pages to add to the paginator if set
+	 *
+	 * @return string
+	 */
 	private function _getCountQuery()
 	{
 		if (null === $this->_queryBuilder) {
