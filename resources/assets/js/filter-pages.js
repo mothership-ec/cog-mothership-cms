@@ -48,6 +48,7 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 	 * Collection form data and add it to the end of a URL
 	 *
 	 * @param url {string}
+	 * @param removeExisting {boolean}
 	 * @returns {string}
 	 */
 	function appendFormDataToUrl(url, removeExisting) {
