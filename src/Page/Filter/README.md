@@ -129,9 +129,11 @@ class MyController
             // to redeclare your filters variable
             $filters = $this->get('filter.data_binder')->bindData($data, $filters);
 
-            $pageLoader = $this->get('cms.page.loader'); // Get the page loader from the service container
+            $pageLoader = $this->get('cms.page.loader'); // Get the page loader from the service
+                                                         // container
 
-            $pages = $pageLoader->loadFromFilters($filters); // Loads pages as per the data given to the filters
+            $pages = $pageLoader->loadFromFilters($filters); // Loads pages as per the data given
+                                                             // to the filters
 
             return $this->render('Mothership:Site::my-view-file', [
                 'pages' => $pages
@@ -156,7 +158,8 @@ Add a route to the `\Mothership\Site\Bootstrap\Routes` class to give AJAX a URL 
 ```php
 $router->add(
         'page_filtering', // The name of the route, to be called from the view
-        '/page-filtering/{filters}', // The URL of the route, with the $filters variable as part of the URL
+        '/page-filtering/{filters}', // The URL of the route, with the $filters variable as part
+                                     // of the URL
         'Mothership:Site::Controller:MyController#filterPages' // The controller to call
     )
     ->setMethod('GET') // Setting the method as GET allows URLs to contain the form information (recommended)
@@ -175,10 +178,10 @@ although only the first two are required:
 ```html
 <script>
     <!--
-        Call the url() twig function to generate the URL for the page filter controller. The first parameter
-        is the route name as defined above, and the second parameter is an array of arguments to give the controller.
-        In this case, that array only consists of the $filters variable, which is set to the service name of the
-        FilterCollection
+        Call the url() twig function to generate the URL for the page filter controller.
+        The first parameter is the route name as defined above, and the second parameter is
+        an array of arguments to give the controller. In this case, that array only consists of
+        the $filters variable, which is set to the service name of the FilterCollection
     -->
     $(document).ready(function () {
         filterPages(
