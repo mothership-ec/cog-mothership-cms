@@ -17,6 +17,7 @@ use Message\Cog\ValueObject\DateTimeImmutable;
 class Page
 {
 	const SLUG_PATTERN = '/^[a-z0-9\-\/]+$/';
+
 	public $locale;
 	public $authorship;
 

@@ -137,6 +137,8 @@ class Edit implements TransactionalInterface
 	 * @param  Page   $page    	Page object to udpate
 	 * @param  string $newSlug  The new slug to update
 	 *
+	 * @throws  Exception\InvalidSlugException If the slug is invalid this will be thrown.
+	 *
 	 * @return Page          	Return the updated Page object
 	 */
 	public function updateSlug(Page $page, $newSlug)
