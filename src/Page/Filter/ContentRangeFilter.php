@@ -52,7 +52,7 @@ class ContentRangeFilter extends AbstractContentFilter
 		} elseif (null !== $value[RangeFilterForm::MIN]) {
 			$value[RangeFilterForm::MIN] = ($value[RangeFilterForm::MIN] instanceof \DateTime) ?
 				$value[RangeFilterForm::MIN]->getTimestamp() :
-				(float)$value[RangeFilterForm::MIN];
+				(float) $value[RangeFilterForm::MIN];
 		}
 
 		if (!array_key_exists(RangeFilterForm::MAX, $value)) {
@@ -60,7 +60,7 @@ class ContentRangeFilter extends AbstractContentFilter
 		} elseif (null !== $value[RangeFilterForm::MAX]) {
 			$value[RangeFilterForm::MAX] = ($value[RangeFilterForm::MAX] instanceof \DateTime) ?
 				$value[RangeFilterForm::MAX]->getTimestamp() :
-				(float)$value[RangeFilterForm::MAX];
+				(float) $value[RangeFilterForm::MAX];
 		}
 
 		if (count($value) !== 2) {
@@ -88,13 +88,31 @@ class ContentRangeFilter extends AbstractContentFilter
 			}
 			if (null !== $value) {
 				if ($key === RangeFilterForm::MIN) {
-					$queryBuilder->where($this->_getContentAlias() . '.value_string >= ?s', [$this->_value[RangeFilterForm::MIN]]);
+					$queryBuilder->where(
+						$this->_castSQLValue($this->_getContentAlias() . '.value_string') . ' >= ' . $this->_castSQLValue('?s'),
+						[$this->_value[RangeFilterForm::MIN]]);
 				} elseif ($key === RangeFilterForm::MAX) {
-					$queryBuilder->where($this->_getContentAlias() . '.value_string <= ?s', [$this->_value[RangeFilterForm::MAX]]);
+					$queryBuilder->where(
+						$this->_castSQLValue($this->_getContentAlias() . '.value_string') . ' <= ' . $this->_castSQLValue('?s'),
+						[$this->_value[RangeFilterForm::MAX]]);
 				} else {
 					throw new \LogicException('Key `' . $key . '` should not exist on value!');
 				}
 			}
 		}
+	}
+
+	/**
+	 * Get MySQL statement that casts value to a float
+	 * MySQL has a limit on 65 characters for a decimal value, with a maximum of 30 decimal places. This sets the
+	 * maximum values to ensure flexibility
+	 *
+	 * @param $value
+	 *
+	 * @return string
+	 */
+	private function _castSQLValue($value)
+	{
+		return sprintf('CAST(%s as DECIMAL(65,30))', $value);
 	}
 }
