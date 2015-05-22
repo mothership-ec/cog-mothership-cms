@@ -16,7 +16,7 @@ use Message\Mothership\CMS\Form\RangeFilterForm;
  */
 class ContentRangeFilter extends AbstractContentFilter
 {
-	const CONTENT_ALIAS = 'content_range_filter_pc';
+	protected $_alias = 'content_range_filter_pc';
 
 	/**
 	 * @var array
@@ -98,13 +98,5 @@ class ContentRangeFilter extends AbstractContentFilter
 				}
 			}
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected function _getContentAlias()
-	{
-		return self::CONTENT_ALIAS;
 	}
 }

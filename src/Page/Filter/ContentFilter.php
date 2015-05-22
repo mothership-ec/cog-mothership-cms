@@ -15,7 +15,7 @@ use Message\Cog\DB\QueryBuilderInterface;
  */
 class ContentFilter extends AbstractContentFilter
 {
-	const CONTENT_ALIAS = 'content_filter_pc';
+	protected $_alias = 'content_filter_pc';
 
 	/**
 	 * @var QueryBuilderFactory
@@ -108,13 +108,5 @@ class ContentFilter extends AbstractContentFilter
 		}
 
 		$this->setOptions(['choices' => $choices]);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected function _getContentAlias()
-	{
-		return self::CONTENT_ALIAS;
 	}
 }

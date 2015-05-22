@@ -18,6 +18,11 @@ abstract class AbstractContentFilter extends AbstractFilter implements ContentFi
 	/**
 	 * @var string
 	 */
+	protected $_alias;
+
+	/**
+	 * @var string
+	 */
 	protected $_field;
 
 	/**
@@ -42,7 +47,7 @@ abstract class AbstractContentFilter extends AbstractFilter implements ContentFi
 
 		$this->_field = $field;
 	}
-	
+
 	/**
 	 * Build a join statement for the query builder based on the group
 	 *
@@ -58,9 +63,18 @@ abstract class AbstractContentFilter extends AbstractFilter implements ContentFi
 	}
 
 	/**
-	 * Get the alias for the `page_content` table to include in the join statement
-	 *
-	 * @return string
+	 * Get the alias for the joined content table from the database
 	 */
-	abstract protected function _getContentAlias();
+	protected function _getContentAlias()
+	{
+		if (!is_string($this->_alias)) {
+			throw new \InvalidArgumentException('Alias must be a string, ' . gettype($this->_alias) . ' given');
+		}
+
+		if (null === $this->_field) {
+			throw new \LogicException('Cannot create table alias, field not set');
+		}
+
+		return $this->_alias . '_' . $this->_field . ($this->_group ? '_' . $this->_group : '');
+	}
 }
