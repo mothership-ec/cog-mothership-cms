@@ -1,5 +1,29 @@
 # Changelog
 
+## 4.3.0
+
+- Implemented new `Filter` component
+- `Page\Filter` namespace
+- `TagFilter` class for filtering pages by their tags
+- `ContentFilter` class for filtering by content fields
+- `ContentRangeFilter` class for filtering for pages with content that falls between two values
+- `ContentFilterInterface` interface for classes that filter by content, implemented by `ContentFilter` and `ContentRangeFilter`
+- `AbstractContentFilter` abstract class extended by `ContentFilter` and `ContentRangeFilter`
+- `RangeFilterForm` class, a simple form that contains two matching drop downs for filtering by range
+- `Module\PageFilter` controller for rendering filter form
+- `filter-pages.js` file for handling AJAX requests to load content fields, and amending URLs to match form data (if method is set to `GET`)
+- Complete refactor of `Page\Loader` class to use `QueryBuilder`
+- `Page\Loader::__construct()` takes `QueryBuilderFactory` instead of `Query` (should be safe as accessed by service container, see <a href="http://wiki.mothership.ec/Backwards_compatibility">our documentation on backwards compatibility</a>)
+- Added `Page\Loader::loadFromFilters()` method for loading from a filter collection
+- Added `Page\Loader::applyFilters()` method for applying filters to the query
+- Added `Page\Loader::setFilters()` method for setting the filters on a query
+- Added `Page\Loader::clearFilters()` method for removing all filters from the loader
+- Documentation `README.md` file for `Page\Filter` namespace
+- Added `LinkedIn` to share links
+- Added `linked-in` to `social.yml` config
+- Added `image` translation for blog pages
+- Updated `Cog` dependency to 4.4
+
 ## 4.2.1
 
 - Fix typo in `pinterest` config file (was `pintrest`)

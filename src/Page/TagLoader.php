@@ -4,41 +4,68 @@ namespace Message\Mothership\CMS\Page;
 
 use Message\Cog\Field;
 
-use Message\Cog\DB\Query as DBQuery;
-use Message\Cog\DB\Result as DBResult;
+use Message\Cog\DB\QueryBuilderFactory;
 use Message\Cog\DB\Entity\EntityLoaderInterface;
-use Message\Cog\Field\Factory;
 
 /**
  * Loads page tags by page.
  * 
  * @author Iris Schaffer <iris@message.co.uk>
+ * @author Thomas Marchant <thomas@message.co.uk>
  */
 class TagLoader implements EntityLoaderInterface
 {
-	protected $_query;
+	private $_queryBuilderFactory;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param DBQuery       $query     The database query instance to use
+	 * @param QueryBuilderFactory $queryBuilderFactory        The database query instance to use
 	 */
-	public function __construct(DBQuery $query)
+	public function __construct(QueryBuilderFactory $queryBuilderFactory)
 	{
-		$this->_query = $query;
+		$this->_queryBuilderFactory = $queryBuilderFactory;
 	}
 
+	/**
+	 * Get all tags for one page
+	 *
+	 * @param Page $page
+	 *
+	 * @return array
+	 */
 	public function load(Page $page)
 	{
-		$tags = $this->_query->run('
-			SELECT
-				tag_name
-			FROM
-				page_tag
-			WHERE
-				page_id = ?i
-		', $page->id);
+		return $this->_getQueryBuilder()
+			->where('page_id = ?i', [$page->id])
+			->getQuery()
+			->run()
+			->flatten()
+		;
+	}
 
-		return $tags->flatten();
+	/**
+	 * Get all tags
+	 *
+	 * @return array
+	 */
+	public function getAll()
+	{
+		return $this->_getQueryBuilder()
+			->getQuery()
+			->run()
+			->flatten()
+		;
+	}
+
+	/**
+	 * @return \Message\Cog\DB\QueryBuilder
+	 */
+	private function _getQueryBuilder()
+	{
+		return $this->_queryBuilderFactory->getQueryBuilder()
+			->select('tag_name', true)
+			->from('page_tag')
+		;
 	}
 }
