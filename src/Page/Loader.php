@@ -113,6 +113,11 @@ class Loader
 	private $_returnAsArray;
 
 	/**
+	 * @var FilterCollection
+	 */
+	private $_filters;
+
+	/**
 	 * Constructor
 	 *
 	 * @param QueryBuilderFactory    $queryBuilderFactory   Database query instance to use
@@ -546,7 +551,8 @@ class Loader
 	}
 
 	/**
-	 * Loop through filters and apply them to the query builder
+	 * If no filter collection is set on loader, assign filters to the loader. If a filter collection is already
+	 * set, loop through them and add them to the main filter collection
 	 *
 	 * @param FilterCollection $filters
 	 *
@@ -554,13 +560,39 @@ class Loader
 	 */
 	public function applyFilters(FilterCollection $filters)
 	{
-		if (null === $this->_queryBuilder) {
-			$this->_buildQuery();
+		if ($this->_filters instanceof FilterCollection) {
+			foreach ($filters as $filter) {
+				$this->_filters->add($filter);
+			}
+		} else {
+			$this->setFilters($filters);
 		}
 
-		foreach ($filters as $filter) {
-			$filter->apply($this->_queryBuilder);
-		}
+		return $this;
+	}
+
+	/**
+	 * Remove all filters from loader
+	 *
+	 * @return Loader
+	 */
+	public function clearFilters()
+	{
+		$this->_filters = null;
+
+		return $this;
+	}
+
+	/**
+	 * Set filter
+	 *
+	 * @param FilterCollection $filters
+	 *
+	 * @return Loader
+	 */
+	public function setFilters(FilterCollection $filters)
+	{
+		$this->_filters = $filters;
 
 		return $this;
 	}
@@ -649,6 +681,12 @@ class Loader
 			if (!$this->_loadUnpublished) {
 				$this->_queryBuilder->where('page.publish_at <= ?d', [new DateTimeImmutable]);
 				$this->_queryBuilder->where('(page.unpublish_at > ?d OR page.unpublish_at IS NULL)', [new DateTimeImmutable]);
+			}
+
+			if ($this->_filters instanceof FilterCollection) {
+				foreach ($this->_filters as $filter) {
+					$filter->apply($this->_queryBuilder);
+				}
 			}
 		}
 	}
