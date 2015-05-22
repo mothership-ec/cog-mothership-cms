@@ -22,6 +22,7 @@
 - Added `LinkedIn` to share links
 - Added `linked-in` to `social.yml` config
 - Added `image` translation for blog pages
+- Updated `Cog` dependency to 4.4
 
 ## 4.2.1
 
