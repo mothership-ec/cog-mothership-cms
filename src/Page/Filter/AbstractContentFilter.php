@@ -11,7 +11,7 @@ use Message\Cog\Filter\AbstractFilter;
  * @author  Thomas Marchant <thomas@mothership.ec>
  *
  * Abstract classes for content filters, includes `setField()` method as well as method for generating a join
- * statement to give to the query builder
+ * statement to give to the query builder.
  */
 abstract class AbstractContentFilter extends AbstractFilter implements ContentFilterInterface
 {

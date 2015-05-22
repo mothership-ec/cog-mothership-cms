@@ -27,7 +27,7 @@ class ContentFilter extends AbstractContentFilter
 	 *
 	 * Include instance of QueryBuilderFactory to allow choices to be automatically loaded
 	 */
-	public function __construct($name, $displayName, QueryBuilderFactory $queryBuilderFactory)
+	public function __construct($name, $displayName, QueryBuilderFactory $queryBuilderFactory = null)
 	{
 		parent::__construct($name, $displayName);
 
@@ -36,13 +36,22 @@ class ContentFilter extends AbstractContentFilter
 
 	/**
 	 * {@inheritDoc}
-	 *
-	 * Call `setChoices()` after assigning the field and group
 	 */
 	public function setField($field, $group = null)
 	{
 		parent::setField($field, $group);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Method calls `_setChoices()` to generate choices if they are not set
+	 */
+	public function getForm()
+	{
 		$this->_setChoices();
+
+		return parent::getForm();
 	}
 
 	/**
@@ -76,10 +85,15 @@ class ContentFilter extends AbstractContentFilter
 	}
 
 	/**
-	 * Load content assigned to field
+	 * Load choices for form field if not already set, and if there is an instance of QueryBuilderFactory set
+	 * against the filter class
 	 */
 	private function _setChoices()
 	{
+		if (null === $this->_queryBuilderFactory || !empty($this->getOptions()['choices'])) {
+			return;
+		}
+
 		$queryBuilder = $this->_queryBuilderFactory->getQueryBuilder()
 			->select('value_string', true)
 			->from('page_content')
