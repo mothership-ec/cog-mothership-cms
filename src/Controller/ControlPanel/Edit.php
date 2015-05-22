@@ -424,6 +424,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		))->val()->optional();
 
 		$siblings = $this->get('cms.page.loader')->getSiblings($page);
+
 		$siblingChoices = array();
 		if ($siblings) {
 			$siblingChoices[0] = 'Move to top';
