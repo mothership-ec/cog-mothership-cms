@@ -162,7 +162,8 @@ $router->add(
                                      // of the URL
         'Mothership:Site::Controller:MyController#filterPages' // The controller to call
     )
-    ->setMethod('GET') // Setting the method as GET allows URLs to contain the form information (recommended)
+    ->setMethod('GET') // Setting the method as GET allows URLs to contain the form information.
+                       // This is recommended for the purposes of maintaining pagination etc.
 ;
 ```
 
