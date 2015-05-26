@@ -565,6 +565,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			// continue if the frontend route is the most promenant
 			if ($routes['_route'] !== 'ms.cms.frontend') {
 				$this->addFlash('error',  $this->trans('ms.cms.feedback.force-slug.failure.reserved-route'));
+				$update = false;
 			}
 		} catch (\Symfony\Component\Routing\Exception\ResourceNotFoundException $e) {	
 			$this->addFlash('error', $this->trans('ms.cms.feedback.force-slug.failure.not-matched'));
@@ -572,7 +573,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		}
 
 		// If not slug has been found, we need to check the history too
-		if (!$checkSlug) {
+		if (!$checkSlug && $update) {
 			// Check for the slug historicaly and show deleted ones too
 			$historicalSlug = $this->get('cms.page.loader')
 				->includeDeleted(true)
