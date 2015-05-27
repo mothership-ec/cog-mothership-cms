@@ -137,13 +137,20 @@ class Edit implements TransactionalInterface
 	 * @param  Page   $page    	Page object to udpate
 	 * @param  string $newSlug  The new slug to update
 	 *
+	 * @throws  Exception\InvalidSlugException If the slug is invalid this will be thrown.
+	 *
 	 * @return Page          	Return the updated Page object
 	 */
 	public function updateSlug(Page $page, $newSlug)
 	{
+		if (!preg_match(Page::SLUG_PATTERN, $newSlug)) {
+			throw new Exception\InvalidSlugException('Slug must only be formed of alphanumeric characters and hyphens.');
+		}
+
 		// Get all the segements
 		$segements = $page->slug->getSegments();
 		$date = new DateTimeImmutable;
+
 		$this->_transaction->run('
 			REPLACE INTO
 				page_slug_history
