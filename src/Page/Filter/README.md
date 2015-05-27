@@ -186,7 +186,7 @@ although only the first two are required:
     -->
     $(document).ready(function () {
         filterPages(
-            '{{ url('page-filtering, { filters: 'page_filters'}) }}',
+            '{{ url('page-filtering', { filters: 'page_filters'}) }}',
             '#my-container'
         );
     });

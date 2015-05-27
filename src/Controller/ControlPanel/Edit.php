@@ -12,6 +12,7 @@ use Message\Mothership\CMS\Page\Exception\PageEditException;
 
 use Message\Cog\ValueObject\Slug;
 use Message\Mothership\FileManager\File;
+use Message\Mothership\CMS\Page\Exception\InvalidSlugException;
 
 class Edit extends \Message\Cog\Controller\Controller
 {
@@ -384,7 +385,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		else {
 			$form->add('slug', 'text', $this->trans('ms.cms.attributes.slug.label'), array(
 				'read_only' => true,
-				'data' => $this->trans('ms.cms.attributes.slug.homepage')
+				'data' => $this->trans('ms.cms.attributes.slug.homepage'),
 			));
 		}
 
@@ -559,8 +560,21 @@ class Edit extends \Message\Cog\Controller\Controller
 		$slug = '/'.implode('/',$slugSegments);
 		$checkSlug = $this->get('cms.page.loader')->getBySlug($slug, false);
 
+		try {
+			$routes = $this->get('routing.matcher')->match($slug);
+
+			// continue if the frontend route is the most promenant
+			if ($routes['_route'] !== 'ms.cms.frontend') {
+				$this->addFlash('error',  $this->trans('ms.cms.feedback.force-slug.failure.reserved-route'));
+				$update = false;
+			}
+		} catch (\Symfony\Component\Routing\Exception\ResourceNotFoundException $e) {	
+			$this->addFlash('error', $this->trans('ms.cms.feedback.force-slug.failure.not-matched'));
+			$update = false;
+		}
+
 		// If not slug has been found, we need to check the history too
-		if (!$checkSlug) {
+		if (!$checkSlug && $update) {
 			// Check for the slug historicaly and show deleted ones too
 			$historicalSlug = $this->get('cms.page.loader')
 				->includeDeleted(true)
@@ -620,7 +634,13 @@ class Edit extends \Message\Cog\Controller\Controller
 		// If the slug has changed then update the slug
 		if ($update && $page->slug->getLastSegment() != $newSlug) {
 			$this->get('cms.page.edit')->removeHistoricalSlug($slug);
-			$page = $this->get('cms.page.edit')->updateSlug($page, $newSlug);
+			try {
+				$page = $this->get('cms.page.edit')->updateSlug($page, $newSlug);
+			} catch (InvalidSlugException $e) {
+				$this->addFlash('error', $this->trans('ms.cms.feedback.force-slug.failure.generic', [
+					'%message%' => $e->getMessage(),
+				]));
+			}
 		}
 
 		// return the updated or unchanged page

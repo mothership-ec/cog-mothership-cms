@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.3.2
+
+- Validation on slugs. Slugs can only have alphanumeric characters or hyphens, and they can no longer conflict with reserved routes (e.g. '/admin')
+- Amended filtering readme
+
 ## 4.3.1
 
 - `RangeFilterForm` can take `min_placeholder` and `max_placeholder` options to set the placeholder text for the select fields
