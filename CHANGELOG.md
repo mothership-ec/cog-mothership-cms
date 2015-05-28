@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.4
+
+- Fix for issue where page loader would create invalid MySQL when calling `getByID()` with an empty value
+
 ## 4.3.3
 
 - Fix `social.yml` file, had tabs on LinkedIn lines causing a parse error on new installation
