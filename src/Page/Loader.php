@@ -159,6 +159,10 @@ class Loader
 	 */
 	public function getByID($pageIDs)
 	{
+		if (!is_numeric($pageIDs) && empty($pageIDs)) {
+			return is_array($pageIDs) ? [] : false;
+		}
+
 		if (!is_array($pageIDs)) {
 			$pageIDs = [$pageIDs];
 			$this->_returnAsArray = false;
