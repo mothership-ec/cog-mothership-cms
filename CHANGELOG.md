@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.3
+
+- Fix `social.yml` file, had tabs on LinkedIn lines causing a parse error on new installation
+
 ## 4.3.2
 
 - Validation on slugs. Slugs can only have alphanumeric characters or hyphens, and they can no longer conflict with reserved routes (e.g. '/admin')
