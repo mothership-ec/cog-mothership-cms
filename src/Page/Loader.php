@@ -311,6 +311,8 @@ class Loader
 	 */
 	public function getAll()
 	{
+		$this->_returnAsArray = true;
+
 		$this->_buildQuery();
 
 		return $this->_loadPages();

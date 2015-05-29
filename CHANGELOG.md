@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.5
+
+- Fix for issue where calling `getAll()` on page loader would return a page instance if only one existed in database instead of an array
+
 ## 4.3.4
 
 - Fix for issue where page loader would create invalid MySQL when calling `getByID()` with an empty value
