@@ -13,3 +13,6 @@ pinterest:
 linked-in:
   name: # name
   slug: # slug to link to
+tumblr:
+  name: # name
+  slug: # slug to link to

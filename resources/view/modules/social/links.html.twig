@@ -24,4 +24,9 @@
 		<a href="http://www.linkedin.com/{{ social.linkedIn.slug|default(social.linkedIn.name) }}">LinkedIn</a>
 	</li>
 	{% endif %}
+	{% if not social.tumblr.name is empty %}
+	<li class="tumblr">
+		<a href="http://{{ social.tumblr.slug|default(social.tumblr.name) }}.tumblr.com">Tumblr</a>
+	</li>
+	{% endif %}
 </ul>
