@@ -849,7 +849,6 @@ class Loader
 				unset($pages[$key]);
 				continue;
 			}
-
 		}
 
 		return count($pages) == 1 && !$this->_returnAsArray ? array_shift($pages) : $pages;

@@ -1,32 +1,79 @@
 <ul class="social">
-	{% if not social.twitter.name is empty %}
-	<li class="twitter">
-		<a href="https://twitter.com/{{ social.twitter.slug|default(social.twitter.name)|e('url') }}">Twitter</a>
-	</li>
-	{% endif %}
-	{% if not social.instagram.name is empty %}
-	<li class="instagram">
-		<a href="http://instagram.com/{{ social.instagram.slug|default(social.instagram.name)|e('url') }}">Instagram</a>
-	</li>
-	{% endif %}
-	{% if not social.facebook.name is empty %}
-	<li class="facebook">
-		<a href="https://www.facebook.com/{{ social.facebook.slug|default(social.facebook.name)|e('url') }}">Facebook</a>
-	</li>
-	{% endif %}
-	{% if not social.pinterest.name is empty %}
-	<li class="pinterest">
-		<a href="http://www.pinterest.com/{{ social.pinterest.slug|default(social.pinterest.name)|e('url') }}">Pinterest</a>
-	</li>
-	{% endif %}
-	{% if not social.linkedIn.name is empty %}
-	<li class="linkedin">
-		<a href="http://www.linkedin.com/{{ social.linkedIn.slug|default(social.linkedIn.name) }}">LinkedIn</a>
-	</li>
-	{% endif %}
-	{% if not social.tumblr.name is empty %}
-	<li class="tumblr">
-		<a href="http://{{ social.tumblr.slug|default(social.tumblr.name) }}.tumblr.com">Tumblr</a>
-	</li>
-	{% endif %}
+	{% for network in networks %}
+		{% if not social.twitter.name is empty and network == 'twitter' %}
+
+			<li class="twitter">
+				<a href="https://twitter.com/{{ social.twitter.slug|default(social.twitter.name)|e('url') }}">Twitter</a>
+			</li>
+		
+		{% elseif not social.instagram.name is empty and network == 'instagram' %}
+
+			<li class="instagram">
+				<a href="http://instagram.com/{{ social.instagram.slug|default(social.instagram.name)|e('url') }}">Instagram</a>
+			</li>
+		
+		{% elseif not social.facebook.name is empty and network == 'facebook' %}
+
+			<li class="facebook">
+				<a href="https://www.facebook.com/{{ social.facebook.slug|default(social.facebook.name)|e('url') }}">Facebook</a>
+			</li>
+		
+		{% elseif not social.pinterest.name is empty and network == 'pinterest' %}
+
+			<li class="pinterest">
+				<a href="https://www.pinterest.com/{{ social.pinterest.slug|default(social.pinterest.name)|e('url') }}">Pinterest</a>
+			</li>
+		
+		{% elseif not social.linkedIn.name is empty and (network == 'linked-in' or network == 'linkedIn')  %}
+
+			<li class="linkedin">
+				<a href="http://www.linkedin.com/{{ social.linkedIn.slug|default(social.linkedIn.name) }}">LinkedIn</a>
+			</li>
+		
+		{% elseif not social.googlePlus.name is empty and (network == 'google-plus' or network == 'googlePlus')  %}
+
+			<li class="googleplus">
+				<a href="https://plus.google.com/{{ social.googlePlus.slug|default(social.googlePlus.name) }}">Google+</a>
+			</li>
+
+		{% elseif not social.soundcloud.name is empty and network == 'soundcloud'  %}
+
+			<li class="soundcloud">
+				<a href="https://soundcloud.com/{{ social.soundcloud.slug|default(social.soundcloud.name) }}">Soundcloud</a>
+			</li>
+
+		{% elseif not social.bandcamp.name is empty and network == 'bandcamp'  %}
+
+			<li class="bandcamp">
+				{% if social.bandcamp.slug %}
+					<a href="https://bandcamp.com/{{ social.bandcamp.slug }}">Bandcamp</a>
+				{% else %}
+					<a href="https://{{ social.bandcamp.name }}.bandcamp.com">Bandcamp</a>
+				{% endif %}
+			</li>
+
+		{% elseif not social.youtube.name is empty and network == 'youtube'  %}
+
+			<li class="youtube">
+				<a href="https://youtube.com/{{ social.youtube.slug|default('user/' ~ social.youtube.name) }}">Youtube</a>
+			</li>
+
+		{% elseif not social.vimeo.name is empty and network == 'vimeo'  %}
+
+			<li class="vimeo">
+				<a href="https://vimeo.com/{{ social.vimeo.slug|default(social.vimeo.name) }}">Vimeo</a>
+			</li>
+		
+		{% elseif not social.tumblr.name is empty and network == 'tumblr' %}
+
+			<li class="tumblr">
+				{% if social.tumblr.slug %}
+					<a href="https://tumblr.com/{{ social.tumblr.slug }}">Tumblr</a>
+				{% else %}
+					<a href="https://{{ social.tumblr.name }}.tumblr.com">Tumblr</a>
+				{% endif %}
+			</li>
+		
+		{% endif %}
+	{% endfor %}
 </ul>

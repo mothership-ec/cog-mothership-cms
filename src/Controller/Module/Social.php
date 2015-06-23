@@ -8,7 +8,7 @@ use Message\Cog\Filesystem\File;
 
 class Social extends Controller
 {
-	public function share(Page $page, $description = null, File $image = null, $networks = null)
+	public function share(Page $page, $description = null, File $image = null, array $networks = null)
 	{
 		if ($networks === null) {
 			$networks = ['facebook', 'twitter'];
@@ -28,9 +28,20 @@ class Social extends Controller
 		]);
 	}
 
-	public function links()
+	public function links(array $networks = null)
 	{
+		$cfg = $this->get('cfg')->social;
+
+		// if null then use all in the config
+		if ($networks === null) {
+			$networks = [];
+			foreach ($cfg as $network => $values) {
+				$networks[] = $network;
+			}
+		}
+
 		return $this->render('Message:Mothership:CMS::modules:social:links', [
+			'networks' => $networks,
 			'social' => $this->get('cfg')->social,
 		]);
 	}

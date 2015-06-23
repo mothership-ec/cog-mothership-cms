@@ -16,3 +16,21 @@ linked-in:
 tumblr:
   name: # name
   slug: # slug to link to
+google-plus:
+  name: # name
+  slug: # slug to link to
+soundcloud:
+  name: # name
+  slug: # slug to link to
+bandcamp:
+  name: # name
+  slug: # slug to link to
+youtube:
+  name: # name
+  slug: # slug to link to
+vimeo:
+  name: # name
+  slug: # slug to link to
+reddit:
+  name: # name
+  slug: # slug to link to

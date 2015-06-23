@@ -1,22 +1,69 @@
+{% set onclick = 'window.open(this.href, \'sharewin\', \'left=20,top=20,width=500,height=500,toolbar=1,resizable=0\'); return false;' %}
+
 <ul class="social">
-	{% if 'twitter' in networks %}
-		<li class="twitter">
-			<a href="https://twitter.com/share?url={{ uri|e('url') }}&amp;text={{ title|e('url') }}{% if not social.twitter.name is empty %}&amp;via={{ social.twitter.name }}{% endif %}">Twitter</a>
-		</li>
-	{% endif %}
-	{% if 'facebook' in networks %}
-		<li class="facebook">
-			<a href="http://www.facebook.com/sharer.php?s=100&amp;p[url]={{ uri|e('url') }}&amp;p[images][0]={{ imageUri|e('url') }}&amp;p[title]={{ title|e('url') }}&amp;p[summary]={{ description|raw|striptags|e('url') }}">Facebook</a>
-		</li>
-	{% endif %}
-	{% if 'pinterest' in networks %}
-		<li class="pinterest">
-			<a href="http://pinterest.com/pin/create/button/?url={{ uri|e('url') }}&amp;media={{ imageUri|e('url') }}&amp;description={{ description|raw|striptags|e('url') }}">Pinterest</a>
-		</li>
-	{% endif %}
-	{% if 'tumblr' in networks %}
-		<li class="tumblr">
-			<a href="http://www.tumblr.com/share/link?url=url={{ uri|e('url') }}&amp;description={{ description|raw|striptags|e('url') }}">Tumblr</a>
-		</li>
-	{% endif %}
+	{% for network in networks %}
+		{% if network == 'twitter' %}
+			<li class="twitter">
+				<a href="https://twitter.com/share?url={{ uri|e('url') }}&amp;text={{ title|e('url') }}{% if not social.twitter.name is empty %}&amp;via={{ social.twitter.name }}{% endif %}"
+					onclick="{{ onclick }}">
+					Twitter
+				</a>
+			</li>
+
+		{% elseif network == 'facebook' %}
+			
+			<li class="facebook">
+				<a href="http://www.facebook.com/sharer.php?s=100&amp;p[url]={{ uri|e('url') }}&amp;p[images][0]={{ imageUri|e('url') }}&amp;p[title]={{ title|e('url') }}&amp;p[summary]={{ description|raw|striptags|e('url') }}"
+					onclick="{{ onclick }}">
+					Facebook
+				</a>
+			</li>
+
+		{% elseif network == 'pinterest' %}
+
+			<li class="pinterest">
+				<a href="http://pinterest.com/pin/create/button/?url={{ uri|e('url') }}&amp;media={{ imageUri|e('url') }}&amp;description={{ description|raw|striptags|e('url') }}"
+					onclick="{{ onclick }}">
+					Pinterest
+				</a>
+			</li>
+
+		{% elseif network == 'tumblr' %}
+
+			<li class="tumblr">
+				<a href="http://www.tumblr.com/share/link?url={{ uri|e('url') }}&amp;description={{ description|raw|striptags|e('url') }}"
+					onclick="{{ onclick }}">
+					Tumblr
+				</a>
+			</li>
+
+		{% elseif network == 'google-plus' or network == 'googlePlus' %}
+
+			<li class="google-plus">
+				<a href="https://plus.google.com/share?url={{ uri|e('url') }}"
+					onclick="{{ onclick }}">
+					Google+
+				</a>
+			</li>
+
+		{% elseif network == 'linked-in' or network == 'linkedIn' %}
+			
+			<li class="linked-in">
+				<a href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{ uri|e('url') }}"
+					onclick="{{ onclick }}">
+					LinkedIn
+				</a>
+			</li>
+
+		{% elseif network == 'reddit' %}
+
+			<li class="reddit">
+				<a href="http://reddit.com/submit?url={{ uri|e('url') }}&amp;title={{ title|e('url') }}"
+					onclick="{{ onclick }}">
+					Reddit
+				</a>
+			</li>
+
+		{% endif %}
+	{% endfor %}
 </ul>
