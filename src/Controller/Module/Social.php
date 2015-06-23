@@ -8,8 +8,12 @@ use Message\Cog\Filesystem\File;
 
 class Social extends Controller
 {
-	public function share(Page $page, $description = null, File $image = null, array $networks = ['facebook', 'twitter'])
+	public function share(Page $page, $description = null, File $image = null, array $networks = null)
 	{
+		if ($networks === null) {
+			$networks = ['facebook', 'twitter'];
+		}
+
 		$schemeAndHost = $this->get('http.request.master')->getSchemeAndHttpHost();
 		$trimmed       = rtrim($page->slug, '/');
 		$uri           = $schemeAndHost . $this->generateUrl('ms.cms.frontend', ['slug' => !empty($trimmed) ? $trimmed : $page->slug]);
