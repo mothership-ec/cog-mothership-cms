@@ -4,7 +4,7 @@
 	{% for network in networks %}
 		{% if network == 'twitter' %}
 			<li class="twitter">
-				<a href="https://twitter.com/share?url={{ uri|e('url') }}&amp;text={{ title|e('url') }} - {{ description }}{% if not social.twitter.name is empty %}&amp;via={{ social.twitter.name }}{% endif %}"
+				<a href="https://twitter.com/share?url={{ uri|e('url') }}&amp;text={{ title|e('url') }}{% if not description is empty %}{{ (' - ' ~ description)|raw|striptags|e('url') }}{% endif %}{% if not social.twitter.name is empty %}&amp;via={{ social.twitter.name }}{% endif %}"
 					onclick="{{ onclick }}">
 					Twitter
 				</a>
