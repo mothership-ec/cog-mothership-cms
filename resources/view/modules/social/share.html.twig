@@ -49,7 +49,7 @@
 		{% elseif network == 'linked-in' or network == 'linkedIn' %}
 			
 			<li class="linked-in">
-				<a href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{ uri|e('url') }}"
+				<a href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{ uri|e('url') }}&amp;title={{ title|e('url') }}&amp;summary={{ description|raw|striptags|e('url') }}"
 					onclick="{{ onclick }}">
 					LinkedIn
 				</a>
