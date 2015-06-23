@@ -73,6 +73,12 @@
 					<a href="https://{{ social.tumblr.name }}.tumblr.com">Tumblr</a>
 				{% endif %}
 			</li>
+
+		{% elseif not social.github.name is empty and network == 'tumblr' %}
+
+			<li class="github">
+				<a href="https://github.com/{{ social.github.slug|default(social.github.name) }}">Vimeo</a>
+			</li>
 		
 		{% endif %}
 	{% endfor %}
