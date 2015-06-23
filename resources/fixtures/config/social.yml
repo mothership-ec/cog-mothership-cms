@@ -31,6 +31,6 @@ youtube:
 vimeo:
   name: # name
   slug: # slug to link to
-reddit:
+github:
   name: # name
   slug: # slug to link to
