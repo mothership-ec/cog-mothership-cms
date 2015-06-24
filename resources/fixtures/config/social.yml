@@ -13,3 +13,24 @@ pinterest:
 linked-in:
   name: # name
   slug: # slug to link to
+tumblr:
+  name: # name
+  slug: # slug to link to
+google-plus:
+  name: # name
+  slug: # slug to link to
+soundcloud:
+  name: # name
+  slug: # slug to link to
+bandcamp:
+  name: # name
+  slug: # slug to link to
+youtube:
+  name: # name
+  slug: # slug to link to
+vimeo:
+  name: # name
+  slug: # slug to link to
+github:
+  name: # name
+  slug: # slug to link to
