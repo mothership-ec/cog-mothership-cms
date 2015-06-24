@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.6
+
+- Loading pages by sibling no longer checks if the page depth is 0 strictly, as MySQL can set the depth as a string of '0', causing the check to return false.
+
 ## 4.3.5
 
 - Fix for issue where calling `getAll()` on page loader would return a page instance if only one existed in database instead of an array

@@ -373,7 +373,7 @@ class Loader
 
 		// If the page is in the top level, just load all top level pages, else work out
 		// which pages have the same parent first
-		if ($page->depth === 0) {
+		if ($page->depth == 0) {
 			$this->_queryBuilder
 				->where('page.position_depth = ?i', [0])
 			;
