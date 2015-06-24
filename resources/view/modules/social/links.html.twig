@@ -74,7 +74,7 @@
 				{% endif %}
 			</li>
 
-		{% elseif not social.github.name is empty and network == 'tumblr' %}
+		{% elseif not social.github.name is empty and network == 'github' %}
 
 			<li class="github">
 				<a href="https://github.com/{{ social.github.slug|default(social.github.name) }}">Vimeo</a>
