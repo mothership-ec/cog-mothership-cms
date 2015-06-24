@@ -14,9 +14,10 @@ class Social extends Controller
 			$networks = ['facebook', 'twitter'];
 		}
 
-		$schemeAndHost = $this->get('http.request.master')->getSchemeAndHttpHost();
-		$trimmed       = rtrim($page->slug, '/');
-		$uri           = $schemeAndHost . $this->generateUrl('ms.cms.frontend', ['slug' => !empty($trimmed) ? $trimmed : $page->slug]);
+		$schemeAndHost = rtrim($this->get('http.request.master')->getSchemeAndHttpHost(), '/');
+		// empty breaks so homepage in this case
+		$slug = empty($page->slug) ? '/' : $page->slug;
+		$uri  = $schemeAndHost . '/' . trim($this->generateUrl('ms.cms.frontend', ['slug' => $slug]), '/');
 	
 		return $this->render('Message:Mothership:CMS::modules:social:share', [
 			'social'      => $this->get('cfg')->social,
