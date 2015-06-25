@@ -1,5 +1,22 @@
 # Changelog
 
+## 4.4.0
+
+- Extended `social.yml` config to have config settings for the following social networks:
+    - Tumblr
+    - Google+
+    - Soundcloud
+    - Bandcamp
+    - YouTube
+    - Vimeo
+    - Github
+- Added share links for the following social networks:
+    - Google+
+    - Tumblr
+    - Reddit
+- `Controller\Module\Social::links()` controller now takes an array of social networks as an optional parameter. If not set, it will take all configs from the `social.yml` config file
+- `Controller\Module\Social::share()` controller now takes an array of social networks as an optional third parameter. If not set, it will default to Facebook and Twitter (original behaviour before v4.4.0)
+
 ## 4.3.6
 
 - Loading pages by sibling no longer checks if the page depth is 0 strictly, as MySQL can set the depth as a string of '0', causing the check to return false.
