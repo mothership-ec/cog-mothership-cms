@@ -127,7 +127,6 @@ class Edit implements TransactionalInterface
 		if (!$this->_transOverride) {
 			$this->_transaction->commit();
 		}
-
 		return $event->getPage();
 	}
 
@@ -380,10 +379,10 @@ class Edit implements TransactionalInterface
 		// Build the insert query and parameters
 		$inserts = array();
 		$values = array();
-		foreach ($page->accessGroups as $groupName) {
+		foreach ($page->accessGroups as $group) {
 			$inserts[] = '(?i, ?s)';
 			$values[] = $page->id;
-			$values[] = $groupName;
+			$values[] = $group->getName();
 		}
 
 		// If there is changes to be made then run the built query
