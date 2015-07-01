@@ -236,11 +236,17 @@ class Edit extends \Message\Cog\Controller\Controller
 				$page = $this->_updateSlug($page, $data['slug']);
 			}
 
+			$userGroups = $this->get('user.groups');
+
 			$page->visibilitySearch     = $data['visibility_search'];
 			$page->visibilityMenu       = $data['visibility_menu'];
 			$page->visibilityAggregator = $data['visibility_aggregator'];
 			$page->access               = $data['access'] ?: 0;
-			$page->accessGroups         = $data['access_groups'];
+			
+			$page->accessGroups = array_map(function($group) use ($userGroups) {
+				return $userGroups->get($group);
+			}, $data['access_groups']);
+
 			$page->setTags($this->_parseTags($data['tags']));
 
 			$page = $this->get('cms.page.edit')->save($page);

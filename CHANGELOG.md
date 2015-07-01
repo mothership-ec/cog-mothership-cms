@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.4.1
+
+- Resolve issue where page titles could not be edited if there is a page access group set, due to the `Edit` class assuming that the access group was a string and not an object
+
 ## 4.4.0
 
 - Extended `social.yml` config to have config settings for the following social networks:
