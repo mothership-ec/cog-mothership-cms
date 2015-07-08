@@ -3,7 +3,7 @@
 namespace Message\Mothership\CMS\Page;
 
 use Message\Cog\Field;
-
+use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\DB\QueryBuilderFactory;
 use Message\Cog\DB\Entity\EntityLoaderInterface;
 
@@ -30,14 +30,16 @@ class TagLoader implements EntityLoaderInterface
 	/**
 	 * Get all tags for one page
 	 *
-	 * @param Page $page
+	 * @param Page $page                    The page whose tags to load
+	 * @param bool $includeUnpublished      Include tags for unpublished pages
+	 * @param bool $includeDeleted          Include tags for deleted pages
 	 *
 	 * @return array
 	 */
-	public function load(Page $page)
+	public function load(Page $page, $includeUnpublished = false, $includeDeleted = false)
 	{
-		return $this->_getQueryBuilder()
-			->where('page_id = ?i', [$page->id])
+		return $this->_getQueryBuilder($includeUnpublished, $includeDeleted)
+			->where('page_tag.page_id = ?i', [$page->id])
 			->getQuery()
 			->run()
 			->flatten()
@@ -47,11 +49,14 @@ class TagLoader implements EntityLoaderInterface
 	/**
 	 * Get all tags
 	 *
+	 * @param bool $includeUnpublished      Include tags for unpublished pages
+	 * @param bool $includeDeleted          Include tags for deleted pages
+	 *
 	 * @return array
 	 */
-	public function getAll()
+	public function getAll($includeUnpublished = false, $includeDeleted = false)
 	{
-		return $this->_getQueryBuilder()
+		return $this->_getQueryBuilder($includeUnpublished, $includeDeleted)
 			->getQuery()
 			->run()
 			->flatten()
@@ -61,14 +66,15 @@ class TagLoader implements EntityLoaderInterface
 	/**
 	 * Get all tags that belong to child pages of the given page
 	 *
-	 * @param Page $parent    The parent page whose children's tags will be loaded
+	 * @param Page $parent                 The parent page whose children's tags will be loaded
+	 * @param bool $includeUnpublished     Include tags for unpublished pages
+	 * @param bool $includeDeleted         Include tags for deleted pages
 	 *
 	 * @return array
 	 */
-	public function getTagsFromChildren(Page $parent)
+	public function getTagsFromChildren(Page $parent, $includeUnpublished = false, $includeDeleted = false)
 	{
-		return $this->_getQueryBuilder()
-			->leftJoin('page', 'page.page_id = page_tag.page_id')
+		return $this->_getQueryBuilder($includeUnpublished, $includeDeleted)
 			->where('page.position_left > ?i', [$parent->left])
 			->where('page.position_right < ?i', [$parent->right])
 			->getQuery()
@@ -78,13 +84,29 @@ class TagLoader implements EntityLoaderInterface
 	}
 
 	/**
+	 * Get the instance of the query builder with the basic query set up
+	 *
+	 * @param bool $includeUnpublished      Include tags for unpublished pages
+	 * @param bool $includeDeleted          Include tags for deleted pages
+	 *
 	 * @return \Message\Cog\DB\QueryBuilder
 	 */
-	private function _getQueryBuilder()
+	private function _getQueryBuilder($includeUnpublished = false, $includeDeleted = false)
 	{
-		return $this->_queryBuilderFactory->getQueryBuilder()
+		$queryBuilder = $this->_queryBuilderFactory->getQueryBuilder()
 			->select('tag_name', true)
 			->from('page_tag')
+			->leftJoin('page', 'page.page_id = page_tag.page_id')
 		;
+
+		if (!$includeUnpublished) {
+			$queryBuilder->where('page.publish_at <= ?d', [new DateTimeImmutable]);
+			$queryBuilder->where('(page.unpublish_at > ?d OR page.unpublish_at IS NULL)', [new DateTimeImmutable]);		}
+
+		if (!$includeDeleted) {
+			$queryBuilder->where('page.deleted_at IS NULL');
+		}
+
+		return $queryBuilder;
 	}
 }
