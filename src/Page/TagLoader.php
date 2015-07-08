@@ -59,6 +59,25 @@ class TagLoader implements EntityLoaderInterface
 	}
 
 	/**
+	 * Get all tags that belong to child pages of the given page
+	 *
+	 * @param Page $parent    The parent page whose children's tags will be loaded
+	 *
+	 * @return array
+	 */
+	public function getTagsFromChildren(Page $parent)
+	{
+		return $this->_getQueryBuilder()
+			->leftJoin('page', 'page.page_id = page_tag.page_id')
+			->where('page.position_left > ?i', [$parent->left])
+			->where('page.position_right < ?i', [$parent->right])
+			->getQuery()
+			->run()
+			->flatten()
+		;
+	}
+
+	/**
 	 * @return \Message\Cog\DB\QueryBuilder
 	 */
 	private function _getQueryBuilder()
