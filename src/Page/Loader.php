@@ -680,7 +680,7 @@ class Loader
 				->groupBy('page.page_id');
 
 			if (!$this->_order === PageOrder::NONE) {
-				$this->_queryBuilder->orderBy($this->_getOrderStatement())
+				$this->_queryBuilder->orderBy($this->_getOrderStatement());
 			}
 
 			if (!$this->_loadDeleted) {
