@@ -18,4 +18,5 @@ class PageOrder
 	const ID_REVERSE           = "cms.page.order.id.reverse";
 	const STANDARD             = "cms.page.order.standard";
 	const REVERSE              = "cms.page.order.reverse";
+	const NONE                 = "cms.page.order.none";
 }
