@@ -679,7 +679,7 @@ class Loader
 				->leftJoin('page_access_group', 'page_access_group.page_id = page.page_id')
 				->groupBy('page.page_id');
 
-			if (!$this->_order === PageOrder::NONE) {
+			if ($this->_order !== PageOrder::NONE) {
 				$this->_queryBuilder->orderBy($this->_getOrderStatement());
 			}
 
