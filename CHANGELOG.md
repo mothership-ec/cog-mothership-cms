@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.5.0
+
+- Added `PageOrder::NONE` constant to disable ORDER BY statement when loading pages
+- Added `getTagsFromChildren()` method to `TagLoader` load all tags that belong to any children of a page
+- Added option to include tags for unpublished pages on `TagLoader` methods (disabled by default)
+- Added option to include tags for deleted pages on `TagLoader` methods (disabled by default)
+
 ## 4.4.1
 
 - Resolve issue where page titles could not be edited if there is a page access group set, due to the `Edit` class assuming that the access group was a string and not an object
