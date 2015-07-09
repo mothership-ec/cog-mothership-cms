@@ -101,7 +101,8 @@ class TagLoader implements EntityLoaderInterface
 
 		if (!$includeUnpublished) {
 			$queryBuilder->where('page.publish_at <= ?d', [new DateTimeImmutable]);
-			$queryBuilder->where('(page.unpublish_at > ?d OR page.unpublish_at IS NULL)', [new DateTimeImmutable]);		}
+			$queryBuilder->where('(page.unpublish_at > ?d OR page.unpublish_at IS NULL)', [new DateTimeImmutable]);
+		}
 
 		if (!$includeDeleted) {
 			$queryBuilder->where('page.deleted_at IS NULL');
