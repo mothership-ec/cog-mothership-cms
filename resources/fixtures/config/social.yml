@@ -1,12 +1,36 @@
 twitter:
-  name: # username
+  name: Mothership_Ecom
   slug: # slug to link to
 facebook:
-  name: # username
+  name: mothership.ecommerce
   slug: # slug to link to
 instagram:
-  name: # username
+  name: # instagram
   slug: # slug to link to
-pintrest:
-  name: # username
+pinterest:
+  name: # pinterest
+  slug: # slug to link to
+linked-in:
+  name: # name
+  slug: # slug to link to
+tumblr:
+  name: # name
+  slug: # slug to link to
+google-plus:
+  name: # name
+  slug: # slug to link to
+soundcloud:
+  name: # name
+  slug: # slug to link to
+bandcamp:
+  name: # name
+  slug: # slug to link to
+youtube:
+  name: # name
+  slug: # slug to link to
+vimeo:
+  name: # name
+  slug: # slug to link to
+github:
+  name: # name
   slug: # slug to link to

@@ -127,7 +127,6 @@ class Edit implements TransactionalInterface
 		if (!$this->_transOverride) {
 			$this->_transaction->commit();
 		}
-
 		return $event->getPage();
 	}
 
@@ -137,13 +136,20 @@ class Edit implements TransactionalInterface
 	 * @param  Page   $page    	Page object to udpate
 	 * @param  string $newSlug  The new slug to update
 	 *
+	 * @throws  Exception\InvalidSlugException If the slug is invalid this will be thrown.
+	 *
 	 * @return Page          	Return the updated Page object
 	 */
 	public function updateSlug(Page $page, $newSlug)
 	{
+		if (!preg_match(Page::SLUG_PATTERN, $newSlug)) {
+			throw new Exception\InvalidSlugException('Slug must only be formed of alphanumeric characters and hyphens.');
+		}
+
 		// Get all the segements
 		$segements = $page->slug->getSegments();
 		$date = new DateTimeImmutable;
+
 		$this->_transaction->run('
 			REPLACE INTO
 				page_slug_history
@@ -273,41 +279,41 @@ class Edit implements TransactionalInterface
 	 * @param  Page 	$page 				The Page object of the page we are
 	 *                         				going to move
 	 * @param  int  	$index				The position index to move to.
+	 *
+ 	 * @return bool
 	 */
 	public function changeOrder(Page $page, $index)
 	{
 		// This is important as we add 1 to the key
-		try {
+		$siblings = $this->_loader
+			->getSiblings($page);
+		// We minus one here as we have to add one in the controller so 0 is
+		// the move to top option.
+		$nearestSibling = isset($siblings[$index - 1]) ? $siblings[$index - 1]->id : false;
 
-			$siblings = $this->_loader
-				->getSiblings($page);
-			// We minus one here as we have to add one in the controller so 0 is
-			// the move to top option.
-			$nearestSibling = isset($siblings[$index - 1]) ? $siblings[$index - 1]->id : false;
-
-			$addAfter = false;
-			if ($index === 0) {
-				// Load the siblings and get the one which is at the top
-				$siblings = $this->_loader->getSiblings($page);
-				$nearestSibling = array_shift($siblings);
-				$addAfter = true;
-			} else {
-				// Otherwise just load the given sibling to move the page after
-				$nearestSibling = $this->_loader->getByID($nearestSibling);
-			}
-
-			$this->_nestedSetHelper->move(
-				$page->id,
-				$nearestSibling->id,
-				false,
-				$addAfter
-			);
-			$this->_transaction->commit();
-
-			return true;
-		} catch (Exception $e) {
-			return false;
+		$addAfter = false;
+		if ($index === 0) {
+			// Load the siblings and get the one which is at the top
+			$siblings = $this->_loader->getSiblings($page);
+			$nearestSibling = array_shift($siblings);
+			$addAfter = true;
+		} else {
+			// Otherwise just load the given sibling to move the page after
+			$nearestSibling = $this->_loader->getByID($nearestSibling);
 		}
+
+		if (!$nearestSibling) {
+			throw new Exception\PageEditException('Could not load nearest sibling');
+		}
+
+		$this->_nestedSetHelper->move(
+			$page->id,
+			$nearestSibling->id,
+			false,
+			$addAfter
+		);
+
+		return (bool) $this->_transaction->commit();
 	}
 
 	/**
@@ -315,17 +321,14 @@ class Edit implements TransactionalInterface
 	 *
 	 * @param int 	$pageID 		The ID of the page we are going to move
 	 * @param int   $newParentID 	The ID of the new parent we are moving to
+	 *
+	 * @return bool
 	 */
 	public function changeParent($pageID, $newParentID)
 	{
-		try {
-			$this->_nestedSetHelper->move($pageID, $newParentID, true);
-			$this->_transaction->commit();
+		$this->_nestedSetHelper->move($pageID, $newParentID, true);
 
-			return true;
-		} catch (\Exception $e) {
-			return false;
-		}
+		return (bool) $this->_transaction->commit();
 	}
 
 	/**
@@ -376,10 +379,10 @@ class Edit implements TransactionalInterface
 		// Build the insert query and parameters
 		$inserts = array();
 		$values = array();
-		foreach ($page->accessGroups as $groupName) {
+		foreach ($page->accessGroups as $group) {
 			$inserts[] = '(?i, ?s)';
 			$values[] = $page->id;
-			$values[] = $groupName;
+			$values[] = $group->getName();
 		}
 
 		// If there is changes to be made then run the built query

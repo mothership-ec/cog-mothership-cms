@@ -30,8 +30,7 @@ class Services implements ServicesInterface
 
 		$services['cms.page.loader'] = $services->factory(function($c) {
 			return new CMS\Page\Loader(
-				'Locale class',
-				$c['db.query'],
+				$c['db.query.builder.factory'],
 				$c['cms.page.types'],
 				$c['user.groups'],
 				$c['cms.page.authorisation'],
@@ -93,9 +92,9 @@ class Services implements ServicesInterface
 			return new CMS\Page\Authorisation($c['user.group.loader'], $c['user.current']);
 		});
 
-		$services['cms.page.tag.loader'] = $services->factory(function($c) {
-			return new CMS\Page\TagLoader($c['db.query']);
-		});
+		$services['cms.page.tag.loader'] = function($c) {
+			return new CMS\Page\TagLoader($c['db.query.builder.factory']);
+		};
 
 		$services['cms.page.create'] = $services->factory(function($c) {
 			return new CMS\Page\Create(
@@ -150,7 +149,7 @@ class Services implements ServicesInterface
 		};
 
 		$services['cms.blog.comment_builder'] = $services->factory(function($c) {
-			return new CMS\Blog\CommentBuilder($c['user.current'], $c['request'], $c['cms.blog.content_validator']);
+			return new CMS\Blog\CommentBuilder($c['user.current'], $c['request'], $c['cms.blog.content_validator'], $c['user.group.loader']);
 		});
 
 		$services['cms.blog.comment_loader'] = function($c) {
@@ -171,6 +170,10 @@ class Services implements ServicesInterface
 
 		$services['cms.blog.comment_statuses'] = function($c) {
 			return new CMS\Blog\Statuses;
+		};
+
+		$services['cms.blog.comment_dashboard_loader'] = function($c) {
+			return new CMS\Blog\Dashboard\DashboardLoader($c['cms.blog.comment_loader'], $c['cms.page.loader'], $c['cms.page.types']);
 		};
 
 		$services->extend('field.collection', function($fields, $c) {

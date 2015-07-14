@@ -1,5 +1,6 @@
 {% extends 'Message:Mothership:CMS::dashboard' %}
 
+
 {% block stylesheets %}
 	{{ parent() }}
 	{% stylesheets
@@ -10,6 +11,23 @@
 	%}
 		<link rel="stylesheet" href="{{ asset_url }}">
 	{% endstylesheets %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	{% javascripts
+		'@Message:Mothership:CMS::resources/assets/js/page-edit.js'
+
+		output='/assets/js/ms_cms.js'
+		filter='?jsmin'
+	%}
+		<script src="{{ asset_url }}"></script>
+	{% endjavascripts %}
+
+{% endblock %}
+
+{% block sidebar %}
+	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index', {'currentPageID':page.id}))}}
 {% endblock %}
 
 {% block slideAttr 'data-slide-loaded' %}

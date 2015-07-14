@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Bootstrap;
 
 use Message\Cog\Bootstrap\RoutesInterface;
+use Message\Mothership\CMS\Page\Page;
 
 class Routes implements RoutesInterface
 {
@@ -21,7 +22,7 @@ class Routes implements RoutesInterface
 
 		// Be sure to put front end routes *before* this line (as with contact form and comments above)
 		$router['ms.cms']->add('ms.cms.frontend', '{slug}', 'Message:Mothership:CMS::Controller:Frontend#renderPage')
-			->setRequirement('slug', '[a-z0-9\-\/]+')
+			->setRequirement('slug', trim(Page::SLUG_PATTERN, '/'))
 			->setDefault('slug', '/');
 
 		$router['ms.cms']->add('ms.cms.broken_link.action', '/broken_link', 'Message:Mothership:CMS::Controller:Module:Form#brokenLinkAction')

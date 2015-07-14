@@ -57,4 +57,3 @@ asset.use
 
 
 **note: we could add a config option for the service name for the page type collection and user groups collection (so the app can swap them out if they like)**
-
