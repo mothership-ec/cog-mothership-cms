@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.5.1
+
+- Resolve issue where MySQL pagination would break if no pages were returned on page loader.
+
 ## 4.5.0
 
 - Added `PageOrder::NONE` constant to disable ORDER BY statement when loading pages

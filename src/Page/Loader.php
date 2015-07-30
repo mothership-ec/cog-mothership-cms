@@ -160,6 +160,10 @@ class Loader
 	public function getByID($pageIDs)
 	{
 		if (!is_numeric($pageIDs) && empty($pageIDs)) {
+			if ($this->_pagination !== null) {
+				$this->_pagination->setCountQuery('SELECT 0 as `count`');
+			}
+
 			return is_array($pageIDs) ? [] : false;
 		}
 
