@@ -23,7 +23,7 @@ class PageProxy extends Page
 	public function getTags()
 	{
 		if (!$this->_isLoaded('tags')) {
-			$tags = $this->_loaders->get('tags')->load($this);
+			$tags = $this->_loaders->get('tags')->load($this, true, true);
 			
 			if ($tags !== false) {
 				$this->tags = $this->tags + $tags;
