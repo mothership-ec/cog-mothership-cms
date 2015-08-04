@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.5.2
+
+- Resolve issue where `PageProxy::getTags()` method would only load tags for published and non-deleted pages
+
 ## 4.5.1
 
 - Resolve issue where MySQL pagination would break if no pages were returned on page loader.
