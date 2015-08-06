@@ -57,9 +57,9 @@ class Frontend extends Controller
 		if (!$page) {
 			// Check for this slug in the history, and redirect if we find a result
 			if ($redirectTo = $this->get('cms.page.loader')->checkSlugHistory($slug)) {
-				return $this->redirect($this->generateUrl('ms.cms.frontend', array(
-					'slug' => ltrim($redirectTo->slug->getFull(), '/'),
-				)), 301);
+				return $this->redirect($this->generateUrl('ms.cms.frontend', [
+					'slug' => $redirectTo->isHomepage() ? '/' : ltrim($redirectTo->slug->getFull(), '/'),
+				]), 301);
 			}
 
 			// Otherwise, throw a 404
