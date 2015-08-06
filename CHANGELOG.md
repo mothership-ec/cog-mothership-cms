@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.5.3
+
+- Resolve issue where slug redirects would break if redirecting to the home page (where a slug is empty)
+
 ## 4.5.2
 
 - Resolve issue where `PageProxy::getTags()` method would only load tags for published and non-deleted pages
