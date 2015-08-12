@@ -2,10 +2,18 @@
 
 namespace Message\Mothership\CMS\Controller\ControlPanel;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class Sidebar extends \Message\Cog\Controller\Controller
 {
 	public function index($currentPageID = null)
 	{
+		// skip loading all the products if ajax request
+		if ($this->get('request')->server->has('HTTP_X_REQUESTED_WITH') && 
+			strtolower($this->get('request')->server->get('HTTP_X_REQUESTED_WITH')) == 'xmlhttprequest') {
+			return new Response();
+		}
+
 		$loader = $this->_services['cms.page.loader'];
 		$pages  = $loader->getAll();
 		$hasPages = !empty($pages);
