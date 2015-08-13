@@ -793,15 +793,15 @@ class Loader
 			// Get the page type
 			$pages[$key]->type = $this->_pageTypes->get($data->type);
 
-			// If the page is the most left page then it is the homepage so
-			// we need to override the slug to avoid unnecessary redirects
-			if ($this->_getMinPositionLeft() == $data->left) {
-				$data->slug = new Slug('/');
-			}
+			if (!isset($pages[$key]->slug) || !($pages[$key]->slug instanceof Slug)) {
+				// If the page is the most left page then it is the homepage so
+				// we need to override the slug to avoid unnecessary redirects
+				if ($this->_getMinPositionLeft() == $data->left) {
+					$data->slug = new Slug('/');
+				}
 
 			
-			// Test if already set from cache before loading
-			if (!isset($pages[$key]->slug)) {
+				// Test if already set from cache before loading
 				$pages[$key]->slug = new Slug($data->slug);
 			}
 
