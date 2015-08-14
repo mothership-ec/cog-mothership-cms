@@ -264,14 +264,9 @@ class Link extends MultipleValueField
 	 *
 	 * @param Page $parent
 	 */
-	protected function _setPageHeirarchy(Page $parent = null)
+	protected function _setPageHeirarchy()
 	{
-		$children = $this->_loader->getChildren($parent);
-
-		foreach ($children as $page) {
-			$this->_pages[$page->id] = $page;
-			$this->_setPageHeirarchy($page);
-		}
+		$this->_pages = $this->_loader->getAll();
 	}
 
 	/**
