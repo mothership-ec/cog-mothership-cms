@@ -6,6 +6,7 @@
 - Optimised `Link` field type page tree building
 - Added `PageCollection` class for storing page cache
 - Added `cms.page.cache` service which returns `PageCollection` class
+- Ability to pass `filterPages()` JavaScript function a URL negating the need to create a new route for the returned HTML
 - Increased `Cog` dependency to 4.8
 
 ## 4.5.3
