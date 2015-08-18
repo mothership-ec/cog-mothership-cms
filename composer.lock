@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e49a92b36375f9aeb7f7f0e19651a8d6",
+    "hash": "239cd7493e87a4a00d9ab57f37097a4a",
     "packages": [
         {
             "name": "dflydev/markdown",
@@ -626,16 +626,16 @@
         },
         {
             "name": "mothership-ec/cog",
-            "version": "4.7.1",
+            "version": "4.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mothership-ec/cog.git",
-                "reference": "324e0c02cd30696b70cf1befe582f9db24faf34e"
+                "reference": "7b63eccebf4e0dcf40ad4b9bcc2716253367f8b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mothership-ec/cog/zipball/324e0c02cd30696b70cf1befe582f9db24faf34e",
-                "reference": "324e0c02cd30696b70cf1befe582f9db24faf34e",
+                "url": "https://api.github.com/repos/mothership-ec/cog/zipball/7b63eccebf4e0dcf40ad4b9bcc2716253367f8b8",
+                "reference": "7b63eccebf4e0dcf40ad4b9bcc2716253367f8b8",
                 "shasum": ""
             },
             "require": {
@@ -717,7 +717,7 @@
                 "cog",
                 "framework"
             ],
-            "time": "2015-07-31 12:57:18"
+            "time": "2015-08-18 13:35:50"
         },
         {
             "name": "mothership-ec/cog-imageresize",
@@ -971,16 +971,16 @@
         },
         {
             "name": "mothership-ec/cog-user",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mothership-ec/cog-user.git",
-                "reference": "9392dfdc39fbb2b58298076ddc855143c5db3851"
+                "reference": "48d8655c3fb5004b676a9294031be20ea9ab7cef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mothership-ec/cog-user/zipball/9392dfdc39fbb2b58298076ddc855143c5db3851",
-                "reference": "9392dfdc39fbb2b58298076ddc855143c5db3851",
+                "url": "https://api.github.com/repos/mothership-ec/cog-user/zipball/48d8655c3fb5004b676a9294031be20ea9ab7cef",
+                "reference": "48d8655c3fb5004b676a9294031be20ea9ab7cef",
                 "shasum": ""
             },
             "require": {
@@ -1013,7 +1013,7 @@
                 "cog",
                 "user"
             ],
-            "time": "2015-07-30 10:59:36"
+            "time": "2015-08-14 10:13:05"
         },
         {
             "name": "mtdowling/cron-expression",
