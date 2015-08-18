@@ -40,9 +40,14 @@ class Services implements ServicesInterface
 					'content' => $c['cms.page.content_loader'],
 					'image' => $c['cms.page.image.loader'],
 					'tags' => $c['cms.page.tag.loader'],
-				])
+				]),
+				$c['cms.page.cache']
 			);
 		});
+
+		$services['cms.page.cache'] = function($c) {
+			return new CMS\Page\PageCollection;
+		};
 
 		$services['cms.page.searcher'] = function($c) {
 			$searcher =  new CMS\Page\Searcher($c['db.query'], $c['markdown.parser']);
