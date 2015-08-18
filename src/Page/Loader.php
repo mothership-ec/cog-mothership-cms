@@ -17,6 +17,7 @@ use Message\Cog\DB\QueryBuilderInterface;
 use Message\Cog\Filter\FilterCollection;
 use Message\Cog\Pagination\Pagination;
 use Message\Cog\DB\Entity\EntityLoaderCollection;
+use Message\Cog\ValueObject\Collection;
 
 /**
  * Responsible for loading page data and returning prepared instances of `Page`.
@@ -118,6 +119,11 @@ class Loader
 	private $_filters;
 
 	/**
+	 * @var Collection
+	 */
+	private $_pageCache;
+
+	/**
 	 * Constructor
 	 *
 	 * @param QueryBuilderFactory    $queryBuilderFactory   Database query instance to use
@@ -136,7 +142,8 @@ class Loader
 		Authorisation $authorisation,
 		UserInterface $user,
 		Searcher $searcher,
-		EntityLoaderCollection $loaders
+		EntityLoaderCollection $loaders,
+		Collection $pageCache
 	) {
 		$this->_queryBuilderFactory  = $queryBuilderFactory;
 		$this->_pageTypes            = $pageTypes;
@@ -145,6 +152,7 @@ class Loader
 		$this->_user 		         = $user;
 		$this->_searcher             = $searcher;
 		$this->_loaders              = $loaders;
+		$this->_pageCache            = $pageCache;
 	}
 
 	/**
@@ -758,18 +766,20 @@ class Loader
 	{
 		$results = $this->_runQuery();
 
+		foreach ($results as $key => $data) {
+			if ($this->_pageCache->exists($key)) {
+
+			}
+		}
+
 		$pages = $results->bindTo(
 			'Message\\Mothership\\CMS\\Page\\PageProxy',
-			[$this->_loaders]
+			[$this->_loaders],
+			false,
+			$this->_pageCache
 		);
 
 		foreach ($results as $key => $data) {
-			// Skip deleted pages
-			if ($data->deletedAt && !$this->_loadDeleted) {
-				unset($pages[$key]);
-				continue;
-			}
-
 			$pages[$key]->visibilitySearch     = (bool) $pages[$key]->visibilitySearch;
 			$pages[$key]->visibilityMenu       = (bool) $pages[$key]->visibilityMenu;
 			$pages[$key]->visibilityAggregator = (bool) $pages[$key]->visibilityAggregator;
@@ -780,75 +790,82 @@ class Loader
 				$data->unpublishAt ? new DateTimeImmutable(date('c', $data->unpublishAt)) : null
 			);
 
-			// Remove the page if we are asking to not show unpublished pages and
-			// the page is in fact unpublished
-			if (!$this->_loadUnpublished && !$this->_authorisation->isPublished($pages[$key])) {
-				unset($pages[$key]);
-				continue;
-			}
-
 			// Get the page type
 			$pages[$key]->type = $this->_pageTypes->get($data->type);
 
-			// If the page is the most left page then it is the homepage so
-			// we need to override the slug to avoid unnecessary redirects
-			if ($this->_getMinPositionLeft() == $data->left) {
-				$data->slug = new Slug('/');
+			if (!isset($pages[$key]->slug) || !($pages[$key]->slug instanceof Slug)) {
+				// If the page is the most left page then it is the homepage so
+				// we need to override the slug to avoid unnecessary redirects
+				if ($this->_getMinPositionLeft() == $data->left) {
+					$data->slug = new Slug('/');
+				}
+
+			
+				// Test if already set from cache before loading
+				$pages[$key]->slug = new Slug($data->slug);
 			}
 
-			$pages[$key]->slug = new Slug($data->slug);
-			$pages[$key]->type = clone $this->_pageTypes->get($data->type);
+			// Test if already set from cache before loading
+			if (!isset($pages[$key]->type)) {
+				$pages[$key]->type = clone $this->_pageTypes->get($data->type);
+			}
 
 			// Load authorship details
-			$pages[$key]->authorship = new Authorship;
-			$pages[$key]->authorship->create(new DateTimeImmutable(date('c',$data->createdAt)), $data->createdBy);
+			// Test if already set from cache before loading
+			if (!isset($pages[$key]->authorship)) {
+				$pages[$key]->authorship = new Authorship;
+				$pages[$key]->authorship->create(new DateTimeImmutable(date('c',$data->createdAt)), $data->createdBy);
 
-			if ($data->updatedAt) {
-				$pages[$key]->authorship->update(new DateTimeImmutable(date('c',$data->updatedAt)), $data->updatedBy);
-			}
+				if ($data->updatedAt) {
+					$pages[$key]->authorship->update(new DateTimeImmutable(date('c',$data->updatedAt)), $data->updatedBy);
+				}
 
-			if ($data->deletedAt) {
-				$pages[$key]->authorship->delete(new DateTimeImmutable(date('c',$data->deletedAt)), $data->deletedBy);
+				if ($data->deletedAt) {
+					$pages[$key]->authorship->delete(new DateTimeImmutable(date('c',$data->deletedAt)), $data->deletedBy);
+				}
 			}
 
 			// If the page is set to inherit it's access then loop through each
 			// parent to find the inherited access level.
-			$pages[$key]->accessInherited = false;
-			$check = $pages[$key];
+			// Check to see if this has already been loaded first (from cache)
+			if (!isset($pages[$key]->access) || $pages[$key]->access < 0) {
+				$pages[$key]->accessInherited = false;
+				$check = $pages[$key];
 
-			while ($pages[$key]->access < 0) {
-				$check = $this->_queryBuilderFactory->getQueryBuilder()
-					->select([
-						'access',
-						'GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups'
-					])
-					->from('page')
-					->leftJoin('page_access_group', 'page_access_group.page_id = page.page_id')
-					->where('page.position_left < ?i', [$check->left])
-					->where('page.position_right >= ?i', [$check->left])
-					->where('page.position_depth = ?i - 1', [$check->depth])
-					->getQuery()
-					->run()
-				;
+				while ($pages[$key]->access < 0) {
+					$check = $this->_queryBuilderFactory->getQueryBuilder()
+						->select([
+							'access',
+							'GROUP_CONCAT(page_access_group.group_name SEPARATOR \',\') AS accessGroups'
+						])
+						->from('page')
+						->leftJoin('page_access_group', 'page_access_group.page_id = page.page_id')
+						->where('page.position_left < ?i', [$check->left])
+						->where('page.position_right >= ?i', [$check->left])
+						->where('page.position_depth = ?i - 1', [$check->depth])
+						->getQuery()
+						->run()
+					;
 
-				$check = $check->bindTo('Message\\Mothership\\CMS\\Page\\Page');
-				$check = $check[0];
+					$check = $check->bindTo('Message\\Mothership\\CMS\\Page\\Page');
+					$check = $check[0];
 
-				$pages[$key]->access = $check->access;
-				$data->accessGroups = $check->accessGroups;
+					$pages[$key]->access = $check->access;
+					$data->accessGroups = $check->accessGroups;
 
-				$pages[$key]->accessInherited = true;
-			}
+					$pages[$key]->accessInherited = true;
+				}
 
-			// Ensure the page access is at least 0
-			$pages[$key]->access = max(0, $pages[$key]->access);
+				// Ensure the page access is at least 0
+				$pages[$key]->access = max(0, $pages[$key]->access);
 
-			// Load access groups
-			$groups = array_filter(explode(',', $data->accessGroups));
-			$pages[$key]->accessGroups = array();
-			foreach ($groups as $groupName) {
-				if ($group = $this->_userGroups->get(trim($groupName))) {
-					$pages[$key]->accessGroups[$group->getName()] = $group;
+				// Load access groups
+				$groups = array_filter(explode(',', $data->accessGroups));
+				$pages[$key]->accessGroups = array();
+				foreach ($groups as $groupName) {
+					if ($group = $this->_userGroups->get(trim($groupName))) {
+						$pages[$key]->accessGroups[$group->getName()] = $group;
+					}
 				}
 			}
 
