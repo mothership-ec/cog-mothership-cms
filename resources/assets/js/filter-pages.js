@@ -169,7 +169,7 @@ function filterPages(ajaxUrl, filterDestinationID, method, formID, paginationMen
 			data: form.serialize(),
 			success: function (data) {
 				var replace = $(filterDestinationID, data);
-				replace = replace.size() ? replace : $(data); 
+				replace = replace.size() ? replace.children() : $(data); 
 
 				filterDestination.html(replace);
 				appendFormDataToPagination();
