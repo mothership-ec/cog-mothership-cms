@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.6.0
+
+- Implemented page caching on `Page\Loader`
+- Optimised `Link` field type page tree building
+- Added `PageCollection` class for storing page cache
+- Added `cms.page.cache` service which returns `PageCollection` class
+- Increased `Cog` dependency to 4.8
+
 ## 4.5.3
 
 - Resolve issue where slug redirects would break if redirecting to the home page (where a slug is empty)
