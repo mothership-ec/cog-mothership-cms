@@ -102,6 +102,11 @@ class ContentEdit
 			'pageID'    => $page->id,
 		]);
 
+		$this->_dispatcher->dispatch(
+			Event\ContentEvent::EDIT,
+			new Event\ContentEvent($page, $content)
+		);
+
 		return $this->_transaction->commit();
 	}
 
