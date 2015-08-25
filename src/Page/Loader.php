@@ -828,7 +828,7 @@ class Loader
 			// If the page is set to inherit it's access then loop through each
 			// parent to find the inherited access level.
 			// Check to see if this has already been loaded first (from cache)
-			if (!isset($pages[$key]->access) || $pages[$key]->access < 0) {
+			if (!isset($pages[$key]->access) || !is_array($pages[$key]->access)) {
 				$pages[$key]->accessInherited = false;
 				$check = $pages[$key];
 
