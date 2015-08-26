@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.6.1
+
+- Resolve issue where `Attributes` tab would cause an error when attempting to load access groups
+
 ## 4.6.0
 
 - Implemented page caching on `Page\Loader`
