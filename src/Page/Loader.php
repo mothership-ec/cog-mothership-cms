@@ -766,12 +766,6 @@ class Loader
 	{
 		$results = $this->_runQuery();
 
-		foreach ($results as $key => $data) {
-			if ($this->_pageCache->exists($key)) {
-
-			}
-		}
-
 		$pages = $results->bindTo(
 			'Message\\Mothership\\CMS\\Page\\PageProxy',
 			[$this->_loaders],
