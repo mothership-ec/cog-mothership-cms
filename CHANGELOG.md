@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.7.0
+
+- Added `Page\Event\ContentEvent` class for content-related event listeners
+- `Page\ContentEdit::save()` method fires instance of `Page\Event\ContentEvent` at the end of save
+- Removed erroneously added loop from `Page\Loader` that didn't do anything
+
 ## 4.6.1
 
 - Resolve issue where `Attributes` tab would cause an error when attempting to load access groups
