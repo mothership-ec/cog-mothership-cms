@@ -109,6 +109,20 @@ class Page
 	}
 
 	/**
+	 * Check to see if the current time falls within the publish date range
+	 *
+	 * @return bool
+	 */
+	public function isPublished()
+	{
+		if (null === $this->publishDateRange) {
+			return false;
+		}
+
+		return $this->publishDateRange->isInRange();
+	}
+
+	/**
 	 * Check if the page is the homepage.
 	 *
 	 * @return boolean
