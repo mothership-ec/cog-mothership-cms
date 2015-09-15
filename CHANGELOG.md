@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.8.0
+
+- Added `Page::isPublished()` to allow for checking if a page is published without having to access the `publishDateRange` property directly
+- Do not display deleted pages as CMS options in link field
+- Append unpublished pages in link field CMS options with `[unpublished]`
+- By default `Page\ContentFilter` does not include content from deleted or unpublished pages when loading options for filter form
+- Remove broken and out of date unit tests
+- Implement Travis
+
 ## 4.7.0
 
 - Added `Page\Event\ContentEvent` class for content-related event listeners
