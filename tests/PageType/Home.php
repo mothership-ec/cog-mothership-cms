@@ -3,7 +3,7 @@
 namespace Message\Mothership\CMS\Test\PageType;
 
 use Message\Mothership\CMS\PageType\PageTypeInterface;
-use Message\Mothership\CMS\Field\Factory as FieldFactory;
+use Message\Cog\Field\Factory as FieldFactory;
 
 class Home implements PageTypeInterface
 {
