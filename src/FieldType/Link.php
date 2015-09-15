@@ -218,6 +218,10 @@ class Link extends MultipleValueField
 			foreach ($this->_pages as $page) {
 				$prefix             = str_repeat('-', $page->depth);
 				$options[$page->id] = $prefix . ' ' . $page->title;
+
+				if (!$page->isPublished()) {
+					$options[$page->id] .= ' [unpublished]';
+				}
 			}
 
 			$this->setFieldOptions([
@@ -266,7 +270,7 @@ class Link extends MultipleValueField
 	 */
 	protected function _setPageHeirarchy()
 	{
-		$this->_pages = $this->_loader->getAll();
+		$this->_pages = $this->_loader->includeDeleted(false)->getAll();
 	}
 
 	/**
