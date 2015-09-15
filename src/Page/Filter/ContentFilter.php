@@ -95,9 +95,14 @@ class ContentFilter extends AbstractContentFilter
 		}
 
 		$queryBuilder = $this->_queryBuilderFactory->getQueryBuilder()
-			->select('value_string', true)
+			->select('page_content.value_string', true)
 			->from('page_content')
-			->where('field_name = ?s', [$this->_field]);
+			->join('page', 'page_content.page_id = page.page_id')
+			->where('page_content.field_name = ?s', [$this->_field])
+			->where('page.deleted_at IS NULL')
+			->where('page.publish_at <= UNIX_TIMESTAMP()')
+			->where('(page.unpublish_at IS NULL OR page.unpublish_at > UNIX_TIMESTAMP())')
+		;
 
 		if (null !== $this->_group) {
 			$queryBuilder->where('group_name = ?s', [$this->_group]);
