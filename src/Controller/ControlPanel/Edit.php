@@ -134,11 +134,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			}
 		}
 
-		// Reload the form because there may be more/less repeatable group instances now
-		// Hotfix for https://github.com/messagedigital/cog-mothership-cms/issues/170
-		$form = $this->_getContentForm($page, $content);
-
-		return $this->_renderContentForm($page, $content, $form);
+		$this->redirectToReferer();
 	}
 
 	/**

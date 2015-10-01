@@ -62,6 +62,8 @@
 							{% set identifierField = group.getIdentifierField().getName() %}
 								<section class="group" data-collapse data-identifier-field="{{ identifierField }}">
 									<h1 class="title" data-group-label>
+										<a href="#" data-group-ctrl-up>UP</a>
+										<a href="#" data-group-ctrl-down>DOWN</a>
 										{% if group.getIdentifierField() is sameas(false) %}
 											Group #{{ i+1 }}
 										{% else %}

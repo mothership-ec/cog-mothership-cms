@@ -71,9 +71,14 @@ class ContentLoader implements EntityLoaderInterface
 
 		// Set up the fields on the Content instance
 		foreach ($this->_fieldFactory as $name => $field) {
-			$content->$name = ($field instanceof Field\Group && $field->isRepeatable())
-								? new Field\RepeatableContainer($field)
-								: $field;
+			if ($field instanceof Field\Group && $field->isRepeatable()) {
+				// add sequence variable
+				$field->add($this->_fieldFactory->getField('hidden', '_sequence'));
+
+				$field = new Field\RepeatableContainer($field);
+			}
+
+			$content->$name = $field;
 		}
 
 		// Loop through the content, grouped by group
@@ -95,6 +100,9 @@ class ContentLoader implements EntityLoaderInterface
 						}
 
 						$group = $group->get($row->sequence);
+
+						// set sequence field value
+						$group->_sequence->setValue($row->sequence);
 					}
 
 					// Set the field

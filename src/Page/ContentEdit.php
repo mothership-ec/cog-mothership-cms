@@ -154,7 +154,13 @@ class ContentEdit
 		foreach ($content as $part) {
 			if ($part instanceof Field\RepeatableContainer) {
 				foreach ($part as $i => $group) {
-					$this->_appendGroup($group, $i);
+					$seq = $i;
+
+					if (isset($group->_sequence)) {
+						$seq = $group->_sequence->getValue();
+					}
+
+					$this->_appendGroup($group, (int) $seq);
 				}
 			}
 			elseif ($part instanceof Field\Group) {
