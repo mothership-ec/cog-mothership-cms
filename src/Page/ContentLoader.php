@@ -8,6 +8,7 @@ use Message\Cog\DB\Query as DBQuery;
 use Message\Cog\DB\Result as DBResult;
 use Message\Cog\DB\Entity\EntityLoaderInterface;
 use Message\Cog\Field\Factory;
+use Message\Cog\Field\ContentBuilder;
 
 /**
  * Page content loader, responsible for loading content for pages and populating
@@ -21,6 +22,7 @@ class ContentLoader implements EntityLoaderInterface
 {
 	protected $_query;
 	protected $_fieldFactory;
+	protected $_contentBuilder;
 
 	/**
 	 * Constructor.
@@ -28,10 +30,11 @@ class ContentLoader implements EntityLoaderInterface
 	 * @param DBQuery       $query     The database query instance to use
 	 * @param Field\Factory $paramname The field factory
 	 */
-	public function __construct(DBQuery $query, Factory $fieldFactory)
+	public function __construct(DBQuery $query, Factory $fieldFactory, ContentBuilder $contentBuilder)
 	{
-		$this->_query        = $query;
-		$this->_fieldFactory = $fieldFactory;
+		$this->_query          = $query;
+		$this->_fieldFactory   = $fieldFactory;
+		$this->_contentBuilder = $contentBuilder;
 	}
 
 	/**
@@ -63,76 +66,9 @@ class ContentLoader implements EntityLoaderInterface
 			'id'         => $page->id,
 		));
 
-		$content = new Content;
-		$groups  = array();
-
 		// Build the fields
 		$this->_fieldFactory->build($page->type);
 
-		// Set up the fields on the Content instance
-		foreach ($this->_fieldFactory as $name => $field) {
-			if ($field instanceof Field\Group && $field->isRepeatable()) {
-				// add sequence variable
-				$field->add($this->_fieldFactory->getField('hidden', '_sequence'));
-
-				$field = new Field\RepeatableContainer($field);
-			}
-
-			$content->$name = $field;
-		}
-
-		// Loop through the content, grouped by group
-		foreach ($result->collect('group') as $groupName => $rows) {
-			foreach ($rows as $row) {
-				// If this field is in a group
-				if ($groupName) {
-					$group = $content->$groupName;
-
-					if (!$group) {
-						continue;
-					}
-
-					// Get the right group instance if it's a repeatable group
-					if ($group instanceof Field\RepeatableContainer) {
-						// Ensure the right number of groups are defined
-						while (!$group->get($row->sequence)) {
-							$group->add();
-						}
-
-						$group = $group->get($row->sequence);
-
-						// set sequence field value
-						$group->_sequence->setValue($row->sequence);
-					}
-
-					// Set the field
-					try {
-						$field = $group->{$row->field};
-					}
-					catch (\OutOfBoundsException $e) {
-						continue;
-					}
-				}
-				// If not, finding the field is easy
-				else {
-					$field = $content->{$row->field};
-				}
-
-				// Skip the field if we can't find it
-				if (!isset($field)) {
-					continue;
-				}
-
-				// Set the values
-				if ($field instanceof Field\MultipleValueField) {
-					$field->setValue($row->data_name, $row->value);
-				}
-				elseif ($field instanceof Field\BaseField) {
-					$field->setValue($row->value);
-				}
-			}
-		}
-
-		return $content;
+		return $this->_contentBuilder->buildContent($this->_fieldFactory, $result->collect('group'), new Content);
 	}
 }

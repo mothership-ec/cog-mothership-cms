@@ -82,7 +82,7 @@ class Services implements ServicesInterface
 		};
 
 		$services['cms.page.content_loader'] = $services->factory(function($c) {
-			return new CMS\Page\ContentLoader($c['db.query'], $c['field.factory']);
+			return new CMS\Page\ContentLoader($c['db.query'], $c['field.factory'], $c['field.content.builder']);
 		});
 
 		$services['cms.page.image.loader'] = $services->factory(function($c) {

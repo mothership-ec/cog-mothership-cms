@@ -156,8 +156,8 @@ class ContentEdit
 				foreach ($part as $i => $group) {
 					$seq = $i;
 
-					if (isset($group->_sequence)) {
-						$seq = $group->_sequence->getValue();
+					if (isset($group->{Field\ContentBuilder::SEQUENCE_FIELD})) {
+						$seq = $group->{Field\ContentBuilder::SEQUENCE_FIELD}->getValue();
 					}
 
 					$this->_appendGroup($group, (int) $seq);

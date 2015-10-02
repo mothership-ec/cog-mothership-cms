@@ -134,7 +134,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			}
 		}
 
-		$this->redirectToReferer();
+		return $this->redirectToReferer();
 	}
 
 	/**
