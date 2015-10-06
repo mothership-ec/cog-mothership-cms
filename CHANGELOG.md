@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.8.1
+
+- Resolve issue where an exception would be thrown when calling `Page\Loader::loadFromFilters()` if a query builder hadn't been built yet. Now calls `getAll()` after applying the filters, rather than the private `_loadPages()` method.
+
 ## 4.8.0
 
 - Added `Page::isPublished()` to allow for checking if a page is published without having to access the `publishDateRange` property directly
