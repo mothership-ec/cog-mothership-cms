@@ -620,13 +620,13 @@ class Loader
 	 *
 	 * @param FilterCollection $filters
 	 *
-	 * @return array|Page
+	 * @return array
 	 */
 	public function loadFromFilters(FilterCollection $filters)
 	{
 		$this->applyFilters($filters);
 
-		return $this->_loadPages();
+		return $this->getAll();
 	}
 
 	/**
