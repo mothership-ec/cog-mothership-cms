@@ -2,8 +2,6 @@
 	{% filter escape %}
 		<section class="group" data-collapse data-identifier-field="{{ identifierField }}">
 			<h1 class="title">
-				<a href="#" data-group-ctrl-up>UP</a>
-				<a href="#" data-group-ctrl-down>DOWN</a>
 				<span data-group-label></span>
 			</h1>
 			<div class="content">
@@ -66,8 +64,6 @@
 							{% set identifierField = group.getIdentifierField().getName() %}
 								<section class="group" data-collapse data-identifier-field="{{ identifierField }}">
 									<h1 class="title">
-										<a href="#" data-group-ctrl-up>UP</a>
-										<a href="#" data-group-ctrl-down>DOWN</a>
 										<span data-group-label>
 											{% if group.getIdentifierField() is sameas(false) %}
 												Group #{{ i+1 }}
