@@ -4,25 +4,29 @@ namespace Message\Mothership\CMS\Page;
 
 use Message\Cog\ValueObject\Slug;
 use Message\Cog\Routing\UrlMatcher;
+use Message\Cog\Routing\UrlGenerator;
 
 class SlugEdit
 {
 	private $_pageLoader;
 	private $_pageEdit;
 	private $_urlMatcher;
+	private $_urlGenerator;
 
 	public function __construct(
 		Loader $pageLoader,
 		Edit $pageEdit,
-		UrlMatcher $urlMatcher
+		UrlMatcher $urlMatcher,
+		UrlGenerator $urlGenerator
 	)
 	{
 		$this->_pageLoader = $pageLoader;
 		$this->_pageEdit = $pageEdit;
 		$this->_urlMatcher = $urlMatcher;
+		$this->_urlGenerator = $urlGenerator;
 	}
 
-	public function updateSlug(Page $page, Slug $slug)
+	public function updateSlug(Page $page, Slug $slug, $force = false)
 	{
 		$newSlug = $slug->getLastSegment();
 
@@ -53,34 +57,26 @@ class SlugEdit
 		if (!$checkSlug) {
 			// Check for the slug historically and show deleted ones too
 			$historicalSlug = $this->_pageLoader
-				->includeDeleted(true)
 				->getBySlug($slug, true);
 
 			// If there is a page returned and it's not this page then offer
 			// a link to remove the slug from history and use it anyway
 			if ($historicalSlug && $historicalSlug->id != $page->id) {
-				// If it's been deleted then offer a different message that a non deleted one
-				if (!is_null($historicalSlug->authorship->deletedAt())) {
-					throw new Exception\SlugUpdateException(
-						'Slug `' . $slug . '` has been previously used on a deleted page',
-						'ms.cms.feedback.force-slug.failure.deleted',
-						[
-							'%slug%' => $slug,
-							'%forceUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug))
-						]
-					);
-				} else {
-					throw new Exception\SlugUpdateException(
-						'Slug `' . $slug . '` has been previously and is redirecting to page ' . $historicalSlug->id,
-						'ms.cms.feedback.force-slug.failure.redirected',
-						[
-							'%slug%' => $slug,
-							'%redirectedUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $historicalSlug->id)),
-							'%redirectedTitle%' => $historicalSlug->title,
-							'%forceUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)),
-						]
-					);
-				}
+				throw new Exception\SlugUpdateException(
+					'Slug `' . $slug . '` has been previously and is redirecting to page ' . $historicalSlug->id,
+					'ms.cms.feedback.force-slug.failure.redirected',
+					[
+						'%slug%' => $slug,
+						'%redirectedUrl%' => $this->_urlGenerator->generate(
+							'ms.cp.cms.edit.attributes',
+							['pageID' => $historicalSlug->id]
+						),
+						'%redirectedTitle%' => $historicalSlug->title,
+						'%forceUrl%' => $this->_urlGenerator->generate(
+							'ms.cp.cms.edit.attributes.slug.force', ['pageID' => $page->id, 'slug' => $newSlug]
+						),
+					]
+				);
 			}
 		}
 
@@ -90,7 +86,7 @@ class SlugEdit
 				'ms.cms.feedback.force-slug.failure.already-used',
 				[
 					'%slugUrl%' => $checkSlug->slug->getFull(),
-					'%usingUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $checkSlug->id)),
+					'%usingUrl%' => $this->_urlGenerator->generate('ms.cp.cms.edit.attributes', ['pageID' => $checkSlug->id]),
 					'%usingTitle%' => $checkSlug->title,
 				]
 			);
