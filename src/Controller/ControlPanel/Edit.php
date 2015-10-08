@@ -187,7 +187,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		$fullSlug = '/'.implode('/',$slugSegments);
 
 		$this->get('cms.page.edit')->removeHistoricalSlug($fullSlug);
-		$page = $this->_updateSlug($page, new Slug($slug));
+		$page = $this->_updateSlug($page, new Slug($slugSegments));
 		$this->addFlash('success', $this->trans('ms.cms.feedback.force-slug.success'));
 
 		return $this->redirectToReferer();
@@ -569,7 +569,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		try {
 			$routes = $this->get('routing.matcher')->match($slug);
 
-			// continue if the frontend route is the most promenant
+			// continue if the frontend route is the most prominent
 			if ($routes['_route'] !== 'ms.cms.frontend') {
 				$this->addFlash('error',  $this->trans('ms.cms.feedback.force-slug.failure.reserved-route'));
 				$update = false;
@@ -581,7 +581,7 @@ class Edit extends \Message\Cog\Controller\Controller
 
 		// If not slug has been found, we need to check the history too
 		if (!$checkSlug && $update) {
-			// Check for the slug historicaly and show deleted ones too
+			// Check for the slug historically and show deleted ones too
 			$historicalSlug = $this->get('cms.page.loader')
 				->includeDeleted(true)
 				->getBySlug($slug, true);
@@ -589,7 +589,7 @@ class Edit extends \Message\Cog\Controller\Controller
 			// If there is a page returned and it's not this page then offer
 			// a link to remove the slug from history and use it anyway
 			if ($historicalSlug && $historicalSlug->id != $page->id) {
-				// If it's been deleted then offer a differnt message that a non deleted one
+				// If it's been deleted then offer a different message that a non deleted one
 				if (!is_null($historicalSlug->authorship->deletedAt())) {
 					$this->addFlash(
 						'error',

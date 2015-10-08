@@ -146,8 +146,8 @@ class Edit implements TransactionalInterface
 			throw new Exception\InvalidSlugException('Slug must only be formed of alphanumeric characters and hyphens.');
 		}
 
-		// Get all the segements
-		$segements = $page->slug->getSegments();
+		// Get all the segments
+		$segments = $page->slug->getSegments();
 		$date = new DateTimeImmutable;
 
 		$this->_transaction->run('
@@ -179,7 +179,7 @@ class Edit implements TransactionalInterface
 			)
 		);
 		// Remove the last one
-		$last = array_pop($segements);
+		$last = array_pop($segments);
 		// Set the new one to the end of the array
 		$segments[] = $newSlug;
 		// Create a new slug object

@@ -464,6 +464,8 @@ class Loader
 			->where('page.position_depth = ?i', [count($parts)])
 		;
 
+		d($this->_queryBuilder->getQueryString());
+
 		$pages = $this->_loadPages();
 
 		if ($pages) {
