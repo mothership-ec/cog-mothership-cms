@@ -63,11 +63,11 @@ class SlugEdit
 	 */
 	public function updateSlug(Page $page, Slug $slug)
 	{
-		$newSlug = $slug->getLastSegment();
-
-		if ($newSlug === $page->slug->getLastSegment()) {
+		if ($slug->getFull() === $page->slug->getFull()) {
 			return;
 		}
+
+		$newSlug = $slug->getLastSegment();
 
 		$slugSegments = $page->slug->getSegments();
 		array_pop($slugSegments);
@@ -75,22 +75,20 @@ class SlugEdit
 		$slug = '/'.implode('/',$slugSegments);
 
 		$this->_checkRoute($slug);
-		$this->_checkSlugExists($page, $newSlug, $slug);
+		$this->_checkSlugExists($page, $slug);
 
 		// If the slug has changed then update the slug
-		if ($page->slug->getLastSegment() != $newSlug) {
-			$this->_pageEdit->removeHistoricalSlug($slug);
-			try {
-				$this->_pageEdit->updateSlug($page, $newSlug);
-			} catch (Exception\InvalidSlugException $e) {
-				throw new Exception\SlugUpdateException(
-					$e->getMessage(),
-					'ms.cms.feedback.force-slug.failure.generic',
-					[
-						'%message%' => $e->getMessage(),
-					]
-				);
-			}
+		$this->_pageEdit->removeHistoricalSlug($slug);
+		try {
+			$this->_pageEdit->updateSlug($page, $newSlug);
+		} catch (Exception\InvalidSlugException $e) {
+			throw new Exception\SlugUpdateException(
+				$e->getMessage(),
+				'ms.cms.feedback.force-slug.failure.generic',
+				[
+					'%message%' => $e->getMessage(),
+				]
+			);
 		}
 	}
 
