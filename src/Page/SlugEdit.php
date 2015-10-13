@@ -143,7 +143,7 @@ class SlugEdit
 
 		if ($existingPage && $existingPage->id != $page->id) {
 			throw new Exception\SlugUpdateException(
-				'Slug `' . $slug . '` has is already used',
+				'Slug `' . $slug . '` has already been used',
 				'ms.cms.feedback.force-slug.failure.already-used',
 				[
 					'%slugUrl%' => $existingPage->slug->getFull(),
@@ -183,7 +183,7 @@ class SlugEdit
 			$newSlug = array_pop($slugParts);
 
 			throw new Exception\SlugUpdateException(
-				'Slug `' . $slug . '` has been previously and is redirecting to page ' . $historicalSlug->id,
+				'Slug `' . $slug . '` has been used previously and is redirecting to page ' . $historicalSlug->id,
 				'ms.cms.feedback.force-slug.failure.redirected',
 				[
 					'%slug%' => $slug,
