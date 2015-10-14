@@ -9,6 +9,7 @@ use Message\Mothership\CMS\Page\Authorisation;
 use Message\Mothership\CMS\Page\Page;
 use Message\Mothership\CMS\Page\Content;
 use Message\Mothership\CMS\Page\Exception\PageEditException;
+use Message\Mothership\CMS\Page\Exception\SlugUpdateException;
 
 use Message\Cog\ValueObject\Slug;
 use Message\Mothership\FileManager\File;
@@ -187,7 +188,7 @@ class Edit extends \Message\Cog\Controller\Controller
 		$fullSlug = '/'.implode('/',$slugSegments);
 
 		$this->get('cms.page.edit')->removeHistoricalSlug($fullSlug);
-		$page = $this->_updateSlug($page, new Slug($slug));
+		$page = $this->_updateSlug($page, new Slug($slugSegments));
 		$this->addFlash('success', $this->trans('ms.cms.feedback.force-slug.success'));
 
 		return $this->redirectToReferer();
@@ -555,101 +556,12 @@ class Edit extends \Message\Cog\Controller\Controller
 	 */
 	protected function _updateSlug(Page $page, Slug $slug)
 	{
-		$newSlug = $slug->getLastSegment();
-
-		// Flag as to whether to update the slug
-		$update = true;
-
-		$slugSegments = $page->slug->getSegments();
-		$last  = array_pop($slugSegments);
-		$slugSegments[] = $newSlug;
-		$slug = '/'.implode('/',$slugSegments);
-		$checkSlug = $this->get('cms.page.loader')->getBySlug($slug, false);
-
 		try {
-			$routes = $this->get('routing.matcher')->match($slug);
-
-			// continue if the frontend route is the most promenant
-			if ($routes['_route'] !== 'ms.cms.frontend') {
-				$this->addFlash('error',  $this->trans('ms.cms.feedback.force-slug.failure.reserved-route'));
-				$update = false;
-			}
-		} catch (\Symfony\Component\Routing\Exception\ResourceNotFoundException $e) {	
-			$this->addFlash('error', $this->trans('ms.cms.feedback.force-slug.failure.not-matched'));
-			$update = false;
+			$this->get('cms.page.slug_edit')->updateSlug($page, $slug);
+		} catch (SlugUpdateException $e) {
+			$this->addFlash('error', $e->getTranslation(), $e->getParams());
 		}
 
-		// If not slug has been found, we need to check the history too
-		if (!$checkSlug && $update) {
-			// Check for the slug historicaly and show deleted ones too
-			$historicalSlug = $this->get('cms.page.loader')
-				->includeDeleted(true)
-				->getBySlug($slug, true);
-
-			// If there is a page returned and it's not this page then offer
-			// a link to remove the slug from history and use it anyway
-			if ($historicalSlug && $historicalSlug->id != $page->id) {
-				// If it's been deleted then offer a differnt message that a non deleted one
-				if (!is_null($historicalSlug->authorship->deletedAt())) {
-					$this->addFlash(
-						'error',
-						$this->trans(
-							'ms.cms.feedback.force-slug.failure.deleted',
-							array(
-								'%slug%' => $slug,
-								'%forceUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug))
-							)
-						)
-					);
-				} else {
-					$this->addFlash(
-						'error',
-						$this->trans(
-							'ms.cms.feedback.force-slug.failure.redirected',
-							array(
-								'%slug%' => $slug,
-								'%redirectedUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $historicalSlug->id)),
-								'%redirectedTitle%' => $historicalSlug->title,
-								'%forceUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes.slug.force', array('pageID' => $page->id,'slug' => $newSlug)),
-							)
-						)
-					);
-				}
-
-				// We shouldn't update the slug as we need action
-				$update = false;
-			}
-		}
-
-		if ($checkSlug && $checkSlug->id != $page->id) {
-			$this->addFlash(
-				'error',
-				$this->trans(
-					'ms.cms.feedback.force-slug.failure.already-used',
-					array(
-						'%slugUrl%' => $checkSlug->slug->getFull(),
-						'%usingUrl%' => $this->generateUrl('ms.cp.cms.edit.attributes', array('pageID' => $checkSlug->id)),
-						'%usingTitle%' => $checkSlug->title,
-					)
-				)
-			);
-			// We shouldn't update the slug as we need action
-			$update = false;
-		}
-
-		// If the slug has changed then update the slug
-		if ($update && $page->slug->getLastSegment() != $newSlug) {
-			$this->get('cms.page.edit')->removeHistoricalSlug($slug);
-			try {
-				$page = $this->get('cms.page.edit')->updateSlug($page, $newSlug);
-			} catch (InvalidSlugException $e) {
-				$this->addFlash('error', $this->trans('ms.cms.feedback.force-slug.failure.generic', [
-					'%message%' => $e->getMessage(),
-				]));
-			}
-		}
-
-		// return the updated or unchanged page
 		return $page;
 	}
 

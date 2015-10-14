@@ -187,6 +187,15 @@ class Services implements ServicesInterface
 			return $fields;
 		});
 
+		$services['cms.page.slug_edit'] = function ($c) {
+			return new CMS\Page\SlugEdit(
+				$c['cms.page.loader'],
+				$c['cms.page.edit'],
+				$c['routing.matcher'],
+				$c['routing.generator']
+			);
+		};
+
 		$services->extend('form.extensions', function($extensions, $c) {
 			$extensions[] = $c['form.cms_extension'];
 
