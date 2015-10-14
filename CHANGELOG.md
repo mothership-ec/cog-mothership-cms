@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.9.0
+
+- Added `Page\SlugEdit` class to process and validate changes to page slugs
+- Added `Page\Exception\SlugUpdateException` class which extends `Message\Cog\Exception\TranslationLogicException` for relaying errors thrown when editing a slug back to the user
+- Added `cms.page.slug_edit` service which returns instance of `Page\SlugEdit`
+- Fixed `$segements` typo in `Page\Edit::updateSlug()` (renamed to `$segments`)
+- Removed logic from `Controller\ControlPanel\Edit::_updateSlug()` and use `Page\SlugEdit` instead. `Page\Exception\SlugUpdateException` is caught and its translation is taken and given to the flash bag
+- Capitalised 'URL' in slug update success message
+- Updated `Cog` dependency to 4.13
+
 ## 4.8.1
 
 - Resolve issue where an exception would be thrown when calling `Page\Loader::loadFromFilters()` if a query builder hadn't been built yet. Now calls `getAll()` after applying the filters, rather than the private `_loadPages()` method.
