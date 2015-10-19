@@ -769,16 +769,16 @@
         },
         {
             "name": "mothership-ec/cog-mothership-cp",
-            "version": "3.5.2",
+            "version": "3.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mothership-ec/cog-mothership-cp.git",
-                "reference": "5574375ae2e9ef55399b85f6745c0dddb11e94c1"
+                "reference": "f3d5a6f267e1df6b4bf9f3477113fe93b6f7614d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mothership-ec/cog-mothership-cp/zipball/5574375ae2e9ef55399b85f6745c0dddb11e94c1",
-                "reference": "5574375ae2e9ef55399b85f6745c0dddb11e94c1",
+                "url": "https://api.github.com/repos/mothership-ec/cog-mothership-cp/zipball/f3d5a6f267e1df6b4bf9f3477113fe93b6f7614d",
+                "reference": "f3d5a6f267e1df6b4bf9f3477113fe93b6f7614d",
                 "shasum": ""
             },
             "require": {
@@ -815,7 +815,7 @@
                 "control panel",
                 "mothership"
             ],
-            "time": "2015-10-14 12:23:35"
+            "time": "2015-10-19 10:50:20"
         },
         {
             "name": "mothership-ec/cog-mothership-file-manager",
