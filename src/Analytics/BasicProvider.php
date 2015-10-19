@@ -2,6 +2,15 @@
 
 namespace Message\Mothership\CMS\Analytics;
 
+/**
+ * @author Samuel Trangmar-Keates
+ *
+ * A basic provider class which is constructed with the reference, params and names
+ * required. Useful for basic providers.
+ *
+ * If there is a more complecated provider, then AnalyticsProviderInterface should
+ * be implemented
+ */
 class BasicProvider implements AnalyticsProvidorInterface
 {
 	/**

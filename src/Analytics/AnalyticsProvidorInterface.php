@@ -10,7 +10,8 @@ namespace Message\Mothership\CMS\Analytics;
 interface AnalyticsProvidorInterface
 {
 	/**
-	 * Gets the view reference to render on each page
+	 * Gets a unique name for the provider.
+	 * This is used as an internal identifier.
 	 * 
 	 * @return string Unique name
 	 */
