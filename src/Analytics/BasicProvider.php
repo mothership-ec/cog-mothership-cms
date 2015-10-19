@@ -28,7 +28,14 @@ class BasicProvider implements AnalyticsProvidorInterface
 	 */
 	private $_params;
 
-	public function __construct($name, $viewRef, $params)
+	/**
+	 * Construct the object with the correct fields.
+	 * 
+	 * @param string $name    The object identifier
+	 * @param string $viewRef The view reference
+	 * @param array  $params  The parameters to pass to the view
+	 */
+	public function __construct($name, $viewRef, $params = [])
 	{
 		$this->_name    = $name;
 		$this->_viewRef = $viewRef;
