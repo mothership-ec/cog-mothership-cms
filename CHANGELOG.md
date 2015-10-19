@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.10.0
+
+- Support for re-ordering repeatable groups, if control panel 3.5.3 or higher is installed
+- `Page\Content` now extends `Message\Cog\Field\Content`. Functionality is now entirely abstracted to `Message\Cog\Field\Content`
+- Added third parameter of `Message\Cog\Field\ContentBuilder` to `Page\ContentLoader::__construct()`. Content populating functionality is now abstracted to `Message\Cog\Field\ContentBuilder`
+- Page edit screen now uses `redirectToReferer()` when a form is submitted, rather than rendering a new form and populating it
+
 ## 4.9.0
 
 - Added `Page\SlugEdit` class to process and validate changes to page slugs
