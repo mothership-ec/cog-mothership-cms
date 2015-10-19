@@ -1,7 +1,9 @@
 {% macro getRepeatablePrototype(form, groupName, fields, identifierField, singularName) %}
 	{% filter escape %}
 		<section class="group" data-collapse data-identifier-field="{{ identifierField }}">
-			<h1 class="title" data-group-label></h1>
+			<h1 class="title">
+				<span data-group-label></span>
+			</h1>
 			<div class="content">
 				{{ form_widget(form[groupName].vars.prototype) }}
 				<a href="#" data-group-remove class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
@@ -57,27 +59,31 @@
 				<div class="content">
 					<p class="group-desc">{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.description')|trans }}</p>
 					<section class="repeatable-group">
-						{% set identifierField = "" %}
-						{% for i,group in part %}
-							{% set identifierField = group.getIdentifierField().getName() %}
-								<section class="group" data-collapse data-identifier-field="{{ identifierField }}">
-									<h1 class="title" data-group-label>
-										{% if group.getIdentifierField() is sameas(false) %}
-											Group #{{ i+1 }}
-										{% else %}
-											{{ group.getIdentifierField() }}
-										{% endif %}
-									</h1>
-									<div class="content">
-										{% for field in repeatables[name] %}
-											{{ form_widget(form[name][i]) }}
-										{% endfor %}
-										<a href="#" data-group-remove class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
-									</div>
-								</section>
-							{% else %}
-								{% do form[name].setRendered %}
-						{% endfor %}
+						<div class="sortable">
+							{% set identifierField = "" %}
+							{% for i,group in part %}
+								{% set identifierField = group.getIdentifierField().getName() %}
+									<section class="group" data-collapse data-identifier-field="{{ identifierField }}">
+										<h1 class="title">
+											<span data-group-label>
+												{% if group.getIdentifierField() is sameas(false) %}
+													Group #{{ i+1 }}
+												{% else %}
+													{{ group.getIdentifierField() }}
+												{% endif %}
+											</span>
+										</h1>
+										<div class="content">
+											{% for field in repeatables[name] %}
+												{{ form_widget(form[name][i]) }}
+											{% endfor %}
+											<a href="#" data-group-remove class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
+										</div>
+									</section>
+								{% else %}
+									{% do form[name].setRendered %}
+							{% endfor %}
+						</div>
 
 						{# <div class="add-group"> #}
 							<a href="#" data-group-add data-prototype="{{
