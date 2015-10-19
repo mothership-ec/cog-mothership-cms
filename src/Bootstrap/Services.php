@@ -7,6 +7,7 @@ use Message\Mothership\CMS;
 use Message\Cog\DB\Entity\EntityLoaderCollection;
 use Message\Cog\Bootstrap\ServicesInterface;
 use Message\Mothership\Report\Report\Collection as ReportCollection;
+use Message\Mothership\CMS\Analytics;
 
 class Services implements ServicesInterface
 {
@@ -263,6 +264,16 @@ class Services implements ServicesInterface
 
 			return $factory;
 		});
+
+		$services['analytics.collection'] = function ($c) {
+			return new Analytics\ProviderCollection([
+				new Analytics\BasicProvider('google', 'Message:Mothership:CMS::modules:analytics:google', ['key' => $c['cfg']->analytics->key]),
+			]);
+		};
+
+		$services['analytics.provider'] = function ($c) {
+			return $c['analytics.collection']->get($c['cfg']->analytics->provider);
+		};
 	}
 
 	public function registerReports($services)

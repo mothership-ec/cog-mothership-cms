@@ -8,6 +8,8 @@ class Analytics extends Controller
 {
 	public function analytics()
 	{
-		return $this->render('Message:Mothership:CMS::modules:analytics:' . $this->get('cfg')->analytics->provider);
+		$provider = $this->get('analytics.provider');
+
+		return $this->render($provider->getViewReference(), $provider->getViewParams());
 	}
 }
