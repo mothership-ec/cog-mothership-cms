@@ -267,7 +267,7 @@ class Services implements ServicesInterface
 
 		$services['analytics.collection'] = function ($c) {
 			return new Analytics\ProviderCollection([
-				new Analytics\BasicProvider('google-analytics', 'Message:Mothership:CMS::modules:analytics:google', ['key' => $c['cfg']->analytics->key]),
+				new Analytics\Provider\GoogleAnalyticsProvider($c['cfg']->analytics->key),
 			]);
 		};
 
