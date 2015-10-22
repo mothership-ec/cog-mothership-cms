@@ -7,7 +7,7 @@ namespace Message\Mothership\CMS\Analytics;
  *
  * An interface for an analytics provider
  */
-interface AnalyticsProvidorInterface
+interface AnalyticsProviderInterface
 {
 	/**
 	 * Gets a unique name for the provider.

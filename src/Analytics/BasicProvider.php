@@ -11,7 +11,7 @@ namespace Message\Mothership\CMS\Analytics;
  * If there is a more complecated provider, then AnalyticsProviderInterface should
  * be implemented
  */
-class BasicProvider implements AnalyticsProvidorInterface
+class BasicProvider implements AnalyticsProviderInterface
 {
 	/**
 	 * @var string
