@@ -11,6 +11,8 @@ use Message\Cog\ValueObject\Slug;
  * history for another page.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
+ *
+ * @deprecated Exception is no longer in use, use \Message\Mothership\CMS\Page\Exception\SlugUpdateException instead
  */
 class HistoricalSlugExistsException extends Exception
 {

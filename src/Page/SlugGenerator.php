@@ -52,9 +52,6 @@ class SlugGenerator
 	 *                            when called internally
 	 *
 	 * @return Slug               The generated slug instance
-	 *
-	 * @throws Exception\HistoricalSlugExistsException If the original generated
-	 *                                                 slug exists in the history
 	 */
 	public function generate($title, Page $parent = null, $attempt = 1)
 	{
@@ -73,15 +70,6 @@ class SlugGenerator
 
 		// Check to see if this slug exists in the history
 		$redirectPage = $this->_loader->checkSlugHistory($slug->getFull());
-
-		// If this slug exists in the history and this is the original
-		// generation request, throw special exception
-		if ($redirectPage && 1 === $attempt) {
-			throw new Exception\HistoricalSlugExistsException(sprintf(
-				'Slug `%s` exists historically',
-				$slug->getFull()
-			), $slug, $redirectPage);
-		}
 
 		// If the generated slug exists either historically or on a live page,
 		// try again with a flag for uniqueness
