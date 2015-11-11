@@ -9,8 +9,8 @@ class GoogleAnalyticsProvider extends BasicProvider
 	/**
 	 * Construct with mothership default views
 	 */
-	public function __construct($key, $viewReferece = 'Message:Mothership:CMS::modules:analytics:google-analytics')
+	public function __construct($key, $viewReference = 'Message:Mothership:CMS::modules:analytics:google-analytics')
 	{
-		parent::__construct('google-analytics', $viewReferece, [ 'key' => $key ]);
+		parent::__construct('google-analytics', $viewReference, [ 'key' => $key ]);
 	}
 }
