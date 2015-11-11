@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.10.1
+
+- Deprecated `Exception\HistoricalSlugExistsException`, use `Page\Exception\SlugUpdateException` instead
+- `Page\SlugGenerator::generate()` no longer throws `Exception\HistoricalSlugExistsException` if the slug exists in the slug history
+
 ## 4.10.0
 
 - Support for re-ordering repeatable groups, if control panel 3.5.3 or higher is installed
