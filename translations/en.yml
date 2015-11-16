@@ -40,7 +40,7 @@ ms.cms:
         reserved-route: This route is already reserved by a module.
         generic: Error updating slug: %message%
         not-matched: The slug given does not match the requirements. Please use only alphanumeric characters and hyphens.
-      success: The Url was successfully updated
+      success: The URL was successfully updated
   repeatable_group:
     add: "{0} Add a %name%|[1,Inf] Add another %name%"
     remove: Remove this %name%

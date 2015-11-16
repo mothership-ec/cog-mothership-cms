@@ -23,7 +23,6 @@ class Link extends MultipleValueField
 
 	const SCOPE_CMS      = 'cms';
 	const SCOPE_EXTERNAL = 'external';
-//	const SCOPE_ROUTE    = 'route'; # for a future version?
 	const SCOPE_ANY      = 'any';
 
 	const DEFAULT_LABEL = 'ms.cms.field_types.link.default_label';
@@ -58,6 +57,8 @@ class Link extends MultipleValueField
 
 	public function getFormField(FormBuilder $form)
 	{
+		$this->_setDefaultOptions();
+
 		switch ($this->_scope) {
 			case self::SCOPE_CMS :
 				$this->_addCmsLink($form);
@@ -83,7 +84,6 @@ class Link extends MultipleValueField
 		}
 
 		$this->_scope = $scope;
-		$this->_setDefaultOptions();
 
 		return $this;
 	}
@@ -138,7 +138,7 @@ class Link extends MultipleValueField
 	 * @return Link
 	 */
 	public function setFieldOptions(array $options)
-	{
+	{		
 		$base = $this->getFieldOptions();
 
 		$options = array_merge($base, $options);
@@ -211,18 +211,29 @@ class Link extends MultipleValueField
 	 */
 	protected function _setCmsLinkOptions()
 	{
-		$this->_setPageHeirarchy();
-		$options = [];
+		if(empty($this->getFieldOptions()['choices'])) {
+			$this->_setPageHeirarchy();
+			$options = [];
 
-		foreach ($this->_pages as $page) {
-			$prefix             = str_repeat('-', $page->depth);
-			$options[$page->id] = $prefix . ' ' . $page->title;
+			foreach ($this->_pages as $page) {
+				$prefix             = str_repeat('-', $page->depth);
+				$options[$page->id] = $prefix . ' ' . $page->title;
+
+				if (!$page->isPublished()) {
+					$options[$page->id] .= ' [unpublished]';
+				}
+			}
+
+			$this->setFieldOptions([
+				'choices'     => $options,
+			]);
 		}
 
-		$this->setFieldOptions([
-			'empty_value' => self::EMPTY_VALUE,
-			'choices'     => $options,
-		]);
+		if(!empty($this->getFieldOptions()['choices'])) {
+			$this->setFieldOptions([
+				'empty_value' => self::EMPTY_VALUE,
+			]);
+		}
 	}
 
 	/**
@@ -238,16 +249,18 @@ class Link extends MultipleValueField
 	 */
 	protected function _setAnyLinkOptions()
 	{
-		$this->_setPageHeirarchy();
-		$options = [];
+		if(empty($this->getFieldOptions()['choices'])) {
+			$this->_setPageHeirarchy();
+			$options = [];
 
-		foreach ($this->_pages as $page) {
-			$options[] = $page->slug->getFull();
+			foreach ($this->_pages as $page) {
+				$options[] = $page->slug->getFull();
+			}
+
+			$this->setFieldOptions([
+				'choices'  => $options,
+			]);
 		}
-
-		$this->setFieldOptions([
-			'choices'  => $options,
-		]);
 	}
 
 	/**
@@ -255,14 +268,9 @@ class Link extends MultipleValueField
 	 *
 	 * @param Page $parent
 	 */
-	protected function _setPageHeirarchy(Page $parent = null)
+	protected function _setPageHeirarchy()
 	{
-		$children = $this->_loader->getChildren($parent);
-
-		foreach ($children as $page) {
-			$this->_pages[$page->id] = $page;
-			$this->_setPageHeirarchy($page);
-		}
+		$this->_pages = $this->_loader->includeDeleted(false)->getAll();
 	}
 
 	/**

@@ -1,5 +1,71 @@
 # Changelog
 
+## 4.10.1
+
+- Deprecated `Exception\HistoricalSlugExistsException`, use `Page\Exception\SlugUpdateException` instead
+- `Page\SlugGenerator::generate()` no longer throws `Exception\HistoricalSlugExistsException` if the slug exists in the slug history
+
+## 4.10.0
+
+- Support for re-ordering repeatable groups, if control panel 3.5.3 or higher is installed
+- `Page\Content` now extends `Message\Cog\Field\Content`. Functionality is now entirely abstracted to `Message\Cog\Field\Content`
+- Added third parameter of `Message\Cog\Field\ContentBuilder` to `Page\ContentLoader::__construct()`. Content populating functionality is now abstracted to `Message\Cog\Field\ContentBuilder`
+- Page edit screen now uses `redirectToReferer()` when a form is submitted, rather than rendering a new form and populating it
+
+## 4.9.0
+
+- Added `Page\SlugEdit` class to process and validate changes to page slugs
+- Added `Page\Exception\SlugUpdateException` class which extends `Message\Cog\Exception\TranslationLogicException` for relaying errors thrown when editing a slug back to the user
+- Added `cms.page.slug_edit` service which returns instance of `Page\SlugEdit`
+- Fixed `$segements` typo in `Page\Edit::updateSlug()` (renamed to `$segments`)
+- Removed logic from `Controller\ControlPanel\Edit::_updateSlug()` and use `Page\SlugEdit` instead. `Page\Exception\SlugUpdateException` is caught and its translation is taken and given to the flash bag
+- Capitalised 'URL' in slug update success message
+- Updated `Cog` dependency to 4.13
+
+## 4.8.1
+
+- Resolve issue where an exception would be thrown when calling `Page\Loader::loadFromFilters()` if a query builder hadn't been built yet. Now calls `getAll()` after applying the filters, rather than the private `_loadPages()` method.
+
+## 4.8.0
+
+- Added `Page::isPublished()` to allow for checking if a page is published without having to access the `publishDateRange` property directly
+- Do not display deleted pages as CMS options in link field
+- Append unpublished pages in link field CMS options with `[unpublished]`
+- By default `Page\ContentFilter` does not include content from deleted or unpublished pages when loading options for filter form
+- Remove broken and out of date unit tests
+- Implement Travis
+
+## 4.7.0
+
+- Added `Page\Event\ContentEvent` class for content-related event listeners
+- `Page\ContentEdit::save()` method fires instance of `Page\Event\ContentEvent` at the end of save
+- Removed erroneously added loop from `Page\Loader` that didn't do anything
+
+## 4.6.1
+
+- Resolve issue where `Attributes` tab would cause an error when attempting to load access groups
+
+## 4.6.0
+
+- Implemented page caching on `Page\Loader`
+- Optimised `Link` field type page tree building
+- Added `PageCollection` class for storing page cache
+- Added `cms.page.cache` service which returns `PageCollection` class
+- Ability to pass `filterPages()` JavaScript function a URL negating the need to create a new route for the returned HTML
+- Increased `Cog` dependency to 4.8
+
+## 4.5.3
+
+- Resolve issue where slug redirects would break if redirecting to the home page (where a slug is empty)
+
+## 4.5.2
+
+- Resolve issue where `PageProxy::getTags()` method would only load tags for published and non-deleted pages
+
+## 4.5.1
+
+- Resolve issue where MySQL pagination would break if no pages were returned on page loader.
+
 ## 4.5.0
 
 - Added `PageOrder::NONE` constant to disable ORDER BY statement when loading pages

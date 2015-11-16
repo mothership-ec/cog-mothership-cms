@@ -3,6 +3,7 @@
 namespace Message\Mothership\CMS\Test\Page;
 
 use Message\Mothership\CMS\Page\Page;
+use Message\Mothership\CMS\Test\PageType\Blog;
 
 class PageTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,9 +16,8 @@ class PageTest extends \PHPUnit_Framework_TestCase
 
 	public function testGetType()
 	{
-		// TODO: create blog page type fixture class to use here.
-		$this->_page->type = 'blog';
+		$this->_page->type = new Blog;
 
-		#$this->assertInstanceOf('Message\Mothership\CMS\PageType\\PageTypeInterface', $this->_page->getType());
+		$this->assertInstanceOf('Message\Mothership\CMS\PageType\\PageTypeInterface', $this->_page->getType());
 	}
 }

@@ -7,6 +7,7 @@ use Message\Mothership\CMS;
 use Message\Cog\DB\Entity\EntityLoaderCollection;
 use Message\Cog\Bootstrap\ServicesInterface;
 use Message\Mothership\Report\Report\Collection as ReportCollection;
+use Message\Mothership\CMS\Analytics;
 
 class Services implements ServicesInterface
 {
@@ -40,9 +41,14 @@ class Services implements ServicesInterface
 					'content' => $c['cms.page.content_loader'],
 					'image' => $c['cms.page.image.loader'],
 					'tags' => $c['cms.page.tag.loader'],
-				])
+				]),
+				$c['cms.page.cache']
 			);
 		});
+
+		$services['cms.page.cache'] = function($c) {
+			return new CMS\Page\PageCollection;
+		};
 
 		$services['cms.page.searcher'] = function($c) {
 			$searcher =  new CMS\Page\Searcher($c['db.query'], $c['markdown.parser']);
@@ -77,7 +83,7 @@ class Services implements ServicesInterface
 		};
 
 		$services['cms.page.content_loader'] = $services->factory(function($c) {
-			return new CMS\Page\ContentLoader($c['db.query'], $c['field.factory']);
+			return new CMS\Page\ContentLoader($c['db.query'], $c['field.factory'], $c['field.content.builder']);
 		});
 
 		$services['cms.page.image.loader'] = $services->factory(function($c) {
@@ -182,6 +188,15 @@ class Services implements ServicesInterface
 			return $fields;
 		});
 
+		$services['cms.page.slug_edit'] = function ($c) {
+			return new CMS\Page\SlugEdit(
+				$c['cms.page.loader'],
+				$c['cms.page.edit'],
+				$c['routing.matcher'],
+				$c['routing.generator']
+			);
+		};
+
 		$services->extend('form.extensions', function($extensions, $c) {
 			$extensions[] = $c['form.cms_extension'];
 
@@ -249,6 +264,16 @@ class Services implements ServicesInterface
 
 			return $factory;
 		});
+
+		$services['analytics.collection'] = function ($c) {
+			return new Analytics\ProviderCollection([
+				new Analytics\Provider\GoogleAnalyticsProvider($c['cfg']->analytics->key),
+			]);
+		};
+
+		$services['analytics.provider'] = function ($c) {
+			return $c['analytics.collection']->get($c['cfg']->analytics->provider);
+		};
 	}
 
 	public function registerReports($services)
