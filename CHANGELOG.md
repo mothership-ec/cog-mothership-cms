@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.11.0
+
+- Added functionality for embedding analytics code to views by calling `render(controller('Message:Mothership:CMS::Controller:Module:Analytics#analytics'))`
+- Added `Analytics\AnalyticsProviderInterface` interface representing an analytics service
+- Added `Analytics/BasicProvider` class for generic analytics provider classes
+- Added `Analytics\Provider\GoogleAnalyticsProvider` class representing Google Analytics
+- Added `Analytics\ProviderCollection` class for registering and storying analytics providers
+- Added `Controller\Module\Analytics` controller for rendering analytics code
+- Added `analytics.yml` config fixture for registering analytics code
+- Added `analytics.collection` service which returns instance of `Analytics\ProviderCollection`
+- Added `analytics.provider` service which returns registered instance of `Analytics\AnalyticsProviderInterface` determined by `analytics.yml` `provider` config setting
+- Added `modules/analytics/google-analytics.html.twig` view file for rendering Google Analytics code
+
 ## 4.10.1
 
 - Deprecated `Exception\HistoricalSlugExistsException`, use `Page\Exception\SlugUpdateException` instead
