@@ -8,7 +8,7 @@
 
 - Added functionality for embedding analytics code to views by calling `render(controller('Message:Mothership:CMS::Controller:Module:Analytics#analytics'))`
 - Added `Analytics\AnalyticsProviderInterface` interface representing an analytics service
-- Added `Analytics/BasicProvider` class for generic analytics provider classes
+- Added `Analytics\BasicProvider` class for generic analytics provider classes
 - Added `Analytics\Provider\GoogleAnalyticsProvider` class representing Google Analytics
 - Added `Analytics\ProviderCollection` class for registering and storying analytics providers
 - Added `Controller\Module\Analytics` controller for rendering analytics code
