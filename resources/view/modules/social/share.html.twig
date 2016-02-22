@@ -64,6 +64,14 @@
 				</a>
 			</li>
 
+		{% elseif network == 'email' %}
+
+			<li class="email">
+				<a href="mailto:?subject={{ title|e('url') }}&amp;body={{ description|raw|striptags|e('url') }}%20via%20{{ uri|e('url') }}">
+					Email
+				</a>
+			</li>
+
 		{% endif %}
 	{% endfor %}
 </ul>

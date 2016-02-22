@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.12.0
+
+- Allow pages to be shared via email
+
 ## 4.11.0
 
 - Added functionality for embedding analytics code to views by calling `render(controller('Message:Mothership:CMS::Controller:Module:Analytics#analytics'))`
