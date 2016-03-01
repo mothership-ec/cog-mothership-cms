@@ -2,7 +2,6 @@
 
 namespace Message\Mothership\CMS\Page\Filter;
 
-use Message\Cog\Filter\AbstractFilter;
 use Message\Cog\DB;
 
 /**
