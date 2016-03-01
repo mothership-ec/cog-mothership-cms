@@ -2,7 +2,9 @@
 
 namespace Message\Mothership\CMS\Page\Filter;
 
+use Message\Mothership\CMS\Page\Page;
 use Message\Cog\Filter\AbstractFilter;
+use Message\Cog\DB;
 
 /**
  * Class AbstractContentFilter
@@ -28,6 +30,11 @@ abstract class AbstractContentFilter extends AbstractFilter implements ContentFi
 	protected $_group;
 
 	/**
+	 * @var Page
+	 */
+	protected $_parent;
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public function setField($field, $group = null)
@@ -43,6 +50,17 @@ abstract class AbstractContentFilter extends AbstractFilter implements ContentFi
 		}
 
 		$this->_field = $field;
+	}
+
+	/**
+	 * Set parent page, so that only pages which are children will be loaded
+	 * @todo add to ContentFilterInterface for next major version
+	 *
+	 * @param Page $parent
+	 */
+	public function setParent(Page $parent)
+	{
+		$this->_parent = $parent;
 	}
 
 	/**
@@ -65,5 +83,19 @@ abstract class AbstractContentFilter extends AbstractFilter implements ContentFi
 	protected function _getContentAlias()
 	{
 		return self::DB_ALIAS . '_' . $this->getName();
+	}
+
+	/**
+	 * @param DB\QueryBuilderInterface $queryBuilder
+	 */
+	protected function _applyParentFilter(DB\QueryBuilderInterface $queryBuilder)
+	{
+		if ($queryBuilder instanceof DB\QueryBuilder && $this->_parent) {
+			$queryBuilder->where('page.left > ?i', [$this->_parent->left])
+				->where('page.right < ?i', [$this->_parent->right])
+			;
+		} elseif ($this->_parent) {
+			throw new \LogicException('Cannot apply parent to content filter unless the query builder is an instance of `\\Message\\Cog\\DB\\QueryBuilder`. The QueryBuilderInterface has been deprecated and should not be used.');
+		}
 	}
 }

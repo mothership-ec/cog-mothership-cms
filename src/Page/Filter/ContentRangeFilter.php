@@ -100,6 +100,9 @@ class ContentRangeFilter extends AbstractContentFilter
 				}
 			}
 		}
+
+		$this->_applyParentFilter($queryBuilder);
+
 	}
 
 	/**

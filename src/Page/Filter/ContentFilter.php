@@ -3,8 +3,7 @@
 namespace Message\Mothership\CMS\Page\Filter;
 
 use Message\Cog\Filter\AbstractFilter;
-use Message\Cog\DB\QueryBuilderFactory;
-use Message\Cog\DB\QueryBuilderInterface;
+use Message\Cog\DB;
 
 /**
  * Class ContentFilter
@@ -16,18 +15,18 @@ use Message\Cog\DB\QueryBuilderInterface;
 class ContentFilter extends AbstractContentFilter
 {
 	/**
-	 * @var QueryBuilderFactory
+	 * @var DB\QueryBuilderFactory
 	 */
 	private $_queryBuilderFactory;
 
 	/**
 	 * @param $name
 	 * @param $displayName
-	 * @param QueryBuilderFactory $queryBuilderFactory
+	 * @param DB\QueryBuilderFactory $queryBuilderFactory
 	 *
 	 * Include instance of QueryBuilderFactory to allow choices to be automatically loaded
 	 */
-	public function __construct($name, $displayName, QueryBuilderFactory $queryBuilderFactory = null)
+	public function __construct($name, $displayName, DB\QueryBuilderFactory $queryBuilderFactory = null)
 	{
 		parent::__construct($name, $displayName);
 
@@ -77,11 +76,14 @@ class ContentFilter extends AbstractContentFilter
 	/**
 	 * {@inheritDoc}
 	 */
-	protected function _applyFilter(QueryBuilderInterface $queryBuilder)
+	protected function _applyFilter(DB\QueryBuilderInterface $queryBuilder)
 	{
 		$queryBuilder->leftJoin($this->_getContentAlias(), $this->_getJoinStatement(), 'page_content')
 			->where($this->_getContentAlias() . '.field_name = ?s', [$this->_field])
-			->where($this->_getContentAlias() . '.value_string IN (?js)', [$this->_value]);
+			->where($this->_getContentAlias() . '.value_string IN (?js)', [$this->_value])
+		;
+
+		$this->_applyParentFilter($queryBuilder);
 	}
 
 	/**
