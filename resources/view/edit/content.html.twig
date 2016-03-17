@@ -37,7 +37,11 @@
 			<section class="group">
 				<h2 class="title">{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.name')|trans }}</h2>
 				<div class="content">
-					<p class="group-desc">{{ ('page.' ~ page.type.getName ~ '.' ~ name ~ '.description')|trans }}</p>
+					{% set descriptionKey = 'page.' ~ page.type.getName ~ '.' ~ name ~ '.description' %}
+					{% set description = descriptionKey | trans %}
+					{% if description != descriptionKey %}
+						<p class="group-desc">{{ description }}</p>
+					{% endif %}
 					{% for field in part.getFields %}
 					{{ form_row(form[name][field.getName]) }}
 					{% endfor %}
