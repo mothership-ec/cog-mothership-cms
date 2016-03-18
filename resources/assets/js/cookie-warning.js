@@ -1,13 +1,15 @@
 $(document).ready(function() {
-	var cookieWarning = $('#ms-cookie-warning'),
-		cookieLink = $('#ms-cookie-link'),
-		cookieName = cookieLink.attr('data-cookie-name'),
-		cookie = getCookie(cookieName)
+	var cookieWarning = $('#ms-cookie-warning'), // Container for cookie warning
+		cookieLink = $('#ms-cookie-link'), // Link that will make the cookie warning disappear
+		cookieName = cookieLink.attr('data-cookie-name'), // Name of the cookie that confirms that the user understands
+		cookie = getCookie(cookieName) // The value of the cookie that confirms that the user understands
 	;
-console.log(document.cookie);
+
 	if (cookie) {
+		// If the user has already confirmed that they understand, hide the warning
 		cookieWarning.hide();
 	} else {
+		// When the user clicks the link, assign a cookie and hide the warning
 		cookieLink.on('click', function (e) {
 			e.preventDefault();
 			document.cookie = encodeURIComponent(cookieName) + '=1; path=/';
