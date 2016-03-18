@@ -13,7 +13,6 @@ $(document).ready(function() {
 		cookieLink.on('click', function (e) {
 			e.preventDefault();
 			document.cookie = encodeURIComponent(cookieName) + '=1; path=/';
-			console.log(document.cookie);
 			cookieWarning.hide();
 		});
 	}
