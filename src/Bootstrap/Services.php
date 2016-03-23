@@ -268,6 +268,7 @@ class Services implements ServicesInterface
 		$services['analytics.collection'] = function ($c) {
 			return new Analytics\ProviderCollection([
 				new Analytics\Provider\GoogleAnalyticsProvider($c['cfg']->analytics->key),
+				new Analytics\Provider\GoogleAnalyticsUniversalProvider($c['cfg']->analytics->key),
 			]);
 		};
 
