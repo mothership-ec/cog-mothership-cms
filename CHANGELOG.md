@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.13.0
+
+- Added `Analytics\AnalyticsEditableProviderInterface`, which extends `Analytics\AnalyticsProviderInterface` interface to allow for view references and parameters to be edited on analytics providers
+- Added `GoogleAnalyticsUniversalProvider` class, which uses the newer 'Universal' tracking (`analytics.js` instead of `ga.js`)
+- `Analytics\BasicProvider` now implements `AnalyticsEditableProviderInterface`, and the appropriate methods (`setViewReference()` and `setViewParams()`) have been added
+
 ## 4.12.0
 
 - Allow pages to be shared via email
