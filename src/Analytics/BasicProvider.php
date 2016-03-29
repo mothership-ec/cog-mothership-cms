@@ -11,7 +11,7 @@ namespace Message\Mothership\CMS\Analytics;
  * If there is a more complecated provider, then AnalyticsProviderInterface should
  * be implemented
  */
-class BasicProvider implements AnalyticsProviderInterface
+class BasicProvider implements AnalyticsEditableProviderInterface
 {
 	/**
 	 * @var string
@@ -35,11 +35,11 @@ class BasicProvider implements AnalyticsProviderInterface
 	 * @param string $viewRef The view reference
 	 * @param array  $params  The parameters to pass to the view
 	 */
-	public function __construct($name, $viewRef, $params = [])
+	public function __construct($name, $viewRef, array $params = [])
 	{
-		$this->_name    = $name;
-		$this->_viewRef = $viewRef;
-		$this->_params  = $params;
+		$this->_name = $name;
+		$this->setViewReference($viewRef);
+		$this->setViewParams($params);
 	}
 
 	/**
@@ -53,9 +53,29 @@ class BasicProvider implements AnalyticsProviderInterface
 	/**
 	 * {@inheritDoc}
 	 */
+	public function setViewReference($viewRef)
+	{
+		if (!is_string($viewRef)) {
+			throw new \InvalidArgumentException('View reference must be a string, ' . gettype($viewRef) . ' given');
+		}
+
+		$this->_viewRef = $viewRef;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public function getViewParams()
 	{
 		return $this->_params;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setViewParams(array $params)
+	{
+		$this->_params = $params;
 	}
 
 	/**
