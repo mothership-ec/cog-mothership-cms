@@ -234,7 +234,7 @@ ms.cms:
     min: From
     max: To
   cookie-warning:
-    text: This site uses cookies essential for e-commerce, along with third party tools to analyse web traffic. View our <a href="/cookie-policy">cookie policy</a>.
+    text: This site uses cookies essential for e-commerce, along with third party tools to analyse web traffic.
     link: OK
 page:
   blog:
