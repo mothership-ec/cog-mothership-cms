@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.14.0
+
+- Add in-built functionality for cookie warnings
+- Added `cookie-warning.js` file for handling warning display and cookie assignment
+- Added `cookie-warning.html.twig` view file for displaying cookie warning
+- Added `ms.cms.cookie-warning` translations for displaying cookie warning
+
 ## 4.13.0
 
 - Added `Analytics\AnalyticsEditableProviderInterface`, which extends `Analytics\AnalyticsProviderInterface` interface to allow for view references and parameters to be edited on analytics providers
