@@ -1,4 +1,16 @@
-{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
+{% extends 'Message:Mothership:CMS::dashboard' %}
+
+
+{% block stylesheets %}
+	{{ parent() }}
+	{% stylesheets
+		'@Message:Mothership:CMS::resources/assets/css/cms.css'
+
+		output='/assets/css/ms_cms.css'
+		filter='csscogulerewrite,?cssmin'
+	%}
+		<link rel="stylesheet" href="{{ asset_url }}">
+	{% endstylesheets %}
 
 {% block javascripts %}
 	{{ parent() }}
@@ -18,7 +30,9 @@
 	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index', {'currentPageID':page.id}))}}
 {% endblock %}
 
-{% block main %}
+{% block slideAttr 'data-slide-loaded' %}
+
+{% block slide %}
 	<hgroup class="title">
 		<h1 data-title>{{ page.title }}<span>{{ page.type.getDisplayName() }}</span></h1>
 	</hgroup>
@@ -39,7 +53,7 @@
 			<a href="{{ url('ms.cms.frontend', { slug: page.slug|trim('/') ?: '/' }) }}" class="button small preview">{{ 'ms.cms.edit.button.view'|trans }}</a>
 		</div>
 	</div>
-	<section class="container-content short">
+	<section class="container-content">
 		{% block form %}{% endblock %}
 	</section>
 {% endblock %}

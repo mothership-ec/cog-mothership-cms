@@ -1,15 +1,17 @@
-{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
-
-{% block sidebar %}
-	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index'))}}
-{% endblock %}
+{% extends 'Message:Mothership:ControlPanel::_templates/full_slideout' %}
 
 {% block main %}
-	<div class="dashboard">
-		<div class="modules">
-			{% for reference in dashboardReferences %}
-				{{ render(controller(reference.reference)) }}
-			{% endfor %}
-		</div>
+	<hgroup class="title">
+		<h1>Content</h1>
+		<div class="controls">
+			{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Search#index'))}}
+
+			<a href="{{ url('ms.cp.cms.create')}}" class="button small create" data-live>{{ 'ms.cms.create.button.menu'|trans }}</a>
+
+		</div>	
+	</hgroup>
+
+	<div class="container-content">
+		{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:DashBoard#pageList')) }}
 	</div>
 {% endblock %}

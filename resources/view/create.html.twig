@@ -1,10 +1,8 @@
-{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
+{% extends 'Message:Mothership:CMS::dashboard' %}
 
-{% block sidebar %}
-	{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index'))}}
-{% endblock %}
+{% block slideAttr 'data-slide-loaded' %}
 
-{% block main %}
+{% block slide %}
 <hgroup class="title">
 	<h1>{{ 'ms.cms.create.page-title'|trans }}</h1>
 </hgroup>
@@ -18,7 +16,7 @@
 	{% for type in form.type %}
 	<label class="option-block">
 		{{ form_widget(type) }}
-		<p class="type"><strong>{{ type.vars.label }}</strong></p>
+		<p class="type">{{ type.vars.label }}</p>
 		<p>{{ types.get(type.vars.value).getDescription }}</p>
 	</label>
 	{% endfor %}

@@ -1,8 +1,4 @@
-{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
-
-{% block sidebar %}
-{{ render(controller('Message:Mothership:CMS::Controller:ControlPanel:Sidebar#index'))}}
-{% endblock %}
+{% extends 'Message:Mothership:ControlPanel::_templates/cp' %}
 
 {% block main %}
 	<hgroup class="title"><h1>Search Results</h1></hgroup>
@@ -14,12 +10,11 @@
 				<a href="{{ url('ms.cp.cms.edit', {pageID: page.id}) }}">
 					{{ page.title }}
 				</a>
-<!-- 				<p>{{ page.excerpt|raw }}</p> -->
 			</li>
 		{% endfor %}
 		</ul>
 		{% else %}
-		<p>{{ 'Sorry we couldn\'t find any results'|trans }}</p>
+			<p>{{ 'Sorry we couldn\'t find any results'|trans }}</p>
 		{% endif %}
 	</div>
 {% endblock %}

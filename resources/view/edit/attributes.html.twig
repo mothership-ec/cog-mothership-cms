@@ -18,9 +18,8 @@
 
 <button type="submit" class="button small save" id="save-content">{{ 'ms.cms.attributes.button.save'|trans }}</button>
 
-<section class="group">
+<section>
 	<h2 class="title">{{ 'ms.cms.attributes.authorship.heading'|trans }}</h2>
-	<div class="content">
 		<dl>
 			<dt>{{ 'Created by'|trans }}</dt>
 				<dd>{{ page.authorship.createdUser.name }} {{ 'at'|trans }} {{ page.authorship.createdAt|date }}</dd>
@@ -29,7 +28,6 @@
 				<dd>{{ page.authorship.updatedUser.name }} {{ 'at'|trans }} {{ page.authorship.updatedAt|date }}</dd>
 			{% endif %}
 		</dl>
-	</div>
 </section>
 
 {{ form_end(form) }}

@@ -1,7 +1,9 @@
 <?php
 
 namespace Message\Mothership\CMS\Controller\ControlPanel;
-
+/**
+ * @deprecated
+ */
 class Sidebar extends \Message\Cog\Controller\Controller
 {
 	public function index($currentPageID = null)
